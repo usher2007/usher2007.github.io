@@ -1,15 +1,13 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="chrome=1">
   
-  <title>《Python源码剖析》读书笔记-3 字符串对象 | 一根笨茄子</title>
-  <meta name="author" content="Yubo Guo">
-  
-  <meta name="description" content="&amp;#x7B2C;3&amp;#x7AE0; Python&amp;#x4E2D;&amp;#x7684;&amp;#x5B57;&amp;#x7B26;&amp;#x4E32;&amp;#x5BF9;&amp;#x8C61;
+  <title>《Python源码剖析》读书笔记-3 字符串对象 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="&#x7B2C;3&#x7AE0; Python&#x4E2D;&#x7684;&#x5B57;&#x7B26;&#x4E32;&#x5BF9;&#x8C61;
 
-&amp;#x5B57;&amp;#x7B26;&amp;#x4E32;&amp;#x5BF9;&amp;#x8C61;&amp;#x5B9A;&amp;#x4E49;&amp;#x4E3A;1
+&#x5B57;&#x7B26;&#x4E32;&#x5BF9;&#x8C61;&#x5B9A;&#x4E49;&#x4E3A;1
 2
 3
 4
@@ -24,79 +22,117 @@
 13
 14
 15
-typedef struct {
-    PyObject_VAR_HEAD
-    long ob_shash;
-    int ob_sstate;
-    char ob_sval[1];
+typedef struct {">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《Python源码剖析》读书笔记-3 字符串对象">
+<meta property="og:url" content="http://yoursite.com/2014/03/23/python-source-3/">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="&#x7B2C;3&#x7AE0; Python&#x4E2D;&#x7684;&#x5B57;&#x7B26;&#x4E32;&#x5BF9;&#x8C61;
 
-    /* Invariants:
-     * ob_sval contains space for &amp;apos;ob_size+1&amp;apos; elements.
-     * ob_sval[ob_size] == 0.
-     * ob_shash is the hash of the string or -1 if not computed yet.
-     * ob_sstate != 0 iff the string object is in stringobject.c&amp;apos;s
-     * &amp;apos;interned&amp;apos; dictionary; in this case the two references
-     * from &amp;apos;interned&amp;apos; to this object are *not counted* in ob_refcnt.
-     */
-} PyStringObject;
+&#x5B57;&#x7B26;&#x4E32;&#x5BF9;&#x8C61;&#x5B9A;&#x4E49;&#x4E3A;1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+typedef struct {">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="《Python源码剖析》读书笔记-3 字符串对象">
+<meta name="twitter:description" content="&#x7B2C;3&#x7AE0; Python&#x4E2D;&#x7684;&#x5B57;&#x7B26;&#x4E32;&#x5BF9;&#x8C61;
 
-&amp;#x5176;&amp;#x4E2D;PyObject_VAR_HEAD&amp;#x5B8F;&amp;#x4E2D;&amp;#x6709;&amp;#x4E00;&amp;#x4E2A;ob_size&amp;#x57DF;&amp;#xFF0C;&amp;#x8868;&amp;#x793A;&amp;#x53EF;&amp;#x53D8;&amp;#x957F;&amp;#x5EA6;&amp;#x5BF9;&amp;#x8C61;&amp;#x7684;&amp;#x957F;&amp;#x5EA6;&amp;#x3002;
-ob_sval&amp;#x5B9E;&amp;#x9645;&amp;#x4E0A;&amp;#x4FDD;&amp;#x5B58;&amp;#x4E86;&amp;#x4E00;&amp;#x4E2A;&amp;#x6307;&amp;#x5411;&amp;#x5177;&amp;#x4F53;&amp;#x5B57;&amp;#x7B26;&amp;#x4E32;&amp;#x5B58;&amp;#x50A8;&amp;#x4F4D;&amp;#x7F6E;&amp;#x7684;&amp;#x6307;&amp;#x9488;&amp;#x3002;">
+&#x5B57;&#x7B26;&#x4E32;&#x5BF9;&#x8C61;&#x5B9A;&#x4E49;&#x4E3A;1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+typedef struct {">
+  
+    <link rel="alternative" href="/atom.xml" title="Hexo" type="application/atom+xml">
   
   
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-
-  <meta property="og:title" content="《Python源码剖析》读书笔记-3 字符串对象"/>
-  <meta property="og:site_name" content="一根笨茄子"/>
-
-  <link rel="alternate" href="/atom.xml" title="一根笨茄子" type="application/atom+xml">
-  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
-  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" href="/favicon.png">
+  
+  <link href="http://fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
   <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
   
-  
-<script type="text/javascript">
-var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
-document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3F996ee0fca2512b4c29f37f60cf6387ca' type='text/javascript'%3E%3C/script%3E"));
-</script>
-
 </head>
-
-
 <body>
-  <div class="wrapper">
-    <header id="header"><div class="title">
-  <h1><a href="/">一根笨茄子</a></h1>
-  <p><a href="/"></a></p>
-</div>
-<nav class="nav">
-  <ul>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><input type="submit" value="&#xF002;" class="search-form-submit"><input type="hidden" name="q" value="site:http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-python-source-3" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/03/23/python-source-3/" class="article-date">
+  <time datetime="2014-03-23T01:42:08.000Z" itemprop="datePublished">Mar 23 2014</time>
+</a>
     
-      <li><a href="/archives">归档</a></li>
-    
-      <li><a href="/about">关于我</a></li>
-    
-  </ul>
-  <div class="clearfix"></div>
-</nav>
-<div class="clearfix"></div></header>
-    <div class="content"><article class="post">
-  <header>
-    
-      <div class="icon"></div>
-      <time datetime="2014-03-23T01:42:08.000Z"><a href="/2014/03/23/python-source-3/">Mar 23 2014</a></time>
+  </div>
+  <div class="article-inner">
     
     
+      <header class="article-header">
+        
   
-    <h1 class="title">《Python源码剖析》读书笔记-3 字符串对象</h1>
+    <h1 class="article-title" itemprop="name">
+      《Python源码剖析》读书笔记-3 字符串对象
+    </h1>
   
 
-  </header>
-  
-  <div class="entry">
+      </header>
     
-      <hr>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <hr>
 <h2 id="&#x7B2C;3&#x7AE0;_Python&#x4E2D;&#x7684;&#x5B57;&#x7B26;&#x4E32;&#x5BF9;&#x8C61;">&#x7B2C;3&#x7AE0; Python&#x4E2D;&#x7684;&#x5B57;&#x7B26;&#x4E32;&#x5BF9;&#x8C61;</h2>
 <ul>
 <li>&#x5B57;&#x7B26;&#x4E32;&#x5BF9;&#x8C61;&#x5B9A;&#x4E49;&#x4E3A;<br><figure class="highlight c"><table><tr><td class="gutter"><pre>1
@@ -168,169 +204,134 @@ Py_REFCNT(s) -= <span class="number">2</span>;
 </li>
 </ul>
 
-    
-  </div>
-  <footer>
-    
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2014/03/23/python-source-3/" data-id="y75r6ursbdlbcrs2" class="article-share-link">Share</a>
       
       
-  
-  <div class="tags">
-    <a href="/tags/读书笔记/">读书笔记</a>, <a href="/tags/Python/">Python</a>
-  </div>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/">Python</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/读书笔记/">读书笔记</a></li></ul>
 
+    </footer>
+  </div>
+  
     
-    <div class="clearfix"></div>
-  </footer>
+<nav id="article-nav">
+  
+    <a href="/2014/03/26/python-source-4/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          《Python源码剖析》读书笔记-4 List对象
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2014/03/21/python-source-2/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">《Python源码剖析》读书笔记-2 整数对象</div>
+    </a>
+  
+</nav>
+
+  
 </article>
-<!-- JiaThis Button BEGIN -->
-<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?uid=1347205161838655&move=0" charset="utf-8"></script>
-<!-- JiaThis Button END -->
 
-<section id="comment">
-  <h1 class="title">Comments</h1>
-  <div class="ds-thread" data-title="《Python源码剖析》读书笔记-3 字符串对象">
-  </div>
 </section>
-</div>
+        
+          <aside id="sidebar">
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/">Python</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Unity3D/">Unity3D</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/书单/">书单</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/北京车展/">北京车展</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/杂谈/">杂谈</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/游戏开发/">游戏开发</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/爱好/">爱好</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/生活/">生活</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/读书笔记/">读书笔记</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/读后感/">读后感</a><span class="tag-list-count">1</span></li></ul>
+    </div>
   </div>
-  <div class="widget-wrapper">
-    <aside id="sidebar">
-  
-  
-    
-      
-      
-    
-      
-      
 
-<div class="widget tag first">
-  <h3 class="title">Tags</h3>
-  <ul class="entry">
   
-    <li><a href="/tags/Python/">Python</a><small>10</small></li>
-  
-    <li><a href="/tags/Unity3D/">Unity3D</a><small>1</small></li>
-  
-    <li><a href="/tags/书单/">书单</a><small>1</small></li>
-  
-    <li><a href="/tags/北京车展/">北京车展</a><small>1</small></li>
-  
-    <li><a href="/tags/杂谈/">杂谈</a><small>2</small></li>
-  
-    <li><a href="/tags/游戏开发/">游戏开发</a><small>1</small></li>
-  
-    <li><a href="/tags/爱好/">爱好</a><small>1</small></li>
-  
-    <li><a href="/tags/生活/">生活</a><small>2</small></li>
-  
-    <li><a href="/tags/读书笔记/">读书笔记</a><small>10</small></li>
-  
-    <li><a href="/tags/读后感/">读后感</a><small>1</small></li>
-  
-  </ul>
-</div>
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Python/" style="font-size: 20.00px;">Python</a><a href="/tags/Unity3D/" style="font-size: 10.00px;">Unity3D</a><a href="/tags/书单/" style="font-size: 10.00px;">书单</a><a href="/tags/北京车展/" style="font-size: 10.00px;">北京车展</a><a href="/tags/杂谈/" style="font-size: 15.00px;">杂谈</a><a href="/tags/游戏开发/" style="font-size: 10.00px;">游戏开发</a><a href="/tags/爱好/" style="font-size: 10.00px;">爱好</a><a href="/tags/生活/" style="font-size: 15.00px;">生活</a><a href="/tags/读书笔记/" style="font-size: 20.00px;">读书笔记</a><a href="/tags/读后感/" style="font-size: 10.00px;">读后感</a>
+    </div>
+  </div>
 
+  
     
-      
-      
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/05">May 2014</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/04">April 2014</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/03">March 2014</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/12">December 2013</a><span class="archive-list-count">1</span></li></ul>
+    </div>
+  </div>
 
-<div class="widget recent-posts">
-  <h3 class="title">Recent Posts</h3>
-  <ul class="entry">
+  
     
-      <li>
-        <a href="/2014/05/23/unity2d-flappybird/">用Unity2D仿造一个FlappyBird</a>
-      </li>
-    
-      <li>
-        <a href="/2014/05/11/auto-show-2014/">过时的2014北京车展</a>
-      </li>
-    
-      <li>
-        <a href="/2014/05/07/python-source-10/">《Python源码剖析》读书笔记-10 Python虚拟机中的控制流</a>
-      </li>
-    
-      <li>
-        <a href="/2014/04/28/inset-learning/">汤小元插画学习成果</a>
-      </li>
-    
-      <li>
-        <a href="/2014/04/25/python-source-9/">《Python源码剖析》读书笔记-9 Python虚拟机中的一般表达式</a>
-      </li>
-    
-  </ul>
-</div>
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recents</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2014/05/23/unity2d-flappybird/">用Unity2D仿造一个FlappyBird</a>
+          </li>
+        
+          <li>
+            <a href="/2014/05/11/auto-show-2014/">过时的2014北京车展</a>
+          </li>
+        
+          <li>
+            <a href="/2014/05/07/python-source-10/">《Python源码剖析》读书笔记-10 Python虚拟机中的控制流</a>
+          </li>
+        
+          <li>
+            <a href="/2014/04/28/inset-learning/">汤小元插画学习成果</a>
+          </li>
+        
+          <li>
+            <a href="/2014/04/25/python-source-9/">《Python源码剖析》读书笔记-9 Python虚拟机中的一般表达式</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
 
-    
-      
-      
-
-<div class="widget blogroll">
-  <h3 class="title">Links</h3>
-  <ul class="entry">
-  
-    
-    <li><a href="http://guoyb.com/" target="_blank">旧博客</a></li>
-  
-    
-    <li><a href="http://weibo.com/dusticebloomingmonk" target="_blank">新浪微博</a></li>
-  
-    
-    <li><a href="http://www.linkedin.com/profile/view?id=256546845" target="_blank">LinkedIn</a></li>
-  
-    
-    <li><a href="http://www.yanggy.com/" target="_blank">阳总工</a></li>
-  
-    
-    <li><a href="http://mcgrady164.github.io/" target="_blank">阿俊</a></li>
-  
-  </ul>
-</div>
-
-    
   
 </aside>
-<div class="clearfix"></div>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2014 John Doe<br>
+      Powered by <a href="http://zespia.tw/hexo/" target="_blank">Hexo</a>
+    </div>
   </div>
-  <footer id="footer"><div class="copyright">
+</footer>
+    </div>
+    <nav id="mobile-nav">
   
-  &copy; 2014 <a href="/">Yubo Guo</a>
+    <a href="/" class="mobile-nav-link">Home</a>
   
-</div>
-<div class="theme-copyright">
-  Theme by <a href="https://github.com/orderedlist" target="_blank">orderedlist</a>
-   | 
-  Redesign by <a href="http://heroicyang.com/" target="_blank">Heroic Yang</a>
-</div>
-<div class="clearfix"></div></footer>
-  <script src="/js/scale.fix.js"></script>
-<script src="/js/jquery.imagesloaded.min.js"></script>
-<script src="/js/gallery.js"></script>
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
 
-
-<script type="text/javascript">
-  var duoshuoQuery = { short_name: 'guoyb' };
-  (function() {
-    var ds = document.createElement('script');
-    ds.type = 'text/javascript';
-    ds.async = true;
-    ds.src = 'http://static.duoshuo.com/embed.js';
-    ds.charset = 'UTF-8';
-    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
-  })();
-</script>
-
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 
 
 <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
 <script src="/fancybox/jquery.fancybox.pack.js"></script>
-<script type="text/javascript">
-  (function($){
-    $('.fancybox').fancybox();
-  })(jQuery);
-</script>
 
+
+<script type="text/javascript" src="/js/script.js"></script>
+  </div>
 </body>
 </html>
