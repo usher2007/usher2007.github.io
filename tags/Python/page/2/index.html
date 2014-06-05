@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="chrome=1">
   
-  <title>Unity3D | 一根笨茄子</title>
+  <title>Page 2 | Python | 一根笨茄子</title>
   <meta name="author" content="Yubo Guo">
   
   
@@ -46,7 +46,7 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
 </nav>
 <div class="clearfix"></div></header>
     <div class="content">
-<h2 class="archive-title tag">Unity3D</h2>
+<h2 class="archive-title tag">Python</h2>
 
 
   
@@ -54,11 +54,11 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
   <header>
     
       <div class="icon"></div>
-      <time datetime="2014-05-23T10:59:53.000Z"><a href="/2014/05/23/unity2d-flappybird/">May 23 2014</a></time>
+      <time datetime="2014-03-18T05:48:49.000Z"><a href="/2014/03/18/python-source-1/">Mar 18 2014</a></time>
     
     
   
-    <h1 class="title"><a href="/2014/05/23/unity2d-flappybird/">用Unity3D仿造一个FlappyBird</a></h1>
+    <h1 class="title"><a href="/2014/03/18/python-source-1/">《Python源码剖析》读书笔记-1 准备工作和对象初探</a></h1>
   
 
   </header>
@@ -66,27 +66,20 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
   <div class="entry">
     
       <hr>
-<p>Unity3D 4.3&#x7248;&#x672C;&#x4E4B;&#x540E;&#x63D0;&#x4F9B;&#x4E86;&#x5B98;&#x65B9;&#x7684;2D&#x5DE5;&#x5177;&#x5305;&#xFF0C;&#x53EF;&#x4EE5;&#x5F88;&#x65B9;&#x4FBF;&#x7684;&#x7528;&#x6765;&#x5F00;&#x53D1;2D&#x6E38;&#x620F;&#x3002;&#x6211;&#x6628;&#x5929;&#x5728;&#x5B98;&#x7F51;&#x5B66;&#x4E60;&#x4E86;Unity2D&#x7684;<a href="http://unity3d.com/learn/tutorials/modules/beginner/2d" target="_blank" rel="external">tutorial</a>&#xFF0C;&#x4ECA;&#x5929;&#x4E0B;&#x5348;&#x82B1;&#x4E86;3&#x4E2A;&#x5C0F;&#x65F6;&#x4F7F;&#x7528;Unity2D&#x5236;&#x4F5C;&#x4E86;&#x4E00;&#x4E2A;&#x7B80;&#x5316;&#x7248;&#x7684;Flappy Bird&#x3002;</p>
+<h2 id="&#x7B2C;0&#x7AE0;_&#x51C6;&#x5907;&#x5DE5;&#x4F5C;">&#x7B2C;0&#x7AE0; &#x51C6;&#x5907;&#x5DE5;&#x4F5C;</h2>
 <ul>
-<li>&#x51C6;&#x5907;&#x5DE5;&#x4F5C;<ul>
-<li>&#x5E26;alpha&#x901A;&#x9053;&#x7684;&#x5C0F;&#x9E1F;&#x56FE;&#x7247;&#x4E00;&#x5F20;&#x3002;&#x53EF;&#x4EE5;&#x901A;&#x8FC7;PS&#x5BF9;&#x8FD9;&#x5F20;&#x56FE;&#x7247;&#x4E2D;&#x7684;&#x5C0F;&#x9E1F;&#x7684;&#x7FC5;&#x8180;&#x505A;&#x5C0F;&#x5C0F;&#x7684;&#x4FEE;&#x6539;&#xFF0C;&#x5982;&#x4E0B;&#x56FE;&#x6240;&#x793A;&#x3002;&#x8FD9;&#x4E24;&#x5F20;&#x56FE;&#x7247;&#x4F1A;&#x7528;&#x6765;&#x5236;&#x4F5C;&#x5C0F;&#x9E1F;&#x7684;&#x98DE;&#x884C;&#x52A8;&#x753B;&#xFF1B;</li>
-<li><img src="http://guoybblog.qiniudn.com/BirdFly.jpg" alt="Bird Fly"></li>
-<li>&#x4F7F;&#x7528;PS&#x5BF9;&#x5C0F;&#x9E1F;&#x56FE;&#x7247;&#x8FDB;&#x884C;&#x65CB;&#x8F6C;&#xFF0C;&#x5F97;&#x5230;&#x5982;&#x4E0B;&#x4E09;&#x5E45;&#x56FE;&#x7247;&#xFF0C;&#x7528;&#x4E8E;&#x5236;&#x4F5C;&#x5C0F;&#x9E1F;&#x7684;&#x6B7B;&#x4EA1;&#x52A8;&#x753B;&#xFF1B;</li>
-<li><img src="http://guoybblog.qiniudn.com/DeadBird.jpg" alt="Bird Dying"></li>
-<li>&#x6C34;&#x7BA1;&#x56FE;&#x7247;&#x4E00;&#x5F20;&#xFF1B;</li>
-<li>&#x80CC;&#x666F;&#x56FE;&#x7247;&#x4E00;&#x5F20;&#xFF1B;</li>
-<li>GameOver&#x3001;Start&#x3001;0~9&#x7684;&#x6570;&#x5B57;&#x7B49;&#x7528;&#x6765;&#x505A;GUI&#x7684;&#x56FE;&#x7247;&#x82E5;&#x5E72;&#x3002;</li>
-</ul>
-</li>
-</ul>
-<p>
+<li>&#x5728;&#x66F4;&#x6539;int_print&#x51FD;&#x6570;&#x65F6;&#xFF0C;&#x4F1A;&#x62A5;&#x9519;missing &#x2018;;&#x2019; before &#x2018;type&#x2019; &#xFF0C;&#x539F;&#x56E0;&#x662F;c&#x7684;&#x53D8;&#x91CF;&#x58F0;&#x660E;&#x5FC5;&#x987B;&#x4F4D;&#x4E8E;&#x51FD;&#x6570;&#x7684;&#x6700;&#x4E0A;&#x65B9;&#x3002;&#xFF08;&#x4E0E;C++&#x4E0D;&#x540C;&#xFF09;</li>
+<li>&#x5173;&#x4E8E;PyObject_GC_New,&#x5176;&#x5B9E;&#x662F;&#x4E2A;&#x5B8F;&#xFF0C;&#x800C;&#x4E0D;&#x662F;&#x51FD;&#x6570;&#x3002;<br><figure class="highlight c"><table><tr><td class="gutter"><pre>1
+</pre></td><td class="code"><pre><span class="preprocessor">#define PyObject_GC_New(type, typeobj) ( (type *) _PyObject_GC_New(typeobj) )</span>
+</pre></td></tr></table></figure><ul>
+<li>&#x5176;&#x4E2D;&#xFF0C;_PyObject_GC_New&#x662F;&#x4E2A;&#x51FD;&#x6570;&#xFF0C; &#x6839;&#x636E;typeobj&#xFF08;&#x8FD9;&#x662F;&#x4E2A;&#x7ED3;&#x6784;&#x4F53;&#xFF09;&#xFF0C;&#x8FD4;&#x56DE;&#x4E00;&#x6BB5;&#x5927;&#x5C0F;&#x7684;&#x5185;&#x5B58;&#x3002;&#x5C01;&#x88C5;&#x6210;PyObject&#x7684;&#x6307;&#x9488;&#x3002;<br>
     
   </div>
   <footer class="end-sep">
     
       
         <div class="alignleft">
-          <a href="/2014/05/23/unity2d-flappybird/#more" class="more-link">Read More</a>
+          <a href="/2014/03/18/python-source-1/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -101,6 +94,8 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
   
 
   <nav id="pagination">
+  
+    <a href="/tags/Python/" class="prev">Prev</a>
   
   
   <div class="clearfix"></div>

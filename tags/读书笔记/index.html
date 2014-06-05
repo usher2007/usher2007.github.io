@@ -54,6 +54,80 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
   <header>
     
       <div class="icon"></div>
+      <time datetime="2014-06-05T14:05:16.000Z"><a href="/2014/06/05/python-source-11/">Jun 5 2014</a></time>
+    
+    
+  
+    <h1 class="title"><a href="/2014/06/05/python-source-11/">《Python源码剖析》读书笔记-11 Python虚拟机中的函数机制</a></h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<h3 id="&#x7B2C;11&#x7AE0;_Python&#x865A;&#x62DF;&#x673A;&#x4E2D;&#x7684;&#x51FD;&#x6570;&#x673A;&#x5236;">&#x7B2C;11&#x7AE0; Python&#x865A;&#x62DF;&#x673A;&#x4E2D;&#x7684;&#x51FD;&#x6570;&#x673A;&#x5236;</h3>
+<ul>
+<li>&#x51FD;&#x6570;&#x4E5F;&#x662F;&#x4E00;&#x4E2A;&#x5BF9;&#x8C61;<br><figure class="highlight c"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+</pre></td><td class="code"><pre><span class="keyword">typedef</span> <span class="keyword">struct</span> {
+    PyObject_HEAD
+    PyObject *func_code;	<span class="comment">/* A code object */</span>
+    PyObject *func_globals;	<span class="comment">/* A dictionary (other mappings won&apos;t do) */</span>
+    PyObject *func_defaults;	<span class="comment">/* NULL or a tuple */</span>
+    PyObject *func_closure;	<span class="comment">/* NULL or a tuple of cell objects */</span>
+    PyObject *func_doc;	 <span class="comment">/* The __doc__ attribute, can be anything */</span>
+    PyObject *func_name;	<span class="comment">/* The __name__ attribute, a string object */</span>
+    PyObject *func_dict;	<span class="comment">/* The __dict__ attribute, a dict or NULL */</span>
+    PyObject *func_weakreflist;	<span class="comment">/* List of weak references */</span>
+    PyObject *func_module;	<span class="comment">/* The __module__ attribute, can be anything */</span>
+
+    <span class="comment">/* Invariant:
+     * func_closure contains the bindings for func_code-&gt;co_freevars, so
+     * PyTuple_Size(func_closure) == PyCode_GetNumFree(func_code)
+     * (func_closure may be NULL if PyCode_GetNumFree(func_code) == 0).
+     */</span>
+} PyFunctionObject;
+</pre></td></tr></table></figure>
+    
+  </div>
+  <footer class="end-sep">
+    
+      
+        <div class="alignleft">
+          <a href="/2014/06/05/python-source-11/#more" class="more-link">Read More</a>
+        </div>
+      
+      
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+<!-- JiaThis Button BEGIN -->
+<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?uid=1347205161838655&move=0" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+  
+    <article class="post">
+  <header>
+    
+      <div class="icon"></div>
       <time datetime="2014-05-07T09:13:40.000Z"><a href="/2014/05/07/python-source-10/">May 7 2014</a></time>
     
     
@@ -677,51 +751,11 @@ PREDICT(POP_JUMP_IF_TRUE);
 <!-- JiaThis Button END -->
 
   
-    <article class="post">
-  <header>
-    
-      <div class="icon"></div>
-      <time datetime="2014-03-18T05:48:49.000Z"><a href="/2014/03/18/python-source-1/">Mar 18 2014</a></time>
-    
-    
-  
-    <h1 class="title"><a href="/2014/03/18/python-source-1/">《Python源码剖析》读书笔记-1 准备工作和对象初探</a></h1>
-  
-
-  </header>
-  
-  <div class="entry">
-    
-      <hr>
-<h2 id="&#x7B2C;0&#x7AE0;_&#x51C6;&#x5907;&#x5DE5;&#x4F5C;">&#x7B2C;0&#x7AE0; &#x51C6;&#x5907;&#x5DE5;&#x4F5C;</h2>
-<ul>
-<li>&#x5728;&#x66F4;&#x6539;int_print&#x51FD;&#x6570;&#x65F6;&#xFF0C;&#x4F1A;&#x62A5;&#x9519;missing &#x2018;;&#x2019; before &#x2018;type&#x2019; &#xFF0C;&#x539F;&#x56E0;&#x662F;c&#x7684;&#x53D8;&#x91CF;&#x58F0;&#x660E;&#x5FC5;&#x987B;&#x4F4D;&#x4E8E;&#x51FD;&#x6570;&#x7684;&#x6700;&#x4E0A;&#x65B9;&#x3002;&#xFF08;&#x4E0E;C++&#x4E0D;&#x540C;&#xFF09;</li>
-<li>&#x5173;&#x4E8E;PyObject_GC_New,&#x5176;&#x5B9E;&#x662F;&#x4E2A;&#x5B8F;&#xFF0C;&#x800C;&#x4E0D;&#x662F;&#x51FD;&#x6570;&#x3002;<br><figure class="highlight c"><table><tr><td class="gutter"><pre>1
-</pre></td><td class="code"><pre><span class="preprocessor">#define PyObject_GC_New(type, typeobj) ( (type *) _PyObject_GC_New(typeobj) )</span>
-</pre></td></tr></table></figure><ul>
-<li>&#x5176;&#x4E2D;&#xFF0C;_PyObject_GC_New&#x662F;&#x4E2A;&#x51FD;&#x6570;&#xFF0C; &#x6839;&#x636E;typeobj&#xFF08;&#x8FD9;&#x662F;&#x4E2A;&#x7ED3;&#x6784;&#x4F53;&#xFF09;&#xFF0C;&#x8FD4;&#x56DE;&#x4E00;&#x6BB5;&#x5927;&#x5C0F;&#x7684;&#x5185;&#x5B58;&#x3002;&#x5C01;&#x88C5;&#x6210;PyObject&#x7684;&#x6307;&#x9488;&#x3002;<br>
-    
-  </div>
-  <footer class="end-sep">
-    
-      
-        <div class="alignleft">
-          <a href="/2014/03/18/python-source-1/#more" class="more-link">Read More</a>
-        </div>
-      
-      
-    
-    <div class="clearfix"></div>
-  </footer>
-</article>
-<!-- JiaThis Button BEGIN -->
-<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?uid=1347205161838655&move=0" charset="utf-8"></script>
-<!-- JiaThis Button END -->
-
-  
 
   <nav id="pagination">
   
+  
+    <a href="/tags/读书笔记/page/2/" class="next">Next</a>
   
   <div class="clearfix"></div>
 </nav>
@@ -743,7 +777,7 @@ PREDICT(POP_JUMP_IF_TRUE);
   <h3 class="title">Tags</h3>
   <ul class="entry">
   
-    <li><a href="/tags/Python/">Python</a><small>10</small></li>
+    <li><a href="/tags/Python/">Python</a><small>11</small></li>
   
     <li><a href="/tags/Unity3D/">Unity3D</a><small>1</small></li>
   
@@ -759,7 +793,7 @@ PREDICT(POP_JUMP_IF_TRUE);
   
     <li><a href="/tags/生活/">生活</a><small>2</small></li>
   
-    <li><a href="/tags/读书笔记/">读书笔记</a><small>10</small></li>
+    <li><a href="/tags/读书笔记/">读书笔记</a><small>11</small></li>
   
     <li><a href="/tags/读后感/">读后感</a><small>1</small></li>
   
@@ -775,6 +809,10 @@ PREDICT(POP_JUMP_IF_TRUE);
   <ul class="entry">
     
       <li>
+        <a href="/2014/06/05/python-source-11/">《Python源码剖析》读书笔记-11 Python虚拟机中的函数机制</a>
+      </li>
+    
+      <li>
         <a href="/2014/05/23/unity2d-flappybird/">用Unity3D仿造一个FlappyBird</a>
       </li>
     
@@ -788,10 +826,6 @@ PREDICT(POP_JUMP_IF_TRUE);
     
       <li>
         <a href="/2014/04/28/inset-learning/">汤小元插画学习成果</a>
-      </li>
-    
-      <li>
-        <a href="/2014/04/25/python-source-9/">《Python源码剖析》读书笔记-9 Python虚拟机中的一般表达式</a>
       </li>
     
   </ul>

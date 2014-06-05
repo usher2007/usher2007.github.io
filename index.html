@@ -50,6 +50,80 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
   <header>
     
       <div class="icon"></div>
+      <time datetime="2014-06-05T14:05:16.000Z"><a href="/2014/06/05/python-source-11/">Jun 5 2014</a></time>
+    
+    
+  
+    <h1 class="title"><a href="/2014/06/05/python-source-11/">《Python源码剖析》读书笔记-11 Python虚拟机中的函数机制</a></h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<h3 id="&#x7B2C;11&#x7AE0;_Python&#x865A;&#x62DF;&#x673A;&#x4E2D;&#x7684;&#x51FD;&#x6570;&#x673A;&#x5236;">&#x7B2C;11&#x7AE0; Python&#x865A;&#x62DF;&#x673A;&#x4E2D;&#x7684;&#x51FD;&#x6570;&#x673A;&#x5236;</h3>
+<ul>
+<li>&#x51FD;&#x6570;&#x4E5F;&#x662F;&#x4E00;&#x4E2A;&#x5BF9;&#x8C61;<br><figure class="highlight c"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+</pre></td><td class="code"><pre><span class="keyword">typedef</span> <span class="keyword">struct</span> {
+    PyObject_HEAD
+    PyObject *func_code;	<span class="comment">/* A code object */</span>
+    PyObject *func_globals;	<span class="comment">/* A dictionary (other mappings won&apos;t do) */</span>
+    PyObject *func_defaults;	<span class="comment">/* NULL or a tuple */</span>
+    PyObject *func_closure;	<span class="comment">/* NULL or a tuple of cell objects */</span>
+    PyObject *func_doc;	 <span class="comment">/* The __doc__ attribute, can be anything */</span>
+    PyObject *func_name;	<span class="comment">/* The __name__ attribute, a string object */</span>
+    PyObject *func_dict;	<span class="comment">/* The __dict__ attribute, a dict or NULL */</span>
+    PyObject *func_weakreflist;	<span class="comment">/* List of weak references */</span>
+    PyObject *func_module;	<span class="comment">/* The __module__ attribute, can be anything */</span>
+
+    <span class="comment">/* Invariant:
+     * func_closure contains the bindings for func_code-&gt;co_freevars, so
+     * PyTuple_Size(func_closure) == PyCode_GetNumFree(func_code)
+     * (func_closure may be NULL if PyCode_GetNumFree(func_code) == 0).
+     */</span>
+} PyFunctionObject;
+</pre></td></tr></table></figure>
+    
+  </div>
+  <footer class="end-sep">
+    
+      
+        <div class="alignleft">
+          <a href="/2014/06/05/python-source-11/#more" class="more-link">Read More</a>
+        </div>
+      
+      
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+<!-- JiaThis Button BEGIN -->
+<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?uid=1347205161838655&move=0" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+
+  <article class="post">
+  <header>
+    
+      <div class="icon"></div>
       <time datetime="2014-05-23T10:59:53.000Z"><a href="/2014/05/23/unity2d-flappybird/">May 23 2014</a></time>
     
     
@@ -545,106 +619,6 @@ PREDICT(POP_JUMP_IF_TRUE);
 <!-- JiaThis Button END -->
 
 
-  <article class="post">
-  <header>
-    
-      <div class="icon"></div>
-      <time datetime="2014-03-28T23:28:47.000Z"><a href="/2014/03/29/python-source-5/">Mar 29 2014</a></time>
-    
-    
-  
-    <h1 class="title"><a href="/2014/03/29/python-source-5/">《Python源码剖析》读书笔记-5 Dict对象</a></h1>
-  
-
-  </header>
-  
-  <div class="entry">
-    
-      <hr>
-<h2 id="&#x7B2C;5&#x7AE0;_Python&#x4E2D;&#x7684;Dict&#x5BF9;&#x8C61;">&#x7B2C;5&#x7AE0; Python&#x4E2D;&#x7684;Dict&#x5BF9;&#x8C61;</h2>
-<ul>
-<li><p>Dict&#x5BF9;&#x8C61;&#x5B9A;&#x4E49;&#x4E3A;&#xFF1A;<br><figure class="highlight c"><table><tr><td class="gutter"><pre>1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
-26
-27
-28
-29
-30
-31
-</pre></td><td class="code"><pre><span class="keyword">typedef</span> <span class="keyword">struct</span> {
-    <span class="comment">/* Cached hash code of me_key. Note that hash codes are C longs.
-     * We have to use Py_ssize_t instead because dict_popitem() abuses
-     * me_hash to hold a search finger.
-     */</span>
-    Py_ssize_t me_hash;
-    PyObject *me_key;
-    PyObject *me_value;
-} PyDictEntry;
-
-<span class="keyword">typedef</span> <span class="keyword">struct</span> _dictobject PyDictObject;
-<span class="keyword">struct</span> _dictobject {
-    PyObject_HEAD
-    Py_ssize_t ma_fill; <span class="comment">/* # Active + # Dummy */</span>
-    Py_ssize_t ma_used; <span class="comment">/* # Active */</span>
-
-    <span class="comment">/* The table contains ma_mask + 1 slots, and that&apos;s a power of 2.
-     * We store the mask instead of the size because the mask is more
-     * frequently needed.
-     */</span>
-    Py_ssize_t ma_mask;
-
-    <span class="comment">/* ma_table points to ma_smalltable for small tables, else to
-     * additional malloc&apos;ed memory. ma_table is never NULL! This rule
-     * saves repeated runtime null-tests in the workhorse getitem and
-     * setitem calls.
-     */</span>
-    PyDictEntry *ma_table;
-    PyDictEntry *(*ma_lookup)(PyDictObject *mp, PyObject *key, <span class="keyword">long</span> hash);
-    PyDictEntry ma_smalltable[PyDict_MINSIZE];
-};
-</pre></td></tr></table></figure><br>
-    
-  </div>
-  <footer class="end-sep">
-    
-      
-        <div class="alignleft">
-          <a href="/2014/03/29/python-source-5/#more" class="more-link">Read More</a>
-        </div>
-      
-      
-    
-    <div class="clearfix"></div>
-  </footer>
-</article>
-<!-- JiaThis Button BEGIN -->
-<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?uid=1347205161838655&move=0" charset="utf-8"></script>
-<!-- JiaThis Button END -->
-
-
 
 <nav id="pagination">
   
@@ -669,7 +643,7 @@ PREDICT(POP_JUMP_IF_TRUE);
   <h3 class="title">Tags</h3>
   <ul class="entry">
   
-    <li><a href="/tags/Python/">Python</a><small>10</small></li>
+    <li><a href="/tags/Python/">Python</a><small>11</small></li>
   
     <li><a href="/tags/Unity3D/">Unity3D</a><small>1</small></li>
   
@@ -685,7 +659,7 @@ PREDICT(POP_JUMP_IF_TRUE);
   
     <li><a href="/tags/生活/">生活</a><small>2</small></li>
   
-    <li><a href="/tags/读书笔记/">读书笔记</a><small>10</small></li>
+    <li><a href="/tags/读书笔记/">读书笔记</a><small>11</small></li>
   
     <li><a href="/tags/读后感/">读后感</a><small>1</small></li>
   
@@ -701,6 +675,10 @@ PREDICT(POP_JUMP_IF_TRUE);
   <ul class="entry">
     
       <li>
+        <a href="/2014/06/05/python-source-11/">《Python源码剖析》读书笔记-11 Python虚拟机中的函数机制</a>
+      </li>
+    
+      <li>
         <a href="/2014/05/23/unity2d-flappybird/">用Unity3D仿造一个FlappyBird</a>
       </li>
     
@@ -714,10 +692,6 @@ PREDICT(POP_JUMP_IF_TRUE);
     
       <li>
         <a href="/2014/04/28/inset-learning/">汤小元插画学习成果</a>
-      </li>
-    
-      <li>
-        <a href="/2014/04/25/python-source-9/">《Python源码剖析》读书笔记-9 Python虚拟机中的一般表达式</a>
       </li>
     
   </ul>
