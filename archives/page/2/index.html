@@ -54,6 +54,89 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
   <header>
     
       <div class="icon"></div>
+      <time datetime="2014-04-07T13:30:45.000Z"><a href="/2014/04/07/python-source-7/">Apr 7 2014</a></time>
+    
+    
+  
+    <h1 class="title"><a href="/2014/04/07/python-source-7/">《Python源码剖析》读书笔记-7 Python的编译结果</a></h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<h3 id="&#x7B2C;7&#x7AE0;_Python&#x7684;&#x7F16;&#x8BD1;&#x7ED3;&#x679C;&#x2014;&#x2014;Code&#x5BF9;&#x8C61;&#x4E0E;pyc&#x6587;&#x4EF6;">&#x7B2C;7&#x7AE0; Python&#x7684;&#x7F16;&#x8BD1;&#x7ED3;&#x679C;&#x2014;&#x2014;Code&#x5BF9;&#x8C61;&#x4E0E;pyc&#x6587;&#x4EF6;</h3>
+<ul>
+<li>Python&#x7684;&#x6267;&#x884C;&#x6D41;&#x7A0B;&#x5927;&#x81F4;&#x662F;&#xFF1A;Python&#x6E90;&#x4EE3;&#x7801;(.py)-&gt;Python&#x89E3;&#x91CA;&#x5668;(python27.dll)-&gt;Python&#x5B57;&#x8282;&#x7801;(.pyc)-&gt;Python&#x865A;&#x62DF;&#x673A;(python27.dll)-&gt;&#x6267;&#x884C;&#x7ED3;&#x679C;</li>
+<li>pyc&#x6587;&#x4EF6;&#x4E2D;&#x5B58;&#x50A8;&#x4E86;&#x7F16;&#x8BD1;&#x7684;&#x7ED3;&#x679C;&#xFF0C;&#x4E00;&#x4E2A;&#x5D4C;&#x5957;&#x7684;PyCodeObject&#x5BF9;&#x8C61;&#xFF0C;import&#x4F1A;&#x89E6;&#x53D1;pyc&#x6587;&#x4EF6;&#x7684;&#x751F;&#x6210;&#xFF0C;import&#x5176;&#x5B9E;&#x4E5F;&#x5C31;&#x662F;&#x628A;pyc&#x6587;&#x4EF6;&#x4E2D;&#x4FDD;&#x5B58;&#x7684;PyCodeObject&#x52A0;&#x8F7D;&#x5230;&#x5185;&#x5B58;&#x4E2D;</li>
+<li>PyCodeObject&#x7684;&#x5B9A;&#x4E49;&#x5982;&#x4E0B;&#xFF1A;<figure class="highlight c"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+</pre></td><td class="code"><pre><span class="keyword">typedef</span> <span class="keyword">struct</span> {
+    PyObject_HEAD
+    <span class="keyword">int</span> co_argcount;	 <span class="comment">/* #arguments, except *args */</span>
+    <span class="keyword">int</span> co_nlocals;	 <span class="comment">/* #local variables */</span>
+    <span class="keyword">int</span> co_stacksize;	 <span class="comment">/* #entries needed for evaluation stack */</span>
+    <span class="keyword">int</span> co_flags;	 <span class="comment">/* CO_..., see below */</span>
+    PyObject *co_code;	 <span class="comment">/* instruction opcodes */</span>
+    PyObject *co_consts;	<span class="comment">/* list (constants used) */</span>
+    PyObject *co_names;	 <span class="comment">/* list of strings (names used) */</span>
+    PyObject *co_varnames;	<span class="comment">/* tuple of strings (local variable names) */</span>
+    PyObject *co_freevars;	<span class="comment">/* tuple of strings (free variable names) */</span>
+    PyObject *co_cellvars; <span class="comment">/* tuple of strings (cell variable names) */</span>
+    <span class="comment">/* The rest doesn&apos;t count for hash/cmp */</span>
+    PyObject *co_filename;	<span class="comment">/* string (where it was loaded from) */</span>
+    PyObject *co_name;	 <span class="comment">/* string (name, for reference) */</span>
+    <span class="keyword">int</span> co_firstlineno;	 <span class="comment">/* first source line number */</span>
+    PyObject *co_lnotab;	<span class="comment">/* string (encoding addr&lt;-&gt;lineno mapping) See
+       Objects/lnotab_notes.txt for details. */</span>
+    <span class="keyword">void</span> *co_zombieframe; <span class="comment">/* for optimization only (see frameobject.c) */</span>
+    PyObject *co_weakreflist; <span class="comment">/* to support weakrefs to code objects */</span>
+} PyCodeObject;
+</pre></td></tr></table></figure></li>
+<li>&#x4ECE;PyObject_HEAD&#x5B8F;&#x53EF;&#x4EE5;&#x770B;&#x51FA;&#x5B83;&#x4E5F;&#x662F;&#x4E00;&#x4E2A;&#x666E;&#x901A;&#x7684;PyObject&#x5BF9;&#x8C61;&#x3002;
+    
+  </div>
+  <footer class="end-sep">
+    
+      
+        <div class="alignleft">
+          <a href="/2014/04/07/python-source-7/#more" class="more-link">Read More</a>
+        </div>
+      
+      
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+<!-- JiaThis Button BEGIN -->
+<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?uid=1347205161838655&move=0" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+  
+    <article class="post">
+  <header>
+    
+      <div class="icon"></div>
       <time datetime="2014-04-01T14:13:42.000Z"><a href="/2014/04/01/python-source-6/">Apr 1 2014</a></time>
     
     
@@ -492,11 +575,11 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
   
     <li><a href="/tags/Unity3D/">Unity3D</a><small>1</small></li>
   
-    <li><a href="/tags/书单/">书单</a><small>2</small></li>
+    <li><a href="/tags/书单/">书单</a><small>3</small></li>
   
     <li><a href="/tags/北京车展/">北京车展</a><small>1</small></li>
   
-    <li><a href="/tags/杂谈/">杂谈</a><small>3</small></li>
+    <li><a href="/tags/杂谈/">杂谈</a><small>4</small></li>
   
     <li><a href="/tags/游戏开发/">游戏开发</a><small>1</small></li>
   
@@ -520,6 +603,10 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
   <ul class="entry">
     
       <li>
+        <a href="/2015/01/01/2014-booklist-2/">2014年下半年书单</a>
+      </li>
+    
+      <li>
         <a href="/2014/10/01/2014-booklist-1/">2014年上半年书单</a>
       </li>
     
@@ -533,10 +620,6 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
     
       <li>
         <a href="/2014/05/11/auto-show-2014/">过时的2014北京车展</a>
-      </li>
-    
-      <li>
-        <a href="/2014/05/07/python-source-10/">《Python源码剖析》读书笔记-10 Python虚拟机中的控制流</a>
       </li>
     
   </ul>
@@ -575,7 +658,7 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
   </div>
   <footer id="footer"><div class="copyright">
   
-  &copy; 2014 <a href="/">Yubo Guo</a>
+  &copy; 2015 <a href="/">Yubo Guo</a>
   
 </div>
 <div class="theme-copyright">
