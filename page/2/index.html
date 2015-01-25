@@ -50,6 +50,117 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
   <header>
     
       <div class="icon"></div>
+      <time datetime="2014-04-10T10:03:46.000Z"><a href="/2014/04/10/python-source-8/">Apr 10 2014</a></time>
+    
+    
+  
+    <h1 class="title"><a href="/2014/04/10/python-source-8/">《Python源码剖析》读书笔记-8 Python虚拟机框架</a></h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<h3 id="&#x7B2C;8&#x7AE0;_Python&#x865A;&#x62DF;&#x673A;&#x6846;&#x67B6;">&#x7B2C;8&#x7AE0; Python&#x865A;&#x62DF;&#x673A;&#x6846;&#x67B6;</h3>
+<ul>
+<li><h4 id="PyFrameObject">PyFrameObject</h4>
+<ul>
+<li>&#x5B9A;&#x4E49;&#x4E3A;&#xFF1A;<figure class="highlight c"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+</pre></td><td class="code"><pre><span class="keyword">typedef</span> <span class="keyword">struct</span> _frame {
+    PyObject_VAR_HEAD
+    <span class="keyword">struct</span> _frame *f_back;	<span class="comment">/* previous frame, or NULL */</span>
+    PyCodeObject *f_code;	<span class="comment">/* code segment */</span>
+    PyObject *f_builtins;	<span class="comment">/* builtin symbol table (PyDictObject) */</span>
+    PyObject *f_globals;	<span class="comment">/* global symbol table (PyDictObject) */</span>
+    PyObject *f_locals;	 <span class="comment">/* local symbol table (any mapping) */</span>
+    PyObject **f_valuestack;	<span class="comment">/* points after the last local */</span>
+    <span class="comment">/* Next free slot in f_valuestack. Frame creation sets to f_valuestack.
+       Frame evaluation usually NULLs it, but a frame that yields sets it
+       to the current stack top. */</span>
+    PyObject **f_stacktop;
+    PyObject *f_trace;	 <span class="comment">/* Trace function */</span>
+
+    <span class="comment">/* If an exception is raised in this frame, the next three are used to
+     * record the exception info (if any) originally in the thread state. See
+     * comments before set_exc_info() -- it&apos;s not obvious.
+     * Invariant: if _type is NULL, then so are _value and _traceback.
+     * Desired invariant: all three are NULL, or all three are non-NULL. That
+     * one isn&apos;t currently true, but &quot;should be&quot;.
+     */</span>
+    PyObject *f_exc_type, *f_exc_value, *f_exc_traceback;
+
+    PyThreadState *f_tstate;
+    <span class="keyword">int</span> f_lasti;	 <span class="comment">/* Last instruction if called */</span>
+    <span class="comment">/* Call PyFrame_GetLineNumber() instead of reading this field
+       directly. As of 2.3 f_lineno is only valid when tracing is
+       active (i.e. when f_trace is set). At other times we use
+       PyCode_Addr2Line to calculate the line from the current
+       bytecode index. */</span>
+    <span class="keyword">int</span> f_lineno;	 <span class="comment">/* Current line number */</span>
+    <span class="keyword">int</span> f_iblock;	 <span class="comment">/* index in f_blockstack */</span>
+    PyTryBlock f_blockstack[CO_MAXBLOCKS]; <span class="comment">/* for try and loop blocks */</span>
+    PyObject *f_localsplus[<span class="number">1</span>];	<span class="comment">/* locals+stack, dynamically sized */</span>
+} PyFrameObject;
+</pre></td></tr></table></figure></li>
+<li>PyCodeObject&#x548C;PyFrameObject&#x3002;PyFrameObject&#x662F;Python&#x7684;&#x6267;&#x884C;&#x73AF;&#x5883;&#xFF0C;PyCodeObject&#x53EA;&#x662F;&#x5176;&#x4E2D;&#x7684;&#x4E00;&#x90E8;&#x5206;&#x3002;&#x4ECE;&#x4E0A;&#x9762;PyFrameObject&#x7684;&#x5B9A;&#x4E49;&#x4E5F;&#x53EF;&#x4EE5;&#x770B;&#x51FA;&#xFF0C;PyFrameObject&#x8FD8;&#x5305;&#x542B;&#x4E86;&#x540D;&#x5B57;&#x7A7A;&#x95F4;&#xFF0C;&#x6808;&#x5730;&#x5740;&#xFF0C;&#x7EBF;&#x7A0B;&#x72B6;&#x6001;&#x5BF9;&#x8C61;&#x7B49;&#x8BF8;&#x591A;&#x5176;&#x4ED6;&#x5185;&#x5BB9;
+    
+  </div>
+  <footer class="end-sep">
+    
+      
+        <div class="alignleft">
+          <a href="/2014/04/10/python-source-8/#more" class="more-link">Read More</a>
+        </div>
+      
+      
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+<!-- JiaThis Button BEGIN -->
+<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?uid=1347205161838655&move=0" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+
+  <article class="post">
+  <header>
+    
+      <div class="icon"></div>
       <time datetime="2014-04-07T13:30:45.000Z"><a href="/2014/04/07/python-source-7/">Apr 7 2014</a></time>
     
     
@@ -569,11 +680,11 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
   
     <li><a href="/tags/Unity3D/">Unity3D</a><small>1</small></li>
   
-    <li><a href="/tags/书单/">书单</a><small>3</small></li>
+    <li><a href="/tags/书单/">书单</a><small>4</small></li>
   
     <li><a href="/tags/北京车展/">北京车展</a><small>1</small></li>
   
-    <li><a href="/tags/杂谈/">杂谈</a><small>4</small></li>
+    <li><a href="/tags/杂谈/">杂谈</a><small>5</small></li>
   
     <li><a href="/tags/游戏开发/">游戏开发</a><small>1</small></li>
   
@@ -597,6 +708,10 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
   <ul class="entry">
     
       <li>
+        <a href="/2015/01/24/sgjm-reviewmd/">《三国机密》感</a>
+      </li>
+    
+      <li>
         <a href="/2015/01/01/2014-booklist-2/">2014年下半年书单</a>
       </li>
     
@@ -610,10 +725,6 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
     
       <li>
         <a href="/2014/05/23/unity2d-flappybird/">用Unity3D仿造一个FlappyBird</a>
-      </li>
-    
-      <li>
-        <a href="/2014/05/11/auto-show-2014/">过时的2014北京车展</a>
       </li>
     
   </ul>
