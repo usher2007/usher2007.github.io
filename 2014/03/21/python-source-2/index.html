@@ -5,62 +5,64 @@
   <meta http-equiv="X-UA-Compatible" content="chrome=1">
   
   <title>《Python源码剖析》读书笔记-2 整数对象 | 一根笨茄子</title>
-  <meta name="author" content="Yubo Guo">
-  
-  <meta name="description" content="&amp;#x7B2C;2&amp;#x7AE0; Python&amp;#x4E2D;&amp;#x7684;&amp;#x6574;&amp;#x6570;&amp;#x5BF9;&amp;#x8C61;
-
-&amp;#x6574;&amp;#x6570;&amp;#x5BF9;&amp;#x8C61;&amp;#x5B9A;&amp;#x4E49;&amp;#x4E3A;1
-2
-3
-4
-typedef struct {
-    PyObject_HEAD
-    long ob_ival;
-} PyIntObject;">
-  
-  
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-
-  <meta property="og:title" content="《Python源码剖析》读书笔记-2 整数对象"/>
-  <meta property="og:site_name" content="一根笨茄子"/>
-
-  <link rel="alternate" href="/atom.xml" title="一根笨茄子" type="application/atom+xml">
-  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
-  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  
+    <meta name="author" content="Yubo Guo">
+  
+  
+    <meta name="description" content="第2章 Python中的整数对象
+整数对象定义为1234typedef struct &amp;#123;    PyObject_HEAD    long ob_ival;&amp;#125; PyIntObject;">
+  
+  <meta name="description" content="第2章 Python中的整数对象
+整数对象定义为1234typedef struct &amp;#123;    PyObject_HEAD    long ob_ival;&amp;#125; PyIntObject;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《Python源码剖析》读书笔记-2 整数对象">
+<meta property="og:url" content="http://blog.guoyb.com/2014/03/21/python-source-2/index.html">
+<meta property="og:site_name" content="一根笨茄子">
+<meta property="og:description" content="第2章 Python中的整数对象
+整数对象定义为1234typedef struct &amp;#123;    PyObject_HEAD    long ob_ival;&amp;#125; PyIntObject;">
+<meta property="og:updated_time" content="2014-06-01T14:40:38.458Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="《Python源码剖析》读书笔记-2 整数对象">
+<meta name="twitter:description" content="第2章 Python中的整数对象
+整数对象定义为1234typedef struct &amp;#123;    PyObject_HEAD    long ob_ival;&amp;#125; PyIntObject;">
+  
+  
+  <link rel="stylesheet" href="/css/style.css">
   <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
   
-  
-<script type="text/javascript">
-var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
-document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3F996ee0fca2512b4c29f37f60cf6387ca' type='text/javascript'%3E%3C/script%3E"));
-</script>
-
 </head>
-
 
 <body>
   <div class="wrapper">
-    <header id="header"><div class="title">
-  <h1><a href="/">一根笨茄子</a></h1>
-  <p><a href="/"></a></p>
-</div>
-<nav class="nav">
-  <ul>
-    
-      <li><a href="/archives">归档</a></li>
-    
-      <li><a href="/about">关于我</a></li>
-    
-  </ul>
+    <header id="header">
+  <div class="title">
+    <h1><a href="/">一根笨茄子</a></h1>
+    <p><a href="/"></a></p>
+  </div>
+  <nav class="nav">
+    <ul>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/about">关于我</a></li>
+      
+      
+    </ul>
+    <div class="clearfix"></div>
+  </nav>
   <div class="clearfix"></div>
-</nav>
-<div class="clearfix"></div></header>
-    <div class="content"><article class="post">
+</header>
+    <div class="content">
+		<article class="post">
   <header>
     
       <div class="icon"></div>
-      <time datetime="2014-03-21T08:37:34.000Z"><a href="/2014/03/21/python-source-2/">Mar 21 2014</a></time>
+      <a href="/2014/03/21/python-source-2/">
+  <time datetime="2014-03-21T08:37:34.000Z">
+    2014-03-21
+  </time>
+</a>
     
     
   
@@ -72,82 +74,34 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
   <div class="entry">
     
       <hr>
-<h2 id="&#x7B2C;2&#x7AE0;_Python&#x4E2D;&#x7684;&#x6574;&#x6570;&#x5BF9;&#x8C61;">&#x7B2C;2&#x7AE0; Python&#x4E2D;&#x7684;&#x6574;&#x6570;&#x5BF9;&#x8C61;</h2>
+<h2 id="第2章-Python中的整数对象"><a href="#第2章-Python中的整数对象" class="headerlink" title="第2章 Python中的整数对象"></a>第2章 Python中的整数对象</h2><ul>
+<li>整数对象定义为<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> &#123;</span><br><span class="line">    PyObject_HEAD</span><br><span class="line">    <span class="keyword">long</span> ob_ival;</span><br><span class="line">&#125; PyIntObject;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<a id="more"></a>
 <ul>
-<li>&#x6574;&#x6570;&#x5BF9;&#x8C61;&#x5B9A;&#x4E49;&#x4E3A;<br><figure class="highlight c"><table><tr><td class="gutter"><pre>1
-2
-3
-4
-</pre></td><td class="code"><pre><span class="keyword">typedef</span> <span class="keyword">struct</span> {
-    PyObject_HEAD
-    <span class="keyword">long</span> ob_ival;
-} PyIntObject;
-</pre></td></tr></table></figure><a id="more"></a></li>
-<li>tp_dealloc(&#x5728;PyInt_Type&#x4E2D;&#x662F;int_dealloc)&#x548C;tp_free(&#x5728;PyInt_Type&#x4E2D;&#x662F;int_free)&#x7684;&#x533A;&#x522B;:&#x5728;&#x6574;&#x6570;&#x5BF9;&#x8C61;&#x8FD9;&#x91CC;&#x786E;&#x5B9E;&#x6CA1;&#x5565;&#x533A;&#x522B;&#x3002;&#x53EA;&#x662F;&#x5BF9;&#x5916;&#x66B4;&#x9732;&#x7684;&#x63A5;&#x53E3;&#x662F;tp_dealloc&#xFF0C;&#x800C;tp_free&#x662F;&#x4F9B;tp_dealloc&#x8C03;&#x7528;&#x7684;&#x3002;&#x5728;PyString_Type&#x4E2D;&#x5219;&#x770B;&#x7684;&#x66F4;&#x660E;&#x767D;&#x2014;&#x2014;&#x5F53;&#x4E00;&#x4E2A;&#x5B57;&#x7B26;&#x4E32;&#x7684;&#x5F15;&#x7528;&#x8BA1;&#x6570;&#x4E3A;0&#x65F6;&#xFF0C;tp_dealloc&#x4F1A;&#x88AB;&#x8C03;&#x7528;&#xFF0C;&#x5728;&#x5176;&#x4E2D;&#x5904;&#x7406;&#x4E00;&#x4E9B;&#x5173;&#x4E8E;&#x7F13;&#x5B58;&#x7684;&#x4E8B;&#x52A1;&#x540E;&#xFF0C;&#x6700;&#x540E;&#x9760;tp_free&#x5177;&#x4F53;&#x91CA;&#x653E;&#x5185;&#x5B58;&#x3002;</li>
-<li><p>tp_as_number(&#x5728;PyInt_Type&#x4E2D;&#x662F;int_as_number)&#xFF0C;&#x5B9A;&#x4E49;&#x4E86;&#x5173;&#x4E8E;&#x6570;&#x5B57;&#x8FD0;&#x7B97;&#x7684;&#x4E00;&#x65CF;&#x51FD;&#x6570;&#x3002;&#x4EE5;int_add&#x4E3A;&#x4F8B;&#xFF1A;<br><figure class="highlight c"><table><tr><td class="gutter"><pre>1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-</pre></td><td class="code"><pre><span class="keyword">static</span> PyObject *
-int_add(PyIntObject *v, PyIntObject *w)
-{
-    <span class="keyword">register</span> <span class="keyword">long</span> a, b, x;
-    CONVERT_TO_LONG(v, a);
-    CONVERT_TO_LONG(w, b);
-    <span class="comment">/* casts in the line below avoid undefined behaviour on overflow */</span>
-    x = (<span class="keyword">long</span>)((<span class="keyword">unsigned</span> <span class="keyword">long</span>)a + b);
-    <span class="keyword">if</span> ((x^a) &gt;= <span class="number">0</span> || (x^b) &gt;= <span class="number">0</span>)
-        <span class="keyword">return</span> PyInt_FromLong(x);
-    <span class="keyword">return</span> PyLong_Type.tp_as_number-&gt;nb_add((PyObject *)v, (PyObject *)w);
-}
-</pre></td></tr></table></figure></p>
+<li>tp_dealloc(在PyInt_Type中是int_dealloc)和tp_free(在PyInt_Type中是int_free)的区别:在整数对象这里确实没啥区别。只是对外暴露的接口是tp_dealloc，而tp_free是供tp_dealloc调用的。在PyString_Type中则看的更明白——当一个字符串的引用计数为0时，tp_dealloc会被调用，在其中处理一些关于缓存的事务后，最后靠tp_free具体释放内存。</li>
+<li><p>tp_as_number(在PyInt_Type中是int_as_number)，定义了关于数字运算的一族函数。以int_add为例：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> PyObject *</span><br><span class="line"><span class="title">int_add</span><span class="params">(PyIntObject *v, PyIntObject *w)</span></span><br><span class="line"></span>&#123;</span><br><span class="line">    <span class="keyword">register</span> <span class="keyword">long</span> a, b, x;</span><br><span class="line">    CONVERT_TO_LONG(v, a);</span><br><span class="line">    CONVERT_TO_LONG(w, b);</span><br><span class="line">    <span class="comment">/* casts in the line below avoid undefined behaviour on overflow */</span></span><br><span class="line">    x = (long)((unsigned long)a + b);</span><br><span class="line">    <span class="keyword">if</span> ((x^a) &gt;= <span class="number">0</span> || (x^b) &gt;= <span class="number">0</span>)</span><br><span class="line">        return PyInt_FromLong(x);</span><br><span class="line">    return PyLong_Type.tp_as_number-&gt;nb_add((PyObject *)v, (PyObject *)w);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <ul>
-<li>CONVERT_TO_LONG&#x63D0;&#x53D6;&#x51FA;&#x4E86;PyIntObject&#x4E2D;&#x7684;ob_ival&#x90E8;&#x5206;&#xFF0C;&#x5176;&#x5B9E;&#x73B0;&#x4E2D;&#xFF0C;&#x4F7F;&#x7528;PyInt_Check&#x5B8F;&#x68C0;&#x67E5;&#x5BF9;&#x8C61;&#x662F;&#x5426;&#x662F;Int&#x7C7B;&#x578B;&#x3002;&#x68C0;&#x67E5;&#x65F6;&#x4F7F;&#x7528;&#x4E86;PyInt_Type&#x6B64;&#x7C7B;&#x578B;&#x5BF9;&#x8C61;&#x7684;tp_flags&#x57DF;&#x3002;  </li>
-<li>&#x5F53;&#x52A0;&#x6CD5;&#x7ED3;&#x679C;(&#x548C;)&#x4E0E;&#x4E24;&#x4E2A;&#x52A0;&#x6CD5;&#x53C2;&#x6570;(&#x52A0;&#x6570;)&#x7B26;&#x53F7;&#x76F8;&#x53CD;&#x65F6;&#xFF0C;&#x5C31;&#x4EE3;&#x8868;&#x51FA;&#x73B0;&#x4E86;&#x6EA2;&#x51FA;&#x3002;&#x8FD9;&#x5F88;&#x5BB9;&#x6613;&#x7406;&#x89E3;&#xFF0C;&#x6EA2;&#x51FA;&#x4E00;&#x822C;&#x5C31;&#x662F;<strong>&#x4E24;&#x4E2A;&#x8D1F;&#x6570;&#x76F8;&#x52A0;&#x51FA;&#x73B0;&#x4E86;&#x6B63;&#x6570;</strong> &#x6216;&#x8005;<strong>&#x4E24;&#x4E2A;&#x6B63;&#x6570;&#x76F8;&#x52A0;&#x51FA;&#x73B0;&#x4E86;&#x8D1F;&#x6570;</strong>&#xFF0C;&#x800C;&#x4E00;&#x6B63;&#x4E00;&#x8D1F;&#x7684;&#x4E24;&#x4E2A;&#x6570;&#x76F8;&#x52A0;&#x6C38;&#x8FDC;&#x4E0D;&#x4F1A;&#x6EA2;&#x51FA;&#x3002;&#x6EA2;&#x51FA;&#x65F6;&#xFF0C;&#x8FD9;&#x91CC;&#x81EA;&#x52A8;&#x5C06;&#x5176;&#x8868;&#x793A;&#x8303;&#x56F4;&#x6269;&#x5927;&#xFF0C;&#x5F53;&#x505A;long&#x7C7B;&#x578B;&#x5904;&#x7406;&#xFF0C;&#x6240;&#x4EE5;&#x5728;python&#x91CC;&#xFF0C;&#x5C31;&#x611F;&#x89C9;&#x4E0D;&#x5230;int&#x7C7B;&#x578B;&#x7684;&#x52A0;&#x6CD5;&#x6EA2;&#x51FA;&#x4E86;&#x3002;</li>
-<li>Int&#x7C7B;&#x578B;&#x662F;&#x4E0D;&#x53EF;&#x53D8;&#x7C7B;&#x578B;&#xFF0C;&#x4E24;&#x4E2A;int&#x5BF9;&#x8C61;&#x76F8;&#x52A0;&#xFF0C;&#x6700;&#x540E;&#x4F1A;&#x4EA7;&#x751F;&#x4E00;&#x4E2A;&#x65B0;&#x7684;&#x5BF9;&#x8C61;(int&#x6216;&#x8005;long)</li>
+<li>CONVERT_TO_LONG提取出了PyIntObject中的ob_ival部分，其实现中，使用PyInt_Check宏检查对象是否是Int类型。检查时使用了PyInt_Type此类型对象的tp_flags域。  </li>
+<li>当加法结果(和)与两个加法参数(加数)符号相反时，就代表出现了溢出。这很容易理解，溢出一般就是<strong>两个负数相加出现了正数</strong> 或者<strong>两个正数相加出现了负数</strong>，而一正一负的两个数相加永远不会溢出。溢出时，这里自动将其表示范围扩大，当做long类型处理，所以在python里，就感觉不到int类型的加法溢出了。</li>
+<li>Int类型是不可变类型，两个int对象相加，最后会产生一个新的对象(int或者long)</li>
 </ul>
 </li>
-<li><h3 id="&#x6574;&#x6570;&#x5BF9;&#x8C61;&#x7F13;&#x5B58;">&#x6574;&#x6570;&#x5BF9;&#x8C61;&#x7F13;&#x5B58;</h3>
+<li><p>###整数对象缓存</p>
 <ul>
-<li>&#x5B9A;&#x4E49;&#x4E00;&#x4E2A;small_ints&#x7684;PyIntObject&#x6570;&#x7EC4;&#xFF0C;&#x4FDD;&#x5B58;[-NSMALLNEGINTS, NSMALLPOSINTS)&#x7684;&#x6574;&#x6570;&#x5BF9;&#x8C61;&#x3002;&#x56E0;&#x6B64;&#xFF0C;&#x5728;C&#x6E90;&#x7801;&#x4E2D;&#x7ECF;&#x5E38;&#x53EF;&#x4EE5;&#x770B;&#x89C1;&#x8FD9;&#x6837;&#x7684;if&#x8BED;&#x53E5;&#xFF1A;<figure class="highlight c"><table><tr><td class="gutter"><pre>1
-</pre></td><td class="code"><pre><span class="keyword">if</span> (-NSMALLNEGINTS &lt;= ival &amp;&amp; ival &lt; NSMALLPOSINTS)
-</pre></td></tr></table></figure></li>
-<li>&#x5982;&#x679C;&#x6EE1;&#x8DB3;&#x6761;&#x4EF6;&#xFF0C;&#x5C31;&#x4F1A;&#x4ECE;small_ints&#x6570;&#x7EC4;&#x4E2D;&#x53D6;&#x51FA;&#x5BF9;&#x5E94;&#x7684;PyIntObject&#x4F7F;&#x7528;&#x3002;</li>
-<li>&#x901A;&#x7528;&#x6574;&#x6570;&#x5BF9;&#x8C61;&#x6C60;&#x4E0D;&#x4F1A;&#x7F13;&#x5B58;&#x6240;&#x6709;&#x7684;&#x6574;&#x6570;&#xFF0C;&#x53EA;&#x4F1A;&#x7F13;&#x5B58;&#x5176;&#x4E2D;&#x7684;&#x4E00;&#x90E8;&#x5206;&#xFF0C;&#x5176;&#x8BBE;&#x8BA1;&#x7C7B;&#x4F3C;&#x4E8E;STL&#x4E2D;Vector&#x7684;&#x5185;&#x5B58;&#x7BA1;&#x7406;&#x3002;</li>
-<li>&#x6B64;&#x5BF9;&#x8C61;&#x6C60;&#x7684;&#x6BCF;&#x4E00;&#x4E2A;block&#x4E2D;&#x90FD;&#x7F13;&#x5B58;&#x4E86;&#x5927;&#x7EA6;82&#x4E2A;(&#x53EF;&#x4EE5;&#x81EA;&#x884C;&#x8BBE;&#x7F6E;)PyIntObject&#x5BF9;&#x8C61;(&#x6570;&#x7EC4;&#x5F62;&#x5F0F;)&#xFF0C;&#x4EE5;&#x94FE;&#x8868;&#x5F62;&#x5F0F;&#x5B58;&#x50A8;&#xFF0C;&#x94FE;&#x8868;&#x987A;&#x5E8F;&#x4ECE;&#x6570;&#x7EC4;&#x7684;&#x6700;&#x540E;&#x4E00;&#x4E2A;&#x5143;&#x7D20;&#x5F00;&#x59CB;&#xFF0C;&#x5230;&#x7B2C;&#x4E00;&#x4E2A;&#x5143;&#x7D20;&#x7ED3;&#x675F;&#x3002;</li>
-<li>&#x6240;&#x6709;&#x7684;block&#x4E5F;&#x4EE5;&#x94FE;&#x8868;&#x5F62;&#x5F0F;&#x5B58;&#x50A8;&#x3002;</li>
-<li>&#x6784;&#x9020;&#x94FE;&#x8868;&#x65F6;&#xFF0C;&#x4F7F;&#x7528;&#x4E86;PyIntObject&#x7684;ob_type&#x6307;&#x9488;&#x4F5C;&#x4E3A;&#x94FE;&#x8868;&#x6307;&#x9488;&#x3002;&#x8FD9;&#x662F;&#x4E3A;&#x4E86;&#x8282;&#x7701;&#x5185;&#x5B58;&#xFF0C;&#x540C;&#x65F6;&#x8FD9;&#x91CC;&#x7684;&#x6570;&#x636E;&#x7C7B;&#x578B;&#x90FD;&#x662F;Int&#xFF0C;&#x4E5F;&#x5C31;&#x53EF;&#x4EE5;&#x8FD9;&#x6837;&#x505A;&#x4E86;&#x3002;</li>
-<li>&#x5F53;&#x5F53;&#x524D;block&#x4E2D;&#x7684;82&#x4E2A;PyIntObject&#x5185;&#x5B58;&#x4F7F;&#x7528;&#x5B8C;&#x65F6;&#xFF0C;&#x5C31;&#x65B0;&#x7533;&#x8BF7;&#x4E00;&#x4E2A;block&#xFF0C;&#x5E76;&#x4E14;&#x5C06;&#x5176;&#x52A0;&#x8FDB;block&#x94FE;&#x8868;&#xFF0C;&#x540C;&#x65F6;free_list&#x6307;&#x9488;&#x6307;&#x5411;&#x65B0;&#x7684;block&#x4E2D;PyIntObject&#x6570;&#x7EC4;&#x7684;&#x6700;&#x540E;&#x4E00;&#x4E2A;&#x3002;</li>
-<li>&#x5F53;&#x4E00;&#x4E2A;&#x6574;&#x6570;&#x5BF9;&#x8C61;&#x7684;&#x5F15;&#x7528;&#x8BA1;&#x6570;&#x51CF;&#x5C0F;&#x4E3A;0&#x65F6;&#xFF0C;&#x4F1A;&#x8C03;&#x7528;int_deallloc&#x51FD;&#x6570;&#xFF0C;&#x8FD9;&#x4E2A;&#x51FD;&#x6570;&#x4F1A;&#x628A;&#x8FD9;&#x5757;&#x5185;&#x5B58;&#x63A5;&#x5230;free_list&#x6240;&#x4EE3;&#x8868;&#x7684;&#x7A7A;&#x95F2;&#x5185;&#x5B58;&#x5757;&#x4E2D;&#x3002;<figure class="highlight c"><table><tr><td class="gutter"><pre>1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-</pre></td><td class="code"><pre><span class="keyword">static</span> <span class="keyword">void</span>
-int_dealloc(PyIntObject *v)
-{
-    <span class="keyword">if</span> (PyInt_CheckExact(v)) {
-        Py_TYPE(v) = (<span class="keyword">struct</span> _typeobject *)free_list;
-        free_list = v;
-    }
-    <span class="keyword">else</span>
-        Py_TYPE(v)-&gt;tp_free((PyObject *)v);
-}
-</pre></td></tr></table></figure>
-
+<li><p>定义一个small_ints的PyIntObject数组，保存[-NSMALLNEGINTS, NSMALLPOSINTS)的整数对象。因此，在C源码中经常可以看见这样的if语句：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (-NSMALLNEGINTS &lt;= ival &amp;&amp; ival &lt; NSMALLPOSINTS)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>如果满足条件，就会从small_ints数组中取出对应的PyIntObject使用。</p>
+</li>
+<li>通用整数对象池不会缓存所有的整数，只会缓存其中的一部分，其设计类似于STL中Vector的内存管理。</li>
+<li>此对象池的每一个block中都缓存了大约82个(可以自行设置)PyIntObject对象(数组形式)，以链表形式存储，链表顺序从数组的最后一个元素开始，到第一个元素结束。</li>
+<li>所有的block也以链表形式存储。</li>
+<li>构造链表时，使用了PyIntObject的ob_type指针作为链表指针。这是为了节省内存，同时这里的数据类型都是Int，也就可以这样做了。</li>
+<li>当当前block中的82个PyIntObject内存使用完时，就新申请一个block，并且将其加进block链表，同时free_list指针指向新的block中PyIntObject数组的最后一个。</li>
+<li>当一个整数对象的引用计数减小为0时，会调用int_deallloc函数，这个函数会把这块内存接到free_list所代表的空闲内存块中。<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span></span><br><span class="line"><span class="title">int_dealloc</span><span class="params">(PyIntObject *v)</span></span><br><span class="line"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (PyInt_CheckExact(v)) &#123;</span><br><span class="line">        Py_TYPE(v) = (struct _typeobject *)free_list;</span><br><span class="line">        free_list = v;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        Py_TYPE(v)-&gt;tp_free((PyObject *)v);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 </li>
 </ul>
 </li>
@@ -159,9 +113,8 @@ int_dealloc(PyIntObject *v)
     
       
       
-  
   <div class="tags">
-    <a href="/tags/读书笔记/">读书笔记</a>, <a href="/tags/Python/">Python</a>
+    <a class="tags-link" href="/tags/Python/">Python</a>, <a class="tags-link" href="/tags/读书笔记/">读书笔记</a>
   </div>
 
     
@@ -180,111 +133,19 @@ var jiathis_config = {data_track_clickback:'true'};
   <div class="ds-thread" data-title="《Python源码剖析》读书笔记-2 整数对象">
   </div>
 </section>
-</div>
+
+	</div>
   </div>
   <div class="widget-wrapper">
-    <aside id="sidebar">
+	<aside id="sidebar">
   
-  
-    
-      
-      
-    
-      
-      
-
-<div class="widget tag first">
-  <h3 class="title">Tags</h3>
-  <ul class="entry">
-  
-    <li><a href="/tags/Python/">Python</a><small>11</small></li>
-  
-    <li><a href="/tags/Unity3D/">Unity3D</a><small>1</small></li>
-  
-    <li><a href="/tags/书单/">书单</a><small>4</small></li>
-  
-    <li><a href="/tags/北京车展/">北京车展</a><small>1</small></li>
-  
-    <li><a href="/tags/杂谈/">杂谈</a><small>5</small></li>
-  
-    <li><a href="/tags/游戏开发/">游戏开发</a><small>1</small></li>
-  
-    <li><a href="/tags/爱好/">爱好</a><small>1</small></li>
-  
-    <li><a href="/tags/生活/">生活</a><small>2</small></li>
-  
-    <li><a href="/tags/读书笔记/">读书笔记</a><small>11</small></li>
-  
-    <li><a href="/tags/读后感/">读后感</a><small>1</small></li>
-  
-  </ul>
-</div>
-
-    
-      
-      
-
-<div class="widget recent-posts">
-  <h3 class="title">Recent Posts</h3>
-  <ul class="entry">
-    
-      <li>
-        <a href="/2015/01/24/sgjm-reviewmd/">《三国机密》感</a>
-      </li>
-    
-      <li>
-        <a href="/2015/01/01/2014-booklist-2/">2014年下半年书单</a>
-      </li>
-    
-      <li>
-        <a href="/2014/10/01/2014-booklist-1/">2014年上半年书单</a>
-      </li>
-    
-      <li>
-        <a href="/2014/06/05/python-source-11/">《Python源码剖析》读书笔记-11 Python虚拟机中的函数机制</a>
-      </li>
-    
-      <li>
-        <a href="/2014/05/23/unity2d-flappybird/">用Unity3D仿造一个FlappyBird</a>
-      </li>
-    
-  </ul>
-</div>
-
-    
-      
-      
-
-<div class="widget blogroll">
-  <h3 class="title">Links</h3>
-  <ul class="entry">
-  
-    
-    <li><a href="http://guoyb.com/" target="_blank">旧博客</a></li>
-  
-    
-    <li><a href="http://weibo.com/dusticebloomingmonk" target="_blank">新浪微博</a></li>
-  
-    
-    <li><a href="http://www.linkedin.com/profile/view?id=256546845" target="_blank">LinkedIn</a></li>
-  
-    
-    <li><a href="http://www.yanggy.com/" target="_blank">阳总工</a></li>
-  
-    
-    <li><a href="http://mcgrady164.github.io/" target="_blank">阿俊</a></li>
-  
-  </ul>
-</div>
-
-    
   
 </aside>
 <div class="clearfix"></div>
   </div>
   <footer id="footer"><div class="copyright">
   
-  &copy; 2015 <a href="/">Yubo Guo</a>
+  &copy; 2016 <a href="/">Yubo Guo</a>
   
 </div>
 <div class="theme-copyright">
@@ -293,7 +154,8 @@ var jiathis_config = {data_track_clickback:'true'};
   Redesign by <a href="http://heroicyang.com/" target="_blank">Heroic Yang</a>
 </div>
 <div class="clearfix"></div></footer>
-  <script src="/js/scale.fix.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+<script src="/js/scale.fix.js"></script>
 <script src="/js/jquery.imagesloaded.min.js"></script>
 <script src="/js/gallery.js"></script>
 

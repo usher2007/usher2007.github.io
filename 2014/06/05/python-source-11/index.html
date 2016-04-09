@@ -5,90 +5,64 @@
   <meta http-equiv="X-UA-Compatible" content="chrome=1">
   
   <title>《Python源码剖析》读书笔记-11 Python虚拟机中的函数机制 | 一根笨茄子</title>
-  <meta name="author" content="Yubo Guo">
-  
-  <meta name="description" content="&amp;#x7B2C;11&amp;#x7AE0; Python&amp;#x865A;&amp;#x62DF;&amp;#x673A;&amp;#x4E2D;&amp;#x7684;&amp;#x51FD;&amp;#x6570;&amp;#x673A;&amp;#x5236;
-
-&amp;#x51FD;&amp;#x6570;&amp;#x4E5F;&amp;#x662F;&amp;#x4E00;&amp;#x4E2A;&amp;#x5BF9;&amp;#x8C61;1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-typedef struct {
-    PyObject_HEAD
-    PyObject *func_code;	/* A code object */
-    PyObject *func_globals;	/* A dictionary (other mappings won&amp;apos;t do) */
-    PyObject *func_defaults;	/* NULL or a tuple */
-    PyObject *func_closure;	/* NULL or a tuple of cell objects */
-    PyObject *func_doc;	 /* The __doc__ attribute, can be anything */
-    PyObject *func_name;	/* The __name__ attribute, a string object */
-    PyObject *func_dict;	/* The __dict__ attribute, a dict or NULL */
-    PyObject *func_weakreflist;	/* List of weak references */
-    PyObject *func_module;	/* The __module__ attribute, can be anything */
-
-    /* Invariant:
-     * func_closure contains the bindings for func_code-&amp;gt;co_freevars, so
-     * PyTuple_Size(func_closure) == PyCode_GetNumFree(func_code)
-     * (func_closure may be NULL if PyCode_GetNumFree(func_code) == 0).
-     */
-} PyFunctionObject;">
-  
-  
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-
-  <meta property="og:title" content="《Python源码剖析》读书笔记-11 Python虚拟机中的函数机制"/>
-  <meta property="og:site_name" content="一根笨茄子"/>
-
-  <link rel="alternate" href="/atom.xml" title="一根笨茄子" type="application/atom+xml">
-  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
-  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  
+    <meta name="author" content="Yubo Guo">
+  
+  
+    <meta name="description" content="第11章 Python虚拟机中的函数机制
+函数也是一个对象123456789101112131415161718typedef struct &amp;#123;    PyObject_HEAD    PyObject *func_code;	/* A code object */    PyObject *func_globals;	/* A dictionary (other mappings w">
+  
+  <meta name="description" content="第11章 Python虚拟机中的函数机制
+函数也是一个对象123456789101112131415161718typedef struct &amp;#123;    PyObject_HEAD    PyObject *func_code;	/* A code object */    PyObject *func_globals;	/* A dictionary (other mappings w">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《Python源码剖析》读书笔记-11 Python虚拟机中的函数机制">
+<meta property="og:url" content="http://blog.guoyb.com/2014/06/05/python-source-11/index.html">
+<meta property="og:site_name" content="一根笨茄子">
+<meta property="og:description" content="第11章 Python虚拟机中的函数机制
+函数也是一个对象123456789101112131415161718typedef struct &amp;#123;    PyObject_HEAD    PyObject *func_code;	/* A code object */    PyObject *func_globals;	/* A dictionary (other mappings w">
+<meta property="og:updated_time" content="2014-06-05T14:11:35.910Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="《Python源码剖析》读书笔记-11 Python虚拟机中的函数机制">
+<meta name="twitter:description" content="第11章 Python虚拟机中的函数机制
+函数也是一个对象123456789101112131415161718typedef struct &amp;#123;    PyObject_HEAD    PyObject *func_code;	/* A code object */    PyObject *func_globals;	/* A dictionary (other mappings w">
+  
+  
+  <link rel="stylesheet" href="/css/style.css">
   <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
   
-  
-<script type="text/javascript">
-var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
-document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3F996ee0fca2512b4c29f37f60cf6387ca' type='text/javascript'%3E%3C/script%3E"));
-</script>
-
 </head>
-
 
 <body>
   <div class="wrapper">
-    <header id="header"><div class="title">
-  <h1><a href="/">一根笨茄子</a></h1>
-  <p><a href="/"></a></p>
-</div>
-<nav class="nav">
-  <ul>
-    
-      <li><a href="/archives">归档</a></li>
-    
-      <li><a href="/about">关于我</a></li>
-    
-  </ul>
+    <header id="header">
+  <div class="title">
+    <h1><a href="/">一根笨茄子</a></h1>
+    <p><a href="/"></a></p>
+  </div>
+  <nav class="nav">
+    <ul>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/about">关于我</a></li>
+      
+      
+    </ul>
+    <div class="clearfix"></div>
+  </nav>
   <div class="clearfix"></div>
-</nav>
-<div class="clearfix"></div></header>
-    <div class="content"><article class="post">
+</header>
+    <div class="content">
+		<article class="post">
   <header>
     
       <div class="icon"></div>
-      <time datetime="2014-06-05T14:05:16.000Z"><a href="/2014/06/05/python-source-11/">Jun 5 2014</a></time>
+      <a href="/2014/06/05/python-source-11/">
+  <time datetime="2014-06-05T14:05:16.000Z">
+    2014-06-05
+  </time>
+</a>
     
     
   
@@ -100,96 +74,58 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
   <div class="entry">
     
       <hr>
-<h3 id="&#x7B2C;11&#x7AE0;_Python&#x865A;&#x62DF;&#x673A;&#x4E2D;&#x7684;&#x51FD;&#x6570;&#x673A;&#x5236;">&#x7B2C;11&#x7AE0; Python&#x865A;&#x62DF;&#x673A;&#x4E2D;&#x7684;&#x51FD;&#x6570;&#x673A;&#x5236;</h3>
+<h3 id="第11章-Python虚拟机中的函数机制"><a href="#第11章-Python虚拟机中的函数机制" class="headerlink" title="第11章 Python虚拟机中的函数机制"></a>第11章 Python虚拟机中的函数机制</h3><ul>
+<li>函数也是一个对象<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> &#123;</span><br><span class="line">    PyObject_HEAD</span><br><span class="line">    PyObject *func_code;	<span class="comment">/* A code object */</span></span><br><span class="line">    PyObject *func_globals;	<span class="comment">/* A dictionary (other mappings won't do) */</span></span><br><span class="line">    PyObject *func_defaults;	<span class="comment">/* NULL or a tuple */</span></span><br><span class="line">    PyObject *func_closure;	<span class="comment">/* NULL or a tuple of cell objects */</span></span><br><span class="line">    PyObject *func_doc;	 <span class="comment">/* The __doc__ attribute, can be anything */</span></span><br><span class="line">    PyObject *func_name;	<span class="comment">/* The __name__ attribute, a string object */</span></span><br><span class="line">    PyObject *func_dict;	<span class="comment">/* The __dict__ attribute, a dict or NULL */</span></span><br><span class="line">    PyObject *func_weakreflist;	<span class="comment">/* List of weak references */</span></span><br><span class="line">    PyObject *func_module;	<span class="comment">/* The __module__ attribute, can be anything */</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Invariant:</span><br><span class="line">     * func_closure contains the bindings for func_code-&gt;co_freevars, so</span><br><span class="line">     * PyTuple_Size(func_closure) == PyCode_GetNumFree(func_code)</span><br><span class="line">     * (func_closure may be NULL if PyCode_GetNumFree(func_code) == 0).</span><br><span class="line">     */</span></span><br><span class="line">&#125; PyFunctionObject;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<a id="more"></a>
 <ul>
-<li>&#x51FD;&#x6570;&#x4E5F;&#x662F;&#x4E00;&#x4E2A;&#x5BF9;&#x8C61;<br><figure class="highlight c"><table><tr><td class="gutter"><pre>1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-</pre></td><td class="code"><pre><span class="keyword">typedef</span> <span class="keyword">struct</span> {
-    PyObject_HEAD
-    PyObject *func_code;	<span class="comment">/* A code object */</span>
-    PyObject *func_globals;	<span class="comment">/* A dictionary (other mappings won&apos;t do) */</span>
-    PyObject *func_defaults;	<span class="comment">/* NULL or a tuple */</span>
-    PyObject *func_closure;	<span class="comment">/* NULL or a tuple of cell objects */</span>
-    PyObject *func_doc;	 <span class="comment">/* The __doc__ attribute, can be anything */</span>
-    PyObject *func_name;	<span class="comment">/* The __name__ attribute, a string object */</span>
-    PyObject *func_dict;	<span class="comment">/* The __dict__ attribute, a dict or NULL */</span>
-    PyObject *func_weakreflist;	<span class="comment">/* List of weak references */</span>
-    PyObject *func_module;	<span class="comment">/* The __module__ attribute, can be anything */</span>
-
-    <span class="comment">/* Invariant:
-     * func_closure contains the bindings for func_code-&gt;co_freevars, so
-     * PyTuple_Size(func_closure) == PyCode_GetNumFree(func_code)
-     * (func_closure may be NULL if PyCode_GetNumFree(func_code) == 0).
-     */</span>
-} PyFunctionObject;
-</pre></td></tr></table></figure><a id="more"></a></li>
-<li><p>PyCodeObject&#x548C;PyFunctionObject&#x7684;&#x533A;&#x522B;:</p>
+<li><p>PyCodeObject和PyFunctionObject的区别:</p>
 <ul>
-<li>PyCodeObject&#x662F;&#x7F16;&#x8BD1;&#x65F6;&#x4EA7;&#x751F;&#x7684;&#x9759;&#x6001;&#x5BF9;&#x8C61;&#xFF0C;&#x91CC;&#x9762;&#x7684;&#x6240;&#x6709;&#x4FE1;&#x606F;&#x90FD;&#x53EF;&#x4EE5;&#x4ECE;&#x6E90;&#x4EE3;&#x7801;&#x4E2D;&#x83B7;&#x5F97;;</li>
-<li>PyFunctionObject&#x5219;&#x662F;&#x7A0B;&#x5E8F;&#x5728;&#x8FD0;&#x884C;&#x65F6;&#x52A8;&#x6001;&#x4EA7;&#x751F;&#x7684;&#xFF08;&#x662F;&#x4E0B;&#x9762;&#x5373;&#x5C06;&#x63D0;&#x5230;&#x7684;MAKE_FUNCTION&#x6307;&#x4EE4;&#x4EA7;&#x751F;&#x7684;&#xFF09;&#xFF0C;&#x5176;&#x4E2D;&#x4F1A;&#x5305;&#x62EC;&#x4E00;&#x4E2A;&#x9759;&#x6001;&#x4EA7;&#x751F;&#x7684;PyCodeObject&#xFF0C;&#x4E5F;&#x5C31;&#x662F;func_code&#x57DF;&#xFF0C;&#x8FD9;&#x4E2A;&#x5BF9;&#x8C61;&#x5BF9;&#x5E94;&#x4E86;&#x51FD;&#x6570;&#x7684;&#x4EE3;&#x7801;&#x5757;&#x3002;&#x9664;&#x6B64;&#x4E4B;&#x5916;&#xFF0C;func_globals&#x4E4B;&#x7C7B;&#x7684;&#x4E0A;&#x4E0B;&#x6587;&#x4FE1;&#x606F;&#x662F;&#x5728;&#x8FD0;&#x884C;&#x65F6;&#x624D;&#x80FD;&#x786E;&#x5B9A;&#x7684;&#x52A8;&#x6001;&#x4FE1;&#x606F;&#x3002;</li>
+<li>PyCodeObject是编译时产生的静态对象，里面的所有信息都可以从源代码中获得;</li>
+<li>PyFunctionObject则是程序在运行时动态产生的（是下面即将提到的MAKE_FUNCTION指令产生的），其中会包括一个静态产生的PyCodeObject，也就是func_code域，这个对象对应了函数的代码块。除此之外，func_globals之类的上下文信息是在运行时才能确定的动态信息。</li>
 </ul>
 </li>
-<li><p>&#x5728;&#x5B9A;&#x4E49;&#x51FD;&#x6570;&#x65F6;&#xFF0C;&#x4F1A;&#x751F;&#x6210;&#x5D4C;&#x5957;&#x7684;PyCodeObject&#x7ED3;&#x6784;&#x3002;&#x51FD;&#x6570;&#x7684;&#x4EE3;&#x7801;&#x5757;&#x5BF9;&#x5E94;&#x7684;PyCodeObject&#x4F1A;&#x5B58;&#x50A8;&#x4E8E;&#x5916;&#x5C42;PyCodeObject&#x7684;&#x5E38;&#x91CF;&#x8868;&#x4E2D;&#x3002;&#x8FD9;&#x6837;&#xFF0C;&#x5916;&#x5C42;PyCodeObject&#x7684;&#x5B57;&#x8282;&#x7801;&#x6307;&#x4EE4;&#x4E2D;&#x53EA;&#x5305;&#x542B;&#x4E86;&#x2019;def f:&#x2019;&#x6240;&#x5BF9;&#x5E94;&#x7684;&#x5B57;&#x8282;&#x7801;&#x6307;&#x4EE4;&#xFF08;MAKE_FUNCTION&#xFF09;&#xFF0C;&#x800C;f&#x5185;&#x4EE3;&#x7801;&#x5757;&#x8D4C;&#x8D62;&#x7684;&#x5B57;&#x8282;&#x7801;&#x6307;&#x4EE4;&#x5219;&#x4E0D;&#x76F4;&#x63A5;&#x5305;&#x542B;&#x5728;&#x5916;&#x5C42;PyCodeObject&#x4E2D;&#xFF0C;&#x8FD9;&#x6837;&#xFF0C;&#x5728;&#x6267;&#x884C;&#x51FD;&#x6570;&#x7684;&#x5B9A;&#x4E49;&#x65F6;&#xFF0C;&#x51FD;&#x6570;&#x5C31;&#x4E0D;&#x4F1A;&#x88AB;&#x8C03;&#x7528;&#xFF1B;&#x53EA;&#x6709;&#x5F53;&#x771F;&#x6B63;&#x8C03;&#x7528;&#x51FD;&#x6570;&#x65F6;&#xFF0C;&#x51FD;&#x6570;&#x5185;&#x7684;&#x4EE3;&#x7801;&#xFF08;&#x5BF9;&#x5E94;&#x7684;&#x5B57;&#x8282;&#x7801;&#x6307;&#x4EE4;&#xFF09;&#x624D;&#x4F1A;&#x771F;&#x6B63;&#x88AB;&#x6267;&#x884C;&#x3002;</p>
+<li><p>在定义函数时，会生成嵌套的PyCodeObject结构。函数的代码块对应的PyCodeObject会存储于外层PyCodeObject的常量表中。这样，外层PyCodeObject的字节码指令中只包含了’def f:’所对应的字节码指令（MAKE_FUNCTION），而f内代码块赌赢的字节码指令则不直接包含在外层PyCodeObject中，这样，在执行函数的定义时，函数就不会被调用；只有当真正调用函数时，函数内的代码（对应的字节码指令）才会真正被执行。</p>
 </li>
-<li><p>MAKE_FUNCTION&#x521B;&#x5EFA;&#x51FD;&#x6570;&#x5BF9;&#x8C61;&#xFF0C;&#x9700;&#x8981;&#x5148;&#x4ECE;&#x5916;&#x5C42;PyCodeObject&#x5BF9;&#x8C61;&#x7684;&#x5E38;&#x91CF;&#x8868;&#xFF08;co_consts&#xFF09;&#x4E2D;&#x53D6;&#x51FA;&#x5F53;&#x524D;&#x6240;&#x5B9A;&#x4E49;&#x51FD;&#x6570;&#x5BF9;&#x5E94;&#x7684;PyCodeObject&#x5BF9;&#x8C61;&#xFF0C;&#x7136;&#x540E;&#x4EE5;&#x6B64;PyCodeObject&#x5BF9;&#x8C61;&#x548C;&#x5F53;&#x524D;&#x6808;&#x5E27;&#x7684;globals&#x540D;&#x5B57;&#x7A7A;&#x95F4;&#x4E3A;&#x53C2;&#x6570;&#xFF0C;&#x5177;&#x4F53;&#x7684;&#x9876;&#x4E00;&#x4E2A;PyFunctionObject&#x3002;&#x4E4B;&#x540E;&#x5C06;&#x51FD;&#x6570;&#x540D;&#xFF08;&#x4F8B;&#x5982;&#xFF0C;&#x2019;f&#x2019;&#xFF09;&#x548C;&#x8FD9;&#x4E2A;PyFunctionObject&#x5BF9;&#x8C61;&#x5BF9;&#x5E94;&#x8D77;&#x6765;&#xFF0C;&#x5B58;&#x5165;&#x5F53;&#x524D;&#x6808;&#x5E27;&#x7684;locals&#x540D;&#x5B57;&#x7A7A;&#x95F4;&#x3002;</p>
+<li><p>MAKE_FUNCTION创建函数对象，需要先从外层PyCodeObject对象的常量表（co_consts）中取出当前所定义函数对应的PyCodeObject对象，然后以此PyCodeObject对象和当前栈帧的globals名字空间为参数，具体的顶一个PyFunctionObject。之后将函数名（例如，’f’）和这个PyFunctionObject对象对应起来，存入当前栈帧的locals名字空间。</p>
 </li>
-<li><p>&#x51FD;&#x6570;&#x8C03;&#x7528;&#xFF1A;</p>
+<li><p>函数调用：</p>
 <ul>
-<li>&#x9996;&#x5148;&#x4F9D;&#x636E;&#x51FD;&#x6570;&#x540D;&#xFF0C;&#x4ECE;&#x5F53;&#x524D;&#x6808;&#x5E27;&#x7684;locals&#x540D;&#x5B57;&#x7A7A;&#x95F4;&#x4E2D;&#x53D6;&#x51FA;PyFunctionObject&#x5BF9;&#x8C61;&#xFF0C;&#x538B;&#x5165;&#x8FD0;&#x884C;&#x65F6;&#x6808;&#xFF1B;</li>
-<li>&#x7136;&#x540E;&#x6267;&#x884C;&#x5B57;&#x8282;&#x7801;&#x6307;&#x4EE4;CALL_FUNCTION&#x3002;</li>
-<li>&#x9996;&#x5148;&#x5904;&#x7406;&#x53C2;&#x6570;&#x4FE1;&#x606F;&#xFF1B;</li>
-<li>&#x7136;&#x540E;&#x4ECE;&#x8FD0;&#x884C;&#x65F6;&#x6808;&#x4E2D;&#x83B7;&#x5F97;&#x521A;&#x624D;&#x88AB;&#x538B;&#x5165;&#x7684;&#x51FD;&#x6570;&#x5BF9;&#x8C61;&#x3002;</li>
-<li>&#x63A5;&#x7740;&#x4ECE;&#x51FD;&#x6570;&#x5BF9;&#x8C61;&#x4E2D;&#x62FF;&#x5230;PyCodeObject&#x5BF9;&#x8C61;&#xFF0C;globals&#x540D;&#x5B57;&#x7A7A;&#x95F4;&#x7B49;&#x4FE1;&#x606F;&#xFF0C;&#x7528;&#x8FD9;&#x4E9B;&#x4FE1;&#x606F;&#x65B0;&#x5EFA;&#x4E00;&#x4E2A;&#x6808;&#x5E27;&#x5BF9;&#x8C61;PyFrameObject&#xFF0C;&#x8C03;&#x7528;PyEval_EvalFrameEx(&#x9012;&#x5F52;&#x7684;)&#x6267;&#x884C;&#x6808;&#x5E27;&#x4E0A;&#x7684;&#x5B57;&#x8282;&#x7801;&#x6307;&#x4EE4;&#x3002;&#x5E76;&#x5C06;&#x6267;&#x884C;&#x7ED3;&#x679C;&#x8FD4;&#x56DE;&#x3002;</li>
-<li>&#x81F3;&#x6B64;&#xFF0C;&#x51FD;&#x6570;&#x7684;&#x8C03;&#x7528;&#x5B8C;&#x6210;&#x3002;</li>
+<li>首先依据函数名，从当前栈帧的locals名字空间中取出PyFunctionObject对象，压入运行时栈；</li>
+<li>然后执行字节码指令CALL_FUNCTION。</li>
+<li>首先处理参数信息；</li>
+<li>然后从运行时栈中获得刚才被压入的函数对象。</li>
+<li>接着从函数对象中拿到PyCodeObject对象，globals名字空间等信息，用这些信息新建一个栈帧对象PyFrameObject，调用PyEval_EvalFrameEx(递归的)执行栈帧上的字节码指令。并将执行结果返回。</li>
+<li>至此，函数的调用完成。</li>
 </ul>
 </li>
-<li><p>&#x53C2;&#x6570;&#x4F20;&#x9012;</p>
+<li><p>参数传递</p>
 <ul>
-<li>CALL_FUNCTION&#x6307;&#x4EE4;&#x7684;&#x53C2;&#x6570;oparg&#xFF0C;&#x4F4E;&#x5B57;&#x8282;&#x8BB0;&#x5F55;&#x4E86;&#x4F4D;&#x7F6E;&#x53C2;&#x6570;&#x7684;&#x4E2A;&#x6570;&#xFF0C;&#x9AD8;&#x5B57;&#x8282;&#x8BB0;&#x5F55;&#x4E86;&#x952E;&#x53C2;&#x6570;&#x7684;&#x4E2A;&#x6570;&#x3002;&#x6240;&#x4EE5;&#x53EF;&#x4EE5;&#x770B;&#x5230;&#x5982;&#x4E0B;&#x4EE3;&#x7801;&#x53D6;&#x51FA;&#x76F8;&#x5173;&#x4FE1;&#x606F;&#x3002;&#x5176;&#x4E2D;&#x4E5F;&#x53EF;&#x4EE5;&#x770B;&#x51FA;&#xFF0C;&#x4E00;&#x4E2A;&#x4F4D;&#x7F6E;&#x53C2;&#x6570;&#x5360;&#x636E;&#x8FD0;&#x884C;&#x65F6;&#x6808;&#x7684;&#x4E00;&#x4E2A;slot&#xFF0C;&#x800C;&#x4E00;&#x4E2A;&#x952E;&#x53C2;&#x6570;&#x5219;&#x4F1A;&#x5360;&#x636E;&#x4E24;&#x4E2A;slot&#xFF08;&#x4E00;&#x4E2A;&#x952E;&#xFF0C;&#x4E00;&#x4E2A;&#x503C;&#xFF09;&#x3002;<figure class="highlight c"><table><tr><td class="gutter"><pre>1
-2
-3
-4
-</pre></td><td class="code"><pre><span class="keyword">int</span> na = oparg &amp; <span class="number">0xff</span>;
-<span class="keyword">int</span> nk = (oparg&gt;&gt;<span class="number">8</span>) &amp; <span class="number">0xff</span>;
-<span class="keyword">int</span> n = na + <span class="number">2</span> * nk;
-PyObject **pfunc = (*pp_stack) - n - <span class="number">1</span>;
-</pre></td></tr></table></figure></li>
-<li>&#x5BF9;&#x4E8E;&#x4F4D;&#x7F6E;&#x53C2;&#x6570;&#xFF0C;&#x4F1A;&#x5728;&#x8C03;&#x7528;&#x51FD;&#x6570;&#x4E4B;&#x524D;&#xFF0C;&#x9996;&#x5148;&#x5C06;&#x53C2;&#x6570;&#x538B;&#x5165;&#x8FD0;&#x884C;&#x65F6;&#x6808;&#x4E2D;&#xFF0C;&#x7136;&#x540E;&#x5728;&#x751F;&#x6210;&#x65B0;&#x7684;&#x6808;&#x5E27;PyFrameObject&#x4E4B;&#x540E;&#xFF08;&#x9012;&#x5F52;&#x8C03;&#x7528;PyEval_EvalFrameEx&#x4E4B;&#x524D;&#xFF09;&#xFF0C;&#x628A;&#x53C2;&#x6570;&#x4ECE;&#x8FD0;&#x884C;&#x65F6;&#x6808;&#x4E2D;&#x62F7;&#x8D1D;&#x5230;PyFrameObject.f_localsplus&#x4E2D;&#x3002;</li>
-<li>&#x4F4D;&#x7F6E;&#x53C2;&#x6570;&#x7684;&#x8BFB;&#x53D6;&#x4E5F;&#x5F88;&#x7B80;&#x5355;&#x3002;&#x56E0;&#x4E3A;&#x5B83;&#x662F;&#x4ECE;&#x5DE6;&#x5230;&#x53F3;&#x4F9D;&#x6B21;&#x5B58;&#x50A8;&#x5728;f_localsplus&#x4E2D;&#x7684;&#xFF0C;&#x6240;&#x4EE5;&#x8BFB;&#x53D6;&#x65F6;&#x53EA;&#x9700;&#x7ED9;&#x51FA;&#x5176;&#x4F4D;&#x7F6E;&#x7D22;&#x5F15;&#x5373;&#x53EF;&#x3002;</li>
-<li>&#x4F4D;&#x7F6E;&#x53C2;&#x6570;&#x7684;&#x9ED8;&#x8BA4;&#x503C;&#xFF0C;&#x4F1A;&#x5728;MAKE_FUNCTION&#x7684;&#x8FC7;&#x7A0B;&#x4E2D;&#x4FDD;&#x5B58;&#x5728;PyFunctionObject.func_defaults&#x8FD9;&#x4E2A;&#x5BF9;&#x8C61;&#x4E2D;&#xFF0C;&#x4EE5;&#x952E;&#x503C;&#x5BF9;&#x7684;&#x5F62;&#x5F0F;&#xFF08;&#x5728;&#x6240;&#x6709;&#x6709;&#x9ED8;&#x8BA4;&#x503C;&#x7684;&#x4F4D;&#x7F6E;&#x53C2;&#x6570;&#x4E2D;&#x7684;&#x7D22;&#x5F15;&#x2014;&gt;&#x9ED8;&#x8BA4;&#x503C;&#xFF09;&#x3002;</li>
-<li>&#x4E4B;&#x540E;&#xFF0C;&#x5728;&#x8C03;&#x7528;&#x6709;&#x9ED8;&#x8BA4;&#x503C;&#x7684;&#x51FD;&#x6570;&#x65F6;&#xFF0C;&#x4F1A;&#x8FDB;&#x5165;&#x4E0E;&#x4E4B;&#x524D;&#x4E0D;&#x540C;&#x7684;&#x6267;&#x884C;&#x8DEF;&#x5F84;PyEval_EvalCodeEx&#xFF0C;&#x5176;&#x4E2D;&#x4F1A;&#x4F9D;&#x636E;&#x4F20;&#x5165;&#x7684;&#x4F4D;&#x7F6E;&#x53C2;&#x6570;&#x4E2A;&#x6570;&#x3001;&#x603B;&#x5171;&#x7684;&#x4F4D;&#x7F6E;&#x53C2;&#x6570;&#x4E2A;&#x6570;&#x3001;&#x5177;&#x6709;&#x9ED8;&#x8BA4;&#x503C;&#x7684;&#x53C2;&#x6570;&#x4E2A;&#x6570;&#x6765;&#x5BF9;&#x53C2;&#x6570;&#x7684;&#x6570;&#x503C;&#x8FDB;&#x884C;&#x8BBE;&#x5B9A;&#xFF0C;&#x5E76;&#x5C06;&#x53C2;&#x6570;&#x7684;&#x5177;&#x4F53;&#x503C;&#x653E;&#x5165;f_localsplus&#x7684;&#x5BF9;&#x5E94;&#x4F4D;&#x7F6E;&#x4E2D;&#x53BB;&#x3002;</li>
-<li>&#x5BF9;&#x4E8E;&#x952E;&#x53C2;&#x6570;&#x6765;&#x8BF4;&#xFF0C;&#x4F1A;&#x9996;&#x5148;&#x5728;&#x51FD;&#x6570;&#x8C03;&#x7528;&#x524D;&#xFF0C;&#x5C06;&#x952E;&#x53C2;&#x6570;&#x7684;&#x952E;&#x548C;&#x503C;&#x4F9D;&#x6B21;&#x538B;&#x5165;&#x8FD0;&#x884C;&#x65F6;&#x6808;&#xFF0C;&#x5728;&#x6784;&#x9020;&#x65B0;&#x7684;&#x6808;&#x5E27;&#x5BF9;&#x8C61;PyFrameObject&#x65F6;&#xFF0C;&#x53D6;&#x51FA;&#x53C2;&#x6570;&#x540D;&#x5BF9;&#x5E94;&#x7684;&#x5B57;&#x7B26;&#x4E32;&#xFF0C;&#x5728;&#x51FD;&#x6570;&#x5BF9;&#x5E94;&#x7684;PyCodeObject&#x5BF9;&#x8C61;&#x7684;co_varnames&#x57DF;&#x4E2D;&#x67E5;&#x627E;&#xFF08;co_varnames&#x57DF;&#x5728;python&#x7F16;&#x8BD1;&#x65F6;&#x5C31;&#x4FDD;&#x5B58;&#x4E86;&#x51FD;&#x6570;&#x5B9A;&#x4E49;&#x65F6;&#x7684;&#x6240;&#x6709;&#x53C2;&#x6570;&#x7684;&#x540D;&#x5B57;&#xFF09;&#xFF0C;&#x67E5;&#x627E;&#x5230;&#x4E4B;&#x540E;&#xFF0C;&#x6309;&#x7167;&#x5176;&#x5728;co_varnames&#x4E2D;&#x7684;&#x7D22;&#x5F15;&#xFF0C;&#x8BBE;&#x7F6E;PyFrameObject.f_localsplus&#x503C;&#x3002;&#x800C;&#x5728;&#x5176;&#x540E;&#x8BBE;&#x7F6E;&#x9ED8;&#x8BA4;&#x503C;&#x65F6;&#xFF0C;&#x5BF9;&#x4E8E;&#x5DF2;&#x7ECF;&#x88AB;&#x952E;&#x53C2;&#x6570;&#x8BBE;&#x7F6E;&#x7684;&#x51FD;&#x6570;&#x53C2;&#x6570;&#xFF0C;&#x4F1A;&#x68C0;&#x6D4B;&#x5230;&#x5176;&#x5DF2;&#x7ECF;&#x5B58;&#x5728;&#x4E8E;PyFrameObject.f_localsplus&#x4E2D;&#xFF0C;&#x5C31;&#x4E0D;&#x518D;&#x4E3A;&#x5176;&#x8BBE;&#x7F6E;&#x9ED8;&#x8BA4;&#x503C;&#x3002;</li>
-<li>&#x6269;&#x5C55;&#x4F4D;&#x7F6E;&#x53C2;&#x6570;&#x4E0E;&#x6269;&#x5C55;&#x952E;&#x53C2;&#x6570;&#x90FD;&#x662F;&#x88AB;&#x5F53;&#x505A;&#x5C40;&#x90E8;&#x53D8;&#x91CF;&#x6765;&#x5904;&#x7406;&#x7684;&#x3002;&#x5176;&#x4E2D;&#x5BF9;&#x4E8E;&#x6269;&#x5C55;&#x4F4D;&#x7F6E;&#x53C2;&#x6570;&#xFF0C;&#x4F1A;&#x751F;&#x6210;&#x4E00;&#x4E2A;PyTupleObject&#x653E;&#x5165;f_localsplus&#x7684;&#x5BF9;&#x5E94;&#x4F4D;&#x7F6E;&#xFF1B;&#x5BF9;&#x4E8E;&#x6269;&#x5C55;&#x952E;&#x53C2;&#x6570;&#xFF0C;&#x4F1A;&#x751F;&#x6210;&#x4E00;&#x4E2A;PyDictObject&#xFF0C;&#x6536;&#x96C6;&#x4E86;&#x90A3;&#x4E9B;&#x8C03;&#x7528;&#x65F6;&#x4F20;&#x9012;&#x7ED9;&#x51FD;&#x6570;&#x7684;&#x952E;&#x503C;&#x5BF9;&#x4E2D;&#x952E;&#x6CA1;&#x6709;&#x51FA;&#x73B0;&#x5728;co_varnames&#x4E2D;&#x7684;&#x90A3;&#x4E9B;&#x952E;&#x503C;&#x5BF9;&#xFF0C;&#x5E76;&#x5C06;&#x6B64;PyDictObject&#x7F6E;&#x4E8E;f_localsplus&#x7684;&#x7279;&#x5B9A;&#x4F4D;&#x7F6E;&#x4E2D;&#x3002;</li>
+<li><p>CALL_FUNCTION指令的参数oparg，低字节记录了位置参数的个数，高字节记录了键参数的个数。所以可以看到如下代码取出相关信息。其中也可以看出，一个位置参数占据运行时栈的一个slot，而一个键参数则会占据两个slot（一个键，一个值）。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> na = oparg &amp; <span class="number">0xff</span>;</span><br><span class="line"><span class="keyword">int</span> nk = (oparg&gt;&gt;<span class="number">8</span>) &amp; <span class="number">0xff</span>;</span><br><span class="line"><span class="keyword">int</span> n = na + <span class="number">2</span> * nk;</span><br><span class="line">PyObject **pfunc = (*pp_stack) - n - <span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>对于位置参数，会在调用函数之前，首先将参数压入运行时栈中，然后在生成新的栈帧PyFrameObject之后（递归调用PyEval_EvalFrameEx之前），把参数从运行时栈中拷贝到PyFrameObject.f_localsplus中。</p>
+</li>
+<li>位置参数的读取也很简单。因为它是从左到右依次存储在f_localsplus中的，所以读取时只需给出其位置索引即可。</li>
+<li>位置参数的默认值，会在MAKE_FUNCTION的过程中保存在PyFunctionObject.func_defaults这个对象中，以键值对的形式（在所有有默认值的位置参数中的索引–&gt;默认值）。</li>
+<li>之后，在调用有默认值的函数时，会进入与之前不同的执行路径PyEval_EvalCodeEx，其中会依据传入的位置参数个数、总共的位置参数个数、具有默认值的参数个数来对参数的数值进行设定，并将参数的具体值放入f_localsplus的对应位置中去。</li>
+<li>对于键参数来说，会首先在函数调用前，将键参数的键和值依次压入运行时栈，在构造新的栈帧对象PyFrameObject时，取出参数名对应的字符串，在函数对应的PyCodeObject对象的co_varnames域中查找（co_varnames域在python编译时就保存了函数定义时的所有参数的名字），查找到之后，按照其在co_varnames中的索引，设置PyFrameObject.f_localsplus值。而在其后设置默认值时，对于已经被键参数设置的函数参数，会检测到其已经存在于PyFrameObject.f_localsplus中，就不再为其设置默认值。</li>
+<li>扩展位置参数与扩展键参数都是被当做局部变量来处理的。其中对于扩展位置参数，会生成一个PyTupleObject放入f_localsplus的对应位置；对于扩展键参数，会生成一个PyDictObject，收集了那些调用时传递给函数的键值对中键没有出现在co_varnames中的那些键值对，并将此PyDictObject置于f_localsplus的特定位置中。</li>
 </ul>
 </li>
-<li><p>&#x51FD;&#x6570;&#x7684;&#x5C40;&#x90E8;&#x53D8;&#x91CF;&#xFF0C;&#x5E76;&#x6CA1;&#x6709;&#x5B58;&#x50A8;&#x4E8E;&#x5F53;&#x524D;&#x6808;&#x5E27;&#x7684;f_locals&#x4E2D;&#x3002;&#x5B9E;&#x9645;&#x4E0A;&#xFF0C;f_locals&#x6839;&#x672C;&#x5C31;&#x662F;&#x4E00;&#x4E2A;NULL&#x503C;&#x3002;&#x800C;&#x51FD;&#x6570;&#x7684;&#x5C40;&#x90E8;&#x53D8;&#x91CF;&#x4E5F;&#x662F;&#x5B58;&#x653E;&#x5728;f_localsplus&#x8FD9;&#x6837;&#x4E00;&#x4E2A;&#x6570;&#x7EC4;&#x4E2D;&#x7684;&#x3002;&#x8FD9;&#x662F;&#x56E0;&#x4E3A;&#x5728;&#x51FD;&#x6570;&#x7684;&#x7F16;&#x8BD1;&#x8FC7;&#x7A0B;&#x4E2D;&#xFF0C;&#x51FD;&#x6570;&#x4E2D;&#x7684;&#x5C40;&#x90E8;&#x53D8;&#x91CF;&#x4FE1;&#x606F;&#x662F;&#x5B8C;&#x5168;&#x6E05;&#x695A;&#x7684;&#x3002;&#x56E0;&#x6B64;&#xFF0C;&#x4F7F;&#x7528;f_localsplus&#x8FD9;&#x6837;&#x7684;&#x6570;&#x7EC4;&#x7ED3;&#x6784;&#x5C31;&#x53EF;&#x4EE5;&#x5B8C;&#x6210;&#x529F;&#x80FD;&#xFF0C;&#x800C;&#x4E14;&#x6BD4;&#x90A3;&#x79CD;&#x4ECE;f_locals&#x5B57;&#x5178;&#x4E2D;&#x67E5;&#x627E;&#x7684;&#x65B9;&#x5F0F;&#x66F4;&#x9AD8;&#x6548;&#x3002;</p>
+<li><p>函数的局部变量，并没有存储于当前栈帧的f_locals中。实际上，f_locals根本就是一个NULL值。而函数的局部变量也是存放在f_localsplus这样一个数组中的。这是因为在函数的编译过程中，函数中的局部变量信息是完全清楚的。因此，使用f_localsplus这样的数组结构就可以完成功能，而且比那种从f_locals字典中查找的方式更高效。</p>
 </li>
-<li><p>&#x95ED;&#x5305;&#xFF08;Closure&#xFF09;</p>
+<li><p>闭包（Closure）</p>
 <ul>
-<li>&#x5728;PyCodeObject&#x4E2D;&#xFF0C;co_cellvars&#x4FDD;&#x5B58;&#x4E86;&#x5185;&#x5C42;&#x5D4C;&#x5957;&#x4F5C;&#x7528;&#x57DF;&#xFF08;&#x5982;&#x679C;&#x6709;&#x7684;&#x8BDD;&#xFF09;&#x4E2D;&#x4F7F;&#x7528;&#x7684;&#x672C;&#x5C42;&#x53D8;&#x91CF;&#x540D;&#x7684;&#x96C6;&#x5408;&#xFF1B;co_freevars&#x4FDD;&#x5B58;&#x4E86;&#x672C;&#x5C42;&#x4F5C;&#x7528;&#x57DF;&#x4E2D;&#x4F7F;&#x7528;&#x4E86;&#x5916;&#x5C42;&#x4F5C;&#x7528;&#x57DF;&#x4E2D;&#x7684;&#x53D8;&#x91CF;&#x540D;&#x7684;&#x96C6;&#x5408;&#x3002;</li>
-<li>&#x5728;PyFrameObject&#x4E2D;&#xFF0C;f_localsplus&#x4E2D;&#x4E5F;&#x4FDD;&#x5B58;&#x4E86;cellvars&#x548C;freevars&#x3002;&#x5177;&#x4F53;&#x7684;&#xFF0C;&#x5728;&#x751F;&#x6210;PyFrameObject&#x4E4B;&#x540E;&#xFF0C;&#x4F1A;&#x628A;&#x5BF9;&#x5E94;&#x7684;PyCodeObject&#x4E2D;&#x7684;cellvars&#x751F;&#x6210;PyCellObject&#x5BF9;&#x8C61;&#xFF0C;&#x590D;&#x5236;&#x5230;f_localsplus&#x4E2D;&#x7684;&#x5C40;&#x90E8;&#x53D8;&#x91CF;&#x7684;&#x540E;&#x9762;&#x3002;</li>
-<li>&#x5728;&#x5B9A;&#x4E49;&#x95ED;&#x5305;&#x4E4B;&#x65F6;&#xFF08;&#x4E5F;&#x5C31;&#x662F;&#x5916;&#x5C42;&#x51FD;&#x6570;&#x6267;&#x884C;&#x5230;&#x5185;&#x5C42;&#x51FD;&#x6570;&#x7684;&#x5B9A;&#x4E49;&#x5904;&#x7684;&#x65F6;&#x5019;&#xFF09;&#xFF0C;&#x4F1A;&#x628A;cellvars&#x5BF9;&#x5E94;&#x7684;PyCellObject&#x6253;&#x5305;&#x6210;&#x4E00;&#x4E2A;tuple&#x3001;&#x5185;&#x5C42;&#x51FD;&#x6570;&#x5BF9;&#x5E94;&#x7684;PyCodeObject&#x5BF9;&#x8C61;&#x538B;&#x5165;&#x8FD0;&#x884C;&#x65F6;&#x6808;&#xFF0C;&#x7136;&#x540E;&#x6267;&#x884C;&#x4E00;&#x4E2A;MAKE_CLOSURE&#x6307;&#x4EE4;&#x3002;&#x5728;MAKE_CLOSURE&#x6307;&#x4EE4;&#x7684;&#x6267;&#x884C;&#x4E2D;&#xFF0C;&#x9664;&#x4E86;&#x65B0;&#x751F;&#x6210;&#x4E00;&#x4E2A;PyFunctionObject&#x5BF9;&#x8C61;&#x4E4B;&#x5916;&#xFF0C;&#x8FD8;&#x5C06;&#x8FD0;&#x884C;&#x65F6;&#x6808;&#x4E2D;&#x7684;&#x90A3;&#x4E2A;tuple&#x8D4B;&#x7ED9;&#x4E86;PyFunctionObject&#x5BF9;&#x8C61;&#x7684;func_closure&#x57DF;&#xFF1B;&#x800C;&#x5728;&#x6267;&#x884C;&#x5185;&#x5C42;&#x51FD;&#x6570;&#x65F6;&#xFF0C;&#x5C31;&#x4F1A;&#x5C06;PyFunctionObject&#x4E2D;&#x7684;func_closure&#x4E2D;&#x7684;&#x5BF9;&#x8C61;&#x4F9D;&#x6B21;&#x53D6;&#x51FA;&#xFF0C;&#x653E;&#x5165;f_localsplus&#x4E2D;&#x7684;&#x5BF9;&#x5E94;&#x4F4D;&#x7F6E;&#xFF08;&#x5728;&#x5C40;&#x90E8;&#x53D8;&#x91CF;&#x548C;cellvars&#x4E4B;&#x540E;&#xFF09;&#x3002;&#x5F53;&#x9700;&#x8981;&#x7528;&#x5230;&#x8FD9;&#x4E9B;&#x6765;&#x81EA;&#x5916;&#x5C42;&#x51FD;&#x6570;&#x7684;&#x53D8;&#x91CF;&#x65F6;&#xFF0C;&#x5C31;&#x4F1A;&#x4ECE;f_localsplus&#x4E2D;&#x7684;freevars&#x533A;&#x57DF;&#x53D6;&#x51FA;&#x3002;</li>
+<li>在PyCodeObject中，co_cellvars保存了内层嵌套作用域（如果有的话）中使用的本层变量名的集合；co_freevars保存了本层作用域中使用了外层作用域中的变量名的集合。</li>
+<li>在PyFrameObject中，f_localsplus中也保存了cellvars和freevars。具体的，在生成PyFrameObject之后，会把对应的PyCodeObject中的cellvars生成PyCellObject对象，复制到f_localsplus中的局部变量的后面。</li>
+<li>在定义闭包之时（也就是外层函数执行到内层函数的定义处的时候），会把cellvars对应的PyCellObject打包成一个tuple、内层函数对应的PyCodeObject对象压入运行时栈，然后执行一个MAKE_CLOSURE指令。在MAKE_CLOSURE指令的执行中，除了新生成一个PyFunctionObject对象之外，还将运行时栈中的那个tuple赋给了PyFunctionObject对象的func_closure域；而在执行内层函数时，就会将PyFunctionObject中的func_closure中的对象依次取出，放入f_localsplus中的对应位置（在局部变量和cellvars之后）。当需要用到这些来自外层函数的变量时，就会从f_localsplus中的freevars区域取出。</li>
 </ul>
 </li>
-<li><p>&#x88C5;&#x9970;&#x5668;&#xFF08;Decorator&#xFF09;</p>
+<li><p>装饰器（Decorator）</p>
 <ul>
-<li>&#x88C5;&#x9970;&#x5668;&#x7684;&#x5B9E;&#x73B0;&#x662F;&#x57FA;&#x4E8E;&#x95ED;&#x5305;&#x7684;&#xFF0C;&#x4E24;&#x8005;&#x7F16;&#x8BD1;&#x8FC7;&#x540E;&#x7684;&#x5B57;&#x8282;&#x7801;&#x6267;&#x884C;&#x6548;&#x679C;&#x5B8C;&#x5168;&#x76F8;&#x540C;&#xFF0C;&#x56E0;&#x6B64;&#x88C5;&#x9970;&#x5668;&#x4E0D;&#x8FC7;&#x662F;&#x95ED;&#x5305;&#x7684;&#x4E00;&#x79CD;&#x8BED;&#x6CD5;&#x7CD6;&#x800C;&#x5DF2;&#x3002;</li>
+<li>装饰器的实现是基于闭包的，两者编译过后的字节码执行效果完全相同，因此装饰器不过是闭包的一种语法糖而已。</li>
 </ul>
 </li>
 </ul>
@@ -200,9 +136,8 @@ PyObject **pfunc = (*pp_stack) - n - <span class="number">1</span>;
     
       
       
-  
   <div class="tags">
-    <a href="/tags/读书笔记/">读书笔记</a>, <a href="/tags/Python/">Python</a>
+    <a class="tags-link" href="/tags/Python/">Python</a>, <a class="tags-link" href="/tags/读书笔记/">读书笔记</a>
   </div>
 
     
@@ -221,111 +156,19 @@ var jiathis_config = {data_track_clickback:'true'};
   <div class="ds-thread" data-title="《Python源码剖析》读书笔记-11 Python虚拟机中的函数机制">
   </div>
 </section>
-</div>
+
+	</div>
   </div>
   <div class="widget-wrapper">
-    <aside id="sidebar">
+	<aside id="sidebar">
   
-  
-    
-      
-      
-    
-      
-      
-
-<div class="widget tag first">
-  <h3 class="title">Tags</h3>
-  <ul class="entry">
-  
-    <li><a href="/tags/Python/">Python</a><small>11</small></li>
-  
-    <li><a href="/tags/Unity3D/">Unity3D</a><small>1</small></li>
-  
-    <li><a href="/tags/书单/">书单</a><small>4</small></li>
-  
-    <li><a href="/tags/北京车展/">北京车展</a><small>1</small></li>
-  
-    <li><a href="/tags/杂谈/">杂谈</a><small>5</small></li>
-  
-    <li><a href="/tags/游戏开发/">游戏开发</a><small>1</small></li>
-  
-    <li><a href="/tags/爱好/">爱好</a><small>1</small></li>
-  
-    <li><a href="/tags/生活/">生活</a><small>2</small></li>
-  
-    <li><a href="/tags/读书笔记/">读书笔记</a><small>11</small></li>
-  
-    <li><a href="/tags/读后感/">读后感</a><small>1</small></li>
-  
-  </ul>
-</div>
-
-    
-      
-      
-
-<div class="widget recent-posts">
-  <h3 class="title">Recent Posts</h3>
-  <ul class="entry">
-    
-      <li>
-        <a href="/2015/01/24/sgjm-reviewmd/">《三国机密》感</a>
-      </li>
-    
-      <li>
-        <a href="/2015/01/01/2014-booklist-2/">2014年下半年书单</a>
-      </li>
-    
-      <li>
-        <a href="/2014/10/01/2014-booklist-1/">2014年上半年书单</a>
-      </li>
-    
-      <li>
-        <a href="/2014/06/05/python-source-11/">《Python源码剖析》读书笔记-11 Python虚拟机中的函数机制</a>
-      </li>
-    
-      <li>
-        <a href="/2014/05/23/unity2d-flappybird/">用Unity3D仿造一个FlappyBird</a>
-      </li>
-    
-  </ul>
-</div>
-
-    
-      
-      
-
-<div class="widget blogroll">
-  <h3 class="title">Links</h3>
-  <ul class="entry">
-  
-    
-    <li><a href="http://guoyb.com/" target="_blank">旧博客</a></li>
-  
-    
-    <li><a href="http://weibo.com/dusticebloomingmonk" target="_blank">新浪微博</a></li>
-  
-    
-    <li><a href="http://www.linkedin.com/profile/view?id=256546845" target="_blank">LinkedIn</a></li>
-  
-    
-    <li><a href="http://www.yanggy.com/" target="_blank">阳总工</a></li>
-  
-    
-    <li><a href="http://mcgrady164.github.io/" target="_blank">阿俊</a></li>
-  
-  </ul>
-</div>
-
-    
   
 </aside>
 <div class="clearfix"></div>
   </div>
   <footer id="footer"><div class="copyright">
   
-  &copy; 2015 <a href="/">Yubo Guo</a>
+  &copy; 2016 <a href="/">Yubo Guo</a>
   
 </div>
 <div class="theme-copyright">
@@ -334,7 +177,8 @@ var jiathis_config = {data_track_clickback:'true'};
   Redesign by <a href="http://heroicyang.com/" target="_blank">Heroic Yang</a>
 </div>
 <div class="clearfix"></div></footer>
-  <script src="/js/scale.fix.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+<script src="/js/scale.fix.js"></script>
 <script src="/js/jquery.imagesloaded.min.js"></script>
 <script src="/js/gallery.js"></script>
 

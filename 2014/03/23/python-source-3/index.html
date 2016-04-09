@@ -5,87 +5,68 @@
   <meta http-equiv="X-UA-Compatible" content="chrome=1">
   
   <title>《Python源码剖析》读书笔记-3 字符串对象 | 一根笨茄子</title>
-  <meta name="author" content="Yubo Guo">
-  
-  <meta name="description" content="&amp;#x7B2C;3&amp;#x7AE0; Python&amp;#x4E2D;&amp;#x7684;&amp;#x5B57;&amp;#x7B26;&amp;#x4E32;&amp;#x5BF9;&amp;#x8C61;
-
-&amp;#x5B57;&amp;#x7B26;&amp;#x4E32;&amp;#x5BF9;&amp;#x8C61;&amp;#x5B9A;&amp;#x4E49;&amp;#x4E3A;1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-typedef struct {
-    PyObject_VAR_HEAD
-    long ob_shash;
-    int ob_sstate;
-    char ob_sval[1];
-
-    /* Invariants:
-     * ob_sval contains space for &amp;apos;ob_size+1&amp;apos; elements.
-     * ob_sval[ob_size] == 0.
-     * ob_shash is the hash of the string or -1 if not computed yet.
-     * ob_sstate != 0 iff the string object is in stringobject.c&amp;apos;s
-     * &amp;apos;interned&amp;apos; dictionary; in this case the two references
-     * from &amp;apos;interned&amp;apos; to this object are *not counted* in ob_refcnt.
-     */
-} PyStringObject;
-
-&amp;#x5176;&amp;#x4E2D;PyObject_VAR_HEAD&amp;#x5B8F;&amp;#x4E2D;&amp;#x6709;&amp;#x4E00;&amp;#x4E2A;ob_size&amp;#x57DF;&amp;#xFF0C;&amp;#x8868;&amp;#x793A;&amp;#x53EF;&amp;#x53D8;&amp;#x957F;&amp;#x5EA6;&amp;#x5BF9;&amp;#x8C61;&amp;#x7684;&amp;#x957F;&amp;#x5EA6;&amp;#x3002;
-ob_sval&amp;#x5B9E;&amp;#x9645;&amp;#x4E0A;&amp;#x4FDD;&amp;#x5B58;&amp;#x4E86;&amp;#x4E00;&amp;#x4E2A;&amp;#x6307;&amp;#x5411;&amp;#x5177;&amp;#x4F53;&amp;#x5B57;&amp;#x7B26;&amp;#x4E32;&amp;#x5B58;&amp;#x50A8;&amp;#x4F4D;&amp;#x7F6E;&amp;#x7684;&amp;#x6307;&amp;#x9488;&amp;#x3002;">
-  
-  
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-
-  <meta property="og:title" content="《Python源码剖析》读书笔记-3 字符串对象"/>
-  <meta property="og:site_name" content="一根笨茄子"/>
-
-  <link rel="alternate" href="/atom.xml" title="一根笨茄子" type="application/atom+xml">
-  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
-  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  
+    <meta name="author" content="Yubo Guo">
+  
+  
+    <meta name="description" content="第3章 Python中的字符串对象
+字符串对象定义为
+123456789101112131415typedef struct &amp;#123;    PyObject_VAR_HEAD    long ob_shash;    int ob_sstate;    char ob_sval[1];    /* Invariants:     * ob_sval contains space for &#39;">
+  
+  <meta name="description" content="第3章 Python中的字符串对象
+字符串对象定义为
+123456789101112131415typedef struct &amp;#123;    PyObject_VAR_HEAD    long ob_shash;    int ob_sstate;    char ob_sval[1];    /* Invariants:     * ob_sval contains space for &apos;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《Python源码剖析》读书笔记-3 字符串对象">
+<meta property="og:url" content="http://blog.guoyb.com/2014/03/23/python-source-3/index.html">
+<meta property="og:site_name" content="一根笨茄子">
+<meta property="og:description" content="第3章 Python中的字符串对象
+字符串对象定义为
+123456789101112131415typedef struct &amp;#123;    PyObject_VAR_HEAD    long ob_shash;    int ob_sstate;    char ob_sval[1];    /* Invariants:     * ob_sval contains space for &apos;">
+<meta property="og:updated_time" content="2014-06-01T14:39:34.996Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="《Python源码剖析》读书笔记-3 字符串对象">
+<meta name="twitter:description" content="第3章 Python中的字符串对象
+字符串对象定义为
+123456789101112131415typedef struct &amp;#123;    PyObject_VAR_HEAD    long ob_shash;    int ob_sstate;    char ob_sval[1];    /* Invariants:     * ob_sval contains space for &apos;">
+  
+  
+  <link rel="stylesheet" href="/css/style.css">
   <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
   
-  
-<script type="text/javascript">
-var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
-document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3F996ee0fca2512b4c29f37f60cf6387ca' type='text/javascript'%3E%3C/script%3E"));
-</script>
-
 </head>
-
 
 <body>
   <div class="wrapper">
-    <header id="header"><div class="title">
-  <h1><a href="/">一根笨茄子</a></h1>
-  <p><a href="/"></a></p>
-</div>
-<nav class="nav">
-  <ul>
-    
-      <li><a href="/archives">归档</a></li>
-    
-      <li><a href="/about">关于我</a></li>
-    
-  </ul>
+    <header id="header">
+  <div class="title">
+    <h1><a href="/">一根笨茄子</a></h1>
+    <p><a href="/"></a></p>
+  </div>
+  <nav class="nav">
+    <ul>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/about">关于我</a></li>
+      
+      
+    </ul>
+    <div class="clearfix"></div>
+  </nav>
   <div class="clearfix"></div>
-</nav>
-<div class="clearfix"></div></header>
-    <div class="content"><article class="post">
+</header>
+    <div class="content">
+		<article class="post">
   <header>
     
       <div class="icon"></div>
-      <time datetime="2014-03-23T01:42:08.000Z"><a href="/2014/03/23/python-source-3/">Mar 23 2014</a></time>
+      <a href="/2014/03/23/python-source-3/">
+  <time datetime="2014-03-23T01:42:08.000Z">
+    2014-03-23
+  </time>
+</a>
     
     
   
@@ -97,73 +78,33 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
   <div class="entry">
     
       <hr>
-<h2 id="&#x7B2C;3&#x7AE0;_Python&#x4E2D;&#x7684;&#x5B57;&#x7B26;&#x4E32;&#x5BF9;&#x8C61;">&#x7B2C;3&#x7AE0; Python&#x4E2D;&#x7684;&#x5B57;&#x7B26;&#x4E32;&#x5BF9;&#x8C61;</h2>
+<h2 id="第3章-Python中的字符串对象"><a href="#第3章-Python中的字符串对象" class="headerlink" title="第3章 Python中的字符串对象"></a>第3章 Python中的字符串对象</h2><ul>
+<li><p>字符串对象定义为</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> &#123;</span><br><span class="line">    PyObject_VAR_HEAD</span><br><span class="line">    <span class="keyword">long</span> ob_shash;</span><br><span class="line">    <span class="keyword">int</span> ob_sstate;</span><br><span class="line">    <span class="keyword">char</span> ob_sval[<span class="number">1</span>];</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Invariants:</span><br><span class="line">     * ob_sval contains space for 'ob_size+1' elements.</span><br><span class="line">     * ob_sval[ob_size] == 0.</span><br><span class="line">     * ob_shash is the hash of the string or -1 if not computed yet.</span><br><span class="line">     * ob_sstate != 0 iff the string object is in stringobject.c's</span><br><span class="line">     * 'interned' dictionary; in this case the two references</span><br><span class="line">     * from 'interned' to this object are *not counted* in ob_refcnt.</span><br><span class="line">     */</span></span><br><span class="line">&#125; PyStringObject;</span><br></pre></td></tr></table></figure>
 <ul>
-<li>&#x5B57;&#x7B26;&#x4E32;&#x5BF9;&#x8C61;&#x5B9A;&#x4E49;&#x4E3A;<br><figure class="highlight c"><table><tr><td class="gutter"><pre>1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-</pre></td><td class="code"><pre><span class="keyword">typedef</span> <span class="keyword">struct</span> {
-    PyObject_VAR_HEAD
-    <span class="keyword">long</span> ob_shash;
-    <span class="keyword">int</span> ob_sstate;
-    <span class="keyword">char</span> ob_sval[<span class="number">1</span>];
-
-    <span class="comment">/* Invariants:
-     * ob_sval contains space for &apos;ob_size+1&apos; elements.
-     * ob_sval[ob_size] == 0.
-     * ob_shash is the hash of the string or -1 if not computed yet.
-     * ob_sstate != 0 iff the string object is in stringobject.c&apos;s
-     * &apos;interned&apos; dictionary; in this case the two references
-     * from &apos;interned&apos; to this object are *not counted* in ob_refcnt.
-     */</span>
-} PyStringObject;
-</pre></td></tr></table></figure><ul>
-<li>&#x5176;&#x4E2D;PyObject_VAR_HEAD&#x5B8F;&#x4E2D;&#x6709;&#x4E00;&#x4E2A;ob_size&#x57DF;&#xFF0C;&#x8868;&#x793A;&#x53EF;&#x53D8;&#x957F;&#x5EA6;&#x5BF9;&#x8C61;&#x7684;&#x957F;&#x5EA6;&#x3002;</li>
-<li>ob_sval&#x5B9E;&#x9645;&#x4E0A;&#x4FDD;&#x5B58;&#x4E86;&#x4E00;&#x4E2A;&#x6307;&#x5411;&#x5177;&#x4F53;&#x5B57;&#x7B26;&#x4E32;&#x5B58;&#x50A8;&#x4F4D;&#x7F6E;&#x7684;&#x6307;&#x9488;&#x3002;<a id="more"></a></li>
+<li>其中PyObject_VAR_HEAD宏中有一个ob_size域，表示可变长度对象的长度。</li>
+<li>ob_sval实际上保存了一个指向具体字符串存储位置的指针。<a id="more"></a></li>
 </ul>
 </li>
-<li><h3 id="Intern&#x673A;&#x5236;">Intern&#x673A;&#x5236;</h3>
+<li><p>###Intern机制</p>
 <ul>
-<li>Intern&#x673A;&#x5236;&#x662F;&#x4E00;&#x79CD;&#x7F13;&#x5B58;&#x673A;&#x5236;&#xFF0C;&#x907F;&#x514D;&#x4E86;&#x5B57;&#x7B26;&#x4E32;&#x5728;&#x5185;&#x5B58;&#x4E2D;&#x5360;&#x7528;&#x8FC7;&#x591A;&#x7684;&#x5185;&#x5B58;&#xFF1B;&#x540C;&#x65F6;&#x5BF9;&#x5355;&#x5B57;&#x7B26;&#x4E32;&#x505A;&#x51FA;&#x4F18;&#x5316;&#xFF0C;&#x4F7F;&#x4E4B;&#x4E0D;&#x9700;&#x8981;&#x6BCF;&#x6B21;&#x4F7F;&#x7528;&#x90FD;&#x5411;&#x5185;&#x5B58;&#x7533;&#x8BF7;&#x5206;&#x914D;&#x5185;&#x5B58;&#x3002;</li>
-<li>&#x9996;&#x5148;&#x770B;PyString_InternInPlace(PyObject **p)&#xFF0C;&#x5176;&#x4E2D;&#x901A;&#x8FC7;&#x4E00;&#x4E2A;Dict&#x4FDD;&#x5B58;&#x6240;&#x6709;&#x9700;&#x8981;&#x901A;&#x8FC7;Intern&#x673A;&#x5236;&#x6765;&#x5171;&#x4EAB;&#x7684;&#x5B57;&#x7B26;&#x4E32;&#xFF08;&#x952E;&#x503C;&#x90FD;&#x662F;&#x8BE5;&#x5B57;&#x7B26;&#x4E32;&#x5BF9;&#x8C61;&#x7684;&#x6307;&#x9488;&#xFF09;&#x3002;</li>
-<li>&#x5176;&#x6B21;&#xFF0C;&#x5728;nullstring&#x548C;characters&#x91CC;&#x9762;&#x4E5F;&#x4FDD;&#x5B58;&#x4E86;&#x6307;&#x5411;&#x7A7A;&#x5B57;&#x7B26;&#x5BF9;&#x8C61;&#x548C;&#x5355;&#x5B57;&#x7B26;&#x5BF9;&#x8C61;&#x7684;&#x6307;&#x9488;&#x3002;&#x5F53;&#x76EE;&#x524D;&#x9700;&#x8981;&#x521B;&#x5EFA;&#x7684;&#x5B57;&#x7B26;&#x4E32;&#x5BF9;&#x8C61;&#xFF0C;&#x5DF2;&#x7ECF;&#x5728;nullstring&#x4E2D;&#x6216;&#x8005;characters&#x4E2D;&#x65F6;&#xFF0C;&#x5C31;&#x76F4;&#x63A5;&#x53D6;&#x51FA;&#x800C;&#x4E0D;&#x4F1A;&#x91CD;&#x65B0;&#x7533;&#x8BF7;&#x5185;&#x5B58;&#x3002;&#x800C;&#x5BF9;&#x4E8E;&#x90A3;&#x4E9B;&#x957F;&#x5EA6;&#x5927;&#x4E8E;1&#x7684;&#x5B57;&#x7B26;&#x4E32;&#xFF0C;Python&#x8FD8;&#x662F;&#x4F1A;&#x4E3A;&#x5B83;&#x4EEC;&#x7533;&#x8BF7;/&#x91CA;&#x653E;&#x5185;&#x5B58;&#xFF0C;&#x53EA;&#x662F;&#x5982;&#x679C;&#x5B57;&#x7B26;&#x4E32;&#x5DF2;&#x7ECF;&#x88AB;Intern&#xFF0C;Intern&#x673A;&#x5236;&#x80FD;&#x591F;&#x4FDD;&#x8BC1;&#x8FD9;&#x4E9B;&#x5B57;&#x7B26;&#x4E32;&#x53EA;&#x5360;&#x7528;1&#x4EFD;&#x5185;&#x5B58;&#x3002;</li>
-<li>&#x53E6;&#x5916;&#xFF0C;&#x867D;&#x7136;interned&#x5B57;&#x5178;&#x5728;&#x63D2;&#x5165;&#x65F6;&#xFF0C;&#x662F;&#x4F7F;&#x7528;&#x7684;&#xFF08;PyObject*)&#x6307;&#x9488;&#x4F5C;&#x4E3A;key&#x548C;value&#xFF0C;&#x4F46;&#x662F;&#x5B9E;&#x9645;&#x4E0A;&#x63D2;&#x5165;&#x548C;&#x67E5;&#x627E;&#x65F6;&#x90FD;&#x4F1A;&#x7528;&#x5230;string&#x7684;hash&#x503C;&#xFF08;&#x5177;&#x4F53;&#x5982;&#x4F55;&#x4F7F;&#x7528;&#xFF0C;Python&#x4E2D;&#x7684;Dict&#x5BF9;&#x8C61;&#x4F1A;&#x8BB2;&#xFF09;&#x3002;&#x8FD9;&#x6837;&#xFF0C;&#x4E0D;&#x540C;&#x65F6;&#x523B;&#x751F;&#x6210;&#x7684;&#x540C;&#x4E00;&#x4E2A;python&#x5B57;&#x7B26;&#x4E32;&#xFF0C;&#x867D;&#x7136;&#x53EF;&#x80FD;&#x4ED6;&#x4EEC;&#x7684;&#x6307;&#x9488;&#x4E0D;&#x540C;&#xFF0C;&#x4F46;&#x662F;hash&#x503C;&#x76F8;&#x540C;&#xFF0C;&#x56E0;&#x6B64;&#x8FD8;&#x662F;&#x53EF;&#x4EE5;&#x5728;interned&#x5B57;&#x5178;&#x4E2D;&#x67E5;&#x627E;&#x5230;&#xFF0C;&#x4ECE;&#x800C;&#x8D77;&#x5230;&#x8282;&#x7701;&#x5185;&#x5B58;&#x7684;&#x4F5C;&#x7528;&#x3002;</li>
-<li>Intern&#x7684;&#x5F15;&#x7528;&#x8BA1;&#x6570;&#x662F;&#x4E00;&#x4E2A;&#x503C;&#x5F97;&#x5173;&#x6CE8;&#x7684;&#x95EE;&#x9898;&#x3002;&#x5728;PyString_InternInPlace(PyObject **p)&#x5B58;&#x5728;&#x8FD9;&#x4E48;&#x4E00;&#x6BB5;&#x5173;&#x4E8E;&#x5F15;&#x7528;&#x8BA1;&#x6570;&#x7684;&#x5904;&#x7406;&#xFF1A;<figure class="highlight c"><table><tr><td class="gutter"><pre>1
-2
-3
-4
-5
-6
-7
-</pre></td><td class="code"><pre><span class="keyword">if</span> (PyDict_SetItem(interned, (PyObject *)s, (PyObject *)s) &lt; <span class="number">0</span>) {
-        PyErr_Clear();
-        <span class="keyword">return</span>;
-    }
-<span class="comment">/* The two references in interned are not counted by refcnt.
-   The string deallocator will take care of this */</span>
-Py_REFCNT(s) -= <span class="number">2</span>;
-</pre></td></tr></table></figure></li>
-<li>&#x5982;&#x679C;s&#x88AB;&#x63D2;&#x5165;Interned&#x5B57;&#x5178;&#x4E2D;&#xFF0C;&#x5728;PyDict_SetItem&#x51FD;&#x6570;&#x5185;&#x90E8;&#xFF0C;&#x4F1A;&#x4E3A;key&#x548C;value&#x5404;&#x589E;&#x52A0;&#x4E00;&#x6B21;&#x5F15;&#x7528;&#x8BA1;&#x6570;&#xFF1B;Py_REFCNT(s) -= 2;&#x5219;&#x5C06;&#x5F15;&#x7528;&#x8BA1;&#x6570;&#x590D;&#x539F;&#x3002;&#x8FD9;&#x662F;&#x56E0;&#x4E3A;Python&#x4E0D;&#x5E0C;&#x671B;interned&#x7684;&#x5B57;&#x7B26;&#x4E32;&#x6C38;&#x8FDC;&#x5B58;&#x5728;&#x4E8E;&#x5185;&#x5B58;&#x4E2D;&#xFF0C;&#x6240;&#x4EE5;&#x4F1A;&#x5F3A;&#x5236;&#x8BBE;&#x7F6E;interned&#x5185;&#x90E8;&#x7684;&#x5F15;&#x7528;&#x8BA1;&#x6570;&#x65E0;&#x6548;&#xFF0C;&#x800C;&#x5F53;&#x5916;&#x90E8;&#x7684;&#x5F15;&#x7528;&#x8BA1;&#x6570;&#x4E3A;0&#x65F6;&#xFF0C;&#x5C31;&#x9500;&#x6BC1;&#x8BE5;&#x5BF9;&#x8C61;&#x3002;&#x5728;string_dealloc&#x4E2D;&#x505A;&#x4E86;&#x76F8;&#x5173;&#x7684;&#x5904;&#x7406;&#xFF0C;&#x4F7F;&#x5F97;&#x5916;&#x90E8;&#x5F15;&#x7528;&#x8BA1;&#x6570;&#x4E3A;0&#x7684;interned&#x5B57;&#x7B26;&#x4E32;&#x5BF9;&#x8C61;&#x53EF;&#x4EE5;&#x4ECE;interned&#x5B57;&#x5178;&#x4E2D;&#x79FB;&#x51FA;&#x3002;</li>
+<li>Intern机制是一种缓存机制，避免了字符串在内存中占用过多的内存；同时对单字符串做出优化，使之不需要每次使用都向内存申请分配内存。</li>
+<li>首先看PyString_InternInPlace(PyObject **p)，其中通过一个Dict保存所有需要通过Intern机制来共享的字符串（键值都是该字符串对象的指针）。</li>
+<li>其次，在nullstring和characters里面也保存了指向空字符对象和单字符对象的指针。当目前需要创建的字符串对象，已经在nullstring中或者characters中时，就直接取出而不会重新申请内存。而对于那些长度大于1的字符串，Python还是会为它们申请/释放内存，只是如果字符串已经被Intern，Intern机制能够保证这些字符串只占用1份内存。</li>
+<li>另外，虽然interned字典在插入时，是使用的（PyObject*)指针作为key和value，但是实际上插入和查找时都会用到string的hash值（具体如何使用，Python中的Dict对象会讲）。这样，不同时刻生成的同一个python字符串，虽然可能他们的指针不同，但是hash值相同，因此还是可以在interned字典中查找到，从而起到节省内存的作用。</li>
+<li><p>Intern的引用计数是一个值得关注的问题。在PyString_InternInPlace(PyObject **p)存在这么一段关于引用计数的处理：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (PyDict_SetItem(interned, (PyObject *)s, (PyObject *)s) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        PyErr_Clear();</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="comment">/* The two references in interned are not counted by refcnt.</span><br><span class="line">   The string deallocator will take care of this */</span></span><br><span class="line">Py_REFCNT(s) -= <span class="number">2</span>;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>如果s被插入Interned字典中，在PyDict_SetItem函数内部，会为key和value各增加一次引用计数；Py_REFCNT(s) -= 2;则将引用计数复原。这是因为Python不希望interned的字符串永远存在于内存中，所以会强制设置interned内部的引用计数无效，而当外部的引用计数为0时，就销毁该对象。在string_dealloc中做了相关的处理，使得外部引用计数为0的interned字符串对象可以从interned字典中移出。</p>
+</li>
 </ul>
 </li>
-<li><h3 id="String&#x7684;&#x8FDE;&#x63A5;">String&#x7684;&#x8FDE;&#x63A5;</h3>
+<li><p>###String的连接</p>
 <ul>
-<li>&#x2018;+&#x2019;&#x5BF9;&#x5E94;&#x4E86;string_concat&#x51FD;&#x6570;</li>
-<li>&#x5BF9;&#x4E8E;&#x8F93;&#x5165;&#x7684;&#x4E24;&#x4E2A;&#x5B57;&#x7B26;&#x4E32;&#xFF0C;&#x4E00;&#x822C;&#x7684;&#xFF0C;&#x4F1A;&#x8FDB;&#x884C;&#x4E00;&#x6B21;&#x5185;&#x5B58;&#x7533;&#x8BF7;&#x548C;&#x4E24;&#x6B21;memcpy&#x3002;</li>
-<li>&#x800C;join&#x51FD;&#x6570;&#x5BF9;&#x5E94;&#x7684;string_join&#x51FD;&#x6570;</li>
-<li>&#x65E0;&#x8BBA;list&#x7684;&#x957F;&#x5EA6;&#x662F;&#x591A;&#x5C11;&#xFF0C;&#x90FD;&#x53EA;&#x7533;&#x8BF7;&#x4E00;&#x6B21;&#x5185;&#x5B58;&#xFF0C;&#x800C;&#x505A;2n-1&#x6B21;memcpy&#xFF0C;&#x56E0;&#x6B64;&#x5BF9;&#x4E8E;&#x5927;&#x91CF;&#x7684;&#x5B57;&#x7B26;&#x4E32;&#x8FDE;&#x63A5;&#xFF0C;&#x4F7F;&#x7528;join&#x51FD;&#x6570;&#x66F4;&#x9AD8;&#x6548;</li>
+<li>‘+’对应了string_concat函数</li>
+<li>对于输入的两个字符串，一般的，会进行一次内存申请和两次memcpy。</li>
+<li>而join函数对应的string_join函数</li>
+<li>无论list的长度是多少，都只申请一次内存，而做2n-1次memcpy，因此对于大量的字符串连接，使用join函数更高效</li>
 </ul>
 </li>
 </ul>
@@ -174,9 +115,8 @@ Py_REFCNT(s) -= <span class="number">2</span>;
     
       
       
-  
   <div class="tags">
-    <a href="/tags/读书笔记/">读书笔记</a>, <a href="/tags/Python/">Python</a>
+    <a class="tags-link" href="/tags/Python/">Python</a>, <a class="tags-link" href="/tags/读书笔记/">读书笔记</a>
   </div>
 
     
@@ -195,111 +135,19 @@ var jiathis_config = {data_track_clickback:'true'};
   <div class="ds-thread" data-title="《Python源码剖析》读书笔记-3 字符串对象">
   </div>
 </section>
-</div>
+
+	</div>
   </div>
   <div class="widget-wrapper">
-    <aside id="sidebar">
+	<aside id="sidebar">
   
-  
-    
-      
-      
-    
-      
-      
-
-<div class="widget tag first">
-  <h3 class="title">Tags</h3>
-  <ul class="entry">
-  
-    <li><a href="/tags/Python/">Python</a><small>11</small></li>
-  
-    <li><a href="/tags/Unity3D/">Unity3D</a><small>1</small></li>
-  
-    <li><a href="/tags/书单/">书单</a><small>4</small></li>
-  
-    <li><a href="/tags/北京车展/">北京车展</a><small>1</small></li>
-  
-    <li><a href="/tags/杂谈/">杂谈</a><small>5</small></li>
-  
-    <li><a href="/tags/游戏开发/">游戏开发</a><small>1</small></li>
-  
-    <li><a href="/tags/爱好/">爱好</a><small>1</small></li>
-  
-    <li><a href="/tags/生活/">生活</a><small>2</small></li>
-  
-    <li><a href="/tags/读书笔记/">读书笔记</a><small>11</small></li>
-  
-    <li><a href="/tags/读后感/">读后感</a><small>1</small></li>
-  
-  </ul>
-</div>
-
-    
-      
-      
-
-<div class="widget recent-posts">
-  <h3 class="title">Recent Posts</h3>
-  <ul class="entry">
-    
-      <li>
-        <a href="/2015/01/24/sgjm-reviewmd/">《三国机密》感</a>
-      </li>
-    
-      <li>
-        <a href="/2015/01/01/2014-booklist-2/">2014年下半年书单</a>
-      </li>
-    
-      <li>
-        <a href="/2014/10/01/2014-booklist-1/">2014年上半年书单</a>
-      </li>
-    
-      <li>
-        <a href="/2014/06/05/python-source-11/">《Python源码剖析》读书笔记-11 Python虚拟机中的函数机制</a>
-      </li>
-    
-      <li>
-        <a href="/2014/05/23/unity2d-flappybird/">用Unity3D仿造一个FlappyBird</a>
-      </li>
-    
-  </ul>
-</div>
-
-    
-      
-      
-
-<div class="widget blogroll">
-  <h3 class="title">Links</h3>
-  <ul class="entry">
-  
-    
-    <li><a href="http://guoyb.com/" target="_blank">旧博客</a></li>
-  
-    
-    <li><a href="http://weibo.com/dusticebloomingmonk" target="_blank">新浪微博</a></li>
-  
-    
-    <li><a href="http://www.linkedin.com/profile/view?id=256546845" target="_blank">LinkedIn</a></li>
-  
-    
-    <li><a href="http://www.yanggy.com/" target="_blank">阳总工</a></li>
-  
-    
-    <li><a href="http://mcgrady164.github.io/" target="_blank">阿俊</a></li>
-  
-  </ul>
-</div>
-
-    
   
 </aside>
 <div class="clearfix"></div>
   </div>
   <footer id="footer"><div class="copyright">
   
-  &copy; 2015 <a href="/">Yubo Guo</a>
+  &copy; 2016 <a href="/">Yubo Guo</a>
   
 </div>
 <div class="theme-copyright">
@@ -308,7 +156,8 @@ var jiathis_config = {data_track_clickback:'true'};
   Redesign by <a href="http://heroicyang.com/" target="_blank">Heroic Yang</a>
 </div>
 <div class="clearfix"></div></footer>
-  <script src="/js/scale.fix.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+<script src="/js/scale.fix.js"></script>
 <script src="/js/jquery.imagesloaded.min.js"></script>
 <script src="/js/gallery.js"></script>
 

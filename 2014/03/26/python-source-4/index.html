@@ -5,92 +5,68 @@
   <meta http-equiv="X-UA-Compatible" content="chrome=1">
   
   <title>《Python源码剖析》读书笔记-4 List对象 | 一根笨茄子</title>
-  <meta name="author" content="Yubo Guo">
-  
-  <meta name="description" content="&amp;#x7B2C;4&amp;#x7AE0; Python&amp;#x4E2D;&amp;#x7684;List&amp;#x5BF9;&amp;#x8C61;
-
-List&amp;#x5BF9;&amp;#x8C61;&amp;#x5B9A;&amp;#x4E49;&amp;#x4E3A;1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-typedef struct {
-    PyObject_VAR_HEAD
-    /* Vector of pointers to list elements. list[0] is ob_item[0], etc. */
-    PyObject **ob_item;
-
-    /* ob_item contains space for &amp;apos;allocated&amp;apos; elements. The number
-     * currently in use is ob_size.
-     * Invariants:
-     * 0 &amp;lt;= ob_size &amp;lt;= allocated
-     * len(list) == ob_size
-     * ob_item == NULL implies ob_size == allocated == 0
-     * list.sort() temporarily sets allocated to -1 to detect mutations.
-     *
-     * Items must normally not be NULL, except during construction when
-     * the list is not yet visible outside the function that builds it.
-     */
-    Py_ssize_t allocated;
-} PyListObject;
-
-ob_size&amp;#x548C;allocated&amp;#x7684;&amp;#x533A;&amp;#x522B;&amp;#x5728;&amp;#x4E8E;&amp;#xFF0C;ob_size&amp;#x662F;&amp;#x5F53;&amp;#x524D;List&amp;#x4E2D;&amp;#x4F7F;&amp;#x7528;&amp;#x5230;&amp;#x7684;&amp;#x5143;&amp;#x7D20;&amp;#x4E2A;&amp;#x6570;&amp;#xFF0C;&amp;#x4E5F;&amp;#x5C31;&amp;#x662F;List&amp;#x7684;&amp;#x5B9E;&amp;#x9645;&amp;#x957F;&amp;#x5EA6;&amp;#xFF1B;&amp;#x800C;allocated&amp;#x662F;List&amp;#x7684;&amp;#x5BB9;&amp;#x91CF;&amp;#xFF0C;&amp;#x548C;STL&amp;#x4E2D;vector&amp;#x7684;capacity&amp;#x7C7B;&amp;#x4F3C;&amp;#x3002;&amp;#x6240;&amp;#x4EE5;&amp;#x6709;0&amp;lt;=ob_size&amp;lt;=allocated.">
-  
-  
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-
-  <meta property="og:title" content="《Python源码剖析》读书笔记-4 List对象"/>
-  <meta property="og:site_name" content="一根笨茄子"/>
-
-  <link rel="alternate" href="/atom.xml" title="一根笨茄子" type="application/atom+xml">
-  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
-  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  
+    <meta name="author" content="Yubo Guo">
+  
+  
+    <meta name="description" content="第4章 Python中的List对象
+List对象定义为
+123456789101112131415161718typedef struct &amp;#123;    PyObject_VAR_HEAD    /* Vector of pointers to list elements. list[0] is ob_item[0], etc. */    PyObject **ob_item;">
+  
+  <meta name="description" content="第4章 Python中的List对象
+List对象定义为
+123456789101112131415161718typedef struct &amp;#123;    PyObject_VAR_HEAD    /* Vector of pointers to list elements. list[0] is ob_item[0], etc. */    PyObject **ob_item;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《Python源码剖析》读书笔记-4 List对象">
+<meta property="og:url" content="http://blog.guoyb.com/2014/03/26/python-source-4/index.html">
+<meta property="og:site_name" content="一根笨茄子">
+<meta property="og:description" content="第4章 Python中的List对象
+List对象定义为
+123456789101112131415161718typedef struct &amp;#123;    PyObject_VAR_HEAD    /* Vector of pointers to list elements. list[0] is ob_item[0], etc. */    PyObject **ob_item;">
+<meta property="og:updated_time" content="2014-06-01T14:40:48.032Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="《Python源码剖析》读书笔记-4 List对象">
+<meta name="twitter:description" content="第4章 Python中的List对象
+List对象定义为
+123456789101112131415161718typedef struct &amp;#123;    PyObject_VAR_HEAD    /* Vector of pointers to list elements. list[0] is ob_item[0], etc. */    PyObject **ob_item;">
+  
+  
+  <link rel="stylesheet" href="/css/style.css">
   <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
   
-  
-<script type="text/javascript">
-var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
-document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3F996ee0fca2512b4c29f37f60cf6387ca' type='text/javascript'%3E%3C/script%3E"));
-</script>
-
 </head>
-
 
 <body>
   <div class="wrapper">
-    <header id="header"><div class="title">
-  <h1><a href="/">一根笨茄子</a></h1>
-  <p><a href="/"></a></p>
-</div>
-<nav class="nav">
-  <ul>
-    
-      <li><a href="/archives">归档</a></li>
-    
-      <li><a href="/about">关于我</a></li>
-    
-  </ul>
+    <header id="header">
+  <div class="title">
+    <h1><a href="/">一根笨茄子</a></h1>
+    <p><a href="/"></a></p>
+  </div>
+  <nav class="nav">
+    <ul>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/about">关于我</a></li>
+      
+      
+    </ul>
+    <div class="clearfix"></div>
+  </nav>
   <div class="clearfix"></div>
-</nav>
-<div class="clearfix"></div></header>
-    <div class="content"><article class="post">
+</header>
+    <div class="content">
+		<article class="post">
   <header>
     
       <div class="icon"></div>
-      <time datetime="2014-03-26T12:02:05.000Z"><a href="/2014/03/26/python-source-4/">Mar 26 2014</a></time>
+      <a href="/2014/03/26/python-source-4/">
+  <time datetime="2014-03-26T12:02:05.000Z">
+    2014-03-26
+  </time>
+</a>
     
     
   
@@ -102,73 +78,30 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
   <div class="entry">
     
       <hr>
-<h2 id="&#x7B2C;4&#x7AE0;_Python&#x4E2D;&#x7684;List&#x5BF9;&#x8C61;">&#x7B2C;4&#x7AE0; Python&#x4E2D;&#x7684;List&#x5BF9;&#x8C61;</h2>
+<h2 id="第4章-Python中的List对象"><a href="#第4章-Python中的List对象" class="headerlink" title="第4章 Python中的List对象"></a>第4章 Python中的List对象</h2><ul>
+<li><p>List对象定义为</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> &#123;</span><br><span class="line">    PyObject_VAR_HEAD</span><br><span class="line">    <span class="comment">/* Vector of pointers to list elements. list[0] is ob_item[0], etc. */</span></span><br><span class="line">    PyObject **ob_item;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* ob_item contains space for 'allocated' elements. The number</span><br><span class="line">     * currently in use is ob_size.</span><br><span class="line">     * Invariants:</span><br><span class="line">     * 0 &lt;= ob_size &lt;= allocated</span><br><span class="line">     * len(list) == ob_size</span><br><span class="line">     * ob_item == NULL implies ob_size == allocated == 0</span><br><span class="line">     * list.sort() temporarily sets allocated to -1 to detect mutations.</span><br><span class="line">     *</span><br><span class="line">     * Items must normally not be NULL, except during construction when</span><br><span class="line">     * the list is not yet visible outside the function that builds it.</span><br><span class="line">     */</span></span><br><span class="line">    Py_ssize_t allocated;</span><br><span class="line">&#125; PyListObject;</span><br></pre></td></tr></table></figure>
 <ul>
-<li>List&#x5BF9;&#x8C61;&#x5B9A;&#x4E49;&#x4E3A;<br><figure class="highlight c"><table><tr><td class="gutter"><pre>1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-</pre></td><td class="code"><pre><span class="keyword">typedef</span> <span class="keyword">struct</span> {
-    PyObject_VAR_HEAD
-    <span class="comment">/* Vector of pointers to list elements. list[0] is ob_item[0], etc. */</span>
-    PyObject **ob_item;
-
-    <span class="comment">/* ob_item contains space for &apos;allocated&apos; elements. The number
-     * currently in use is ob_size.
-     * Invariants:
-     * 0 &lt;= ob_size &lt;= allocated
-     * len(list) == ob_size
-     * ob_item == NULL implies ob_size == allocated == 0
-     * list.sort() temporarily sets allocated to -1 to detect mutations.
-     *
-     * Items must normally not be NULL, except during construction when
-     * the list is not yet visible outside the function that builds it.
-     */</span>
-    Py_ssize_t allocated;
-} PyListObject;
-</pre></td></tr></table></figure><ul>
-<li>ob_size&#x548C;allocated&#x7684;&#x533A;&#x522B;&#x5728;&#x4E8E;&#xFF0C;ob_size&#x662F;&#x5F53;&#x524D;List&#x4E2D;&#x4F7F;&#x7528;&#x5230;&#x7684;&#x5143;&#x7D20;&#x4E2A;&#x6570;&#xFF0C;&#x4E5F;&#x5C31;&#x662F;List&#x7684;&#x5B9E;&#x9645;&#x957F;&#x5EA6;&#xFF1B;&#x800C;allocated&#x662F;List&#x7684;&#x5BB9;&#x91CF;&#xFF0C;&#x548C;STL&#x4E2D;vector&#x7684;capacity&#x7C7B;&#x4F3C;&#x3002;&#x6240;&#x4EE5;&#x6709;0&lt;=ob_size&lt;=allocated.<a id="more"></a></li>
+<li>ob_size和allocated的区别在于，ob_size是当前List中使用到的元素个数，也就是List的实际长度；而allocated是List的容量，和STL中vector的capacity类似。所以有0&lt;=ob_size&lt;=allocated.<a id="more"></a></li>
 </ul>
 </li>
-<li><p>&#x521B;&#x5EFA;list&#x7528;PyList_New&#xFF0C;&#x5176;&#x4E2D;&#x4E5F;&#x7528;&#x5230;&#x4E86;&#x7F13;&#x51B2;&#x6C60;&#x6280;&#x672F;&#xFF0C;&#x4E0E;&#x6574;&#x6570;&#x5BF9;&#x8C61;&#x4E00;&#x6837;&#x3002;&#x800C;&#x4E14;&#x6240;&#x4F7F;&#x7528;&#x7684;&#x94FE;&#x8868;&#x90FD;&#x53EB;&#x505A;free_list&#x3002;&#x8FD9;&#x4E24;&#x4E2A;free_list&#x5B9A;&#x4E49;&#x5728;&#x4E0D;&#x540C;&#x7684;.c&#x6587;&#x4EF6;&#x4E2D;&#xFF0C;&#x5E76;&#x4E14;&#x7528;static&#x5173;&#x952E;&#x5B57;&#x9650;&#x5B9A;&#x5176;&#x4F5C;&#x7528;&#x57DF;&#x53EA;&#x5728;&#x5F53;&#x524D;&#x6587;&#x4EF6;&#xFF0C;&#x6240;&#x4EE5;&#x6CA1;&#x6709;&#x547D;&#x540D;&#x51B2;&#x7A81;&#x3002;</p>
+<li><p>创建list用PyList_New，其中也用到了缓冲池技术，与整数对象一样。而且所使用的链表都叫做free_list。这两个free_list定义在不同的.c文件中，并且用static关键字限定其作用域只在当前文件，所以没有命名冲突。</p>
 </li>
-<li><p>PyList_Insert&#x91CC;&#x9700;&#x8981;&#x6CE8;&#x610F;&#x4E09;&#x70B9;&#xFF1A;</p>
+<li><p>PyList_Insert里需要注意三点：</p>
 <ul>
-<li>&#x5728;&#x975E;&#x672B;&#x5C3E;&#x63D2;&#x5165;&#x4E00;&#x4E2A;&#x5143;&#x7D20;&#xFF0C;&#x4F1A;&#x5E26;&#x6765;&#x5927;&#x91CF;&#x7684;&#x5143;&#x7D20;&#x62F7;&#x8D1D;&#x64CD;&#x4F5C;&#xFF0C;&#x4F4E;&#x6548;&#xFF1B;</li>
-<li>&#x63D2;&#x5165;&#x65F6;&#x7684;&#x4E0B;&#x6807;&#x5904;&#x7406;&#x4E86;&#x8D1F;&#x6570;&#x60C5;&#x51B5;&#xFF0C;&#x6240;&#x4EE5;python&#x624D;&#x53EF;&#x4EE5;&#x652F;&#x6301;arr.insert(-1,5)&#x8FD9;&#x79CD;&#x8BED;&#x6CD5;&#xFF1B;</li>
-<li>&#x63D2;&#x5165;&#x65F6;&#x4F1A;&#x8C03;&#x7528;&#x5230;list_resize&#xFF0C;&#x5728;list_resize&#x4E2D;&#xFF0C;&#x5F53;list&#x4E2D;&#x9884;&#x5206;&#x914D;&#x7684;&#x5185;&#x5B58;&#x4E0D;&#x591F;&#x65F6;&#x9700;&#x8981;&#x6269;&#x5C55;&#x5185;&#x5B58;&#xFF0C;&#x800C;&#x5F53;&#x9884;&#x5206;&#x914D;&#x7684;&#x5185;&#x5B58;&#x4F7F;&#x7528;&#x60C5;&#x51B5;&#x4E0D;&#x8DB3;&#x4E00;&#x534A;&#x65F6;&#xFF0C;&#x4E5F;&#x4F1A;&#x6536;&#x7F29;&#x5185;&#x5B58;&#x3002;</li>
+<li>在非末尾插入一个元素，会带来大量的元素拷贝操作，低效；</li>
+<li>插入时的下标处理了负数情况，所以python才可以支持arr.insert(-1,5)这种语法；</li>
+<li>插入时会调用到list_resize，在list_resize中，当list中预分配的内存不够时需要扩展内存，而当预分配的内存使用情况不足一半时，也会收缩内存。</li>
 </ul>
 </li>
-<li>PyList_SetItem&#x4E0E;list_subscript&#x7684;&#x533A;&#x522B;<ul>
-<li>PyList_SetItem&#x662F;C API&#xFF0C;&#x4E0D;&#x5BF9;&#x4E0B;&#x6807;&#x505A;&#x8D1F;&#x6570;&#x9006;&#x5E8F;&#x5904;&#x7406;&#xFF1B;list_subscript&#x5BF9;&#x5E94;&#x4E86;python&#x4E2D;&#x7684;__getitem__&#x51FD;&#x6570;&#xFF0C;&#x53EF;&#x4EE5;&#x4ECE;&#x4E0B;&#x9762;&#x770B;&#x51FA;&#xFF1A;<figure class="highlight c"><table><tr><td class="gutter"><pre>1
-2
-3
-4
-5
-6
-</pre></td><td class="code"><pre><span class="keyword">static</span> PyMethodDef list_methods[] = {
-    {<span class="string">&quot;__getitem__&quot;</span>, (PyCFunction)list_subscript, METH_O|METH_COEXIST, getitem_doc},
-    {<span class="string">&quot;__reversed__&quot;</span>,(PyCFunction)list_reversed, METH_NOARGS, reversed_doc},
-    ...
-    {NULL, NULL} <span class="comment">/* sentinel */</span>
-};
-</pre></td></tr></table></figure></li>
-<li>&#x5F53;&#x5728;python&#x6E90;&#x7801;&#x4E2D;&#x8C03;&#x7528;arr[-1]&#x65F6;&#xFF0C;&#x5176;&#x5B9E;&#x662F;&#x8C03;&#x7528;&#x4E86;list_subscript&#x51FD;&#x6570;&#xFF0C;&#x6B64;&#x51FD;&#x6570;&#x4F1A;&#x5BF9;&#x8F93;&#x5165;&#x7684;&#x4E0B;&#x6807;&#x53C2;&#x6570;&#x505A;&#x8D1F;&#x6570;&#x9006;&#x5E8F;&#x5904;&#x7406;&#x3002;</li>
-<li>&#x6240;&#x4EE5;&#x5728;python&#x6E90;&#x7801;&#x4E2D;&#xFF0C;&#x53EF;&#x4EE5;&#x653E;&#x5FC3;&#x7684;&#x4F7F;&#x7528;&#x8D1F;&#x6570;&#x4E0B;&#x6807;&#xFF0C;&#x800C;&#x5F53;&#x6211;&#x4EEC;&#x5229;&#x7528;python&#x7684;C API&#x5199;&#x4E00;&#x4E9B;&#x6269;&#x5C55;&#x65F6;&#xFF0C;&#x5219;&#x5FC5;&#x987B;&#x8981;&#x4FDD;&#x8BC1;&#x4F20;&#x5165;PyList_SetItem&#x4E2D;&#x7684;&#x4E0B;&#x6807;&#x53C2;&#x6570;&#x4E0D;&#x8D8A;&#x754C;&#x3002;</li>
+<li><p>PyList_SetItem与list_subscript的区别</p>
+<ul>
+<li><p>PyList_SetItem是C API，不对下标做负数逆序处理；list_subscript对应了python中的__getitem__函数，可以从下面看出：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> PyMethodDef list_methods[] = &#123;</span><br><span class="line">    &#123;<span class="string">"__getitem__"</span>, (PyCFunction)list_subscript, METH_O|METH_COEXIST, getitem_doc&#125;,</span><br><span class="line">    &#123;<span class="string">"__reversed__"</span>,(PyCFunction)list_reversed, METH_NOARGS, reversed_doc&#125;,</span><br><span class="line">    ...</span><br><span class="line">    &#123;<span class="literal">NULL</span>, <span class="literal">NULL</span>&#125; <span class="comment">/* sentinel */</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>当在python源码中调用arr[-1]时，其实是调用了list_subscript函数，此函数会对输入的下标参数做负数逆序处理。</p>
+</li>
+<li>所以在python源码中，可以放心的使用负数下标，而当我们利用python的C API写一些扩展时，则必须要保证传入PyList_SetItem中的下标参数不越界。</li>
 </ul>
 </li>
 </ul>
@@ -179,9 +112,8 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
     
       
       
-  
   <div class="tags">
-    <a href="/tags/读书笔记/">读书笔记</a>, <a href="/tags/Python/">Python</a>
+    <a class="tags-link" href="/tags/Python/">Python</a>, <a class="tags-link" href="/tags/读书笔记/">读书笔记</a>
   </div>
 
     
@@ -200,111 +132,19 @@ var jiathis_config = {data_track_clickback:'true'};
   <div class="ds-thread" data-title="《Python源码剖析》读书笔记-4 List对象">
   </div>
 </section>
-</div>
+
+	</div>
   </div>
   <div class="widget-wrapper">
-    <aside id="sidebar">
+	<aside id="sidebar">
   
-  
-    
-      
-      
-    
-      
-      
-
-<div class="widget tag first">
-  <h3 class="title">Tags</h3>
-  <ul class="entry">
-  
-    <li><a href="/tags/Python/">Python</a><small>11</small></li>
-  
-    <li><a href="/tags/Unity3D/">Unity3D</a><small>1</small></li>
-  
-    <li><a href="/tags/书单/">书单</a><small>4</small></li>
-  
-    <li><a href="/tags/北京车展/">北京车展</a><small>1</small></li>
-  
-    <li><a href="/tags/杂谈/">杂谈</a><small>5</small></li>
-  
-    <li><a href="/tags/游戏开发/">游戏开发</a><small>1</small></li>
-  
-    <li><a href="/tags/爱好/">爱好</a><small>1</small></li>
-  
-    <li><a href="/tags/生活/">生活</a><small>2</small></li>
-  
-    <li><a href="/tags/读书笔记/">读书笔记</a><small>11</small></li>
-  
-    <li><a href="/tags/读后感/">读后感</a><small>1</small></li>
-  
-  </ul>
-</div>
-
-    
-      
-      
-
-<div class="widget recent-posts">
-  <h3 class="title">Recent Posts</h3>
-  <ul class="entry">
-    
-      <li>
-        <a href="/2015/01/24/sgjm-reviewmd/">《三国机密》感</a>
-      </li>
-    
-      <li>
-        <a href="/2015/01/01/2014-booklist-2/">2014年下半年书单</a>
-      </li>
-    
-      <li>
-        <a href="/2014/10/01/2014-booklist-1/">2014年上半年书单</a>
-      </li>
-    
-      <li>
-        <a href="/2014/06/05/python-source-11/">《Python源码剖析》读书笔记-11 Python虚拟机中的函数机制</a>
-      </li>
-    
-      <li>
-        <a href="/2014/05/23/unity2d-flappybird/">用Unity3D仿造一个FlappyBird</a>
-      </li>
-    
-  </ul>
-</div>
-
-    
-      
-      
-
-<div class="widget blogroll">
-  <h3 class="title">Links</h3>
-  <ul class="entry">
-  
-    
-    <li><a href="http://guoyb.com/" target="_blank">旧博客</a></li>
-  
-    
-    <li><a href="http://weibo.com/dusticebloomingmonk" target="_blank">新浪微博</a></li>
-  
-    
-    <li><a href="http://www.linkedin.com/profile/view?id=256546845" target="_blank">LinkedIn</a></li>
-  
-    
-    <li><a href="http://www.yanggy.com/" target="_blank">阳总工</a></li>
-  
-    
-    <li><a href="http://mcgrady164.github.io/" target="_blank">阿俊</a></li>
-  
-  </ul>
-</div>
-
-    
   
 </aside>
 <div class="clearfix"></div>
   </div>
   <footer id="footer"><div class="copyright">
   
-  &copy; 2015 <a href="/">Yubo Guo</a>
+  &copy; 2016 <a href="/">Yubo Guo</a>
   
 </div>
 <div class="theme-copyright">
@@ -313,7 +153,8 @@ var jiathis_config = {data_track_clickback:'true'};
   Redesign by <a href="http://heroicyang.com/" target="_blank">Heroic Yang</a>
 </div>
 <div class="clearfix"></div></footer>
-  <script src="/js/scale.fix.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+<script src="/js/scale.fix.js"></script>
 <script src="/js/jquery.imagesloaded.min.js"></script>
 <script src="/js/gallery.js"></script>
 
