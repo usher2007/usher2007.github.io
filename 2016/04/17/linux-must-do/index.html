@@ -1,0 +1,218 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  
+  <title>Ubuntu安装备忘录 | 一根笨茄子</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  
+    <meta name="author" content="Yubo Guo">
+  
+  
+    <meta name="description" content="最近连续给自己的笔记本和工作机装了两个Ubuntu虚拟机，总结下常用的工具和配置，长期更新。
+
+安装ssh server
+sudo apt-get install openssh-server 
+设置网络为VMnet8 并配置好ip">
+  
+  <meta name="description" content="最近连续给自己的笔记本和工作机装了两个Ubuntu虚拟机，总结下常用的工具和配置，长期更新。
+
+安装ssh server
+sudo apt-get install openssh-server 
+设置网络为VMnet8 并配置好ip">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Ubuntu安装备忘录">
+<meta property="og:url" content="http://blog.guoyb.com/2016/04/17/linux-must-do/index.html">
+<meta property="og:site_name" content="一根笨茄子">
+<meta property="og:description" content="最近连续给自己的笔记本和工作机装了两个Ubuntu虚拟机，总结下常用的工具和配置，长期更新。
+
+安装ssh server
+sudo apt-get install openssh-server 
+设置网络为VMnet8 并配置好ip">
+<meta property="og:updated_time" content="2016-04-17T08:05:26.169Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Ubuntu安装备忘录">
+<meta name="twitter:description" content="最近连续给自己的笔记本和工作机装了两个Ubuntu虚拟机，总结下常用的工具和配置，长期更新。
+
+安装ssh server
+sudo apt-get install openssh-server 
+设置网络为VMnet8 并配置好ip">
+  
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+</head>
+
+<body>
+  <div class="wrapper">
+    <header id="header">
+  <div class="title">
+    <h1><a href="/">一根笨茄子</a></h1>
+    <p><a href="/"></a></p>
+  </div>
+  <nav class="nav">
+    <ul>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/about">关于我</a></li>
+      
+      
+    </ul>
+    <div class="clearfix"></div>
+  </nav>
+  <div class="clearfix"></div>
+</header>
+    <div class="content">
+		<article class="post">
+  <header>
+    
+      <div class="icon"></div>
+      <a href="/2016/04/17/linux-must-do/">
+  <time datetime="2016-04-17T07:41:08.000Z">
+    2016-04-17
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title">Ubuntu安装备忘录</h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>最近连续给自己的笔记本和工作机装了两个Ubuntu虚拟机，总结下常用的工具和配置，长期更新。</p>
+<ul>
+<li>安装ssh server<ul>
+<li>sudo apt-get install openssh-server </li>
+<li>设置网络为VMnet8 并配置好ip<a id="more"></a></li>
+</ul>
+</li>
+<li><p>安装Python</p>
+<ul>
+<li>sudo apt-get install python/python3/python-pip/python3-pip</li>
+<li>pip install virtualenv</li>
+</ul>
+</li>
+<li><p>Git/Github</p>
+<ul>
+<li>sudo apt-get install git</li>
+<li>git config –global user.email “you@example.com”</li>
+<li>git config –global user.name “Your Name”</li>
+<li>ssh-keygen -t rsa -b 4096 -C “you@example.com”</li>
+<li>eval $(ssh-agent -s)</li>
+<li>ssh-add ~/.ssh/id_rsa</li>
+<li>复制 ~/.ssh/id_rsa.pub的内容并在Github上依此新建一个SSH Entry</li>
+</ul>
+</li>
+<li><p>Vim相关</p>
+<ul>
+<li>git clone git@github.com:yubo1911/config-files.git</li>
+<li>sudo apt-get install pyflakes</li>
+<li>mkdir -p ~/.vim/autoload ~/.vim/bundle &amp;&amp; curl -LSso ~/.vim/autoload/pathogen.vim <a href="https://tpo.pe/pathogen.vim" target="_blank" rel="external">https://tpo.pe/pathogen.vim</a></li>
+<li>git clone git://github.com/tpope/vim-sensible.git (安装vim插件）</li>
+<li>由于工作中Python代码的历史原因，tab键设置成了8个空格，这里为了与工作环境统一，需要编辑.vimrc<blockquote>
+<p>autocmd filetype python set ts=8<br>autocmd filetype python set sw=8<br>autocmd filetype python set sts=8<br>autocmd filetype python set noet  </p>
+</blockquote>
+</li>
+</ul>
+</li>
+<li><p>Tmux相关</p>
+<ul>
+<li>sudo apt-get install tmux</li>
+<li><p>Tmux常用命令</p>
+<blockquote>
+<p>tmux new-session<br>tmux attach -t 0(session_id)<br>tmux kill-session -t 0<br>tmux ls  </p>
+</blockquote>
+</li>
+<li><p>ctrl+b 进入命令模式，之后</p>
+<blockquote>
+<p>d detach，随后可以tmux attach回来<br>w 从当前session的多个window中选择一个<br>s  从所有sessions中选择一个<br>c 创建新窗口<br>p 切换上一窗口<br>n 切换到下一个窗口<br>，重命名窗口<br>$ 重命名session  </p>
+</blockquote>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="持续更新中……"><a href="#持续更新中……" class="headerlink" title="持续更新中……"></a>持续更新中……</h2>
+    
+  </div>
+  <footer>
+    
+      
+      
+  <div class="tags">
+    <a class="tags-link" href="/tags/Ubuntu/">Ubuntu</a>, <a class="tags-link" href="/tags/工具/">工具</a>
+  </div>
+
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+<!-- JiaThis Button BEGIN -->
+<script type="text/javascript">
+var jiathis_config = {data_track_clickback:'true'};
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?move=0&amp;uid=1706898" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+<section id="comment">
+  <h1 class="title">Comments</h1>
+  <div class="ds-thread" data-title="Ubuntu安装备忘录">
+  </div>
+</section>
+
+	</div>
+  </div>
+  <div class="widget-wrapper">
+	<aside id="sidebar">
+  
+  
+</aside>
+<div class="clearfix"></div>
+  </div>
+  <footer id="footer"><div class="copyright">
+  
+  &copy; 2016 <a href="/">Yubo Guo</a>
+  
+</div>
+<div class="theme-copyright">
+  Theme by <a href="https://github.com/orderedlist" target="_blank">orderedlist</a>
+   | 
+  Redesign by <a href="http://heroicyang.com/" target="_blank">Heroic Yang</a>
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+<script src="/js/scale.fix.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = { short_name: 'guoyb' };
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';
+    ds.async = true;
+    ds.src = 'http://static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+  (function($){
+    $('.fancybox').fancybox();
+  })(jQuery);
+</script>
+
+</body>
+</html>
