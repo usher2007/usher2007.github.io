@@ -52,6 +52,54 @@
   <header>
     
       <div class="icon"></div>
+      <a href="/2014/03/23/python-source-3/">
+  <time datetime="2014-03-23T01:42:08.000Z">
+    2014-03-23
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title"><a href="/2014/03/23/python-source-3/">《Python源码剖析》读书笔记-3 字符串对象</a></h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<h2 id="第3章-Python中的字符串对象"><a href="#第3章-Python中的字符串对象" class="headerlink" title="第3章 Python中的字符串对象"></a>第3章 Python中的字符串对象</h2><ul>
+<li><p>字符串对象定义为</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> &#123;</span><br><span class="line">    PyObject_VAR_HEAD</span><br><span class="line">    <span class="keyword">long</span> ob_shash;</span><br><span class="line">    <span class="keyword">int</span> ob_sstate;</span><br><span class="line">    <span class="keyword">char</span> ob_sval[<span class="number">1</span>];</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Invariants:</span><br><span class="line">     * ob_sval contains space for 'ob_size+1' elements.</span><br><span class="line">     * ob_sval[ob_size] == 0.</span><br><span class="line">     * ob_shash is the hash of the string or -1 if not computed yet.</span><br><span class="line">     * ob_sstate != 0 iff the string object is in stringobject.c's</span><br><span class="line">     * 'interned' dictionary; in this case the two references</span><br><span class="line">     * from 'interned' to this object are *not counted* in ob_refcnt.</span><br><span class="line">     */</span></span><br><span class="line">&#125; PyStringObject;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>其中PyObject_VAR_HEAD宏中有一个ob_size域，表示可变长度对象的长度。</li>
+<li>ob_sval实际上保存了一个指向具体字符串存储位置的指针。
+    
+  </div>
+  <footer class="end-sep">
+    
+      
+        <div class="alignleft">
+          <a href="/2014/03/23/python-source-3/#more" class="more-link">Read More</a>
+        </div>
+      
+      
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+<!-- JiaThis Button BEGIN -->
+<script type="text/javascript">
+var jiathis_config = {data_track_clickback:'true'};
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?move=0&amp;uid=1706898" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+
+  <article class="post">
+  <header>
+    
+      <div class="icon"></div>
       <a href="/2014/03/21/python-source-2/">
   <time datetime="2014-03-21T08:37:34.000Z">
     2014-03-21
@@ -78,7 +126,7 @@
     
       
         <div class="alignleft">
-          <a href="/2014/03/21/python-source-2/#more" class="more-link">阅读全文</a>
+          <a href="/2014/03/21/python-source-2/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -126,7 +174,7 @@ var jiathis_config = {data_track_clickback:'true'};
     
       
         <div class="alignleft">
-          <a href="/2014/03/18/python-source-1/#more" class="more-link">阅读全文</a>
+          <a href="/2014/03/18/python-source-1/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -171,7 +219,7 @@ var jiathis_config = {data_track_clickback:'true'};
     
       
         <div class="alignleft">
-          <a href="/2013/12/30/2013-booklist-2/#more" class="more-link">阅读全文</a>
+          <a href="/2013/12/30/2013-booklist-2/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -190,7 +238,7 @@ var jiathis_config = {data_track_clickback:'true'};
 
 <nav id="pagination">
   
-    <a href="/page/2/" class="prev">上一页</a>
+    <a href="/page/2/" class="prev">Prev</a>
   
   
   <div class="clearfix"></div>

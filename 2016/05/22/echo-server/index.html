@@ -1,0 +1,176 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  
+  <title>echoserver的几种实现(socket, select, epoll, libuv) | 一根笨茄子</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  
+    <meta name="author" content="Yubo Guo">
+  
+  
+    <meta name="description" content="学习Linux下的网络编程相关内容，最简单直接的方式就是实现一个echoserver，打通client-&amp;gt;server-&amp;gt;processing-&amp;gt;client的通路。最近在研究libuv，所以就分别用纯socket、select、epoll、libuv几种方式实现了各自的echoserver版本。">
+  
+  <meta name="description" content="学习Linux下的网络编程相关内容，最简单直接的方式就是实现一个echoserver，打通client-&amp;gt;server-&amp;gt;processing-&amp;gt;client的通路。最近在研究libuv，所以就分别用纯socket、select、epoll、libuv几种方式实现了各自的echoserver版本。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="echoserver的几种实现(socket, select, epoll, libuv)">
+<meta property="og:url" content="http://blog.guoyb.com/2016/05/22/echo-server/index.html">
+<meta property="og:site_name" content="一根笨茄子">
+<meta property="og:description" content="学习Linux下的网络编程相关内容，最简单直接的方式就是实现一个echoserver，打通client-&amp;gt;server-&amp;gt;processing-&amp;gt;client的通路。最近在研究libuv，所以就分别用纯socket、select、epoll、libuv几种方式实现了各自的echoserver版本。">
+<meta property="og:updated_time" content="2016-05-22T12:45:30.359Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="echoserver的几种实现(socket, select, epoll, libuv)">
+<meta name="twitter:description" content="学习Linux下的网络编程相关内容，最简单直接的方式就是实现一个echoserver，打通client-&amp;gt;server-&amp;gt;processing-&amp;gt;client的通路。最近在研究libuv，所以就分别用纯socket、select、epoll、libuv几种方式实现了各自的echoserver版本。">
+  
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+</head>
+
+<body>
+  <div class="wrapper">
+    <header id="header">
+  <div class="title">
+    <h1><a href="/">一根笨茄子</a></h1>
+    <p><a href="/"></a></p>
+  </div>
+  <nav class="nav">
+    <ul>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/about">关于我</a></li>
+      
+      
+    </ul>
+    <div class="clearfix"></div>
+  </nav>
+  <div class="clearfix"></div>
+</header>
+    <div class="content">
+		<article class="post">
+  <header>
+    
+      <div class="icon"></div>
+      <a href="/2016/05/22/echo-server/">
+  <time datetime="2016-05-22T06:13:26.000Z">
+    2016-05-22
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title">echoserver的几种实现(socket, select, epoll, libuv)</h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>学习Linux下的网络编程相关内容，最简单直接的方式就是实现一个echoserver，打通client-&gt;server-&gt;processing-&gt;client的通路。最近在研究libuv，所以就分别用纯socket、select、epoll、libuv几种方式实现了各自的echoserver版本。  </p>
+<a id="more"></a>
+<h1 id="socket"><a href="#socket" class="headerlink" title="socket"></a>socket</h1><hr>
+<p>socket是网络通信的基础，无论是后面将要讲到的select、epoll还是libuv，都是基于socket来实现的。<br>一般直接使用socket建立网络连接分如下几步：  </p>
+<blockquote>
+<p>a. create socket<br>b. bind socket<br>c. listen<br>d. accept&amp;processing  </p>
+</blockquote>
+<h2 id="create-socket"><a href="#create-socket" class="headerlink" title="create socket"></a>create socket</h2><p>使用如下语句即可创建socket<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sockfd = socket(AF_INET, SOCK_STREAM, <span class="number">0</span>);</span><br></pre></td></tr></table></figure><br>第一个参数用于表示通信的范围，AF_INET表示IPv4,其他常用的参数常量还有AF_UNIX(本地通信），AF_INET6(IPv6)等。<br>第二个参数表示socket的类型，SOCK_STREAM用于表示TCP,还可用SOCK_DGRAM表示UDP。<br>第三个参数用于表示协议，如果某种类型的socket，其下只有一种协议实现的话，这个参数一般填写为0即可。  </p>
+<h2 id="bind-socket"><a href="#bind-socket" class="headerlink" title="bind socket"></a>bind socket</h2><p>bind操作用于配置socket监听的地址、端口等信息。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> sockaddr_in server_addr;</span><br><span class="line">bzero((char *)&amp;server_addr, <span class="keyword">sizeof</span>(server_addr));</span><br><span class="line">server_addr.sin_family = AF_INET;</span><br><span class="line">server_addr.sin_addr.s_addr = INADDR_ANY;</span><br><span class="line">server_addr.sin_port = htons(DEFAULT_PORT);</span><br><span class="line">bind_res = bind(sockfd, (struct sockaddr *)&amp;server_addr, sizeof(server_addr));</span><br></pre></td></tr></table></figure><br>这里需要留意的是，bind的第二个参数具体传入的数据类型与socket创建时的通信范围有关。这里的socket是AF_INET，所以使用sockaddr_in；如果是AF_UNIX，则需要使用sockaddr_un。  </p>
+<h2 id="listen"><a href="#listen" class="headerlink" title="listen"></a>listen</h2><p>listen操作使得socket开始真正的监听<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">listen(sockfd, <span class="number">5</span>);</span><br></pre></td></tr></table></figure><br>listen的第二个参数表示backlog，即连接的最大缓存个数，需要根据应用场景具体调节大小。  </p>
+<h2 id="accept-amp-processing"><a href="#accept-amp-processing" class="headerlink" title="accept&amp;processing"></a>accept&amp;processing</h2><p>直接使用socket编写网络程序，为了保证并发，一般会将阻塞式的accept和线程/进程结合起来。这里我选择使用fork新开一个子进程的方式处理。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> sockaddr_in client_addr;</span><br><span class="line">clilen = <span class="keyword">sizeof</span>(client_addr);	</span><br><span class="line"><span class="keyword">while</span>(<span class="number">1</span>)</span><br><span class="line">&#123;</span><br><span class="line">	newsockfd = accept(sockfd, (struct sockaddr *)&amp;client_addr, &amp;clilen);</span><br><span class="line">	<span class="keyword">if</span>(newsockfd &lt; <span class="number">0</span>)</span><br><span class="line">		error(<span class="string">"Error when accept socket.\n"</span>);</span><br><span class="line">	pid = fork();</span><br><span class="line">	<span class="keyword">if</span>(pid &lt; <span class="number">0</span>)</span><br><span class="line">		error(<span class="string">"Error when fork.\n"</span>);</span><br><span class="line">	<span class="keyword">if</span>(pid == <span class="number">0</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		close(sockfd);</span><br><span class="line">		echo_message(newsockfd);</span><br><span class="line">		<span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">	&#123;</span><br><span class="line">		close(newsockfd);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>我们在一个无限循环中，不断地调用阻塞式的accept等待新连接的到来。accept会返回一个新创建的socket，这个newsocket可以用于处理和对应客户端的通信请求。并且，对应客户端的信息会填充好client_addr结构。<br>每当在循环中接受了一个新的客户端连接后，都调用fork()创建一个新的子进程。在子进程中，复制得到的监听sockfd其实是没有用的，所以可以直接关掉它（同理，在父进程中，也可以直接关掉newsockfd)，之后使用echo_message函数处理这个客户端的连接。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">echo_message</span><span class="params">(<span class="keyword">int</span> newsockfd)</span></span><br><span class="line"></span>&#123;</span><br><span class="line">	<span class="keyword">char</span> buffer[<span class="number">256</span>];</span><br><span class="line">	<span class="keyword">int</span> n;</span><br><span class="line">	<span class="keyword">while</span>(<span class="number">1</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		bzero(buffer, <span class="number">256</span>);</span><br><span class="line">		n = read(newsockfd, buffer, <span class="number">255</span>);</span><br><span class="line">		<span class="keyword">if</span>(n &lt; <span class="number">0</span>)</span><br><span class="line">			error(<span class="string">"Error when reading socket.\n"</span>);</span><br><span class="line">		<span class="keyword">if</span>(n == <span class="number">0</span>)</span><br><span class="line">			return;</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">"Here is the message: %s"</span>, buffer);</span><br><span class="line">		n = write(newsockfd, buffer, strlen(buffer));</span><br><span class="line">		<span class="keyword">if</span>(n &lt; <span class="number">0</span>)</span><br><span class="line">			error(<span class="string">"Error when writing socket.\n"</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>在linux一切皆是文件，所以对于newsockfd代表的客户端socket来说，可以直接调用read、write来实现回显操作。由于这段代码是在新进程中运行的，所以完全可以不用关心父进程的accept是否阻塞，直接一个while(1)循环搞定。<br>整体的实现代码详见我的<a href="https://github.com/yubo1911/saber/blob/master/echo-server/socket-echo-server.c" target="_blank" rel="external">GitHub</a>。  </p>
+<h1 id="select"><a href="#select" class="headerlink" title="select"></a>select</h1><hr>
+<p>在上面的实现方式中，进程/线程的生成需要一定的消耗，限制并发数量，并且，多进程/多线程也给编程带来了数据同步、竞争等一系列问题。这时可以通过引入select来解决这一问题。  </p>
+<p>select是一种用于监视文件事件的方式。在Linux系统中，socket也是一种文件，所以我们可以通过select来判断所监听的socket中有没有事件（新连接、新数据）发生，这样我们就可以把所有的处理（accept， echo-message)都放在同一个线程中进行，而不用担心阻塞操作会影响到其他操作，因为使用了select之后，每次使用accept这种有可能阻塞的函数调用时，都是“有的放矢”的。 </p>
+<p>使用select的前几步和之前一样，都是create socket，bind socket，listen，只有在accept&amp;processing的时候，需要提前使用select判断是否有事件发生。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span>(<span class="number">1</span>)</span><br><span class="line">&#123;</span><br><span class="line">	FD_ZERO(&amp;fdsr);</span><br><span class="line">	FD_SET(sockfd, &amp;fdsr);</span><br><span class="line">	<span class="keyword">for</span> (i=<span class="number">0</span>; i&lt;BACKLOG; ++i)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">if</span> (fd_A[i] != <span class="number">0</span>)</span><br><span class="line">		&#123;</span><br><span class="line">			FD_SET(fd_A[i], &amp;fdsr);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	ret = select(maxsock + <span class="number">1</span>, &amp;fdsr, NULL, NULL, &amp;tv);</span><br><span class="line">	<span class="keyword">if</span> (ret &lt; <span class="number">0</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		error(<span class="string">"Error in select.\n"</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span> <span class="keyword">if</span> (ret == <span class="number">0</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="comment">//printf("Just timeout.\n");</span></span><br><span class="line">		<span class="keyword">continue</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span> (i=<span class="number">0</span>; i&lt;conn_amount; ++i)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">if</span> (FD_ISSET(fd_A[i], &amp;fdsr))</span><br><span class="line">		&#123;</span><br><span class="line">			echo_message(fd_A[i]);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (FD_ISSET(sockfd, &amp;fdsr))</span><br><span class="line">	&#123;</span><br><span class="line">		newfd = accept(sockfd, (struct sockaddr *)&amp;client_addr, &amp;clilen);</span><br><span class="line">		<span class="keyword">if</span> (newfd &lt; <span class="number">0</span>)</span><br><span class="line">			error(<span class="string">"Error when accept socket.\n"</span>);</span><br><span class="line">		<span class="keyword">if</span> (conn_amount &lt; BACKLOG)</span><br><span class="line">		&#123;</span><br><span class="line">			fd_A[conn_amount] = newfd;</span><br><span class="line">			conn_amount++;</span><br><span class="line">			<span class="built_in">printf</span>(<span class="string">"New connection client[%d] %s:%d\n"</span>, conn_amount,</span><br><span class="line">					inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port));</span><br><span class="line">			<span class="keyword">if</span> (newfd &gt; maxsock)</span><br><span class="line">			&#123;</span><br><span class="line">				maxsock = newfd;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">else</span></span><br><span class="line">		&#123;</span><br><span class="line">			<span class="built_in">printf</span>(<span class="string">"Now can't accept more connections.\n"</span>);</span><br><span class="line">			send(newfd, <span class="string">"bye"</span>, <span class="number">4</span>, <span class="number">0</span>);</span><br><span class="line">			close(newfd);</span><br><span class="line">			<span class="keyword">continue</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>select的第一个参数需要填写成所需监听的最大文件描述符+1，所以我们使用了maxsock来保存当前监听列表中最大的文件描述符。第2-4个参数分别为监听读事件的描述符列表、监听写事件的描述符列表、监听异常事件的描述符列表。最后一个参数是阻塞的超时时间，如果设置为0，则立即返回，如果传入NULL指针，则无限期阻塞直至有事件发生。  </p>
+<p>我们在这里首先将绑定在服务端的sockfd通过FD_SET加入至读事件监听集合中。通过FD_ISSET来判断sockfd上是否有读事件发生。如果sockfd上有事件产生，则像之前一样用accept生成一个绑定对应客户端的socket，并加入到fd_A列表中。  </p>
+<p>在每次循环开始时，都将fd_A列表中保存的描述符通过FD_SET加入至读事件监听集合中。同样的，通过FD_ISSET来判断fd_A中的socket是否有读事件发生。如果有，则通过echo_message处理客户端的数据。  </p>
+<p>这里的echo_message因为和主循环在同一个线程中，所以不能像之前一样，通过while(1)+阻塞的read调用实现。由于我们将读事件的监听都放在了主循环中，所以在echo_message中只需要读取数据，并写回客户端即可。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">echo_message</span><span class="params">(<span class="keyword">int</span> newsockfd)</span></span><br><span class="line"></span>&#123;</span><br><span class="line">	<span class="keyword">char</span> buffer[<span class="number">256</span>];</span><br><span class="line">	<span class="keyword">int</span> n;</span><br><span class="line">	bzero(buffer, <span class="number">256</span>);</span><br><span class="line">	n = read(newsockfd, buffer, <span class="number">255</span>);</span><br><span class="line">	<span class="keyword">if</span>(n &lt; <span class="number">0</span>)</span><br><span class="line">		perror(<span class="string">"Error when reading socket.\n"</span>);</span><br><span class="line">	<span class="keyword">if</span>(n == <span class="number">0</span>)</span><br><span class="line">		return;</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"Here is the message: %s"</span>, buffer);</span><br><span class="line">	n = write(newsockfd, buffer, strlen(buffer));</span><br><span class="line">	<span class="keyword">if</span>(n &lt; <span class="number">0</span>)</span><br><span class="line">		perror(<span class="string">"Error when writing socket.\n"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>完整代码详见我的<a href="https://github.com/yubo1911/saber/blob/master/echo-server/select-echo-server.c" target="_blank" rel="external">GitHub</a>。  </p>
+<h1 id="epoll"><a href="#epoll" class="headerlink" title="epoll"></a>epoll</h1><hr>
+<p>使用select可以在一个线程中实现非阻塞的echoserver。但是select在每次返回之后，需要遍历所有的监听文件描述符，通过FD_ISSET是否有事件发生，这样降低了效率，因为一般来讲读事件只存在于少数的描述符上。另外，select支持的文件描述符的个数有上限限制。最后，select需要把描述符的消息从内核空间拷贝到用户空间，影响效率。  </p>
+<p>使用epoll可以解决这几个问题。首先，epoll仅仅将有事件发生的文件描述符返回给用户，避免了大量不必要的遍历；第二，epoll对于文件描述符数量的上限的限制是系统所能打开的最大文件数量，上限大大提高；第三，epoll通过mmap加速内核与用户空间的消息传递。  </p>
+<p>同样的，我们首先需要create socket，bind socket，listen。<br>使用epoll首先要创建要给epoll的实例出来。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">epollfd = epoll_create(MAX_EVENTS);</span><br></pre></td></tr></table></figure><br>传入的参数在Linux2.6.8之后已经被忽略了，只要大于0即可。<br>然后，将绑定在服务端的socket加入到epoll实例中。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> epoll_event ev;</span><br><span class="line">ev.events = EPOLLIN;</span><br><span class="line">ev.data.fd = sockfd;</span><br><span class="line"><span class="keyword">if</span> (epoll_ctl(epollfd, EPOLL_CTL_ADD, sockfd, &amp;ev) == <span class="number">-1</span>)</span><br><span class="line">&#123;</span><br><span class="line">	error(<span class="string">"Error when add listen sock to epoll.\n"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>在主循环中，通过epoll_wait等待事件发生。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span>(<span class="number">1</span>)</span><br><span class="line">&#123;</span><br><span class="line">	nfds = epoll_wait(epollfd, events, MAX_EVENTS, <span class="number">-1</span>);</span><br><span class="line">	<span class="keyword">if</span> (nfds == <span class="number">-1</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		error(<span class="string">"Error when epoll wait.\n"</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span> (i=<span class="number">0</span>; i&lt;nfds; ++i)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">if</span> (events[i].data.fd == sockfd)</span><br><span class="line">		&#123;</span><br><span class="line">			newsock = accept(sockfd, (struct sockaddr *)&amp;client_addr, &amp;clilen);</span><br><span class="line">			<span class="keyword">if</span> (newsock == <span class="number">-1</span>)</span><br><span class="line">			&#123;</span><br><span class="line">				error(<span class="string">"Error when accept new sock.\n"</span>);</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			<span class="comment">//setnonblocking(newsock);</span></span><br><span class="line">			ev.events = EPOLLIN | EPOLLET;</span><br><span class="line">			ev.data.fd = newsock;</span><br><span class="line">			<span class="keyword">if</span> (epoll_ctl(epollfd, EPOLL_CTL_ADD, newsock, &amp;ev) == <span class="number">-1</span>)</span><br><span class="line">			&#123;</span><br><span class="line">				error(<span class="string">"Error when add newsock to epoll.\n"</span>);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">else</span></span><br><span class="line">		&#123;</span><br><span class="line">			echo_message(events[i].data.fd);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>epoll_wait会将有事件发生的文件描述符打包在返回值中返回。<br>如果sockfd上有事件发生，那么通过accept生成绑定客户端的描述符。并将其加入到epoll实例中进行监听。  </p>
+<p>如果事件不是发生sockfd上，那么说明有客户端的输入到来，则调用echo_message进行回显。这里的echo_message函数和select中的完全相同，不再列出。<br>完整代码详见我的<a href="https://github.com/yubo1911/saber/blob/master/echo-server/epoll-echo-server.c" target="_blank" rel="external">GitHub</a>  </p>
+<hr>
+<p>至此，我们使用socket select epoll三种方式实现了echoserver，并对各个方式的优劣均有了一定的了解。接下来，我会新开一片博客，说说如何使用libuv实现echoserver。  </p>
+<p>P.S. 一个相应的客户端的实现，详见<a href="https://github.com/yubo1911/saber/blob/master/echo-server/libuv-echo-client.c" target="_blank" rel="external">GitHub</a> </p>
+
+    
+  </div>
+  <footer>
+    
+      
+      
+  <div class="tags">
+    <a class="tags-link" href="/tags/echoserver/">echoserver</a>, <a class="tags-link" href="/tags/epoll/">epoll</a>, <a class="tags-link" href="/tags/libuv/">libuv</a>, <a class="tags-link" href="/tags/select/">select</a>, <a class="tags-link" href="/tags/socket/">socket</a>
+  </div>
+
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+<!-- JiaThis Button BEGIN -->
+<script type="text/javascript">
+var jiathis_config = {data_track_clickback:'true'};
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?move=0&amp;uid=1706898" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+<section id="comment">
+  <h1 class="title">Comments</h1>
+  <div class="ds-thread" data-title="echoserver的几种实现(socket, select, epoll, libuv)">
+  </div>
+</section>
+
+	</div>
+  </div>
+  <div class="widget-wrapper">
+	<aside id="sidebar">
+  
+  
+</aside>
+<div class="clearfix"></div>
+  </div>
+  <footer id="footer"><div class="copyright">
+  
+  &copy; 2016 <a href="/">Yubo Guo</a>
+  
+</div>
+<div class="theme-copyright">
+  Theme by <a href="https://github.com/orderedlist" target="_blank">orderedlist</a>
+   | 
+  Redesign by <a href="http://heroicyang.com/" target="_blank">Heroic Yang</a>
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+<script src="/js/scale.fix.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = { short_name: 'guoyb' };
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';
+    ds.async = true;
+    ds.src = 'http://static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+  (function($){
+    $('.fancybox').fancybox();
+  })(jQuery);
+</script>
+
+</body>
+</html>
