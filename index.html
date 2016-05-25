@@ -52,6 +52,58 @@
   <header>
     
       <div class="icon"></div>
+      <a href="/2016/05/25/makefile-ld/">
+  <time datetime="2016-05-25T12:55:14.000Z">
+    2016-05-25
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title"><a href="/2016/05/25/makefile-ld/">Makefile中LDFLAGS的一个问题的查证记录</a></h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>昨天在刷<a href="http://c.learncodethehardway.org/book/ex26.html" target="_blank" rel="external">Learn C The Hard Way的ex26</a>时遇到了一个Makefile中有关LDFLAGS的问题，将整个查证解决的过程记录在这里。  </p>
+<p>首先，在上面的文章中，作者给出了这样的一个Makefile：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">PREFIX?=/usr/local</span><br><span class="line">CFLAGS=-g -Wall -I$&#123;PREFIX&#125;/apr/include/apr<span class="number">-1</span>  -I$&#123;PREFIX&#125;/apr/include/apr-util<span class="number">-1</span></span><br><span class="line">LDFLAGS=-L$&#123;PREFIX&#125;/apr/lib -lapr<span class="number">-1</span> -pthread -laprutil<span class="number">-1</span></span><br><span class="line"></span><br><span class="line">all: devpkg</span><br><span class="line"></span><br><span class="line">devpkg: bstrlib.o db.o shell.o commands.o</span><br><span class="line"></span><br><span class="line">install: all</span><br><span class="line">     install -d $(DESTDIR)/$(PREFIX)/bin/</span><br><span class="line">     install devpkg $(DESTDIR)/$(PREFIX)/bin/</span><br><span class="line"></span><br><span class="line">clean:</span><br><span class="line">     rm -f *.o</span><br><span class="line">     rm -f devpkg</span><br><span class="line">     rm -rf *.dSYM</span><br></pre></td></tr></table></figure><br>一开始，我直接照抄了这个Makefile的内容，以及上述文章中的其他程序源文件，并且安装了apr和apr-util两个库，lib文件都存放在/user/local/apr/lib文件夹下面<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">yubo@ubuntu:~$ ls /usr/local/apr/lib</span><br><span class="line">apr.<span class="built_in">exp</span>      libapr<span class="number">-1.</span>a   libapr<span class="number">-1.</span>so    libapr<span class="number">-1.</span>so<span class="number">.0</span><span class="number">.4</span><span class="number">.6</span>  libaprutil<span class="number">-1.</span>la  libaprutil<span class="number">-1.</span>so<span class="number">.0</span>      pkgconfig</span><br><span class="line">aprutil.<span class="built_in">exp</span>  libapr<span class="number">-1.</span>la  libapr<span class="number">-1.</span>so<span class="number">.0</span>  libaprutil<span class="number">-1.</span>a     libaprutil<span class="number">-1.</span>so  libaprutil<span class="number">-1.</span>so<span class="number">.0</span><span class="number">.4</span><span class="number">.1</span></span><br></pre></td></tr></table></figure><br>但是当我运行make时，却报这样的连接错误：<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">yubo@ubuntu:~/path_to_devpkg$ make</span><br><span class="line">cc -g -Wall -I/usr/local/apr/include/apr-1 -I/usr/local/apr/include/apr-util-1 -D_LARGEFILE64_SOURCE=1   -c -o bstrlib.o bstrlib.c</span><br><span class="line">cc -g -Wall -I/usr/local/apr/include/apr-1 -I/usr/local/apr/include/apr-util-1 -D_LARGEFILE64_SOURCE=1   -c -o db.o db.c</span><br><span class="line">cc -g -Wall -I/usr/local/apr/include/apr-1 -I/usr/local/apr/include/apr-util-1 -D_LARGEFILE64_SOURCE=1   -c -o shell.o shell.c</span><br><span class="line">cc -g -Wall -I/usr/local/apr/include/apr-1 -I/usr/local/apr/include/apr-util-1 -D_LARGEFILE64_SOURCE=1   -c -o commands.o commands.c</span><br><span class="line">cc -g -Wall -I/usr/local/apr/include/apr-1 -I/usr/local/apr/include/apr-util-1 -D_LARGEFILE64_SOURCE=1  -L/usr/local/apr/lib -lapr-1 -pthread -laprutil-1  devpkg.c bstrlib.o db.o shell.o commands.o   -o devpkg</span><br><span class="line">/tmp/ccyibR3g.o: In function `main':</span><br><span class="line">/home/yubo/Code/GitCode/PersonalGitCode/saber/learncthehardway/devpkg/devpkg.c:14: undefined reference to `apr_pool_initialize'</span><br><span class="line">...</span><br></pre></td></tr></table></figure><br>明显的，这是在链接时没有找到apr相关的库。可是我已经安装了apr和apr-util，并且也通过-L指定了链接时搜索的目录为/usr/local/apr/lib了。<br>首先，我检查了make生成的cc语句：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cc -g -Wall -I/usr/local/apr/include/apr<span class="number">-1</span> -I/usr/local/apr/include/apr-util<span class="number">-1</span> -D_LARGEFILE64_SOURCE=<span class="number">1</span>  -L/usr/local/apr/lib -lapr<span class="number">-1</span> -pthread -laprutil<span class="number">-1</span>  devpkg.c bstrlib.o db.o shell.o commands.o   -o devpkg</span><br></pre></td></tr></table></figure><br>看上去没什么问题，-L参数正确，apr和apr-util都指定好了。<br>接下来，我想到去求助万能的google，找到了<a href="http://bbs.chinaunix.net/archiver/tid-4076932.html" target="_blank" rel="external">这么一篇帖子</a>，按照其中所说的，把-l参数调整到cc语句的最后，果然可以编译通过了。<br>但是还没结束，怎么修改Makefile可以使得-l语句默认放到所生成的cc语句的最后呢？一番搜索，在Stackoverflow上找到了<a href="http://stackoverflow.com/questions/29288248/make-is-unable-to-find-the-functions" target="_blank" rel="external">这篇文章</a>，按照其中所说，把LDFLAGS中的-l部分拆分到LDLIBS中，得到如下Makefile：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">PREFIX?=/usr/local</span><br><span class="line">CFLAGS=-g -Wall -I$&#123;PREFIX&#125;/apr/include/apr<span class="number">-1</span> -I$&#123;PREFIX&#125;/apr/include/apr-util<span class="number">-1</span> -D_LARGEFILE64_SOURCE=<span class="number">1</span></span><br><span class="line"></span><br><span class="line">all: devpkg</span><br><span class="line"></span><br><span class="line">devpkg: bstrlib.o db.o shell.o commands.o</span><br><span class="line"></span><br><span class="line">LDFLAGS=-L$&#123;PREFIX&#125;/apr/lib </span><br><span class="line">LDLIBS=-lapr<span class="number">-1</span> -pthread -laprutil<span class="number">-1</span></span><br><span class="line"></span><br><span class="line">install: all </span><br><span class="line">		install -d $&#123;DESTDIR&#125;/$&#123;PREFIX&#125;/bin/</span><br><span class="line">		install devpkg $&#123;DESTDIR&#125;/$&#123;PREFIX&#125;/bin/</span><br><span class="line"></span><br><span class="line">clean:</span><br><span class="line">		rm -f *.o</span><br><span class="line">		rm -f devpkg</span><br><span class="line">		rm -rf *.dSYM</span><br></pre></td></tr></table></figure><br>此时再调用make，就可以自动的把-l参数放到最后了。  </p>
+<hr>
+<p>知道了怎么做，还应该知道为什么。<br>其实man cc看一下文档就会明白了。在 -llibrary节有这么一段话：  </p>
+<blockquote>
+<p>It makes a difference where in the command you write this option; the linker searches and processes libraries and object files in the order they are specified.  Thus, foo.o -lz bar.o searches library z after file foo.o but before bar.o.  If bar.o refers to functions in z, those functions may not be loaded.</p>
+</blockquote>
+<p>也就是说，当linker遇到.o文件中一个无法识别的名字时，就会去按照cc语句中的顺序去搜索库。由于处理到bar.o的时候，-lz在它的左边，所以将不会被搜索到。因此如果在bar.o中使用了z库中的变量或函数，就会无法解析。因此，一般写cc语句的时候，会把-l选项放在所有.o文件之后。<br>事实上，-l选项一般也的确是放在LDLIBS中的。不知为何，Learn C The Hard Way的作者将其放在了LDFLAGS里。<br>那么对于object files中的变量，最开始也是类似库文件的顺序查找，但是现代编译器一般都做了优化，会在所有指定的.o文件中进行变量名的查找，所以.o文件的次序变得不那么重要。（参见<a href="http://lampwww.epfl.ch/~fsalvi/docs/gcc/www.network-theory.co.uk/docs/gccintro/gccintro_14.html" target="_blank" rel="external">这篇文章</a>）。</p>
+<hr>
+<p>编译成功后，当我第一次调用生成的可执行文件时，有这样的错误信息输出：  </p>
+<blockquote>
+<p>./devpkg: error while loading shared libraries: libapr-1.so.0: cannot open shared object file: No such file or directory<br>这个问题只需要将/usr/local/apr/lib加到/etc/ld.so.conf.d/下的任意文件中（一般会自己新建一个conf文件），然后调用ldconfig即可解决。</p>
+</blockquote>
+
+    
+  </div>
+  <footer class="end-sep">
+    
+      
+      
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+<!-- JiaThis Button BEGIN -->
+<script type="text/javascript">
+var jiathis_config = {data_track_clickback:'true'};
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?move=0&amp;uid=1706898" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+
+  <article class="post">
+  <header>
+    
+      <div class="icon"></div>
       <a href="/2016/05/22/echo-server/">
   <time datetime="2016-05-22T06:13:26.000Z">
     2016-05-22
@@ -75,7 +127,7 @@
     
       
         <div class="alignleft">
-          <a href="/2016/05/22/echo-server/#more" class="more-link">阅读全文</a>
+          <a href="/2016/05/22/echo-server/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -119,7 +171,7 @@ var jiathis_config = {data_track_clickback:'true'};
     
       
         <div class="alignleft">
-          <a href="/2016/05/08/wedding/#more" class="more-link">阅读全文</a>
+          <a href="/2016/05/08/wedding/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -164,7 +216,7 @@ var jiathis_config = {data_track_clickback:'true'};
     
       
         <div class="alignleft">
-          <a href="/2016/04/19/python-decorator/#more" class="more-link">阅读全文</a>
+          <a href="/2016/04/19/python-decorator/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -211,7 +263,7 @@ var jiathis_config = {data_track_clickback:'true'};
     
       
         <div class="alignleft">
-          <a href="/2016/04/17/linux-must-do/#more" class="more-link">阅读全文</a>
+          <a href="/2016/04/17/linux-must-do/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -257,7 +309,7 @@ var jiathis_config = {data_track_clickback:'true'};
     
       
         <div class="alignleft">
-          <a href="/2016/04/10/international/#more" class="more-link">阅读全文</a>
+          <a href="/2016/04/10/international/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -304,7 +356,7 @@ var jiathis_config = {data_track_clickback:'true'};
     
       
         <div class="alignleft">
-          <a href="/2015/01/24/sgjm-reviewmd/#more" class="more-link">阅读全文</a>
+          <a href="/2015/01/24/sgjm-reviewmd/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -351,7 +403,7 @@ var jiathis_config = {data_track_clickback:'true'};
     
       
         <div class="alignleft">
-          <a href="/2015/01/01/2014-booklist-2/#more" class="more-link">阅读全文</a>
+          <a href="/2015/01/01/2014-booklist-2/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -398,7 +450,7 @@ var jiathis_config = {data_track_clickback:'true'};
     
       
         <div class="alignleft">
-          <a href="/2014/10/01/2014-booklist-1/#more" class="more-link">阅读全文</a>
+          <a href="/2014/10/01/2014-booklist-1/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -444,62 +496,7 @@ var jiathis_config = {data_track_clickback:'true'};
     
       
         <div class="alignleft">
-          <a href="/2014/06/05/python-source-11/#more" class="more-link">阅读全文</a>
-        </div>
-      
-      
-    
-    <div class="clearfix"></div>
-  </footer>
-</article>
-<!-- JiaThis Button BEGIN -->
-<script type="text/javascript">
-var jiathis_config = {data_track_clickback:'true'};
-</script>
-<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?move=0&amp;uid=1706898" charset="utf-8"></script>
-<!-- JiaThis Button END -->
-
-
-  <article class="post">
-  <header>
-    
-      <div class="icon"></div>
-      <a href="/2014/05/23/unity2d-flappybird/">
-  <time datetime="2014-05-23T10:59:53.000Z">
-    2014-05-23
-  </time>
-</a>
-    
-    
-  
-    <h1 class="title"><a href="/2014/05/23/unity2d-flappybird/">用Unity3D仿造一个FlappyBird</a></h1>
-  
-
-  </header>
-  
-  <div class="entry">
-    
-      <hr>
-<p>Unity3D 4.3版本之后提供了官方的2D工具包，可以很方便的用来开发2D游戏。我昨天在官网学习了Unity2D的<a href="http://unity3d.com/learn/tutorials/modules/beginner/2d">tutorial</a>，今天下午花了3个小时使用Unity2D制作了一个简化版的Flappy Bird。</p>
-<ul>
-<li>准备工作<ul>
-<li>带alpha通道的小鸟图片一张。可以通过PS对这张图片中的小鸟的翅膀做小小的修改，如下图所示。这两张图片会用来制作小鸟的飞行动画；</li>
-<li><img src="http://guoybblog.qiniudn.com/BirdFly.jpg" alt="Bird Fly"></li>
-<li>使用PS对小鸟图片进行旋转，得到如下三幅图片，用于制作小鸟的死亡动画；</li>
-<li><img src="http://guoybblog.qiniudn.com/DeadBird.jpg" alt="Bird Dying"></li>
-<li>水管图片一张；</li>
-<li>背景图片一张；</li>
-<li>GameOver、Start、0~9的数字等用来做GUI的图片若干。</li>
-</ul>
-</li>
-</ul>
-    
-  </div>
-  <footer class="end-sep">
-    
-      
-        <div class="alignleft">
-          <a href="/2014/05/23/unity2d-flappybird/#more" class="more-link">阅读全文</a>
+          <a href="/2014/06/05/python-source-11/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -519,7 +516,7 @@ var jiathis_config = {data_track_clickback:'true'};
 <nav id="pagination">
   
   
-    <a href="/page/2/" class="next">下一页</a>
+    <a href="/page/2/" class="next">Next</a>
   
   <div class="clearfix"></div>
 </nav>
