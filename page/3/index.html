@@ -52,6 +52,52 @@
   <header>
     
       <div class="icon"></div>
+      <a href="/2014/03/29/python-source-5/">
+  <time datetime="2014-03-28T23:28:47.000Z">
+    2014-03-29
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title"><a href="/2014/03/29/python-source-5/">《Python源码剖析》读书笔记-5 Dict对象</a></h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<h2 id="第5章-Python中的Dict对象"><a href="#第5章-Python中的Dict对象" class="headerlink" title="第5章 Python中的Dict对象"></a>第5章 Python中的Dict对象</h2><ul>
+<li>Dict对象定义为：<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> &#123;</span><br><span class="line">    <span class="comment">/* Cached hash code of me_key. Note that hash codes are C longs.</span><br><span class="line">     * We have to use Py_ssize_t instead because dict_popitem() abuses</span><br><span class="line">     * me_hash to hold a search finger.</span><br><span class="line">     */</span></span><br><span class="line">    Py_ssize_t me_hash;</span><br><span class="line">    PyObject *me_key;</span><br><span class="line">    PyObject *me_value;</span><br><span class="line">&#125; PyDictEntry;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> _dictobject PyDictObject;</span><br><span class="line"><span class="keyword">struct</span> _dictobject &#123;</span><br><span class="line">    PyObject_HEAD</span><br><span class="line">    Py_ssize_t ma_fill; <span class="comment">/* # Active + # Dummy */</span></span><br><span class="line">    Py_ssize_t ma_used; <span class="comment">/* # Active */</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/* The table contains ma_mask + 1 slots, and that's a power of 2.</span><br><span class="line">     * We store the mask instead of the size because the mask is more</span><br><span class="line">     * frequently needed.</span><br><span class="line">     */</span></span><br><span class="line">    Py_ssize_t ma_mask;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* ma_table points to ma_smalltable for small tables, else to</span><br><span class="line">     * additional malloc'ed memory. ma_table is never NULL! This rule</span><br><span class="line">     * saves repeated runtime null-tests in the workhorse getitem and</span><br><span class="line">     * setitem calls.</span><br><span class="line">     */</span></span><br><span class="line">    PyDictEntry *ma_table;</span><br><span class="line">    PyDictEntry *(*ma_lookup)(PyDictObject *mp, PyObject *key, <span class="keyword">long</span> hash);</span><br><span class="line">    PyDictEntry ma_smalltable[PyDict_MINSIZE];</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+    
+  </div>
+  <footer class="end-sep">
+    
+      
+        <div class="alignleft">
+          <a href="/2014/03/29/python-source-5/#more" class="more-link">Read More</a>
+        </div>
+      
+      
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+<!-- JiaThis Button BEGIN -->
+<script type="text/javascript">
+var jiathis_config = {data_track_clickback:'true'};
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?move=0&amp;uid=1706898" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+
+  <article class="post">
+  <header>
+    
+      <div class="icon"></div>
       <a href="/2014/03/26/python-source-4/">
   <time datetime="2014-03-26T12:02:05.000Z">
     2014-03-26

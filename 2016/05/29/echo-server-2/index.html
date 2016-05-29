@@ -1,0 +1,164 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  
+  <title>echoserver的几种实现-2(libuv) | 一根笨茄子</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  
+    <meta name="author" content="Yubo Guo">
+  
+  
+    <meta name="description" content="在echoserver的几种实现-1中，通过socket、select、epoll几种方式实现了echoserver，了解了select和epoll模型的优劣。接下来，我将通过libuv实现另一个echoserver，学习libuv的使用。libuv的源码在这里，一个比较好的教程在这里。libuv是node.js实现时所用到的事件库，可以通过注册事件回调的方式实现异步处理系统中的IO事件。">
+  
+  <meta name="description" content="在echoserver的几种实现-1中，通过socket、select、epoll几种方式实现了echoserver，了解了select和epoll模型的优劣。接下来，我将通过libuv实现另一个echoserver，学习libuv的使用。libuv的源码在这里，一个比较好的教程在这里。libuv是node.js实现时所用到的事件库，可以通过注册事件回调的方式实现异步处理系统中的IO事件。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="echoserver的几种实现-2(libuv)">
+<meta property="og:url" content="http://blog.guoyb.com/2016/05/29/echo-server-2/index.html">
+<meta property="og:site_name" content="一根笨茄子">
+<meta property="og:description" content="在echoserver的几种实现-1中，通过socket、select、epoll几种方式实现了echoserver，了解了select和epoll模型的优劣。接下来，我将通过libuv实现另一个echoserver，学习libuv的使用。libuv的源码在这里，一个比较好的教程在这里。libuv是node.js实现时所用到的事件库，可以通过注册事件回调的方式实现异步处理系统中的IO事件。">
+<meta property="og:updated_time" content="2016-05-29T09:08:09.487Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="echoserver的几种实现-2(libuv)">
+<meta name="twitter:description" content="在echoserver的几种实现-1中，通过socket、select、epoll几种方式实现了echoserver，了解了select和epoll模型的优劣。接下来，我将通过libuv实现另一个echoserver，学习libuv的使用。libuv的源码在这里，一个比较好的教程在这里。libuv是node.js实现时所用到的事件库，可以通过注册事件回调的方式实现异步处理系统中的IO事件。">
+  
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+</head>
+
+<body>
+  <div class="wrapper">
+    <header id="header">
+  <div class="title">
+    <h1><a href="/">一根笨茄子</a></h1>
+    <p><a href="/"></a></p>
+  </div>
+  <nav class="nav">
+    <ul>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/about">关于我</a></li>
+      
+      
+    </ul>
+    <div class="clearfix"></div>
+  </nav>
+  <div class="clearfix"></div>
+</header>
+    <div class="content">
+		<article class="post">
+  <header>
+    
+      <div class="icon"></div>
+      <a href="/2016/05/29/echo-server-2/">
+  <time datetime="2016-05-29T07:47:42.000Z">
+    2016-05-29
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title">echoserver的几种实现-2(libuv)</h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>在<a href="http://blog.guoyb.com/2016/05/22/echo-server/">echoserver的几种实现-1</a>中，通过socket、select、epoll几种方式实现了echoserver，了解了select和epoll模型的优劣。接下来，我将通过libuv实现另一个echoserver，学习libuv的使用。libuv的源码在<a href="https://github.com/libuv/libuv" target="_blank" rel="external">这里</a>，一个比较好的教程在<a href="http://nikhilm.github.io/uvbook/" target="_blank" rel="external">这里</a>。<br>libuv是node.js实现时所用到的事件库，可以通过注册事件回调的方式实现异步处理系统中的IO事件。  </p>
+<hr>
+<p>使用libuv，一般都会用到一个uv_loop_t的数据结构，它表示了程序中的主循环，保存了需要处理的事件、内部使用的文件描述符、当前的状态等信息。一般的，直接使用libuv的默认uv_loop_t结构：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">uv_loop_t</span> *loop;</span><br><span class="line">loop = uv_default_loop();</span><br></pre></td></tr></table></figure><br>uv_default_loop使用了一个简单的单例实现。如果必要的话，初始化一个全局的uv_loop_t结构体；将此结构体的指针返回。  </p>
+<hr>
+<a id="more"></a>
+<p>之后，我们可以向loop中添加待处理的数据结构了。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">uv_tcp_t</span> server;</span><br><span class="line">uv_tcp_init(loop, &amp;server);</span><br></pre></td></tr></table></figure><br>uv_tcp_init做了这两件事：</p>
+<blockquote>
+<p>a.初始化uv_tcp_t结构，并关联loop；<br>b.将uv_tcp_t添加到loop的处理列表中。  </p>
+</blockquote>
+<p>之后，我们可以像之前一样，为tcp绑定一个监听的地址/端口。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> sockaddr_in addr;</span><br><span class="line">uv_ip4_addr(<span class="string">"0.0.0.0"</span>, DEFAULT_PORT, &amp;addr);</span><br><span class="line">uv_tcp_bind(&amp;server, (const struct sockaddr*)&amp;addr, <span class="number">0</span>);</span><br></pre></td></tr></table></figure><br>接下来，要注册第一个需要处理的事件了。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uv_listen((<span class="keyword">uv_stream_t</span>*)&amp;server, DEFAULT_BACKLOG, on_new_connection);</span><br></pre></td></tr></table></figure><br>每当server上有新连接到来时，就调用on_new_connection函数。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">on_new_connection</span><span class="params">(uv_stream_t *server, <span class="keyword">int</span> status)</span></span><br><span class="line"></span>&#123;</span><br><span class="line">	<span class="keyword">if</span>(status &lt; <span class="number">0</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">"On new connection error %s.\n"</span>, uv_strerror(status));</span><br><span class="line">		return;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"new connection is coming...\n"</span>);</span><br><span class="line">	<span class="keyword">uv_tcp_t</span> *client = (<span class="keyword">uv_tcp_t</span>*)<span class="built_in">malloc</span>(sizeof(<span class="keyword">uv_tcp_t</span>));</span><br><span class="line">	uv_tcp_init(loop, client);</span><br><span class="line">	<span class="keyword">if</span>(uv_accept(server, (<span class="keyword">uv_stream_t</span>*)client) == <span class="number">0</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		uv_read_start((<span class="keyword">uv_stream_t</span>*)client, alloc_buffer, echo_read);</span><br><span class="line">	&#125; <span class="keyword">else</span></span><br><span class="line">	&#123;</span><br><span class="line">		uv_close((<span class="keyword">uv_handle_t</span>*)client, NULL);	</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>这里的uv_stream_t和之前uv_listen的传入的第一个参数是一样的。在这个函数中，可以直接调用uv_accept函数获得和对应客户端绑定的uv_tcp_t对象，这个对象可以当作是对之前的echoserver例程中client socket的封装。<br>得到了client对象，就可以进行接下来的事件处理注册。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uv_read_start((<span class="keyword">uv_stream_t</span>*)client, alloc_buffer, echo_read);</span><br></pre></td></tr></table></figure><br>这次一口气传入了两个事件回调函数。<br>alloc_buffer负责为读事件分配存储空间；echo_read负责具体读事件处理。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">alloc_buffer</span><span class="params">(uv_handle_t *handle, size_t suggested_size, uv_buf_t *buf)</span></span><br><span class="line"></span>&#123;</span><br><span class="line">	buf-&gt;base = (char*) <span class="built_in">malloc</span>(suggested_size);</span><br><span class="line">	buf-&gt;len = suggested_size;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">echo_read</span><span class="params">(uv_stream_t *client, ssize_t nread, <span class="keyword">const</span> uv_buf_t *buf)</span></span><br><span class="line"></span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (nread &lt; <span class="number">0</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">if</span> (nread != UV_EOF)</span><br><span class="line">			<span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">"Read error %s\n"</span>, uv_err_name(nread));</span><br><span class="line">		uv_close((<span class="keyword">uv_handle_t</span>*) client, <span class="literal">NULL</span>);</span><br><span class="line">	&#125; <span class="keyword">else</span> <span class="keyword">if</span> (nread &gt; <span class="number">0</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">uv_write_t</span> *req = (<span class="keyword">uv_write_t</span>*) <span class="built_in">malloc</span>(sizeof(<span class="keyword">uv_write_t</span>));</span><br><span class="line">		<span class="keyword">uv_buf_t</span> wrbuf = uv_buf_init(buf-&gt;base, nread);</span><br><span class="line">		uv_write(req, client, &amp;wrbuf, <span class="number">1</span>, echo_write);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (buf-&gt;base)</span><br><span class="line">		<span class="built_in">free</span>(buf-&gt;base);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>这里libuv甚至隐藏了具体的读取过程，直接将读取的结果通过一个uv_buf_t数据结构传入函数中。因此这里的操作仅仅是复制一个uv_buf_t数据，并将其通过uv_write写回。<br>uv_write中也提供了一个echo_write回调函数。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">echo_write</span><span class="params">(uv_write_t *req, <span class="keyword">int</span> status)</span></span><br><span class="line"></span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (status)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">"Write error %s.\n"</span>, uv_strerror(status));</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="built_in">free</span>(req);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>在echo_read和echo_write的最后，都需要将之前申请的内存释放掉。  </p>
+<hr>
+<p>设置完这一切事件的处理规则之后，只需要调用uv_run让主循环跑起来即可。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uv_run(loop, UV_RUN_DEFAULT);</span><br></pre></td></tr></table></figure>  </p>
+<hr>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>在使用libuv开发echoserver的过程中，libuv封装了大多数的socket操作，也不用关心异步的具体实现方式，通过提炼出<strong>事件+回调</strong>的编程模型，极大的简化了异步网络编程的步骤。libuv也开放了源代码，源码阅读可以从uv_loop_t(uv_loop_s)数据结构入手，理解uv_run函数如何实现这种事件+回调的异步模型。<br>本文的完整代码放在<a href="https://github.com/yubo1911/saber/blob/master/echo-server/libuv-echo-server.c" target="_blank" rel="external">我的GuitHub</a>。另外，一个使用libuv实现的客户端程序也放在<a href="https://github.com/yubo1911/saber/blob/master/echo-server/libuv-echo-client.c" target="_blank" rel="external">这里</a>。</p>
+
+    
+  </div>
+  <footer>
+    
+      
+      
+  <div class="tags">
+    <a class="tags-link" href="/tags/echoserver/">echoserver</a>, <a class="tags-link" href="/tags/epoll/">epoll</a>, <a class="tags-link" href="/tags/libuv/">libuv</a>, <a class="tags-link" href="/tags/select/">select</a>, <a class="tags-link" href="/tags/socket/">socket</a>
+  </div>
+
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+<!-- JiaThis Button BEGIN -->
+<script type="text/javascript">
+var jiathis_config = {data_track_clickback:'true'};
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?move=0&amp;uid=1706898" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+<section id="comment">
+  <h1 class="title">Comments</h1>
+  <div class="ds-thread" data-title="echoserver的几种实现-2(libuv)">
+  </div>
+</section>
+
+	</div>
+  </div>
+  <div class="widget-wrapper">
+	<aside id="sidebar">
+  
+  
+</aside>
+<div class="clearfix"></div>
+  </div>
+  <footer id="footer"><div class="copyright">
+  
+  &copy; 2016 <a href="/">Yubo Guo</a>
+  
+</div>
+<div class="theme-copyright">
+  Theme by <a href="https://github.com/orderedlist" target="_blank">orderedlist</a>
+   | 
+  Redesign by <a href="http://heroicyang.com/" target="_blank">Heroic Yang</a>
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+<script src="/js/scale.fix.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = { short_name: 'guoyb' };
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';
+    ds.async = true;
+    ds.src = 'http://static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+  (function($){
+    $('.fancybox').fancybox();
+  })(jQuery);
+</script>
+
+</body>
+</html>
