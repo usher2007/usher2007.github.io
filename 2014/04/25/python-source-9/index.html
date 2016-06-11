@@ -24,12 +24,14 @@
 <meta property="og:description" content="第9章 Python虚拟机中的一般表达式
 某个指令的参数通过如下语句获取：
 123456#define HAVE_ARGUMENT	90	/* Opcodes from here have an argument: */#define HAS_ARG(op) ((op) &amp;gt;= HAVE_ARGUMENT)#define NEXTARG() (next_instr += 2, (next_i">
-<meta property="og:updated_time" content="2014-06-01T14:41:23.474Z">
+<meta property="og:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/qrcode.jpg">
+<meta property="og:updated_time" content="2016-06-11T08:41:06.360Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="《Python源码剖析》读书笔记-9 Python虚拟机中的一般表达式">
 <meta name="twitter:description" content="第9章 Python虚拟机中的一般表达式
 某个指令的参数通过如下语句获取：
 123456#define HAVE_ARGUMENT	90	/* Opcodes from here have an argument: */#define HAS_ARG(op) ((op) &amp;gt;= HAVE_ARGUMENT)#define NEXTARG() (next_instr += 2, (next_i">
+<meta name="twitter:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/qrcode.jpg">
   
   
   <link rel="stylesheet" href="/css/style.css">
@@ -91,8 +93,9 @@
 </ul>
 </li>
 <li>创建非空的Dict对象时，运行时栈中存放的是Dict的指针，DUP_TOP指令复制的也是Dict的指针，因此当LOAD_CONST,ROT_TWO,LOAD_CONST,STORE_SUBSCR这一系列指令对靠近栈顶的那个Dict插入键值对后，位于栈底的原始Dict也被改变了。</li>
-<li>从LOAD_NAMES指令对应的c代码可以看出查找变量名时是按照LGB的顺序依次进行的；但是这里没有提到如何处理闭包，也就是如何体现LEGB这样的查找顺序。我猜想应该有关闭包的Python代码编译出来的字节码和没有闭包的情形是不一样的。这个猜测有待后续验证。</li>
+<li>从LOAD_NAMES指令对应的c代码可以看出查找变量名时是按照LGB的顺序依次进行的；但是这里没有提到如何处理闭包，也就是如何体现LEGB这样的查找顺序。我猜想应该有关闭包的Python代码编译出来的字节码和没有闭包的情形是不一样的。这个猜测有待后续验证。  </li>
 </ul>
+<p>欢迎关注我的微信公众号，技术·生活·思考：<br><img src="http://7d9lwm.com1.z0.glb.clouddn.com/qrcode.jpg" alt="后端技术小黑屋"></p>
 
     
   </div>
@@ -116,7 +119,7 @@ var jiathis_config = {data_track_clickback:'true'};
 <!-- JiaThis Button END -->
 
 <section id="comment">
-  <h1 class="title">Comments</h1>
+  <h1 class="title">评论</h1>
   <div class="ds-thread" data-title="《Python源码剖析》读书笔记-9 Python虚拟机中的一般表达式">
   </div>
 </section>

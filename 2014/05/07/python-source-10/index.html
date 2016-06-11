@@ -30,7 +30,8 @@ if条件判断语句，在虚拟机中对应了COMPARE_OP，其中有几个地�
 
 在slow_compare中的cmp_outcome函数，处理了Python自定义的一些比较操作，例如is，is not，in等。
 对于那些一般类型的比较操作（非数字，非is，is not这类Python特殊比较符），会通过PyObject_RichCompare来进行。这">
-<meta property="og:updated_time" content="2014-06-01T14:41:30.358Z">
+<meta property="og:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/qrcode.jpg">
+<meta property="og:updated_time" content="2016-06-11T08:41:21.640Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="《Python源码剖析》读书笔记-10 Python虚拟机中的控制流">
 <meta name="twitter:description" content="第10章 Python虚拟机中的控制流
@@ -38,6 +39,7 @@ if条件判断语句，在虚拟机中对应了COMPARE_OP，其中有几个地�
 
 在slow_compare中的cmp_outcome函数，处理了Python自定义的一些比较操作，例如is，is not，in等。
 对于那些一般类型的比较操作（非数字，非is，is not这类Python特殊比较符），会通过PyObject_RichCompare来进行。这">
+<meta name="twitter:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/qrcode.jpg">
   
   
   <link rel="stylesheet" href="/css/style.css">
@@ -144,12 +146,13 @@ if条件判断语句，在虚拟机中对应了COMPARE_OP，其中有几个地�
 <li>如果当前栈帧中有try..except..finally…这样的异常捕获代码，那么一定在当前栈帧中保存了若干个PyTryBlock对象，并且其type是SETUP_FINALLY或者SETUP_EXCEPT。</li>
 <li>那么，首先弹出SETUP_EXCEPT类型的PyTryBlock，并从tstate中获得异常的类型、值、和traceback对象，压入运行时栈中；然后根据PyTryBlock中handler的值跳转字节码的地址。并将why设为WHY_NOT，表示已经找到了异常捕获代码，可以处理该异常。</li>
 <li>跳转到的字节码，会比较运行时栈内的异常类型和源代码编译出来的异常类型是否匹配。如果匹配，就依次执行异常捕获代码except代码块里的字节码；如果不匹配，那么把之前放入运行时栈的异常信息取出，重新构造异常抛出。</li>
-<li>无论异常是否匹配，最后都会执行到POP_BLOCK字节码指令。它会将代表SETUP_FINALLY的那个PyTryBlock取出，然后开始执行finally代码块中的字节码。</li>
+<li>无论异常是否匹配，最后都会执行到POP_BLOCK字节码指令。它会将代表SETUP_FINALLY的那个PyTryBlock取出，然后开始执行finally代码块中的字节码。  </li>
 </ul>
 </li>
 </ul>
 </li>
 </ul>
+<p>欢迎关注我的微信公众号，技术·生活·思考：<br><img src="http://7d9lwm.com1.z0.glb.clouddn.com/qrcode.jpg" alt="后端技术小黑屋"></p>
 
     
   </div>
@@ -173,7 +176,7 @@ var jiathis_config = {data_track_clickback:'true'};
 <!-- JiaThis Button END -->
 
 <section id="comment">
-  <h1 class="title">Comments</h1>
+  <h1 class="title">评论</h1>
   <div class="ds-thread" data-title="《Python源码剖析》读书笔记-10 Python虚拟机中的控制流">
   </div>
 </section>

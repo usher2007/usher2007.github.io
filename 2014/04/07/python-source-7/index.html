@@ -24,12 +24,14 @@ pyc文件中存储了编译的结果，一个嵌套的PyCodeObject对象，impor
 <meta property="og:description" content="第7章 Python的编译结果——Code对象与pyc文件
 Python的执行流程大致是：Python源代码(.py)-&amp;gt;Python解释器(python27.dll)-&amp;gt;Python字节码(.pyc)-&amp;gt;Python虚拟机(python27.dll)-&amp;gt;执行结果
 pyc文件中存储了编译的结果，一个嵌套的PyCodeObject对象，import会触发pyc文件的生成，i">
-<meta property="og:updated_time" content="2014-06-01T14:41:09.676Z">
+<meta property="og:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/qrcode.jpg">
+<meta property="og:updated_time" content="2016-06-11T08:40:37.631Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="《Python源码剖析》读书笔记-7 Python的编译结果">
 <meta name="twitter:description" content="第7章 Python的编译结果——Code对象与pyc文件
 Python的执行流程大致是：Python源代码(.py)-&amp;gt;Python解释器(python27.dll)-&amp;gt;Python字节码(.pyc)-&amp;gt;Python虚拟机(python27.dll)-&amp;gt;执行结果
 pyc文件中存储了编译的结果，一个嵌套的PyCodeObject对象，import会触发pyc文件的生成，i">
+<meta name="twitter:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/qrcode.jpg">
   
   
   <link rel="stylesheet" href="/css/style.css">
@@ -112,10 +114,11 @@ pyc文件中存储了编译的结果，一个嵌套的PyCodeObject对象，impor
 <span class="number">0</span>+<span class="number">6</span>+<span class="number">44</span>=<span class="number">50</span>     ---&gt;       <span class="number">1</span>+<span class="number">1</span>+<span class="number">5</span>=<span class="number">7</span>
 </code></pre>
 </li>
-<li>为啥要存增量呢？我猜测，这里为了节省内存，co_lnotab中的每一个元素都只用了一个byte，其最大值也就是255。存储原始值，岂不是要限制字节码偏移值和源代码行数都得在256行之内？！所以还是存储增量靠谱，编译器可以用来保证编译出的相邻字节码之间的偏移以及对应的源代码偏移都不要超过255。</li>
+<li>为啥要存增量呢？我猜测，这里为了节省内存，co_lnotab中的每一个元素都只用了一个byte，其最大值也就是255。存储原始值，岂不是要限制字节码偏移值和源代码行数都得在256行之内？！所以还是存储增量靠谱，编译器可以用来保证编译出的相邻字节码之间的偏移以及对应的源代码偏移都不要超过255。  </li>
 </ul>
 </li>
 </ul>
+<p>欢迎关注我的微信公众号，技术·生活·思考：<br><img src="http://7d9lwm.com1.z0.glb.clouddn.com/qrcode.jpg" alt="后端技术小黑屋"></p>
 
     
   </div>
@@ -139,7 +142,7 @@ var jiathis_config = {data_track_clickback:'true'};
 <!-- JiaThis Button END -->
 
 <section id="comment">
-  <h1 class="title">Comments</h1>
+  <h1 class="title">评论</h1>
   <div class="ds-thread" data-title="《Python源码剖析》读书笔记-7 Python的编译结果">
   </div>
 </section>
