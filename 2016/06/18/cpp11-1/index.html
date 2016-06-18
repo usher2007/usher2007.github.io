@@ -1,0 +1,186 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  
+  <title>C++11新特性之新类型与初始化 | 一根笨茄子</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  
+    <meta name="author" content="Yubo Guo">
+  
+  
+    <meta name="description" content="这是C++11新特性介绍的第一部分，比较简单易懂，但是也有一些有趣的地方。不想看toy code的读者可以直接拉到文章最后看这部分的总结。  
+新类型long long类型C++11标准中新加入了long long类型属性，占用空间不小于long类型。测试代码如下：1234long large = 1 &amp;lt;&amp;lt; 31;long long long_large = 1 &amp;lt;&amp;lt; 3">
+  
+  <meta name="description" content="这是C++11新特性介绍的第一部分，比较简单易懂，但是也有一些有趣的地方。不想看toy code的读者可以直接拉到文章最后看这部分的总结。  
+新类型long long类型C++11标准中新加入了long long类型属性，占用空间不小于long类型。测试代码如下：1234long large = 1 &amp;lt;&amp;lt; 31;long long long_large = 1 &amp;lt;&amp;lt; 3">
+<meta property="og:type" content="article">
+<meta property="og:title" content="C++11新特性之新类型与初始化">
+<meta property="og:url" content="http://blog.guoyb.com/2016/06/18/cpp11-1/index.html">
+<meta property="og:site_name" content="一根笨茄子">
+<meta property="og:description" content="这是C++11新特性介绍的第一部分，比较简单易懂，但是也有一些有趣的地方。不想看toy code的读者可以直接拉到文章最后看这部分的总结。  
+新类型long long类型C++11标准中新加入了long long类型属性，占用空间不小于long类型。测试代码如下：1234long large = 1 &amp;lt;&amp;lt; 31;long long long_large = 1 &amp;lt;&amp;lt; 3">
+<meta property="og:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/qrcode.jpg">
+<meta property="og:updated_time" content="2016-06-18T12:11:06.801Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="C++11新特性之新类型与初始化">
+<meta name="twitter:description" content="这是C++11新特性介绍的第一部分，比较简单易懂，但是也有一些有趣的地方。不想看toy code的读者可以直接拉到文章最后看这部分的总结。  
+新类型long long类型C++11标准中新加入了long long类型属性，占用空间不小于long类型。测试代码如下：1234long large = 1 &amp;lt;&amp;lt; 31;long long long_large = 1 &amp;lt;&amp;lt; 3">
+<meta name="twitter:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/qrcode.jpg">
+  
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+</head>
+
+<body>
+  <div class="wrapper">
+    <header id="header">
+  <div class="title">
+    <h1><a href="/">一根笨茄子</a></h1>
+    <p><a href="/"></a></p>
+  </div>
+  <nav class="nav">
+    <ul>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/about">关于我</a></li>
+      
+      
+    </ul>
+    <div class="clearfix"></div>
+  </nav>
+  <div class="clearfix"></div>
+</header>
+    <div class="content">
+		<article class="post">
+  <header>
+    
+      <div class="icon"></div>
+      <a href="/2016/06/18/cpp11-1/">
+  <time datetime="2016-06-18T10:31:09.000Z">
+    2016-06-18
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title">C++11新特性之新类型与初始化</h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>这是C++11新特性介绍的第一部分，比较简单易懂，但是也有一些有趣的地方。<br>不想看toy code的读者可以直接拉到文章最后看这部分的总结。  </p>
+<h2 id="新类型"><a href="#新类型" class="headerlink" title="新类型"></a>新类型</h2><h3 id="long-long类型"><a href="#long-long类型" class="headerlink" title="long long类型"></a>long long类型</h3><p>C++11标准中新加入了long long类型属性，占用空间不小于long类型。测试代码如下：<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">long</span> large = <span class="number">1</span> &lt;&lt; <span class="number">31</span>;</span><br><span class="line"><span class="keyword">long</span> <span class="keyword">long</span> long_large = <span class="number">1</span> &lt;&lt; <span class="number">31</span>;</span><br><span class="line"><span class="keyword">long</span> <span class="keyword">long</span> long_long_large = <span class="number">1</span> &lt;&lt; <span class="number">63</span>;</span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="string">"test long long："</span>&lt;&lt;large&lt;&lt;<span class="string">'\t'</span>&lt;&lt;long_large&lt;&lt;<span class="string">'\t'</span>&lt;&lt;long_long_large&lt;&lt;<span class="built_in">endl</span>;</span><br></pre></td></tr></table></figure></p>
+<p>在我的机器上实测，long long类型和long类型同样使用32bit空间。  </p>
+<h3 id="nullptr字面量"><a href="#nullptr字面量" class="headerlink" title="nullptr字面量"></a>nullptr字面量</h3><p>C++11标准中专门为空指针增加了nullptr字面量，同时不推荐再使用NULL或者0表示空指针。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> *p1 = <span class="literal">nullptr</span>;</span><br><span class="line"><span class="keyword">int</span> *p2 = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">int</span> *p3 = <span class="literal">NULL</span>;</span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="string">"test nullptr: "</span>&lt;&lt;(p1 == p2)&lt;&lt;<span class="string">'\t'</span>&lt;&lt;(p1 == p3)&lt;&lt;<span class="built_in">endl</span>;</span><br></pre></td></tr></table></figure>  </p>
+<p>最终测试结果，nullptr和NULL和0是一样的。<br><a id="more"></a>  </p>
+<h3 id="constexpr"><a href="#constexpr" class="headerlink" title="constexpr"></a>constexpr</h3><p>C++11标准中新增constexpr用于声明常量表达式，编译器会验证此变量的值是否是一个常量表达式。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> out_i = <span class="number">0</span>; <span class="comment">// out_i定义于函数外部</span></span><br><span class="line">...</span><br><span class="line"><span class="keyword">constexpr</span> <span class="keyword">int</span> mf = <span class="number">20</span>;</span><br><span class="line"><span class="keyword">constexpr</span> <span class="keyword">int</span> limit = mf + <span class="number">1</span>;</span><br><span class="line"><span class="keyword">constexpr</span> <span class="keyword">int</span> *p4 = &amp;out_i;</span><br><span class="line"><span class="comment">// the following would cause a make error </span></span><br><span class="line"></span><br><span class="line"><span class="comment">// since large is not a constexpr</span></span><br><span class="line"><span class="comment">//constexpr int wrong = large + 1; </span></span><br><span class="line"></span><br><span class="line"><span class="comment">// since &amp;in_j is not a constexpr;</span></span><br><span class="line"><span class="comment">//int in_j = 0;</span></span><br><span class="line"><span class="comment">//constexpr int *p5 = &amp;in_j;</span></span><br></pre></td></tr></table></figure>  </p>
+<p>值得注意的是，constexpr指针可以指向非常量变量，只要此变量定义于函数之外，因为这样的变量的指针（地址）是可以在编译期确定的。<br>另外，下面的constexpr指针与const指针的含义是完全不同的：<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">constexpr</span> <span class="keyword">int</span> *p6 = <span class="literal">nullptr</span>; <span class="comment">// a const pointer point to an int</span></span><br><span class="line"><span class="comment">// p6 = &amp;out_i; // error: p6 is a constexpr</span></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> *p7 = <span class="literal">nullptr</span>; <span class="comment">// a pointer point to a const int</span></span><br></pre></td></tr></table></figure>  </p>
+<p>第一个指针表示一个常量指针，即指针的值是常量；而第二个指针表示一个指向const int的指针，即指针<strong>指向</strong>的值是常量。  </p>
+<p>constexpr还可以用于函数，constexpr函数是指能用于常量表达式的函数，它遵循以下几条约定：  </p>
+<blockquote>
+<p>a.返回类型是字面值类型<br>b.形参类型是字面值类型<br>c.函数体中必须有且仅有一条return语句  </p>
+</blockquote>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">constexpr</span> <span class="keyword">int</span> <span class="title">sz</span><span class="params">()</span> </span>&#123; return <span class="number">42</span>; &#125;</span><br><span class="line"><span class="function"><span class="keyword">constexpr</span> <span class="keyword">int</span> <span class="title">new_sz</span><span class="params">(<span class="keyword">int</span> cnt)</span> </span>&#123; return sz() * cnt; &#125;</span><br><span class="line"><span class="keyword">constexpr</span> <span class="keyword">int</span> size = sz();</span><br><span class="line"><span class="keyword">constexpr</span> <span class="keyword">int</span> nsize = new_sz(mf);</span><br><span class="line"><span class="comment">//constexpr int wrong_size = new_sz(out_i); // error: out_i is not a constexpr</span></span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="string">"test constexpr: "</span>&lt;&lt;mf&lt;&lt;<span class="string">'\t'</span>&lt;&lt;limit&lt;&lt;<span class="string">'\t'</span>&lt;&lt;p4&lt;&lt;<span class="string">'\t'</span>&lt;&lt;size&lt;&lt;<span class="string">'\t'</span>&lt;&lt;nsize&lt;&lt;<span class="string">'\t'</span>&lt;&lt;p6&lt;&lt;<span class="string">'\t'</span>&lt;&lt;p7&lt;&lt;<span class="built_in">endl</span>;</span><br></pre></td></tr></table></figure>  
+<h3 id="noexcept"><a href="#noexcept" class="headerlink" title="noexcept"></a>noexcept</h3><p>noexcept可以用作异常指示符，用于指示一个函数是否会抛出异常。编译器并不检查使用了noexcept的函数是否真的不抛出异常，在运行时，如果一个使用noexcept承诺不抛出异常的函数实际抛出了异常，那么程序会直接终止。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">no_except</span><span class="params">()</span> <span class="keyword">noexcept</span></span><br><span class="line"></span>&#123;</span><br><span class="line">	throw <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// the following call will cause terminate</span></span><br><span class="line"><span class="comment">//no_except();</span></span><br></pre></td></tr></table></figure>  </p>
+<p>noexcept还可以带参数，noexcept(true)表示不会抛出异常，noexcept(false)表示可能抛出异常。<br>同时noexcept还可以用作运算符，接受一个函数调用，返回一个bool值表示是否会抛出异常。noexcept运算符并不会对其实参进行求值。<br>将noexcept运算符，结合带参数的noexcept指示符，可以得到如下常用法：<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">void no_except2() noexcept(noexcept(no_except()))&#123;&#125;</span><br><span class="line">cout&lt;&lt;"test noexcept: "&lt;&lt;noexcept(no_except())&lt;&lt;'\t'&lt;&lt;noexcept(no_except2())&lt;&lt;endl;</span><br></pre></td></tr></table></figure><br>这种用法表示no_except2和no_except的异常说明保持一致。  </p>
+<h2 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h2><h3 id="列表初始化"><a href="#列表初始化" class="headerlink" title="列表初始化"></a>列表初始化</h3><p>C++11新标准中为很多类型增加了列表初始化的功能。<br>可以用列表初始化一个简单变量。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> single_int1 = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">int</span> single_int2 = &#123;<span class="number">0</span>&#125;;</span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="string">"test list initialization:\n"</span>&lt;&lt;single_int1&lt;&lt;<span class="string">'\t'</span>&lt;&lt;single_int2&lt;&lt;<span class="built_in">endl</span>;</span><br></pre></td></tr></table></figure>  </p>
+<p>可以用列表初始化一个容器（vector，list，map，set…)。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// vector/list list initialization</span></span><br><span class="line"><span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt; v1 = &#123;<span class="string">"ab"</span>, <span class="string">"cd"</span>, <span class="string">"ef"</span>&#125;;</span><br><span class="line"><span class="built_in">list</span>&lt;<span class="built_in">string</span>&gt; l2&#123;<span class="string">"gh"</span>, <span class="string">"ij"</span>, <span class="string">"kl"</span>&#125;;</span><br><span class="line"><span class="comment">//vector&lt;string&gt; v3("mn", "op", "qr"); // wrong initialization format</span></span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="string">"test vector/list list initialization:\n"</span>&lt;&lt;v1[<span class="number">1</span>]&lt;&lt;<span class="string">'\t'</span>&lt;&lt;l2.front()&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// map/set list initialization</span></span><br><span class="line"><span class="built_in">map</span>&lt;<span class="built_in">string</span>, <span class="built_in">string</span>&gt; m1 =</span><br><span class="line">&#123;</span><br><span class="line">	&#123;<span class="string">"a"</span>, <span class="string">"A"</span>&#125;,</span><br><span class="line">	&#123;<span class="string">"b"</span>, <span class="string">"B"</span>&#125;,</span><br><span class="line">	&#123;<span class="string">"c"</span>, <span class="string">"C"</span>&#125;</span><br><span class="line">&#125;;</span><br><span class="line">m1.insert(&#123;<span class="string">"d"</span>, <span class="string">"D"</span>&#125;);</span><br><span class="line"><span class="built_in">set</span>&lt;<span class="built_in">string</span>&gt; s1 = &#123;<span class="string">"a"</span>, <span class="string">"b"</span>, <span class="string">"c"</span>&#125;;</span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="string">"test map/set list initialization:\n"</span>&lt;&lt;m1[<span class="string">"d"</span>]&lt;&lt;<span class="string">'\t'</span>&lt;&lt;*s1.find(<span class="string">"b"</span>)&lt;&lt;<span class="built_in">endl</span>;</span><br></pre></td></tr></table></figure>  </p>
+<p>可以在使用new动态分配内存时使用列表初始化。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; *pv = new <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&#123;<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>&#125;;</span><br><span class="line"><span class="keyword">int</span> *pi = new <span class="keyword">int</span>[<span class="number">5</span>]&#123;<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>&#125;;</span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="string">"test new alloator using list initialization:\n"</span>&lt;&lt;(*pv)[<span class="number">2</span>]&lt;&lt;<span class="string">'\t'</span>&lt;&lt;pi[<span class="number">2</span>]&lt;&lt;<span class="built_in">endl</span>;</span><br></pre></td></tr></table></figure>  </p>
+<p>可以在传入参数/函数返回值时使用列表初始化。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">m1.insert(&#123;<span class="string">"d"</span>, <span class="string">"D"</span>&#125;);</span><br><span class="line"></span><br><span class="line"><span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt; error_msg(<span class="keyword">int</span> typ)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">switch</span>(typ)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">case</span> <span class="number">1</span>:</span><br><span class="line">			return &#123;<span class="string">"type1"</span>, <span class="string">"msg1"</span>&#125;;</span><br><span class="line">		<span class="keyword">case</span> <span class="number">2</span>:</span><br><span class="line">			return &#123;<span class="string">"type2"</span>, <span class="string">"msg2"</span>&#125;;</span><br><span class="line">		<span class="keyword">default</span>:</span><br><span class="line">			return &#123;&#125;;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">pair&lt;<span class="built_in">string</span>, <span class="built_in">string</span>&gt; get_pair(<span class="keyword">int</span> typ)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">if</span>(typ == <span class="number">1</span>) return &#123;<span class="string">"key"</span>, <span class="string">"value"</span>&#125;;</span><br><span class="line">	return pair&lt;<span class="built_in">string</span>, <span class="built_in">string</span>&gt;(<span class="string">"default key"</span>, <span class="string">"default value"</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt; err_msg1 = error_msg(<span class="number">1</span>);</span><br><span class="line"><span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt; err_msg2 = error_msg(<span class="number">2</span>);</span><br><span class="line"><span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt; err_msg3 = error_msg(<span class="number">3</span>);</span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="string">"test return value list initialization:\n"</span>&lt;&lt;err_msg1[<span class="number">1</span>]&lt;&lt;<span class="string">'\t'</span>&lt;&lt;err_msg2[<span class="number">1</span>]&lt;&lt;<span class="string">'\t'</span>&lt;&lt;err_msg3.empty()&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">	</span><br><span class="line">pair&lt;<span class="built_in">string</span>, <span class="built_in">string</span>&gt; p1 = get_pair(<span class="number">1</span>);</span><br><span class="line">pair&lt;<span class="built_in">string</span>, <span class="built_in">string</span>&gt; p2 = get_pair(<span class="number">2</span>);</span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="string">"test return pair list initialization:\n"</span>&lt;&lt;p1.first&lt;&lt;<span class="string">'\t'</span>&lt;&lt;p2.first&lt;&lt;<span class="built_in">endl</span>;</span><br></pre></td></tr></table></figure>  </p>
+<h3 id="类内成员初始化"><a href="#类内成员初始化" class="headerlink" title="类内成员初始化"></a>类内成员初始化</h3><p>C++11标准中允许直接对类内成员进行初始化/列表初始化。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> InitClass</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">public</span>:</span><br><span class="line">		<span class="function"><span class="keyword">void</span> <span class="title">print_class</span><span class="params">()</span></span><br><span class="line">		</span>&#123;</span><br><span class="line">			<span class="built_in">cout</span>&lt;&lt;field1&lt;&lt;<span class="string">'\t'</span>&lt;&lt;field2&lt;&lt;<span class="string">'\t'</span>&lt;&lt;field3&lt;&lt;<span class="string">'\t'</span>&lt;&lt;field4&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	<span class="keyword">private</span>:</span><br><span class="line">		<span class="keyword">int</span> field1 = <span class="number">1</span>;</span><br><span class="line">		<span class="keyword">int</span> field2;</span><br><span class="line">		<span class="keyword">double</span> field3 = <span class="number">1.0</span>;</span><br><span class="line">		<span class="keyword">double</span> field4;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> InitClassMgr</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">public</span>:</span><br><span class="line">		<span class="built_in">vector</span>&lt;InitClass&gt; init_objs = &#123;InitClass()&#125;;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">InitClass test_class;</span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="string">"test class member initialization:\n"</span>;</span><br><span class="line">test_class.print_class();</span><br><span class="line"></span><br><span class="line">InitClassMgr mgr;</span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="string">"test class member of class type initialization:\n"</span>;</span><br><span class="line">mgr.init_objs[<span class="number">0</span>].print_class();</span><br></pre></td></tr></table></figure>  </p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ol>
+<li>long long类型。</li>
+<li>nullptr字面量用于表示空指针。</li>
+<li>constexpr用于表示常量表达式。</li>
+<li>noexcept可以用于指示一个函数是否会抛出异常，同时可以用作运算符判定一个函数是否承诺不抛出异常。</li>
+<li>新增基础类型、容器类型、new分配内存时的列表初始化。构建临时变量时也可以直接使用列表初始化。</li>
+<li>可以直接对类内成员进行初始化/列表初始化。  </li>
+</ol>
+<p>完整代码详见<a href="https://github.com/yubo1911/saber/blob/master/learncpp11/new_type_and_keywords.cpp" target="_blank" rel="external">new_type_and_keywords.cpp</a> 和 <a href="https://github.com/yubo1911/saber/blob/master/learncpp11/initialize.cpp" target="_blank" rel="external">initialize.cpp</a>。</p>
+<p>欢迎关注我的微信公众号，技术·生活·思考：<br><img src="http://7d9lwm.com1.z0.glb.clouddn.com/qrcode.jpg" alt="后端技术小黑屋"></p>
+
+    
+  </div>
+  <footer>
+    
+      
+      
+  <div class="tags">
+    <a class="tags-link" href="/tags/C/">C++</a>, <a class="tags-link" href="/tags/C-11/">C++11</a>
+  </div>
+
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+<!-- JiaThis Button BEGIN -->
+<script type="text/javascript">
+var jiathis_config = {data_track_clickback:'true'};
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?move=0&amp;uid=1706898" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+<section id="comment">
+  <h1 class="title">Comments</h1>
+  <div class="ds-thread" data-title="C++11新特性之新类型与初始化">
+  </div>
+</section>
+
+	</div>
+  </div>
+  <div class="widget-wrapper">
+	<aside id="sidebar">
+  
+  
+</aside>
+<div class="clearfix"></div>
+  </div>
+  <footer id="footer"><div class="copyright">
+  
+  &copy; 2016 <a href="/">Yubo Guo</a>
+  
+</div>
+<div class="theme-copyright">
+  Theme by <a href="https://github.com/orderedlist" target="_blank">orderedlist</a>
+   | 
+  Redesign by <a href="http://heroicyang.com/" target="_blank">Heroic Yang</a>
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+<script src="/js/scale.fix.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = { short_name: 'guoyb' };
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';
+    ds.async = true;
+    ds.src = 'http://static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+  (function($){
+    $('.fancybox').fancybox();
+  })(jQuery);
+</script>
+
+</body>
+</html>

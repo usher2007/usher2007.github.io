@@ -52,6 +52,53 @@
   <header>
     
       <div class="icon"></div>
+      <a href="/2016/06/18/cpp11-1/">
+  <time datetime="2016-06-18T10:31:09.000Z">
+    2016-06-18
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title"><a href="/2016/06/18/cpp11-1/">C++11新特性之新类型与初始化</a></h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>这是C++11新特性介绍的第一部分，比较简单易懂，但是也有一些有趣的地方。<br>不想看toy code的读者可以直接拉到文章最后看这部分的总结。  </p>
+<h2 id="新类型"><a href="#新类型" class="headerlink" title="新类型"></a>新类型</h2><h3 id="long-long类型"><a href="#long-long类型" class="headerlink" title="long long类型"></a>long long类型</h3><p>C++11标准中新加入了long long类型属性，占用空间不小于long类型。测试代码如下：<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">long</span> large = <span class="number">1</span> &lt;&lt; <span class="number">31</span>;</span><br><span class="line"><span class="keyword">long</span> <span class="keyword">long</span> long_large = <span class="number">1</span> &lt;&lt; <span class="number">31</span>;</span><br><span class="line"><span class="keyword">long</span> <span class="keyword">long</span> long_long_large = <span class="number">1</span> &lt;&lt; <span class="number">63</span>;</span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="string">"test long long："</span>&lt;&lt;large&lt;&lt;<span class="string">'\t'</span>&lt;&lt;long_large&lt;&lt;<span class="string">'\t'</span>&lt;&lt;long_long_large&lt;&lt;<span class="built_in">endl</span>;</span><br></pre></td></tr></table></figure></p>
+<p>在我的机器上实测，long long类型和long类型同样使用32bit空间。  </p>
+<h3 id="nullptr字面量"><a href="#nullptr字面量" class="headerlink" title="nullptr字面量"></a>nullptr字面量</h3><p>C++11标准中专门为空指针增加了nullptr字面量，同时不推荐再使用NULL或者0表示空指针。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> *p1 = <span class="literal">nullptr</span>;</span><br><span class="line"><span class="keyword">int</span> *p2 = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">int</span> *p3 = <span class="literal">NULL</span>;</span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="string">"test nullptr: "</span>&lt;&lt;(p1 == p2)&lt;&lt;<span class="string">'\t'</span>&lt;&lt;(p1 == p3)&lt;&lt;<span class="built_in">endl</span>;</span><br></pre></td></tr></table></figure>  </p>
+<p>最终测试结果，nullptr和NULL和0是一样的。<br>
+    
+  </div>
+  <footer class="end-sep">
+    
+      
+        <div class="alignleft">
+          <a href="/2016/06/18/cpp11-1/#more" class="more-link">Read More</a>
+        </div>
+      
+      
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+<!-- JiaThis Button BEGIN -->
+<script type="text/javascript">
+var jiathis_config = {data_track_clickback:'true'};
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?move=0&amp;uid=1706898" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+
+  <article class="post">
+  <header>
+    
+      <div class="icon"></div>
       <a href="/2016/06/12/gz-travel/">
   <time datetime="2016-06-11T23:33:27.000Z">
     2016-06-12
@@ -79,7 +126,7 @@
     
       
         <div class="alignleft">
-          <a href="/2016/06/12/gz-travel/#more" class="more-link">阅读全文</a>
+          <a href="/2016/06/12/gz-travel/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -125,7 +172,7 @@ var jiathis_config = {data_track_clickback:'true'};
     
       
         <div class="alignleft">
-          <a href="/2016/05/29/echo-server-2/#more" class="more-link">阅读全文</a>
+          <a href="/2016/05/29/echo-server-2/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -169,7 +216,7 @@ var jiathis_config = {data_track_clickback:'true'};
     
       
         <div class="alignleft">
-          <a href="/2016/05/25/makefile-ld/#more" class="more-link">阅读全文</a>
+          <a href="/2016/05/25/makefile-ld/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -212,7 +259,7 @@ var jiathis_config = {data_track_clickback:'true'};
     
       
         <div class="alignleft">
-          <a href="/2016/05/22/echo-server/#more" class="more-link">阅读全文</a>
+          <a href="/2016/05/22/echo-server/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -256,7 +303,7 @@ var jiathis_config = {data_track_clickback:'true'};
     
       
         <div class="alignleft">
-          <a href="/2016/05/08/wedding/#more" class="more-link">阅读全文</a>
+          <a href="/2016/05/08/wedding/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -301,7 +348,7 @@ var jiathis_config = {data_track_clickback:'true'};
     
       
         <div class="alignleft">
-          <a href="/2016/04/19/python-decorator/#more" class="more-link">阅读全文</a>
+          <a href="/2016/04/19/python-decorator/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -348,7 +395,7 @@ var jiathis_config = {data_track_clickback:'true'};
     
       
         <div class="alignleft">
-          <a href="/2016/04/17/linux-must-do/#more" class="more-link">阅读全文</a>
+          <a href="/2016/04/17/linux-must-do/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -394,7 +441,7 @@ var jiathis_config = {data_track_clickback:'true'};
     
       
         <div class="alignleft">
-          <a href="/2016/04/10/international/#more" class="more-link">阅读全文</a>
+          <a href="/2016/04/10/international/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -441,53 +488,7 @@ var jiathis_config = {data_track_clickback:'true'};
     
       
         <div class="alignleft">
-          <a href="/2015/01/24/sgjm-reviewmd/#more" class="more-link">阅读全文</a>
-        </div>
-      
-      
-    
-    <div class="clearfix"></div>
-  </footer>
-</article>
-<!-- JiaThis Button BEGIN -->
-<script type="text/javascript">
-var jiathis_config = {data_track_clickback:'true'};
-</script>
-<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?move=0&amp;uid=1706898" charset="utf-8"></script>
-<!-- JiaThis Button END -->
-
-
-  <article class="post">
-  <header>
-    
-      <div class="icon"></div>
-      <a href="/2015/01/01/2014-booklist-2/">
-  <time datetime="2015-01-01T01:41:57.000Z">
-    2015-01-01
-  </time>
-</a>
-    
-    
-  
-    <h1 class="title"><a href="/2015/01/01/2014-booklist-2/">2014年下半年书单</a></h1>
-  
-
-  </header>
-  
-  <div class="entry">
-    
-      <hr>
-<p>工作之后就很难找出整块的时间读书了，即使有整块的时间可以用来阅读，心境也比上学的时候浮躁不少，遇到略有晦涩的部分就想跳过或者直接把书撂下，所以这半年读书的效率大打了折扣。</p>
-<h2 id="非技术类："><a href="#非技术类：" class="headerlink" title="非技术类："></a>非技术类：</h2><ul>
-<li><a href="http://book.douban.com/subject/1213945/">《红楼梦》</a><ul>
-<li>熟悉我的人都知道我是个坚定的红楼梦黑，红学黑，可是我自己之前却只看过红楼的前二三十回，因为实在是看不下去。这半年我硬着头皮把一百二十回的红楼梦完整的读了一遍，对它的评价由之前的一到两星升到四星左右。我发现随着年岁的增长（上一次读红楼梦还是在初中），我渐渐的能领悟到小说中的家长里短，人情世故，也能觉察到从始至终曹雪芹文字中的一丝丝忧伤和无奈。那扣掉的一星，是由于我认为那些研（chi1）究（si3）红（ren2）学（fan4）的所谓学者们，过分解读了太多的东西，让这部小说承载了太多的东西，使它在普通人眼中失去了小说本来的味道。或许，十年后，我再读红楼梦，会有更深的感悟。
-    
-  </div>
-  <footer class="end-sep">
-    
-      
-        <div class="alignleft">
-          <a href="/2015/01/01/2014-booklist-2/#more" class="more-link">阅读全文</a>
+          <a href="/2015/01/24/sgjm-reviewmd/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -507,7 +508,7 @@ var jiathis_config = {data_track_clickback:'true'};
 <nav id="pagination">
   
   
-    <a href="/page/2/" class="next">下一页</a>
+    <a href="/page/2/" class="next">Next</a>
   
   <div class="clearfix"></div>
 </nav>
