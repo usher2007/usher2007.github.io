@@ -1,0 +1,162 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  
+  <title>hexo server无法打开调试博客页面问题的查证记录 | 一根笨茄子</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  
+    <meta name="author" content="Yubo Guo">
+  
+  
+    <meta name="description" content="今天更新博客，突然发现启动hexo server之后，使用浏览器打开127.0.0.1:4000无法加载博客的本地测试页面。经过一番查证，发现问题出现4000端口被其他程序占用了。 
+在Windows中，可以使用如下命令查找得到占用4000端口的进程：1234D:\&amp;gt;netstat -aon|findstr &amp;quot;4000&amp;quot;TCP    127.0.0.1:80">
+  
+  <meta name="description" content="今天更新博客，突然发现启动hexo server之后，使用浏览器打开127.0.0.1:4000无法加载博客的本地测试页面。经过一番查证，发现问题出现4000端口被其他程序占用了。 
+在Windows中，可以使用如下命令查找得到占用4000端口的进程：1234D:\&amp;gt;netstat -aon|findstr &amp;quot;4000&amp;quot;TCP    127.0.0.1:80">
+<meta property="og:type" content="article">
+<meta property="og:title" content="hexo server无法打开调试博客页面问题的查证记录">
+<meta property="og:url" content="http://blog.guoyb.com/2016/06/19/hexo-server/index.html">
+<meta property="og:site_name" content="一根笨茄子">
+<meta property="og:description" content="今天更新博客，突然发现启动hexo server之后，使用浏览器打开127.0.0.1:4000无法加载博客的本地测试页面。经过一番查证，发现问题出现4000端口被其他程序占用了。 
+在Windows中，可以使用如下命令查找得到占用4000端口的进程：1234D:\&amp;gt;netstat -aon|findstr &amp;quot;4000&amp;quot;TCP    127.0.0.1:80">
+<meta property="og:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/qrcode.jpg">
+<meta property="og:updated_time" content="2016-06-19T12:00:26.505Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="hexo server无法打开调试博客页面问题的查证记录">
+<meta name="twitter:description" content="今天更新博客，突然发现启动hexo server之后，使用浏览器打开127.0.0.1:4000无法加载博客的本地测试页面。经过一番查证，发现问题出现4000端口被其他程序占用了。 
+在Windows中，可以使用如下命令查找得到占用4000端口的进程：1234D:\&amp;gt;netstat -aon|findstr &amp;quot;4000&amp;quot;TCP    127.0.0.1:80">
+<meta name="twitter:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/qrcode.jpg">
+  
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+</head>
+
+<body>
+  <div class="wrapper">
+    <header id="header">
+  <div class="title">
+    <h1><a href="/">一根笨茄子</a></h1>
+    <p><a href="/"></a></p>
+  </div>
+  <nav class="nav">
+    <ul>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/about">关于我</a></li>
+      
+      
+    </ul>
+    <div class="clearfix"></div>
+  </nav>
+  <div class="clearfix"></div>
+</header>
+    <div class="content">
+		<article class="post">
+  <header>
+    
+      <div class="icon"></div>
+      <a href="/2016/06/19/hexo-server/">
+  <time datetime="2016-06-19T11:45:04.000Z">
+    2016-06-19
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title">hexo server无法打开调试博客页面问题的查证记录</h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>今天更新博客，突然发现启动hexo server之后，使用浏览器打开127.0.0.1:4000无法加载博客的本地测试页面。<br>经过一番查证，发现问题出现4000端口被其他程序占用了。 </p>
+<p>在Windows中，可以使用如下命令查找得到占用4000端口的进程：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">D:\&gt;netstat -aon|findstr &quot;4000&quot;</span><br><span class="line">TCP    127.0.0.1:80        0.0.0.0:0              LISTENING      692</span><br><span class="line">D:\&gt;tasklist|findstr &quot;692&quot;</span><br><span class="line">FoxitProtect.exe               692 Services                   0     22,780 K </span><br></pre></td></tr></table></figure><br>是福昕阅读器的黑锅。停止掉此进程或者直接卸载对应软件后，hexo server就可以顺利加载本地测试页面了。  </p>
+<p>如果是在Linux下，也可以通过lsof命令查找占用对应端口的进程：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">yubo@ubuntu:~$sudo lsof -i:22</span><br><span class="line">COMMAND   PID USER   FD   TYPE DEVICE SIZE/OFF NODE NAME</span><br><span class="line">sshd     1047 root    3u  IPv4   9675      0t0  TCP *:ssh (LISTEN)</span><br><span class="line">sshd     1047 root    4u  IPv6   9678      0t0  TCP *:ssh (LISTEN)</span><br><span class="line">sshd    18121 root    3u  IPv4 150983      0t0  TCP 192.168.122.128:ssh-&gt;192.168.122.1:56067 (ESTABLISHED)</span><br><span class="line">sshd    18188 yubo    3u  IPv4 150983      0t0  TCP 192.168.122.128:ssh-&gt;192.168.122.1:56067 (ESTABLISHED)</span><br><span class="line">sshd    19365 root    3u  IPv4 164069      0t0  TCP 192.168.122.128:ssh-&gt;192.168.122.1:61680 (ESTABLISHED)</span><br><span class="line">sshd    19423 yubo    3u  IPv4 164069      0t0  TCP 192.168.122.128:ssh-&gt;192.168.122.1:61680 (ESTABLISHED)</span><br></pre></td></tr></table></figure></p>
+<p>需要注意的是，如果是知名端口号（例如这里的ssh端口号22），那么就会用字符串名称来替换掉端口号（例如这里使用:ssh替换掉了:22)。  </p>
+<hr>
+<p>欢迎关注我的微信公众号TechTalking，技术·生活·思考：<br><img src="http://7d9lwm.com1.z0.glb.clouddn.com/qrcode.jpg" alt="后端技术小黑屋"></p>
+
+    
+  </div>
+  <footer>
+    
+      
+      
+  <div class="tags">
+    <a class="tags-link" href="/tags/hexo/">hexo</a>, <a class="tags-link" href="/tags/查证记录/">查证记录</a>
+  </div>
+
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+<!-- JiaThis Button BEGIN -->
+<script type="text/javascript">
+var jiathis_config = {data_track_clickback:'true'};
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?move=0&amp;uid=1706898" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+<section id="comment">
+  <h1 class="title">Comments</h1>
+  <div class="ds-thread" data-title="hexo server无法打开调试博客页面问题的查证记录">
+  </div>
+</section>
+
+	</div>
+  </div>
+  <div class="widget-wrapper">
+	<aside id="sidebar">
+  
+  
+</aside>
+<div class="clearfix"></div>
+  </div>
+  <footer id="footer"><div class="copyright">
+  
+  &copy; 2016 <a href="/">Yubo Guo</a>
+  
+</div>
+<div class="theme-copyright">
+  Theme by <a href="https://github.com/orderedlist" target="_blank">orderedlist</a>
+   | 
+  Redesign by <a href="http://heroicyang.com/" target="_blank">Heroic Yang</a>
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+<script src="/js/scale.fix.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = { short_name: 'guoyb' };
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';
+    ds.async = true;
+    ds.src = 'http://static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+  (function($){
+    $('.fancybox').fancybox();
+  })(jQuery);
+</script>
+
+</body>
+</html>

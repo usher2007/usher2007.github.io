@@ -52,6 +52,51 @@
   <header>
     
       <div class="icon"></div>
+      <a href="/2016/06/19/hexo-server/">
+  <time datetime="2016-06-19T11:45:04.000Z">
+    2016-06-19
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title"><a href="/2016/06/19/hexo-server/">hexo server无法打开调试博客页面问题的查证记录</a></h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>今天更新博客，突然发现启动hexo server之后，使用浏览器打开127.0.0.1:4000无法加载博客的本地测试页面。<br>经过一番查证，发现问题出现4000端口被其他程序占用了。 </p>
+<p>在Windows中，可以使用如下命令查找得到占用4000端口的进程：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">D:\&gt;netstat -aon|findstr &quot;4000&quot;</span><br><span class="line">TCP    127.0.0.1:80        0.0.0.0:0              LISTENING      692</span><br><span class="line">D:\&gt;tasklist|findstr &quot;692&quot;</span><br><span class="line">FoxitProtect.exe               692 Services                   0     22,780 K </span><br></pre></td></tr></table></figure><br>是福昕阅读器的黑锅。停止掉此进程或者直接卸载对应软件后，hexo server就可以顺利加载本地测试页面了。  </p>
+<p>如果是在Linux下，也可以通过lsof命令查找占用对应端口的进程：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">yubo@ubuntu:~$sudo lsof -i:22</span><br><span class="line">COMMAND   PID USER   FD   TYPE DEVICE SIZE/OFF NODE NAME</span><br><span class="line">sshd     1047 root    3u  IPv4   9675      0t0  TCP *:ssh (LISTEN)</span><br><span class="line">sshd     1047 root    4u  IPv6   9678      0t0  TCP *:ssh (LISTEN)</span><br><span class="line">sshd    18121 root    3u  IPv4 150983      0t0  TCP 192.168.122.128:ssh-&gt;192.168.122.1:56067 (ESTABLISHED)</span><br><span class="line">sshd    18188 yubo    3u  IPv4 150983      0t0  TCP 192.168.122.128:ssh-&gt;192.168.122.1:56067 (ESTABLISHED)</span><br><span class="line">sshd    19365 root    3u  IPv4 164069      0t0  TCP 192.168.122.128:ssh-&gt;192.168.122.1:61680 (ESTABLISHED)</span><br><span class="line">sshd    19423 yubo    3u  IPv4 164069      0t0  TCP 192.168.122.128:ssh-&gt;192.168.122.1:61680 (ESTABLISHED)</span><br></pre></td></tr></table></figure></p>
+<p>需要注意的是，如果是知名端口号（例如这里的ssh端口号22），那么就会用字符串名称来替换掉端口号（例如这里使用:ssh替换掉了:22)。  </p>
+<hr>
+<p>欢迎关注我的微信公众号TechTalking，技术·生活·思考：<br><img src="http://7d9lwm.com1.z0.glb.clouddn.com/qrcode.jpg" alt="后端技术小黑屋"></p>
+
+    
+  </div>
+  <footer class="end-sep">
+    
+      
+      
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+<!-- JiaThis Button BEGIN -->
+<script type="text/javascript">
+var jiathis_config = {data_track_clickback:'true'};
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?move=0&amp;uid=1706898" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+
+  <article class="post">
+  <header>
+    
+      <div class="icon"></div>
       <a href="/2016/06/18/cpp11-1/">
   <time datetime="2016-06-18T10:31:09.000Z">
     2016-06-18
@@ -442,53 +487,6 @@ var jiathis_config = {data_track_clickback:'true'};
       
         <div class="alignleft">
           <a href="/2016/04/10/international/#more" class="more-link">Read More</a>
-        </div>
-      
-      
-    
-    <div class="clearfix"></div>
-  </footer>
-</article>
-<!-- JiaThis Button BEGIN -->
-<script type="text/javascript">
-var jiathis_config = {data_track_clickback:'true'};
-</script>
-<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?move=0&amp;uid=1706898" charset="utf-8"></script>
-<!-- JiaThis Button END -->
-
-
-  <article class="post">
-  <header>
-    
-      <div class="icon"></div>
-      <a href="/2015/01/24/sgjm-reviewmd/">
-  <time datetime="2015-01-24T14:29:28.000Z">
-    2015-01-24
-  </time>
-</a>
-    
-    
-  
-    <h1 class="title"><a href="/2015/01/24/sgjm-reviewmd/">《三国机密》感</a></h1>
-  
-
-  </header>
-  
-  <div class="entry">
-    
-      <p>（感谢柚子童鞋投稿）</p>
-<hr>
-<ul>
-<li>作为程序员的女朋友，死皮赖脸地要在他博客上挤一篇小文刷存在感，感谢郭先森的慷慨允许。</li>
-<li>2015的开年手机掉厕所，然后被我洗坏了（虽然i6出来了，但是，郭先森，我真的不是故意的，我是有意的^-^）。正好，借这段时间，沉淀自己，过过没有手机的古墓派日子吧。不知不觉半个多月过去了，原来没有手机依然可以在这个时代安然地存在下去。。。</li>
-<li>没有手机的日子，每天上下班的2个小时都在发呆，郭先森贴心地给了他心爱的kindle,斟酌许久推荐了马伯庸的《三国机密》。马伯庸是谁？哪里人？什么时候出名的作家？呵呵，看到这些问题就会发现我是个伪书迷了，嗯，已经很久很久没好好看完一部完整的小说了。
-    
-  </div>
-  <footer class="end-sep">
-    
-      
-        <div class="alignleft">
-          <a href="/2015/01/24/sgjm-reviewmd/#more" class="more-link">Read More</a>
         </div>
       
       
