@@ -1,0 +1,267 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  
+  <title>C++11新特性之类型推断与类型获取 | 一根笨茄子</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  
+    <meta name="author" content="Yubo Guo">
+  
+  
+    <meta name="description" content="C++11新特性之新类型与初始化: http://blog.guoyb.com/2016/06/18/cpp11-1/这是C++11新特性介绍的第二部分，涉及到C++11这次更新中较为重要的特性类型推断(auto)与类型获取（decltype）。不想看toy code的读者可以直接拉到文章最后看这部分的总结。   
+简单的类型推断C++11新标准中增加了auto类型说明符，可以让编译器帮我们分析">
+  
+  <meta name="description" content="C++11新特性之新类型与初始化: http://blog.guoyb.com/2016/06/18/cpp11-1/这是C++11新特性介绍的第二部分，涉及到C++11这次更新中较为重要的特性类型推断(auto)与类型获取（decltype）。不想看toy code的读者可以直接拉到文章最后看这部分的总结。   
+简单的类型推断C++11新标准中增加了auto类型说明符，可以让编译器帮我们分析">
+<meta property="og:type" content="article">
+<meta property="og:title" content="C++11新特性之类型推断与类型获取">
+<meta property="og:url" content="http://blog.guoyb.com/2016/06/25/cpp11-2/index.html">
+<meta property="og:site_name" content="一根笨茄子">
+<meta property="og:description" content="C++11新特性之新类型与初始化: http://blog.guoyb.com/2016/06/18/cpp11-1/这是C++11新特性介绍的第二部分，涉及到C++11这次更新中较为重要的特性类型推断(auto)与类型获取（decltype）。不想看toy code的读者可以直接拉到文章最后看这部分的总结。   
+简单的类型推断C++11新标准中增加了auto类型说明符，可以让编译器帮我们分析">
+<meta property="og:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/qrcode.jpg">
+<meta property="og:updated_time" content="2016-06-25T02:00:12.145Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="C++11新特性之类型推断与类型获取">
+<meta name="twitter:description" content="C++11新特性之新类型与初始化: http://blog.guoyb.com/2016/06/18/cpp11-1/这是C++11新特性介绍的第二部分，涉及到C++11这次更新中较为重要的特性类型推断(auto)与类型获取（decltype）。不想看toy code的读者可以直接拉到文章最后看这部分的总结。   
+简单的类型推断C++11新标准中增加了auto类型说明符，可以让编译器帮我们分析">
+<meta name="twitter:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/qrcode.jpg">
+  
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+  
+<script type="text/javascript">
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?996ee0fca2512b4c29f37f60cf6387ca";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+</head>
+
+<body>
+  <div class="wrapper">
+    <header id="header">
+  <div class="title">
+    <h1><a href="/">一根笨茄子</a></h1>
+    <p><a href="/"></a></p>
+  </div>
+  <nav class="nav">
+    <ul>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/about">关于我</a></li>
+      
+      
+    </ul>
+    <div class="clearfix"></div>
+  </nav>
+  <div class="clearfix"></div>
+</header>
+    <div class="content">
+		<article class="post">
+  <header>
+    
+      <div class="icon"></div>
+      <a href="/2016/06/25/cpp11-2/">
+  <time datetime="2016-06-25T00:30:41.000Z">
+    2016-06-25
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title">C++11新特性之类型推断与类型获取</h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>C++11新特性之新类型与初始化: <a href="http://blog.guoyb.com/2016/06/18/cpp11-1/">http://blog.guoyb.com/2016/06/18/cpp11-1/</a><br>这是C++11新特性介绍的第二部分，涉及到C++11这次更新中较为重要的特性类型推断(auto)与类型获取（decltype）。<br>不想看toy code的读者可以直接拉到文章最后看这部分的总结。   </p>
+<h2 id="简单的类型推断"><a href="#简单的类型推断" class="headerlink" title="简单的类型推断"></a>简单的类型推断</h2><p>C++11新标准中增加了auto类型说明符，可以让编译器帮我们分析表达式的类型。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">double</span> val1 = <span class="number">1.1</span>, val2 = <span class="number">2.2</span>;</span><br><span class="line"><span class="keyword">auto</span> sum = val1 + val2;</span><br><span class="line"><span class="keyword">auto</span> val3 = <span class="number">0.3</span>, *p = &amp;val3;</span><br><span class="line"><span class="comment">//auto val4 = 0, val5 = 0.0; // wrong. different types.</span></span><br><span class="line"><span class="comment">//auto sum2; // wrong, auto type must be initialized.</span></span><br><span class="line"><span class="keyword">double</span> val6 = <span class="number">1.6</span>, &amp;rval6 = val6;</span><br><span class="line"><span class="keyword">auto</span> aval6 = rval6;</span><br><span class="line">aval6 = <span class="number">6.0</span>; <span class="comment">// aval6 is not a reference.</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="string">"test simple auto:\n"</span>&lt;&lt;val1&lt;&lt;<span class="string">'\t'</span>&lt;&lt;val2&lt;&lt;<span class="string">'\t'</span>&lt;&lt;sum&lt;&lt;<span class="string">'\t'</span>&lt;&lt;val3&lt;&lt;<span class="string">'\t'</span>&lt;&lt;p&lt;&lt;<span class="string">'\t'</span>&lt;&lt;val6&lt;&lt;<span class="string">'\t'</span>&lt;&lt;rval6&lt;&lt;<span class="string">'\t'</span>&lt;&lt;aval6&lt;&lt;<span class="built_in">endl</span>;</span><br></pre></td></tr></table></figure>  </p>
+<p>需要注意的是</p>
+<blockquote>
+<p>1.使用auto定义的变量必须有初始值，不然无法进行类型推断<br>2.在同一条语句中使用auto定义的变量，其基础类型必须一致  </p>
+</blockquote>
+<a id="more"></a>  
+<h2 id="const和auto"><a href="#const和auto" class="headerlink" title="const和auto"></a>const和auto</h2><p>auto在进行类型推断时，一般会忽略顶层const(top-level const)，而保留底层const(low-level const)。如果想要保留顶层const，则必须显式的在auto前添加const指示符。<br>所谓顶层const，指的是当前的数据类型本身是常量，如double，int或者相关的指针本身是常量；<br>而底层const，指的是如指针、引用等复合类型，其所指向的数据类型是常量。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> val7 = <span class="number">1</span>, &amp;rval7 = val7;</span><br><span class="line"><span class="keyword">auto</span> aval7 = val7; <span class="comment">// remove top-level const</span></span><br><span class="line">aval7 = <span class="number">7</span>;</span><br><span class="line"><span class="keyword">auto</span> aval8 = rval7; <span class="comment">// remove top-level const</span></span><br><span class="line">aval8 = <span class="number">8</span>;</span><br><span class="line"><span class="keyword">auto</span> aval9 = &amp;val6; <span class="comment">// not const</span></span><br><span class="line">*aval9 = <span class="number">9</span>;</span><br><span class="line"><span class="keyword">auto</span> aval10 = &amp;val7; <span class="comment">// keep low-level const</span></span><br><span class="line"><span class="comment">//*aval10 = 10; // wrong. const int can't be changed.</span></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">auto</span> aval11 = val7; <span class="comment">// top-level const auto</span></span><br><span class="line"><span class="comment">//aval11 = 11; // wrong. const int can't be changed.</span></span><br><span class="line"><span class="keyword">auto</span> &amp;aval12 = val7; <span class="comment">// keep top-level const</span></span><br><span class="line"><span class="comment">//aval12 = 12; // wrong. const reference</span></span><br><span class="line"><span class="keyword">auto</span> &amp;aval13 = val6;</span><br><span class="line">aval13 = <span class="number">13.0</span>;</span><br><span class="line"><span class="comment">//auto &amp;aval14 = 42; // wrong. must be const auto</span></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">auto</span> &amp;aval15 = <span class="number">15</span>;</span><br><span class="line"><span class="comment">//aval15 = 16; // wrong. const reference.</span></span><br><span class="line"><span class="comment">//auto &amp;aval16 = aval7, *aval17 = &amp;val7; // wrong. type not consistent</span></span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="string">"test auto and const:\n"</span>&lt;&lt;val7&lt;&lt;<span class="string">'\t'</span>&lt;&lt;rval7&lt;&lt;<span class="string">'\t'</span>&lt;&lt;aval7&lt;&lt;<span class="string">'\t'</span>&lt;&lt;aval8&lt;&lt;<span class="string">'\t'</span>&lt;&lt;*aval9&lt;&lt;<span class="string">'\t'</span>&lt;&lt;aval10&lt;&lt;<span class="string">'\t'</span>&lt;&lt;aval11&lt;&lt;<span class="string">'\t'</span>&lt;&lt;aval12&lt;&lt;<span class="string">'\t'</span>&lt;&lt;aval13&lt;&lt;<span class="string">'\t'</span>&lt;&lt;aval15&lt;&lt;<span class="built_in">endl</span>;</span><br></pre></td></tr></table></figure>   </p>
+<p>当定义一个auto的引用时，顶层const被保留，如上述测试代码中的aval12所示。另外，输出的结果中，有些数值可能和预想的不太一样，可以思考一下是为什么^_^(Tips: 和引用有关)。  </p>
+<h2 id="类型获取decltype"><a href="#类型获取decltype" class="headerlink" title="类型获取decltype"></a>类型获取decltype</h2><p>decltype(expr)可以获得expr表达式对应的类型，并且不会对expr具体求值。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">d</span><span class="params">()</span></span><br><span class="line"></span>&#123;</span><br><span class="line">	<span class="built_in">cout</span>&lt;&lt;<span class="string">"This function shouldn't be called."</span>&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">	return <span class="number">17</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">decltype</span>(d()) dval17 = <span class="number">15.2</span>;</span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="string">"test decltype:\n"</span>&lt;&lt;dval17&lt;&lt;<span class="built_in">endl</span>;</span><br></pre></td></tr></table></figure>    </p>
+<h2 id="decltype与const"><a href="#decltype与const" class="headerlink" title="decltype与const"></a>decltype与const</h2><p>decltype处理const的方式与auto不同。  </p>
+<blockquote>
+<p>1.如果decltype中的表达式是一个变量，那么返回该变量的类型（包括顶层const）<br>2.如果decltype中的表达式不是变量，则返回该表达式结果对应的类型。  </p>
+</blockquote>
+<p>看上去没啥区别？其实这里的规则导致了decltype(r+0) decltype((i))这种诡异的写法。还是具体看代码吧。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">decltype</span>(val7) val18 = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">decltype</span>(rval7) val19 = val18;</span><br><span class="line"><span class="comment">//val19 = 10; // wrong. val19 is a reference to const int.</span></span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="string">"test decltype and const:\n"</span>&lt;&lt;val18&lt;&lt;<span class="string">'\t'</span>&lt;&lt;val19&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//double *pval20 = &amp;val6;</span></span><br><span class="line"><span class="comment">//decltype(*pval20) val21; // wrong. decltype(*pval20) = double&amp;, must be initialized.</span></span><br><span class="line"><span class="keyword">decltype</span>(rval6 + <span class="number">0</span>) val22;</span><br><span class="line"><span class="comment">//decltype((val6)) val23; //wrong. decltype((val6)) == double&amp;, must be initialized.</span></span><br><span class="line"><span class="keyword">decltype</span>(val6) val24;</span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="string">"test decltype and reference:\n"</span>&lt;&lt;val22&lt;&lt;<span class="string">'\t'</span>&lt;&lt;val24&lt;&lt;<span class="built_in">endl</span>;</span><br></pre></td></tr></table></figure>  </p>
+<p>上面代码中需要注意的地方有：  </p>
+<blockquote>
+<p>1.val21处，如果decltype中的表达式是一个解引用操作，那么将得到一个引用类型，所以必须初始化。<br>2.val22处，rval6是一个引用类型（double&amp;），如果我们需要获得这个引用的基础类型（即double），那么使用rval6 + 0这样一个表达式，显然这个表达式的结果将不是引用了。<br>3.val23和val24处，如果decltype中的变量加上了括号，那么就会被当作表达式处理；而变量是一种可以作为左值被赋值的特殊表达式，因此decltype对于这种带括号的变量（val23处），就会得到一个引用类型。  </p>
+</blockquote>
+<h2 id="使用auto缩写类型"><a href="#使用auto缩写类型" class="headerlink" title="使用auto缩写类型"></a>使用auto缩写类型</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">string</span> name = <span class="string">"Yubo"</span>;</span><br><span class="line"><span class="keyword">auto</span> length = name.size();</span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="string">"test auto with complex type:\n"</span>&lt;&lt;length&lt;&lt;<span class="built_in">endl</span>;</span><br></pre></td></tr></table></figure>  
+<p>不用费劲写string::size_type了^o^  </p>
+<h2 id="使用auto简化声明"><a href="#使用auto简化声明" class="headerlink" title="使用auto简化声明"></a>使用auto简化声明</h2><p>声明指向数组的指针总是一件令人痛苦的事情：<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> val25[<span class="number">3</span>][<span class="number">4</span>] = &#123;</span><br><span class="line">	&#123;<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>&#125;,</span><br><span class="line">	&#123;<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>&#125;,</span><br><span class="line">	&#123;<span class="number">8</span>, <span class="number">9</span>, <span class="number">10</span>, <span class="number">11</span>&#125;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="string">"test auto to simplify type:\n"</span>;</span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="string">"old way:\n"</span>;</span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> (*p)[<span class="number">4</span>] = val25; p != val25 + <span class="number">3</span>; p++)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">for</span>(<span class="keyword">int</span> *q = *p; q != *p + <span class="number">4</span>; q++)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="built_in">cout</span>&lt;&lt;*q&lt;&lt;<span class="string">'\t'</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="built_in">cout</span>&lt;&lt;<span class="string">'\n'</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>  </p>
+<p>有了auto之后，我们可以像下面这样清爽：<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="string">"new way:\n"</span>;</span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">auto</span> ap = val25; ap != val25 + <span class="number">3</span>; ap++)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">for</span>(<span class="keyword">auto</span> aq = *ap; aq != *ap + <span class="number">4</span>; aq++)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="built_in">cout</span>&lt;&lt;*aq&lt;&lt;<span class="string">'\t'</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="built_in">cout</span>&lt;&lt;<span class="string">'\n'</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>  </p>
+<h2 id="使用decltype简化函数返回类型"><a href="#使用decltype简化函数返回类型" class="headerlink" title="使用decltype简化函数返回类型"></a>使用decltype简化函数返回类型</h2><p>如果我们已经知道某个函数会返回什么对象，然而这个对象又是一个类型复杂不好写的对象，那么decltype就可以派上用场了。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> odd[] = &#123;<span class="number">1</span>, <span class="number">3</span>, <span class="number">5</span>, <span class="number">7</span>, <span class="number">9</span>&#125;;</span><br><span class="line"><span class="keyword">int</span> even[] = &#123;<span class="number">0</span>, <span class="number">2</span>, <span class="number">4</span>, <span class="number">6</span>, <span class="number">8</span>&#125;;</span><br><span class="line"><span class="keyword">decltype</span>(odd) *get_odd_or_even(<span class="keyword">int</span> i)</span><br><span class="line">&#123;</span><br><span class="line">	return (i % <span class="number">2</span>) ? &amp;odd : &amp;even;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">auto</span> val26 = get_odd_or_even(<span class="number">1</span>);</span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="string">"test decltype to simplify func return type:\n"</span>;</span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">auto</span> p = begin(*val26); p != end(*val26); p++)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="built_in">cout</span>&lt;&lt;p&lt;&lt;<span class="string">' '</span>&lt;&lt;*p&lt;&lt;<span class="string">'\t'</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="built_in">endl</span>;</span><br></pre></td></tr></table></figure>  </p>
+<h2 id="使用auto动态分配内存"><a href="#使用auto动态分配内存" class="headerlink" title="使用auto动态分配内存"></a>使用auto动态分配内存</h2><p>auto可以和new配合，来动态分配内存，并进行初始化。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span> val27 = new <span class="keyword">auto</span>(val24);</span><br><span class="line"><span class="keyword">auto</span> val28 = new <span class="keyword">auto</span>(name);</span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="string">"test auto to new object with a given obj:\n"</span>;</span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;*val27&lt;&lt;<span class="string">'\t'</span>&lt;&lt;*val28&lt;&lt;<span class="string">'\t'</span>&lt;&lt;val28&lt;&lt;<span class="string">'\t'</span>&lt;&lt;&amp;name&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line"><span class="keyword">auto</span> val29 = new <span class="keyword">auto</span>(odd); <span class="comment">// right. can use auto to new a pointer to an array</span></span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">auto</span> p = *val29; p != *val29 + <span class="number">5</span>; p++)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="built_in">cout</span>&lt;&lt;p&lt;&lt;<span class="string">' '</span>&lt;&lt;*p&lt;&lt;<span class="string">'\t'</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//auto val30 = new auto[10](val24); // wrong. can't use auto to new an array</span></span><br><span class="line"><span class="keyword">int</span> *val31 = new <span class="keyword">int</span>[<span class="number">10</span>]&#123;<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>&#125;; <span class="comment">// this is right</span></span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;val31&lt;&lt;<span class="string">'\t'</span>&lt;&lt;val31[<span class="number">0</span>]&lt;&lt;<span class="string">"to"</span>&lt;&lt;val31[<span class="number">9</span>]&lt;&lt;<span class="built_in">endl</span>;</span><br></pre></td></tr></table></figure>  </p>
+<p>这里有几处需要留意的地方：  </p>
+<blockquote>
+<p>1.val29处，只是new出了一个指向数组的指针，并没有复制数组的值。因此在下面循环中打印出的p值（地址）和odd数组的地址是一样的。<br>2.不可以使用auto来分配一个动态数组。这是因为使用new分配数组时，不支持圆括号的初始化方式，只支持花括号的列表初始化方式。  </p>
+</blockquote>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ol>
+<li>可以使用auto说明符，让编译器帮我们推断类型。  </li>
+<li>auto在进行类型推断时，一般会忽略顶层const(top-level const)，而保留底层const(low-level const)。  </li>
+<li>decltype(expr)可以获得expr表达式对应的类型，并且不会对expr具体求值。 </li>
+<li>decltype(rval + 0)可以获得值类型（非引用），decltype(*p)获得引用类型，decltype((val))获得引用类型。  </li>
+<li>使用auto可以缩写一些复杂难写的类型。  </li>
+<li>使用auto可以简化类型声明，尤其是数组和指针混合的声明。  </li>
+<li>在知道某一函数会返回什么对象时，可以使用decltype可以简化函数返回类型。</li>
+<li>auto和new可以配合以动态分配内存，但是不能用于动态分配数组。  </li>
+</ol>
+<p>完整代码详见 <a href="https://github.com/yubo1911/saber/blob/master/learncpp11/auto_decltype.cpp" target="_blank" rel="external">auto_decltype.cpp</a>  </p>
+<p>转载请注明出处： <a href="http://blog.guoyb.com/2016/06/25/cpp11-2">http://blog.guoyb.com/2016/06/25/cpp11-2/</a>  </p>
+<p>欢迎使用微信扫描下方二维码，关注我的微信公众号TechTalking，技术·生活·思考：<br><img src="http://7d9lwm.com1.z0.glb.clouddn.com/qrcode.jpg" alt="后端技术小黑屋"></p>
+
+    
+  </div>
+  <footer>
+    
+      
+      
+  <div class="tags">
+    <a class="tags-link" href="/tags/C/">C++</a>, <a class="tags-link" href="/tags/C-11/">C++11</a>
+  </div>
+
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+<!-- JiaThis Button BEGIN -->
+<script type="text/javascript">
+var jiathis_config = {data_track_clickback:'true'};
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?move=0&amp;uid=1706898" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+<section id="comment">
+  <h1 class="title">Comments</h1>
+  <div class="ds-thread" data-title="C++11新特性之类型推断与类型获取">
+  </div>
+</section>
+
+	</div>
+  </div>
+	<aside id="sidebar">
+  
+  
+    
+      
+      
+
+<div class="widget tagcloud first">
+  <h3 class="title">Tags</h3>
+  <div class="entry">
+    <a href="/tags/C/" style="font-size: 12px;">C++</a> <a href="/tags/C-11/" style="font-size: 12px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/echoserver/" style="font-size: 12px;">echoserver</a> <a href="/tags/epoll/" style="font-size: 12px;">epoll</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 12px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/select/" style="font-size: 12px;">select</a> <a href="/tags/socket/" style="font-size: 12px;">socket</a> <a href="/tags/书单/" style="font-size: 14px;">书单</a> <a href="/tags/北京车展/" style="font-size: 10px;">北京车展</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/广州/" style="font-size: 10px;">广州</a> <a href="/tags/旅行/" style="font-size: 10px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 16px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 12px;">查证记录</a> <a href="/tags/游戏开发/" style="font-size: 10px;">游戏开发</a> <a href="/tags/爱好/" style="font-size: 10px;">爱好</a> <a href="/tags/生活/" style="font-size: 12px;">生活</a> <a href="/tags/知乎/" style="font-size: 10px;">知乎</a> <a href="/tags/读书笔记/" style="font-size: 18px;">读书笔记</a> <a href="/tags/读后感/" style="font-size: 10px;">读后感</a>
+  </div>
+</div>
+
+    
+      
+      
+
+<div class="widget recent-posts">
+  <h3 class="title">最近文章</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2016/06/25/cpp11-2/">C++11新特性之类型推断与类型获取</a>
+      </li>
+    
+      <li>
+        <a href="/2016/06/19/hexo-server/">hexo server无法打开调试博客页面问题的查证记录</a>
+      </li>
+    
+      <li>
+        <a href="/2016/06/18/cpp11-1/">C++11新特性之新类型与初始化</a>
+      </li>
+    
+      <li>
+        <a href="/2016/06/12/gz-travel/">广州有什么「鲜为人知但很有意思」的景点？</a>
+      </li>
+    
+      <li>
+        <a href="/2016/05/29/echo-server-2/">echoserver的几种实现-2(libuv)</a>
+      </li>
+    
+  </ul>
+</div>
+
+    
+      
+      
+<div class="widget tag">
+  <h3 class="title">友情链接</h3>
+  <ul class="entry">
+  
+    
+    <li><a href="http://www.linkedin.com/profile/view?id=256546845" target="_blank">LinkedIn</a></li>
+  
+    
+    <li><a href="http://www.yanggy.com/" target="_blank">阳总工</a></li>
+  
+  </ul>
+</div>
+
+    
+  
+</aside>
+<div class="clearfix"></div>
+  <footer id="footer"><div class="copyright">
+  
+  &copy; 2016 <a href="/">Yubo Guo</a>
+  
+</div>
+<div class="theme-copyright">
+  Theme by <a href="https://github.com/orderedlist" target="_blank">orderedlist</a>
+   | 
+  Redesign by <a href="http://heroicyang.com/" target="_blank">Heroic Yang</a>
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+<script src="/js/scale.fix.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = { short_name: 'guoyb' };
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';
+    ds.async = true;
+    ds.src = 'http://static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+  (function($){
+    $('.fancybox').fancybox();
+  })(jQuery);
+</script>
+
+</body>
+</html>
