@@ -2,88 +2,234 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>http://blog.guoyb.com/about/index.html</loc>
-    <lastmod>2014-06-01T14:41:41.000Z</lastmod>
+    <loc>http://blog.guoyb.com/2016/06/25/2016-booklist-1/</loc>
+    
+    <lastmod>2016-06-26T10:22:42.996Z</lastmod>
+    
   </url>
   
   <url>
-    <loc>http://blog.guoyb.com/2014/05/07/python-source-10/</loc>
-    <lastmod>2014-06-01T14:41:30.000Z</lastmod>
+    <loc>http://blog.guoyb.com/2016/06/25/cpp11-2/</loc>
+    
+    <lastmod>2016-06-25T02:03:47.656Z</lastmod>
+    
   </url>
   
   <url>
-    <loc>http://blog.guoyb.com/2014/04/25/python-source-9/</loc>
-    <lastmod>2014-06-01T14:41:23.000Z</lastmod>
+    <loc>http://blog.guoyb.com/2016/04/19/python-decorator/</loc>
+    
+    <lastmod>2016-06-25T02:02:49.120Z</lastmod>
+    
   </url>
   
   <url>
-    <loc>http://blog.guoyb.com/2014/04/10/python-source-8/</loc>
-    <lastmod>2014-06-01T14:41:17.000Z</lastmod>
+    <loc>http://blog.guoyb.com/2016/05/25/makefile-ld/</loc>
+    
+    <lastmod>2016-06-25T02:01:58.120Z</lastmod>
+    
   </url>
   
   <url>
-    <loc>http://blog.guoyb.com/2014/04/07/python-source-7/</loc>
-    <lastmod>2014-06-01T14:41:09.000Z</lastmod>
+    <loc>http://blog.guoyb.com/2016/06/19/hexo-server/</loc>
+    
+    <lastmod>2016-06-25T02:01:35.913Z</lastmod>
+    
   </url>
   
   <url>
-    <loc>http://blog.guoyb.com/2014/04/01/python-source-6/</loc>
-    <lastmod>2014-06-01T14:41:01.000Z</lastmod>
+    <loc>http://blog.guoyb.com/2016/06/12/gz-travel/</loc>
+    
+    <lastmod>2016-06-25T02:01:21.792Z</lastmod>
+    
   </url>
   
   <url>
-    <loc>http://blog.guoyb.com/2014/03/29/python-source-5/</loc>
-    <lastmod>2014-06-01T14:40:55.000Z</lastmod>
+    <loc>http://blog.guoyb.com/2016/05/29/echo-server-2/</loc>
+    
+    <lastmod>2016-06-25T02:00:56.586Z</lastmod>
+    
   </url>
   
   <url>
-    <loc>http://blog.guoyb.com/2014/03/26/python-source-4/</loc>
-    <lastmod>2014-06-01T14:40:48.000Z</lastmod>
+    <loc>http://blog.guoyb.com/2016/05/22/echo-server/</loc>
+    
+    <lastmod>2016-06-25T02:00:42.497Z</lastmod>
+    
   </url>
   
   <url>
-    <loc>http://blog.guoyb.com/2014/03/21/python-source-2/</loc>
-    <lastmod>2014-06-01T14:40:38.000Z</lastmod>
+    <loc>http://blog.guoyb.com/2016/06/18/cpp11-1/</loc>
+    
+    <lastmod>2016-06-25T02:00:19.937Z</lastmod>
+    
   </url>
   
   <url>
-    <loc>http://blog.guoyb.com/2014/04/17/maugham-reading-notes/</loc>
-    <lastmod>2014-06-01T14:40:27.000Z</lastmod>
+    <loc>http://blog.guoyb.com/2014/10/01/2014-booklist-1/</loc>
+    
+    <lastmod>2016-06-19T03:04:57.730Z</lastmod>
+    
   </url>
   
   <url>
-    <loc>http://blog.guoyb.com/2014/04/28/inset-learning/</loc>
-    <lastmod>2014-06-01T14:40:18.000Z</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://blog.guoyb.com/2014/05/11/auto-show-2014/</loc>
-    <lastmod>2014-06-01T14:40:11.000Z</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://blog.guoyb.com/2014/03/18/python-source-1/</loc>
-    <lastmod>2014-06-01T14:39:47.000Z</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://blog.guoyb.com/2014/03/23/python-source-3/</loc>
-    <lastmod>2014-06-01T14:39:34.000Z</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://blog.guoyb.com/2014/05/23/unity2d-flappybird/</loc>
-    <lastmod>2014-06-01T14:33:06.000Z</lastmod>
+    <loc>http://blog.guoyb.com/2015/01/01/2014-booklist-2/</loc>
+    
+    <lastmod>2016-06-19T03:04:54.873Z</lastmod>
+    
   </url>
   
   <url>
     <loc>http://blog.guoyb.com/2013/12/30/2013-booklist-2/</loc>
-    <lastmod>2014-03-08T14:56:17.000Z</lastmod>
+    
+    <lastmod>2016-06-19T03:04:00.749Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://blog.guoyb.com/2014/06/05/python-source-11/</loc>
+    
+    <lastmod>2016-06-11T08:41:35.967Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://blog.guoyb.com/2014/05/07/python-source-10/</loc>
+    
+    <lastmod>2016-06-11T08:41:21.640Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://blog.guoyb.com/2014/04/25/python-source-9/</loc>
+    
+    <lastmod>2016-06-11T08:41:06.360Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://blog.guoyb.com/2014/04/10/python-source-8/</loc>
+    
+    <lastmod>2016-06-11T08:40:52.408Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://blog.guoyb.com/2014/04/07/python-source-7/</loc>
+    
+    <lastmod>2016-06-11T08:40:37.631Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://blog.guoyb.com/2016/05/08/wedding/</loc>
+    
+    <lastmod>2016-06-11T08:40:00.984Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://blog.guoyb.com/2016/04/17/linux-must-do/</loc>
+    
+    <lastmod>2016-06-11T08:39:10.888Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://blog.guoyb.com/2016/04/10/international/</loc>
+    
+    <lastmod>2016-06-11T08:38:52.504Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://blog.guoyb.com/about/index.html</loc>
+    
+    <lastmod>2016-05-25T14:03:13.411Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://blog.guoyb.com/2015/01/24/sgjm-reviewmd/</loc>
+    
+    <lastmod>2015-01-25T09:13:08.833Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://blog.guoyb.com/2014/05/23/unity2d-flappybird/</loc>
+    
+    <lastmod>2014-06-02T02:58:00.321Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://blog.guoyb.com/2014/04/01/python-source-6/</loc>
+    
+    <lastmod>2014-06-01T14:41:01.465Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://blog.guoyb.com/2014/03/29/python-source-5/</loc>
+    
+    <lastmod>2014-06-01T14:40:55.917Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://blog.guoyb.com/2014/03/26/python-source-4/</loc>
+    
+    <lastmod>2014-06-01T14:40:48.032Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://blog.guoyb.com/2014/03/21/python-source-2/</loc>
+    
+    <lastmod>2014-06-01T14:40:38.458Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://blog.guoyb.com/2014/04/17/maugham-reading-notes/</loc>
+    
+    <lastmod>2014-06-01T14:40:27.526Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://blog.guoyb.com/2014/04/28/inset-learning/</loc>
+    
+    <lastmod>2014-06-01T14:40:18.640Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://blog.guoyb.com/2014/05/11/auto-show-2014/</loc>
+    
+    <lastmod>2014-06-01T14:40:11.518Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://blog.guoyb.com/2014/03/18/python-source-1/</loc>
+    
+    <lastmod>2014-06-01T14:39:47.777Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://blog.guoyb.com/2014/03/23/python-source-3/</loc>
+    
+    <lastmod>2014-06-01T14:39:34.996Z</lastmod>
+    
   </url>
   
   <url>
     <loc>http://blog.guoyb.com/hellohexo/index.html</loc>
-    <lastmod>2014-03-08T08:16:05.000Z</lastmod>
+    
+    <lastmod>2014-03-08T08:16:05.010Z</lastmod>
+    
   </url>
   
 </urlset>
