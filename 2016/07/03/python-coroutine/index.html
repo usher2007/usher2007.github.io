@@ -1,0 +1,262 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  
+  <title>Python协程：从yield/send到async/await | 一根笨茄子</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  
+    <meta name="author" content="Yubo Guo">
+  
+  
+    <meta name="description" content="Python由于众所周知的GIL的原因，导致其线程无法发挥多核的并行计算能力（当然，后来有了multiprocessing，可以实现多进程并行），显得比较鸡肋。既然在GIL之下，同一时刻只能有一个线程在运行，那么对于CPU密集的程序来说，线程之间的切换开销就成了拖累，而以I/O为瓶颈的程序正是协程所擅长的：  
+多任务并发（非并行），每个任务在合适的时候挂起（发起I/O）和恢复(I/O结束)">
+  
+  <meta name="description" content="Python由于众所周知的GIL的原因，导致其线程无法发挥多核的并行计算能力（当然，后来有了multiprocessing，可以实现多进程并行），显得比较鸡肋。既然在GIL之下，同一时刻只能有一个线程在运行，那么对于CPU密集的程序来说，线程之间的切换开销就成了拖累，而以I/O为瓶颈的程序正是协程所擅长的：  
+多任务并发（非并行），每个任务在合适的时候挂起（发起I/O）和恢复(I/O结束)">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python协程：从yield/send到async/await">
+<meta property="og:url" content="http://blog.guoyb.com/2016/07/03/python-coroutine/index.html">
+<meta property="og:site_name" content="一根笨茄子">
+<meta property="og:description" content="Python由于众所周知的GIL的原因，导致其线程无法发挥多核的并行计算能力（当然，后来有了multiprocessing，可以实现多进程并行），显得比较鸡肋。既然在GIL之下，同一时刻只能有一个线程在运行，那么对于CPU密集的程序来说，线程之间的切换开销就成了拖累，而以I/O为瓶颈的程序正是协程所擅长的：  
+多任务并发（非并行），每个任务在合适的时候挂起（发起I/O）和恢复(I/O结束)">
+<meta property="og:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/qrcode.jpg">
+<meta property="og:updated_time" content="2016-07-04T00:40:48.203Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Python协程：从yield/send到async/await">
+<meta name="twitter:description" content="Python由于众所周知的GIL的原因，导致其线程无法发挥多核的并行计算能力（当然，后来有了multiprocessing，可以实现多进程并行），显得比较鸡肋。既然在GIL之下，同一时刻只能有一个线程在运行，那么对于CPU密集的程序来说，线程之间的切换开销就成了拖累，而以I/O为瓶颈的程序正是协程所擅长的：  
+多任务并发（非并行），每个任务在合适的时候挂起（发起I/O）和恢复(I/O结束)">
+<meta name="twitter:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/qrcode.jpg">
+  
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+  
+<script type="text/javascript">
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?996ee0fca2512b4c29f37f60cf6387ca";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+</head>
+
+<body>
+  <div class="wrapper">
+    <header id="header">
+  <div class="title">
+    <h1><a href="/">一根笨茄子</a></h1>
+    <p><a href="/"></a></p>
+  </div>
+  <nav class="nav">
+    <ul>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/about">关于我</a></li>
+      
+      
+    </ul>
+    <div class="clearfix"></div>
+  </nav>
+  <div class="clearfix"></div>
+</header>
+    <div class="content">
+		<article class="post">
+  <header>
+    
+      <div class="icon"></div>
+      <a href="/2016/07/03/python-coroutine/">
+  <time datetime="2016-07-03T02:35:59.000Z">
+    2016-07-03
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title">Python协程：从yield/send到async/await</h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>Python由于众所周知的GIL的原因，导致其线程无法发挥多核的并行计算能力（当然，后来有了multiprocessing，可以实现多进程并行），显得比较鸡肋。既然在GIL之下，同一时刻只能有一个线程在运行，那么对于CPU密集的程序来说，线程之间的切换开销就成了拖累，而以I/O为瓶颈的程序正是协程所擅长的：  </p>
+<p><strong>多任务并发（非并行），每个任务在合适的时候挂起（发起I/O）和恢复(I/O结束)</strong>  </p>
+<p>Python中的协程经历了很长的一段发展历程。其大概经历了如下三个阶段：  </p>
+<blockquote>
+<ol>
+<li>最初的生成器变形yield/send</li>
+<li>引入@asyncio.coroutine和yield from  </li>
+<li>在最近的Python3.5版本中引入async/await关键字  </li>
+</ol>
+</blockquote>
+<h2 id="从yield说起"><a href="#从yield说起" class="headerlink" title="从yield说起"></a>从yield说起</h2><p>先看一段普通的计算斐波那契续列的代码：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">old_fib</span><span class="params">(n)</span>:</span></span><br><span class="line">	res = [<span class="number">0</span>] * n</span><br><span class="line">	index = <span class="number">0</span></span><br><span class="line">	a = <span class="number">0</span></span><br><span class="line">	b = <span class="number">1</span></span><br><span class="line">	<span class="keyword">while</span> index &lt; n:</span><br><span class="line">		res[index] = b</span><br><span class="line">		a, b = b, a + b</span><br><span class="line">		index += <span class="number">1</span></span><br><span class="line">	<span class="keyword">return</span> res</span><br><span class="line"></span><br><span class="line">print(<span class="string">'-'</span>*<span class="number">10</span> + <span class="string">'test old fib'</span> + <span class="string">'-'</span>*<span class="number">10</span>)</span><br><span class="line"><span class="keyword">for</span> fib_res <span class="keyword">in</span> old_fib(<span class="number">20</span>):</span><br><span class="line">	print(fib_res)</span><br></pre></td></tr></table></figure>  </p>
+<p>如果我们仅仅是需要拿到斐波那契序列的第n位，或者仅仅是希望依此产生斐波那契序列，那么上面这种传统方式就会比较耗费内存。<br><a id="more"></a><br>这时，yield就派上用场了。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">fib</span><span class="params">(n)</span>:</span></span><br><span class="line">	index = <span class="number">0</span></span><br><span class="line">	a = <span class="number">0</span></span><br><span class="line">	b = <span class="number">1</span></span><br><span class="line">	<span class="keyword">while</span> index &lt; n:</span><br><span class="line">		<span class="keyword">yield</span> b</span><br><span class="line">		a, b = b, a + b</span><br><span class="line">		index += <span class="number">1</span></span><br><span class="line"></span><br><span class="line">print(<span class="string">'-'</span>*<span class="number">10</span> + <span class="string">'test yield fib'</span> + <span class="string">'-'</span>*<span class="number">10</span>)</span><br><span class="line"><span class="keyword">for</span> fib_res <span class="keyword">in</span> fib(<span class="number">20</span>):</span><br><span class="line">	print(fib_res)</span><br></pre></td></tr></table></figure>  </p>
+<p>当一个函数中包含yield语句时，python会自动将其识别为一个生成器。这时fib(20)并不会真正调用函数体，而是以函数体生成了一个生成器对象实例。  </p>
+<p>yield在这里可以保留fib函数的计算现场，暂停fib的计算并将b返回。而将fib放入for…in循环中时，每次循环都会调用next(fib(20))，唤醒生成器，执行到下一个yield语句处，直到抛出StopIteration异常。此异常会被for循环捕获，导致跳出循环。  </p>
+<h2 id="Send来了"><a href="#Send来了" class="headerlink" title="Send来了"></a>Send来了</h2><p>从上面的程序中可以看到，目前只有数据从fib(20)中通过yield流向外面的for循环；如果可以向fib(20)发送数据，那不是就可以在Python中实现协程了嘛。  </p>
+<p>于是，Python中的生成器有了send函数，yield表达式也拥有了返回值。  </p>
+<p>我们用这个特性，模拟一个额慢速斐波那契数列的计算：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">stupid_fib</span><span class="params">(n)</span>:</span></span><br><span class="line">	index = <span class="number">0</span></span><br><span class="line">	a = <span class="number">0</span></span><br><span class="line">	b = <span class="number">1</span></span><br><span class="line">	<span class="keyword">while</span> index &lt; n:</span><br><span class="line">		sleep_cnt = <span class="keyword">yield</span> b</span><br><span class="line">		print(<span class="string">'let me think &#123;0&#125; secs'</span>.format(sleep_cnt))</span><br><span class="line">		time.sleep(sleep_cnt)</span><br><span class="line">		a, b = b, a + b</span><br><span class="line">		index += <span class="number">1</span></span><br><span class="line">print(<span class="string">'-'</span>*<span class="number">10</span> + <span class="string">'test yield send'</span> + <span class="string">'-'</span>*<span class="number">10</span>)</span><br><span class="line">N = <span class="number">20</span></span><br><span class="line">sfib = stupid_fib(N)</span><br><span class="line">fib_res = next(sfib)</span><br><span class="line"><span class="keyword">while</span> <span class="keyword">True</span>:</span><br><span class="line">	print(fib_res)</span><br><span class="line">	<span class="keyword">try</span>:</span><br><span class="line">		fib_res = sfib.send(random.uniform(<span class="number">0</span>, <span class="number">0.5</span>))</span><br><span class="line">	<span class="keyword">except</span> StopIteration:</span><br><span class="line">		<span class="keyword">break</span></span><br></pre></td></tr></table></figure>  </p>
+<p>其中next(sfib)相当于sfib.send(None)，可以使得sfib运行至第一个yield处返回。后续的sfib.send(random.uniform(0, 0.5))则将一个随机的秒数发送给sfib，作为当前中断的yield表达式的返回值。这样，我们可以从“主”程序中控制协程计算斐波那契数列时的思考时间，协程可以返回给“主”程序计算结果，Perfect！  </p>
+<h2 id="yield-from是个什么鬼？"><a href="#yield-from是个什么鬼？" class="headerlink" title="yield from是个什么鬼？"></a>yield from是个什么鬼？</h2><p>yield from用于重构生成器，简单的，可以这么使用：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">copy_fib</span><span class="params">(n)</span>:</span></span><br><span class="line">	print(<span class="string">'I am copy from fib'</span>)</span><br><span class="line">	<span class="keyword">yield</span> <span class="keyword">from</span> fib(n)</span><br><span class="line">	print(<span class="string">'Copy end'</span>)</span><br><span class="line">print(<span class="string">'-'</span>*<span class="number">10</span> + <span class="string">'test yield from'</span> + <span class="string">'-'</span>*<span class="number">10</span>)</span><br><span class="line"><span class="keyword">for</span> fib_res <span class="keyword">in</span> copy_fib(<span class="number">20</span>):</span><br><span class="line">	print(fib_res)</span><br></pre></td></tr></table></figure>   </p>
+<p>这种使用方式很简单，但远远不是yield from的全部。yield from的作用还体现可以像一个管道一样将send信息传递给内层协程，并且处理好了各种异常情况，因此，对于stupid_fib也可以这样包装和使用：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">copy_stupid_fib</span><span class="params">(n)</span>:</span></span><br><span class="line">	print(<span class="string">'I am copy from stupid fib'</span>)</span><br><span class="line">	<span class="keyword">yield</span> <span class="keyword">from</span> stupid_fib(n)</span><br><span class="line">	print(<span class="string">'Copy end'</span>)</span><br><span class="line">print(<span class="string">'-'</span>*<span class="number">10</span> + <span class="string">'test yield from and send'</span> + <span class="string">'-'</span>*<span class="number">10</span>)</span><br><span class="line">N = <span class="number">20</span></span><br><span class="line">csfib = copy_stupid_fib(N)</span><br><span class="line">fib_res = next(csfib)</span><br><span class="line"><span class="keyword">while</span> <span class="keyword">True</span>:</span><br><span class="line">	print(fib_res)</span><br><span class="line">	<span class="keyword">try</span>:</span><br><span class="line">		fib_res = csfib.send(random.uniform(<span class="number">0</span>, <span class="number">0.5</span>))</span><br><span class="line">	<span class="keyword">except</span> StopIteration:</span><br><span class="line">		<span class="keyword">break</span></span><br></pre></td></tr></table></figure>  </p>
+<p>如果没有yield from，这里的copy_yield_from将会特别复杂（因为要自己处理各种异常）。  </p>
+<h2 id="asyncio-coroutine和yield-from"><a href="#asyncio-coroutine和yield-from" class="headerlink" title="asyncio.coroutine和yield from"></a>asyncio.coroutine和yield from</h2><p>yield from在asyncio模块中得以发扬光大。先看示例代码：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@asyncio.coroutine</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">smart_fib</span><span class="params">(n)</span>:</span></span><br><span class="line">	index = <span class="number">0</span></span><br><span class="line">	a = <span class="number">0</span></span><br><span class="line">	b = <span class="number">1</span></span><br><span class="line">	<span class="keyword">while</span> index &lt; n:</span><br><span class="line">		sleep_secs = random.uniform(<span class="number">0</span>, <span class="number">0.2</span>)</span><br><span class="line">		<span class="keyword">yield</span> <span class="keyword">from</span> asyncio.sleep(sleep_secs)</span><br><span class="line">		print(<span class="string">'Smart one think &#123;&#125; secs to get &#123;&#125;'</span>.format(sleep_secs, b))</span><br><span class="line">		a, b = b, a + b</span><br><span class="line">		index += <span class="number">1</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@asyncio.coroutine</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">stupid_fib</span><span class="params">(n)</span>:</span></span><br><span class="line">	index = <span class="number">0</span></span><br><span class="line">	a = <span class="number">0</span></span><br><span class="line">	b = <span class="number">1</span></span><br><span class="line">	<span class="keyword">while</span> index &lt; n:</span><br><span class="line">		sleep_secs = random.uniform(<span class="number">0</span>, <span class="number">0.4</span>)</span><br><span class="line">		<span class="keyword">yield</span> <span class="keyword">from</span> asyncio.sleep(sleep_secs)</span><br><span class="line">		print(<span class="string">'Stupid one think &#123;&#125; secs to get &#123;&#125;'</span>.format(sleep_secs, b))</span><br><span class="line">		a, b = b, a + b</span><br><span class="line">		index += <span class="number">1</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">	loop = asyncio.get_event_loop()</span><br><span class="line">	tasks = [</span><br><span class="line">		asyncio.<span class="keyword">async</span>(smart_fib(<span class="number">10</span>)),</span><br><span class="line">		asyncio.<span class="keyword">async</span>(stupid_fib(<span class="number">10</span>)),</span><br><span class="line">	]</span><br><span class="line">	loop.run_until_complete(asyncio.wait(tasks))</span><br><span class="line">	print(<span class="string">'All fib finished.'</span>)</span><br><span class="line">	loop.close()</span><br></pre></td></tr></table></figure>  </p>
+<p>asyncio是一个基于事件循环的实现异步I/O的模块。通过yield from，我们可以将协程asyncio.sleep的控制权交给事件循环，然后挂起当前协程；之后，由事件循环决定何时唤醒asyncio.sleep,接着向后执行代码。  </p>
+<p>这样说可能比较抽象，好在asyncio是一个由python实现的模块，那么我们来看看asyncio.sleep中都做了些什么：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@coroutine</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sleep</span><span class="params">(delay, result=None, *, loop=None)</span>:</span></span><br><span class="line">    <span class="string">"""Coroutine that completes after a given time (in seconds)."""</span></span><br><span class="line">    future = futures.Future(loop=loop)</span><br><span class="line">    h = future._loop.call_later(delay,</span><br><span class="line">                                future._set_result_unless_cancelled, result)</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">return</span> (<span class="keyword">yield</span> <span class="keyword">from</span> future)</span><br><span class="line">    <span class="keyword">finally</span>:</span><br><span class="line">        h.cancel()</span><br></pre></td></tr></table></figure>  </p>
+<p>首先，sleep创建了一个Future对象，作为更内层的协程对象，通过yield from交给了事件循环；其次，它通过调用事件循环的call_later函数，注册了一个回调函数。  </p>
+<p>通过查看Future类的源码，可以看到，Future是一个实现了__iter__对象的生成器：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">  </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Future</span>:</span></span><br><span class="line">	<span class="comment">#blabla...</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__iter__</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> self.done():</span><br><span class="line">            self._blocking = <span class="keyword">True</span></span><br><span class="line">            <span class="keyword">yield</span> self  <span class="comment"># This tells Task to wait for completion.</span></span><br><span class="line">        <span class="keyword">assert</span> self.done(), <span class="string">"yield from wasn't used with future"</span></span><br><span class="line">        <span class="keyword">return</span> self.result()  <span class="comment"># May raise too.</span></span><br></pre></td></tr></table></figure>  </p>
+<p>那么当我们的协程yield from asyncio.sleep时，事件循环其实是与Future对象建立了练习。每次事件循环调用send(None)时，其实都会传递到Future对象的__iter__函数调用；而当Future尚未执行完毕的时候，就会yield self，也就意味着暂时挂起，等待下一次send(None)的唤醒。  </p>
+<p>当我们包装一个Future对象产生一个Task对象时，在Task对象初始化中，就会调用Future的send(None),并且为Future设置好回调函数。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">  </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Task</span><span class="params">(futures.Future)</span>:</span></span><br><span class="line">	<span class="comment">#blabla...</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">_step</span><span class="params">(self, value=None, exc=None)</span>:</span></span><br><span class="line">		<span class="comment">#blabla...</span></span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            <span class="keyword">if</span> exc <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</span><br><span class="line">                result = coro.throw(exc)</span><br><span class="line">            <span class="keyword">elif</span> value <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</span><br><span class="line">                result = coro.send(value)</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                result = next(coro)</span><br><span class="line">		<span class="comment">#exception handle</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">if</span> isinstance(result, futures.Future):</span><br><span class="line">                <span class="comment"># Yielded Future must come from Future.__iter__().</span></span><br><span class="line">                <span class="keyword">if</span> result._blocking:</span><br><span class="line">                    result._blocking = <span class="keyword">False</span></span><br><span class="line">                    result.add_done_callback(self._wakeup)</span><br><span class="line">		<span class="comment">#blabla...</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">_wakeup</span><span class="params">(self, future)</span>:</span></span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            value = future.result()</span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> exc:</span><br><span class="line">            <span class="comment"># This may also be a cancellation.</span></span><br><span class="line">            self._step(<span class="keyword">None</span>, exc)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            self._step(value, <span class="keyword">None</span>)</span><br><span class="line">        self = <span class="keyword">None</span>  <span class="comment"># Needed to break cycles when an exception occurs.</span></span><br></pre></td></tr></table></figure>  </p>
+<p>预设的时间过后，事件循环将调用Future._set_result_unless_cancelled:<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">  </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Future</span>:</span></span><br><span class="line">	<span class="comment">#blabla...</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">_set_result_unless_cancelled</span><span class="params">(self, result)</span>:</span></span><br><span class="line">        <span class="string">"""Helper setting the result only if the future was not cancelled."""</span></span><br><span class="line">        <span class="keyword">if</span> self.cancelled():</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        self.set_result(result)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">set_result</span><span class="params">(self, result)</span>:</span></span><br><span class="line">        <span class="string">"""Mark the future done and set its result.</span><br><span class="line"></span><br><span class="line">        If the future is already done when this method is called, raises</span><br><span class="line">        InvalidStateError.</span><br><span class="line">        """</span></span><br><span class="line">        <span class="keyword">if</span> self._state != _PENDING:</span><br><span class="line">            <span class="keyword">raise</span> InvalidStateError(<span class="string">'&#123;&#125;: &#123;!r&#125;'</span>.format(self._state, self))</span><br><span class="line">        self._result = result</span><br><span class="line">        self._state = _FINISHED</span><br><span class="line">        self._schedule_callbacks()</span><br></pre></td></tr></table></figure>  </p>
+<p>这将改变Future的状态，同时回调之前设定好的Tasks._wakeup；在_wakeup中，将会再次调用Tasks._step，这时，Future的状态已经标记为完成，因此，将不再yield self，而return语句将会触发一个StopIteration异常，此异常将会被Task._step捕获用于设置Task的结果。同时，整个yield from链条也将被唤醒，协程将继续往下执行。  </p>
+<h2 id="async和await"><a href="#async和await" class="headerlink" title="async和await"></a>async和await</h2><p>弄清楚了asyncio.coroutine和yield from之后，在Python3.5中引入的async和await就不难理解了：可以将他们理解成asyncio.coroutine/yield from的完美替身。当然，从Python设计的角度来说，async/await让协程表面上独立于生成器而存在，将细节都隐藏于asyncio模块之下，语法更清晰明了。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">  </span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">def</span> <span class="title">smart_fib</span><span class="params">(n)</span>:</span></span><br><span class="line">	index = <span class="number">0</span></span><br><span class="line">	a = <span class="number">0</span></span><br><span class="line">	b = <span class="number">1</span></span><br><span class="line">	<span class="keyword">while</span> index &lt; n:</span><br><span class="line">		sleep_secs = random.uniform(<span class="number">0</span>, <span class="number">0.2</span>)</span><br><span class="line">		<span class="keyword">await</span> asyncio.sleep(sleep_secs)</span><br><span class="line">		print(<span class="string">'Smart one think &#123;&#125; secs to get &#123;&#125;'</span>.format(sleep_secs, b))</span><br><span class="line">		a, b = b, a + b</span><br><span class="line">		index += <span class="number">1</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">def</span> <span class="title">stupid_fib</span><span class="params">(n)</span>:</span></span><br><span class="line">	index = <span class="number">0</span></span><br><span class="line">	a = <span class="number">0</span></span><br><span class="line">	b = <span class="number">1</span></span><br><span class="line">	<span class="keyword">while</span> index &lt; n:</span><br><span class="line">		sleep_secs = random.uniform(<span class="number">0</span>, <span class="number">0.4</span>)</span><br><span class="line">		<span class="keyword">await</span> asyncio.sleep(sleep_secs)</span><br><span class="line">		print(<span class="string">'Stupid one think &#123;&#125; secs to get &#123;&#125;'</span>.format(sleep_secs, b))</span><br><span class="line">		a, b = b, a + b</span><br><span class="line">		index += <span class="number">1</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">	loop = asyncio.get_event_loop()</span><br><span class="line">	tasks = [</span><br><span class="line">		asyncio.ensure_future(smart_fib(<span class="number">10</span>)),</span><br><span class="line">		asyncio.ensure_future(stupid_fib(<span class="number">10</span>)),</span><br><span class="line">	]</span><br><span class="line">	loop.run_until_complete(asyncio.wait(tasks))</span><br><span class="line">	print(<span class="string">'All fib finished.'</span>)</span><br><span class="line">	loop.close()</span><br></pre></td></tr></table></figure>  </p>
+<p>想要继续弄清楚async/await和asyncio.coroutine/yield from的区别，可以看看<a href="http://www.snarky.ca/how-the-heck-does-async-await-work-in-python-3-5" target="_blank" rel="external">这篇文章</a>。  </p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><hr>
+<p>至此，Python中的协程就介绍完毕了。示例程序中都是以sleep为异步I/O的代表，在实际项目中，可以使用协程异步的读写网络、读写文件、渲染界面等，而在等待协程完成的同时，CPU还可以进行其他的计算。协程的作用正在于此。  </p>
+<p>相关代码可以在GitHub上找到<a href="https://github.com/yubo1911/saber/tree/master/coroutine" target="_blank" rel="external">https://github.com/yubo1911/saber/tree/master/coroutine</a>。  </p>
+<p>转载请注明出处： <a href="http://blog.guoyb.com/2016/07/03/python-coroutine/">http://blog.guoyb.com/2016/07/03/python-coroutine/</a>。  </p>
+<p>欢迎使用微信扫描下方二维码，关注我的微信公众号TechTalking，技术·生活·思考：<br><img src="http://7d9lwm.com1.z0.glb.clouddn.com/qrcode.jpg" alt="后端技术小黑屋"></p>
+
+    
+  </div>
+  <footer>
+    
+      
+      
+  <div class="tags">
+    <a class="tags-link" href="/tags/Python/">Python</a>, <a class="tags-link" href="/tags/coroutine/">coroutine</a>, <a class="tags-link" href="/tags/协程/">协程</a>
+  </div>
+
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+<!-- JiaThis Button BEGIN -->
+<script type="text/javascript">
+var jiathis_config = {data_track_clickback:'true'};
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?move=0&amp;uid=1706898" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+<section id="comment">
+  <h1 class="title">评论</h1>
+  <div class="ds-thread" data-title="Python协程：从yield/send到async/await">
+  </div>
+</section>
+
+	</div>
+  </div>
+	<aside id="sidebar">
+  
+  
+    
+      
+      
+
+<div class="widget tagcloud first">
+  <h3 class="title">Tags</h3>
+  <div class="entry">
+    <a href="/tags/C/" style="font-size: 13.33px;">C++</a> <a href="/tags/C-11/" style="font-size: 13.33px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/echoserver/" style="font-size: 11.67px;">echoserver</a> <a href="/tags/epoll/" style="font-size: 11.67px;">epoll</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 11.67px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/select/" style="font-size: 11.67px;">select</a> <a href="/tags/socket/" style="font-size: 11.67px;">socket</a> <a href="/tags/书单/" style="font-size: 15px;">书单</a> <a href="/tags/北京车展/" style="font-size: 10px;">北京车展</a> <a href="/tags/协程/" style="font-size: 10px;">协程</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/广州/" style="font-size: 10px;">广州</a> <a href="/tags/旅行/" style="font-size: 10px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 16.67px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 11.67px;">查证记录</a> <a href="/tags/游戏开发/" style="font-size: 10px;">游戏开发</a> <a href="/tags/爱好/" style="font-size: 10px;">爱好</a> <a href="/tags/生活/" style="font-size: 11.67px;">生活</a> <a href="/tags/知乎/" style="font-size: 10px;">知乎</a> <a href="/tags/读书笔记/" style="font-size: 18.33px;">读书笔记</a> <a href="/tags/读后感/" style="font-size: 10px;">读后感</a>
+  </div>
+</div>
+
+    
+      
+      
+
+<div class="widget recent-posts">
+  <h3 class="title">最近文章</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2016/07/03/python-coroutine/">Python协程：从yield/send到async/await</a>
+      </li>
+    
+      <li>
+        <a href="/2016/06/30/cpp11-3/">C++11新特性之lambda</a>
+      </li>
+    
+      <li>
+        <a href="/2016/06/25/2016-booklist-1/">2016年上半年书单</a>
+      </li>
+    
+      <li>
+        <a href="/2016/06/25/cpp11-2/">C++11新特性之类型推断与类型获取</a>
+      </li>
+    
+      <li>
+        <a href="/2016/06/19/hexo-server/">hexo server无法打开调试博客页面问题的查证记录</a>
+      </li>
+    
+  </ul>
+</div>
+
+    
+      
+      
+<div class="widget tag">
+  <h3 class="title">友情链接</h3>
+  <ul class="entry">
+  
+    
+    <li><a href="http://www.linkedin.com/in/yubo-guo-739b0071" target="_blank">LinkedIn</a></li>
+  
+    
+    <li><a href="http://www.tuicool.com/sites/2emeIjb" target="_blank">推酷站点</a></li>
+  
+  </ul>
+</div>
+
+    
+  
+</aside>
+<div class="clearfix"></div>
+  <footer id="footer"><div class="copyright">
+  
+  &copy; 2016 <a href="/">Yubo Guo</a>
+  
+</div>
+<div class="theme-copyright">
+  Theme by <a href="https://github.com/orderedlist" target="_blank">orderedlist</a>
+   | 
+  Redesign by <a href="http://heroicyang.com/" target="_blank">Heroic Yang</a>
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+<script src="/js/scale.fix.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = { short_name: 'guoyb' };
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';
+    ds.async = true;
+    ds.src = 'http://static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+  (function($){
+    $('.fancybox').fancybox();
+  })(jQuery);
+</script>
+
+</body>
+</html>
