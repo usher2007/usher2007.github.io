@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://blog.guoyb.com/2016/07/09/cpp11-4/</loc>
+    
+    <lastmod>2016-07-09T10:39:39.500Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://blog.guoyb.com/2016/07/03/python-coroutine/</loc>
     
     <lastmod>2016-07-04T00:40:48.203Z</lastmod>
