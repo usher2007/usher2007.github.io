@@ -1,0 +1,374 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  
+  <title>Redis学习笔记1-基础命令及数据结构 | 一根笨茄子</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  
+    <meta name="author" content="Yubo Guo">
+  
+  
+    <meta name="description" content="Redis是一个内存中的数据存储系统，可用作数据库、缓存或消息中间件等。  
+学习笔记的第1部分记录Redis的基础命令及数据结构。  
+
+启动Redisredis-server –port 6379  
+配置自动启动脚本、配置文件等：  
+
+sudo cp utils/redis_init_script /etc/init.d/
+sudo mv /etc/init.d/redis_init_s">
+  
+  <meta name="description" content="Redis是一个内存中的数据存储系统，可用作数据库、缓存或消息中间件等。  
+学习笔记的第1部分记录Redis的基础命令及数据结构。  
+
+启动Redisredis-server –port 6379  
+配置自动启动脚本、配置文件等：  
+
+sudo cp utils/redis_init_script /etc/init.d/
+sudo mv /etc/init.d/redis_init_s">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis学习笔记1-基础命令及数据结构">
+<meta property="og:url" content="http://blog.guoyb.com/2016/07/21/learn-redis-basic-commands/index.html">
+<meta property="og:site_name" content="一根笨茄子">
+<meta property="og:description" content="Redis是一个内存中的数据存储系统，可用作数据库、缓存或消息中间件等。  
+学习笔记的第1部分记录Redis的基础命令及数据结构。  
+
+启动Redisredis-server –port 6379  
+配置自动启动脚本、配置文件等：  
+
+sudo cp utils/redis_init_script /etc/init.d/
+sudo mv /etc/init.d/redis_init_s">
+<meta property="og:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/qrcode.jpg">
+<meta property="og:updated_time" content="2016-07-21T00:51:32.032Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Redis学习笔记1-基础命令及数据结构">
+<meta name="twitter:description" content="Redis是一个内存中的数据存储系统，可用作数据库、缓存或消息中间件等。  
+学习笔记的第1部分记录Redis的基础命令及数据结构。  
+
+启动Redisredis-server –port 6379  
+配置自动启动脚本、配置文件等：  
+
+sudo cp utils/redis_init_script /etc/init.d/
+sudo mv /etc/init.d/redis_init_s">
+<meta name="twitter:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/qrcode.jpg">
+  
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+  
+<script type="text/javascript">
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?996ee0fca2512b4c29f37f60cf6387ca";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+</head>
+
+<body>
+  <div class="wrapper">
+    <header id="header">
+  <div class="title">
+    <h1><a href="/">一根笨茄子</a></h1>
+    <p><a href="/"></a></p>
+  </div>
+  <nav class="nav">
+    <ul>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/about">关于我</a></li>
+      
+      
+    </ul>
+    <div class="clearfix"></div>
+  </nav>
+  <div class="clearfix"></div>
+</header>
+    <div class="content">
+		<article class="post">
+  <header>
+    
+      <div class="icon"></div>
+      <a href="/2016/07/21/learn-redis-basic-commands/">
+  <time datetime="2016-07-21T00:06:06.000Z">
+    2016-07-21
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title">Redis学习笔记1-基础命令及数据结构</h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>Redis是一个内存中的数据存储系统，可用作数据库、缓存或消息中间件等。  </p>
+<p>学习笔记的第1部分记录Redis的基础命令及数据结构。  </p>
+<hr>
+<h2 id="启动Redis"><a href="#启动Redis" class="headerlink" title="启动Redis"></a>启动Redis</h2><p>redis-server –port 6379  </p>
+<p>配置自动启动脚本、配置文件等：  </p>
+<ul>
+<li>sudo cp utils/redis_init_script /etc/init.d/</li>
+<li>sudo mv /etc/init.d/redis_init_script /etc/init.d/redis_6379</li>
+<li>sudo mkdir /etc/redis</li>
+<li>sudo mkdir -p /var/redis/6379</li>
+<li>sudo cp redis.conf /etc/redis/6379.conf</li>
+<li>sudo vim /etc/redis//6379.conf  : daemonize yes；pidfile /var/run/redis_6379.pid；port 6379；dir /var/redis/6379</li>
+</ul>
+<p>命令行客户端：  </p>
+<p>redis-cli -h 127.0.0.1 -p 6379  </p>
+<p>简单测试Redis是否启动：  </p>
+<p>redis-cli -h 127.0.0.1 -p 6379 PING             #PONG<br><a id="more"></a>   </p>
+<h2 id="基础命令"><a href="#基础命令" class="headerlink" title="基础命令"></a>基础命令</h2><ul>
+<li>SET bar 1</li>
+<li>KEYS *(or other patterns)</li>
+<li>EXISTS bar</li>
+<li>DEL bar</li>
+<li>TYPE bar</li>
+<li>LPUSH foo 1（foo被当作列表）</li>
+<li>GET bar</li>
+<li>INCR bar</li>
+<li>INCRBY num 5</li>
+<li>DECR num</li>
+<li>DECRBY num 2</li>
+<li>INCRBYFLOAT num 1.1</li>
+<li>APPEND bar “hello”</li>
+<li>STRLEN bar</li>
+<li>MSET key1 1 key2 2</li>
+<li>MGET key1 key2</li>
+<li>GETBIT bar 1</li>
+<li>BITCOUNT bar（统计置为1的比特位数）</li>
+<li>BITCOUNT bar 1 2（统计第1个字节和第2个字节中1的比特位数，从0开始计数）</li>
+<li>SETBIT bar 1 1</li>
+<li>BITOP OR res bar num</li>
+<li>BITPOS bar 1（从bar中寻找第一个为1的比特位的位置）</li>
+<li>BITPOS bar 1 4 10（同上寻找，限定查找范围为第4-10个字节）</li>
+</ul>
+<h2 id="散列类型"><a href="#散列类型" class="headerlink" title="散列类型"></a>散列类型</h2><p>一种类似dict的存储结构，不过key只能是字符串。  </p>
+<ul>
+<li>HSET car name BMW（构造散列car，其中name对应的值为BMW)</li>
+<li>HGET car name</li>
+<li>HMSET car name BENZ price 120</li>
+<li>HMGET car name price</li>
+<li>HGETALL car</li>
+<li>HEXISTS car name</li>
+<li>HSETNX car name BMW(当name不存在时，赋值为BMW)</li>
+<li>HINCRBY car price 10</li>
+<li>HDEL car name</li>
+<li>HKEYS car</li>
+<li>HVALS car</li>
+<li>HLEN car</li>
+</ul>
+<h2 id="列表类型"><a href="#列表类型" class="headerlink" title="列表类型"></a>列表类型</h2><p>一种类似于双向链表的存储结构。  </p>
+<ul>
+<li>LPUSH numbers 1 2 3</li>
+<li>RPUSH numbers 0 -1</li>
+<li>LPOP numbers</li>
+<li>RPOP numbers</li>
+<li>LLEN numbers</li>
+<li>LRANGE numbers 0 2(列表切片操作，可以像python那样使用负数下标）</li>
+<li>LREM numbers 2 3(左起移除2个3）/ 0 1(移除所有1) / -1 2(右起移除1个2)</li>
+<li>LINDEX numbers 3</li>
+<li>LSET numbers 3 100</li>
+<li>LTRIM numbers 1 5（保留序号1-5的元素）</li>
+<li>LINSERT numbers BEFORE 1 111（左起寻找1，在1之前插入111）</li>
+<li>LINSERT numbers AFTER 2 222(左起寻找2，在2之后插入222）</li>
+<li>RPOPLPUSH numbers desnums（从numbers右侧pop一个元素插入到desnums左边，像管道一样）</li>
+</ul>
+<h2 id="集合类型"><a href="#集合类型" class="headerlink" title="集合类型"></a>集合类型</h2><p>一种类似于set的存储结构。  </p>
+<ul>
+<li>SADD letter a</li>
+<li>SADD letter a b c</li>
+<li>SMEMBERS letter</li>
+<li>SREM letter c d</li>
+<li>SISMEMBER letter c</li>
+<li>SDIFF setA setB（res = setA - setB)</li>
+<li>SDIFF setA setB setC (res = (setA - setB) - setC)</li>
+<li>SINTER setA setB (交集)</li>
+<li>SINTER setA setB setC</li>
+<li>SUNION setA setB （并集）</li>
+<li>SUNION setA setB setC</li>
+<li>SCARD letter（获取个数）</li>
+<li>SDIFFSTORE setD setA setB（setD = setA - setB)</li>
+<li>SINTERSTORE setE setA setB</li>
+<li>SUNIONSTORE setF setA setB</li>
+<li>SRANDMEMBER setF 2(不重复的取setF中的2个元素出来）</li>
+<li>SRANDMEMBER setF -2（可重复的取setF中的2个元素出来）</li>
+<li>SPOP setF</li>
+<li>SPOP setF 2</li>
+</ul>
+<h2 id="有序集合"><a href="#有序集合" class="headerlink" title="有序集合"></a>有序集合</h2><p>一种类似于优先级队列的存储结构。  </p>
+<ul>
+<li>ZADD scoreboard 89 Tom 67 Peter 100 David</li>
+<li>ZADD testboard 17E+307 a</li>
+<li>ZADD testboard 1.5 b</li>
+<li>ZADD testboard +inf c（可以添加正无穷，同样的-inf表示负无穷）</li>
+<li>ZSCORE scoreboard Peter（获得数值）</li>
+<li>ZRANGE scoreboard 0 2（按照数值从小到大取0-2位）</li>
+<li>ZRANGE scoreboard 1 -1（-1表示最后一位，同负数下标意义相同）</li>
+<li>ZRANGE scoreboard 0 2 WITHSCORES（获得名字的同时返回数值）</li>
+<li>ZREVRANGE scoreboard 0 1（逆序）</li>
+<li>ZRANGEBYSCORE scoreboard 80 100（取分数在80-100之间的元素，从小到大列出）</li>
+<li>ZRANGEBYSCORE scoreboard 80 (100 （表示不包含100）</li>
+<li>ZRANGEBYSCORE scoreboard 60 +inf LIMIT 1 3（60分以上，从小到大排列，取第1-3位（从0开始计数））</li>
+<li>ZREVRANGEBYSCORE scoreboard 100 0 LIMIT 0 3</li>
+<li>ZINCRBY scoreboard 4 Jerry / ZINCRBY scoreboard -4 Jerry</li>
+<li>ZCARD scoreboard(个数)</li>
+<li>ZCOUNT scoreboard 80 100(统计80-100之间的个数）</li>
+<li>ZREM scoreboard Wendy</li>
+<li>ZREMRANGEBYRANK test 0 2(按照排名删除）</li>
+<li>ZREMRANGEBYSCORE test (4 5（按照分数删除）</li>
+<li>ZRANK scoreboard Peter / ZREVRANK scoreboard Peter（获得排名）</li>
+<li>ZINTERSTORE set3 2 set1 set2(set1 和 set2 中元素相交，元素的值相加）</li>
+<li>ZINTERSTORE set4 2 set1 set2 AGGREGATE MIN(set1 和 set2 中元素相交，元素的值取MIN）</li>
+<li>ZINTERSTORE set5 2 set1 set2 AGGREGATE MAX(set1 和 set2 中元素相交，元素的值取MAX）</li>
+<li>ZINTERSTORE set6 2 set1 set2 WEIGHTS 1 0.1(set1 和 set2 中元素相交，元素的值按权重相加）</li>
+<li>ZUNIONSTORE set7 2 set1 set2(set1 和 set2 中元素相并，元素的值相加）</li>
+</ul>
+<p>转载请注明出处： <a href="http://blog.guoyb.com/2016/07/21/learn-redis-basic-commands">http://blog.guoyb.com/2016/07/21/learn-redis-basic-commands/</a>  </p>
+<p>欢迎使用微信扫描下方二维码，关注我的微信公众号TechTalking，技术·生活·思考：<br><img src="http://7d9lwm.com1.z0.glb.clouddn.com/qrcode.jpg" alt="后端技术小黑屋"></p>
+
+    
+  </div>
+  <footer>
+    
+      
+      
+  <div class="tags">
+    <a class="tags-link" href="/tags/redis/">redis</a>, <a class="tags-link" href="/tags/学习笔记/">学习笔记</a>
+  </div>
+
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+<!-- JiaThis Button BEGIN -->
+<script type="text/javascript">
+var jiathis_config = {data_track_clickback:'true'};
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?move=0&amp;uid=1706898" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+<section id="comment">
+  <h1 class="title">Comments</h1>
+  <div class="ds-thread" data-title="Redis学习笔记1-基础命令及数据结构">
+  </div>
+</section>
+
+	</div>
+  </div>
+	<aside id="sidebar">
+  
+  
+    
+      
+      
+
+<div class="widget tagcloud first">
+  <h3 class="title">Tags</h3>
+  <div class="entry">
+    <a href="/tags/C/" style="font-size: 13.33px;">C++</a> <a href="/tags/C-11/" style="font-size: 13.33px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/echoserver/" style="font-size: 11.67px;">echoserver</a> <a href="/tags/epoll/" style="font-size: 11.67px;">epoll</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 11.67px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/select/" style="font-size: 11.67px;">select</a> <a href="/tags/socket/" style="font-size: 11.67px;">socket</a> <a href="/tags/书单/" style="font-size: 15px;">书单</a> <a href="/tags/北京车展/" style="font-size: 10px;">北京车展</a> <a href="/tags/协程/" style="font-size: 10px;">协程</a> <a href="/tags/学习笔记/" style="font-size: 10px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/广州/" style="font-size: 10px;">广州</a> <a href="/tags/旅行/" style="font-size: 10px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 16.67px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 11.67px;">查证记录</a> <a href="/tags/游戏开发/" style="font-size: 10px;">游戏开发</a> <a href="/tags/爱好/" style="font-size: 10px;">爱好</a> <a href="/tags/生活/" style="font-size: 11.67px;">生活</a> <a href="/tags/知乎/" style="font-size: 10px;">知乎</a> <a href="/tags/读书笔记/" style="font-size: 18.33px;">读书笔记</a> <a href="/tags/读后感/" style="font-size: 10px;">读后感</a>
+  </div>
+</div>
+
+    
+      
+      
+
+<div class="widget recent-posts">
+  <h3 class="title">最近文章</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2016/07/21/learn-redis-basic-commands/">Redis学习笔记1-基础命令及数据结构</a>
+      </li>
+    
+      <li>
+        <a href="/2016/07/17/python-vim/">Vim中编辑Python的利器</a>
+      </li>
+    
+      <li>
+        <a href="/2016/07/09/cpp11-4/">C++11新特性之容器相关特性</a>
+      </li>
+    
+      <li>
+        <a href="/2016/07/03/python-coroutine/">Python协程：从yield/send到async/await</a>
+      </li>
+    
+      <li>
+        <a href="/2016/06/30/cpp11-3/">C++11新特性之lambda</a>
+      </li>
+    
+  </ul>
+</div>
+
+    
+      
+      
+<div class="widget tag">
+  <h3 class="title">友情链接</h3>
+  <ul class="entry">
+  
+    
+    <li><a href="http://www.linkedin.com/in/yubo-guo-739b0071" target="_blank">LinkedIn</a></li>
+  
+    
+    <li><a href="http://www.tuicool.com/sites/2emeIjb" target="_blank">推酷站点</a></li>
+  
+  </ul>
+</div>
+
+    
+  
+</aside>
+<div class="clearfix"></div>
+  <footer id="footer"><div class="copyright">
+  
+  &copy; 2016 <a href="/">Yubo Guo</a>
+  
+</div>
+<div class="theme-copyright">
+  Theme by <a href="https://github.com/orderedlist" target="_blank">orderedlist</a>
+   | 
+  Redesign by <a href="http://heroicyang.com/" target="_blank">Heroic Yang</a>
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+<script src="/js/scale.fix.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = { short_name: 'guoyb' };
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';
+    ds.async = true;
+    ds.src = 'http://static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+  (function($){
+    $('.fancybox').fancybox();
+  })(jQuery);
+</script>
+
+</body>
+</html>

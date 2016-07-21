@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://blog.guoyb.com/2016/07/21/learn-redis-basic-commands/</loc>
+    
+    <lastmod>2016-07-21T00:51:32.032Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://blog.guoyb.com/2016/07/17/python-vim/</loc>
     
     <lastmod>2016-07-17T03:30:16.166Z</lastmod>
