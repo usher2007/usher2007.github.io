@@ -4,42 +4,21 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="chrome=1">
   
-  <title>Ubuntu安装备忘录 | 一根笨茄子</title>
+  <title>Tag: virtualenv | 一根笨茄子</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   
     <meta name="author" content="Yubo Guo">
   
   
-    <meta name="description" content="最近连续给自己的笔记本和工作机装了两个Ubuntu虚拟机，总结下常用的工具和配置，长期更新。
-
-安装ssh server
-sudo apt-get install openssh-server 
-设置网络为VMnet8 并配置好ip">
-  
-  <meta name="description" content="最近连续给自己的笔记本和工作机装了两个Ubuntu虚拟机，总结下常用的工具和配置，长期更新。
-
-安装ssh server
-sudo apt-get install openssh-server 
-设置网络为VMnet8 并配置好ip">
-<meta property="og:type" content="article">
-<meta property="og:title" content="Ubuntu安装备忘录">
-<meta property="og:url" content="http://blog.guoyb.com/2016/04/17/linux-must-do/index.html">
+  <meta name="description">
+<meta property="og:type" content="website">
+<meta property="og:title" content="一根笨茄子">
+<meta property="og:url" content="http://blog.guoyb.com/tags/virtualenv/index.html">
 <meta property="og:site_name" content="一根笨茄子">
-<meta property="og:description" content="最近连续给自己的笔记本和工作机装了两个Ubuntu虚拟机，总结下常用的工具和配置，长期更新。
-
-安装ssh server
-sudo apt-get install openssh-server 
-设置网络为VMnet8 并配置好ip">
-<meta property="og:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/qrcode.jpg">
-<meta property="og:updated_time" content="2016-06-11T08:39:10.888Z">
+<meta property="og:description">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Ubuntu安装备忘录">
-<meta name="twitter:description" content="最近连续给自己的笔记本和工作机装了两个Ubuntu虚拟机，总结下常用的工具和配置，长期更新。
-
-安装ssh server
-sudo apt-get install openssh-server 
-设置网络为VMnet8 并配置好ip">
-<meta name="twitter:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/qrcode.jpg">
+<meta name="twitter:title" content="一根笨茄子">
+<meta name="twitter:description">
   
   
   <link rel="stylesheet" href="/css/style.css">
@@ -79,106 +58,42 @@ var _hmt = _hmt || [];
   <div class="clearfix"></div>
 </header>
     <div class="content">
-		<article class="post">
-  <header>
+		
+
+
+<h2 class="archives-title tag"><span>virtualenv</span></h2>
+
+
+
+  
+  
     
-      <div class="icon"></div>
-      <a href="/2016/04/17/linux-must-do/">
-  <time datetime="2016-04-17T07:41:08.000Z">
-    2016-04-17
+    
+      
+      
+      <section class="archives-wrapper">
+        
+        <div class="archives">
+    
+    <article class="post">
+  <header>
+    <a href="/2016/07/22/virtualenv-trick/">
+  <time datetime="2016-07-22T00:41:40.000Z">
+    2016-07-22
   </time>
 </a>
     
-    
   
-    <h1 class="title">Ubuntu安装备忘录</h1>
+    <h1 class="title"><a href="/2016/07/22/virtualenv-trick/">使用virtualenv管理多个Python版本</a></h1>
   
 
   </header>
-  
-  <div class="entry">
-    
-      <hr>
-<p>最近连续给自己的笔记本和工作机装了两个Ubuntu虚拟机，总结下常用的工具和配置，长期更新。</p>
-<ul>
-<li>安装ssh server<ul>
-<li>sudo apt-get install openssh-server </li>
-<li>设置网络为VMnet8 并配置好ip<a id="more"></a></li>
-</ul>
-</li>
-<li><p>安装Python</p>
-<ul>
-<li>sudo apt-get install python/python3/python-pip/python3-pip</li>
-<li>pip install virtualenv</li>
-</ul>
-</li>
-<li><p>Git/Github</p>
-<ul>
-<li>sudo apt-get install git</li>
-<li>git config –global user.email “you@example.com”</li>
-<li>git config –global user.name “Your Name”</li>
-<li>ssh-keygen -t rsa -b 4096 -C “you@example.com”</li>
-<li>eval $(ssh-agent -s)</li>
-<li>ssh-add ~/.ssh/id_rsa</li>
-<li>复制 ~/.ssh/id_rsa.pub的内容并在Github上依此新建一个SSH Entry</li>
-</ul>
-</li>
-<li><p>Vim相关</p>
-<ul>
-<li>git clone git@github.com:yubo1911/config-files.git</li>
-<li>sudo apt-get install pyflakes</li>
-<li>mkdir -p ~/.vim/autoload ~/.vim/bundle &amp;&amp; curl -LSso ~/.vim/autoload/pathogen.vim <a href="https://tpo.pe/pathogen.vim" target="_blank" rel="external">https://tpo.pe/pathogen.vim</a></li>
-<li>git clone git://github.com/tpope/vim-sensible.git (安装vim插件）</li>
-<li>由于工作中Python代码的历史原因，tab键设置成了8个空格，这里为了与工作环境统一，需要编辑.vimrc<blockquote>
-<p>autocmd filetype python set ts=8<br>autocmd filetype python set sw=8<br>autocmd filetype python set sts=8<br>autocmd filetype python set noet  </p>
-</blockquote>
-</li>
-</ul>
-</li>
-<li><p>Tmux相关</p>
-<ul>
-<li>sudo apt-get install tmux</li>
-<li><p>Tmux常用命令</p>
-<blockquote>
-<p>tmux new-session<br>tmux attach -t 0(session_id)<br>tmux kill-session -t 0<br>tmux ls  </p>
-</blockquote>
-</li>
-<li><p>ctrl+b 进入命令模式，之后</p>
-<blockquote>
-<p>d detach，随后可以tmux attach回来<br>w 从当前session的多个window中选择一个<br>s  从所有sessions中选择一个<br>c 创建新窗口<br>p 切换上一窗口<br>n 切换到下一个窗口<br>，重命名窗口<br>$ 重命名session  </p>
-</blockquote>
-</li>
-</ul>
-</li>
-</ul>
-<h2 id="持续更新中……"><a href="#持续更新中……" class="headerlink" title="持续更新中……"></a>持续更新中……</h2><p>欢迎关注我的微信公众号，技术·生活·思考：<br><img src="http://7d9lwm.com1.z0.glb.clouddn.com/qrcode.jpg" alt="后端技术小黑屋"></p>
-
-    
-  </div>
-  <footer>
-    
-      
-      
-  <div class="tags">
-    <a class="tags-link" href="/tags/Ubuntu/">Ubuntu</a>, <a class="tags-link" href="/tags/工具/">工具</a>
-  </div>
-
-    
-    <div class="clearfix"></div>
-  </footer>
 </article>
-<!-- JiaThis Button BEGIN -->
-<script type="text/javascript">
-var jiathis_config = {data_track_clickback:'true'};
-</script>
-<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?move=0&amp;uid=1706898" charset="utf-8"></script>
-<!-- JiaThis Button END -->
+  
+  
+    </div></section>
+  
 
-<section id="comment">
-  <h1 class="title">Comments</h1>
-  <div class="ds-thread" data-title="Ubuntu安装备忘录">
-  </div>
-</section>
 
 	</div>
   </div>

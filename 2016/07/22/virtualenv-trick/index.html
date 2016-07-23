@@ -1,0 +1,241 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  
+  <title>使用virtualenv管理多个Python版本 | 一根笨茄子</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  
+    <meta name="author" content="Yubo Guo">
+  
+  
+    <meta name="description" content="在Ubuntu14.04上默认安装的Python版本是2.7.6，而且似乎也没有更到2.7.9以上的打算。有时，运行一些模块需要更高版本的Python（比如urllib3的一些功能需要2.7.9以上），这时该怎么办呢？  
+之前有一次遇到这种情况，我直接wget Python2.7.11的源码编译安装，覆盖了原来的2.7.6的版本。但是这直接导致了原来系统中一些依赖2.7.6版本的模块无法启动。">
+  
+  <meta name="description" content="在Ubuntu14.04上默认安装的Python版本是2.7.6，而且似乎也没有更到2.7.9以上的打算。有时，运行一些模块需要更高版本的Python（比如urllib3的一些功能需要2.7.9以上），这时该怎么办呢？  
+之前有一次遇到这种情况，我直接wget Python2.7.11的源码编译安装，覆盖了原来的2.7.6的版本。但是这直接导致了原来系统中一些依赖2.7.6版本的模块无法启动。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用virtualenv管理多个Python版本">
+<meta property="og:url" content="http://blog.guoyb.com/2016/07/22/virtualenv-trick/index.html">
+<meta property="og:site_name" content="一根笨茄子">
+<meta property="og:description" content="在Ubuntu14.04上默认安装的Python版本是2.7.6，而且似乎也没有更到2.7.9以上的打算。有时，运行一些模块需要更高版本的Python（比如urllib3的一些功能需要2.7.9以上），这时该怎么办呢？  
+之前有一次遇到这种情况，我直接wget Python2.7.11的源码编译安装，覆盖了原来的2.7.6的版本。但是这直接导致了原来系统中一些依赖2.7.6版本的模块无法启动。">
+<meta property="og:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/qrcode.jpg">
+<meta property="og:updated_time" content="2016-07-23T00:47:24.652Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="使用virtualenv管理多个Python版本">
+<meta name="twitter:description" content="在Ubuntu14.04上默认安装的Python版本是2.7.6，而且似乎也没有更到2.7.9以上的打算。有时，运行一些模块需要更高版本的Python（比如urllib3的一些功能需要2.7.9以上），这时该怎么办呢？  
+之前有一次遇到这种情况，我直接wget Python2.7.11的源码编译安装，覆盖了原来的2.7.6的版本。但是这直接导致了原来系统中一些依赖2.7.6版本的模块无法启动。">
+<meta name="twitter:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/qrcode.jpg">
+  
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+  
+<script type="text/javascript">
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?996ee0fca2512b4c29f37f60cf6387ca";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+</head>
+
+<body>
+  <div class="wrapper">
+    <header id="header">
+  <div class="title">
+    <h1><a href="/">一根笨茄子</a></h1>
+    <p><a href="/"></a></p>
+  </div>
+  <nav class="nav">
+    <ul>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/about">关于我</a></li>
+      
+      
+    </ul>
+    <div class="clearfix"></div>
+  </nav>
+  <div class="clearfix"></div>
+</header>
+    <div class="content">
+		<article class="post">
+  <header>
+    
+      <div class="icon"></div>
+      <a href="/2016/07/22/virtualenv-trick/">
+  <time datetime="2016-07-22T00:41:40.000Z">
+    2016-07-22
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title">使用virtualenv管理多个Python版本</h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>在Ubuntu14.04上默认安装的Python版本是2.7.6，而且似乎也没有更到2.7.9以上的打算。有时，运行一些模块需要更高版本的Python（比如urllib3的一些功能需要2.7.9以上），这时该怎么办呢？  </p>
+<p>之前有一次遇到这种情况，我直接wget Python2.7.11的源码编译安装，覆盖了原来的2.7.6的版本。但是这直接导致了原来系统中一些依赖2.7.6版本的模块无法启动。而从<strong>源码安装</strong>的Python版本回退回<strong>系统默认安装</strong>的Python版本的过程是极其痛苦的，apt-get purge删不干净，需要手动locate各种Python模块的位置，尤其当系统中还有源码安装的Python3时，简直不堪回首……  </p>
+<p>最近又遇到了这样的问题，花了一些时间调研了下virtualenv，发现两个参数配合使用，正好可以解决多Python版本的问题。从此，妈妈再也不用担心我搞乱Python环境啦~  </p>
+<p>下面以在Ubuntu14.04（默认Python2.7.6）上安装Python2.7.9，运行zhihu-terminal(依赖Python2.7.9）为例，记录整个流程。<br><a id="more"></a>  </p>
+<hr>
+<h2 id="从源码安装Python"><a href="#从源码安装Python" class="headerlink" title="从源码安装Python"></a>从源码安装Python</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ wget https://www.python.org/ftp/python/2.7.9/Python-2.7.9.tgz</span><br><span class="line">$ tar xvf Python-2.7.9.tgz</span><br><span class="line">$ cd Python-2.7.9/</span><br><span class="line">$ ./configure --prefix=/usr/local/lib/</span><br><span class="line">$ make</span><br><span class="line">$ sudo make install</span><br></pre></td></tr></table></figure>  
+<p>这里最重要的一个参数是<strong>--prefix=/usr/local/lib/</strong>，它确保了新安装的Python版本和系统默认的Python互不影响。  </p>
+<p>这时，直接运行python，还会显示版本是2.7.6：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ python</span><br><span class="line">Python 2.7.6 (default, Jun 22 2015, 17:58:13) </span><br><span class="line">[GCC 4.8.2] on linux2</span><br><span class="line">Type &quot;help&quot;, &quot;copyright&quot;, &quot;credits&quot; or &quot;license&quot; for more information.</span><br><span class="line">&gt;&gt;&gt; </span><br></pre></td></tr></table></figure>  </p>
+<p>运行Python2.7.9，需要找到/usr/local/lib/bin/下面的python：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ /usr/local/lib/bin/python</span><br><span class="line">Python 2.7.9 (default, Jul 22 2016, 17:26:34) </span><br><span class="line">[GCC 4.8.4] on linux2</span><br><span class="line">Type &quot;help&quot;, &quot;copyright&quot;, &quot;credits&quot; or &quot;license&quot; for more information.</span><br><span class="line">&gt;&gt;&gt; </span><br></pre></td></tr></table></figure>  </p>
+<h2 id="配置virtualenv"><a href="#配置virtualenv" class="headerlink" title="配置virtualenv"></a>配置virtualenv</h2><p>virtualenv的安装就不赘述了。  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ cd zhihu-terminal</span><br><span class="line">$ virtualenv -p /usr/local/lib/bin/python .</span><br><span class="line">$ source ./bin/activate</span><br><span class="line">(virtualenv)$ python</span><br><span class="line">Python 2.7.9 (default, Jul 22 2016, 17:29:31) </span><br><span class="line">[GCC 4.8.4] on linux2</span><br><span class="line">Type &quot;help&quot;, &quot;copyright&quot;, &quot;credits&quot; or &quot;license&quot; for more information.</span><br><span class="line">&gt;&gt;&gt; </span><br></pre></td></tr></table></figure>  
+<p>这里出现了第二个重要的参数 <strong>-p /usr/local/lib/bin/python</strong>，指定了virtualenv所使用的Python路径。  </p>
+<p>至此，在当前virtualenv下就可以畅快的使用Python2.7.9，而不用改动系统默认的Python2.7.6了~  </p>
+<hr>
+<p>转载请注明出处： <a href="http://blog.guoyb.com/2016/07/22/virtualenv-trick/">http://blog.guoyb.com/2016/07/22/virtualenv-trick/</a>  </p>
+<p>欢迎使用微信扫描下方二维码，关注我的微信公众号TechTalking，技术·生活·思考：<br><img src="http://7d9lwm.com1.z0.glb.clouddn.com/qrcode.jpg" alt="后端技术小黑屋"></p>
+
+    
+  </div>
+  <footer>
+    
+      
+      
+  <div class="tags">
+    <a class="tags-link" href="/tags/Python/">Python</a>, <a class="tags-link" href="/tags/virtualenv/">virtualenv</a>
+  </div>
+
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+<!-- JiaThis Button BEGIN -->
+<script type="text/javascript">
+var jiathis_config = {data_track_clickback:'true'};
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?move=0&amp;uid=1706898" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+<section id="comment">
+  <h1 class="title">Comments</h1>
+  <div class="ds-thread" data-title="使用virtualenv管理多个Python版本">
+  </div>
+</section>
+
+	</div>
+  </div>
+	<aside id="sidebar">
+  
+  
+    
+      
+      
+
+<div class="widget tagcloud first">
+  <h3 class="title">Tags</h3>
+  <div class="entry">
+    <a href="/tags/C/" style="font-size: 13.33px;">C++</a> <a href="/tags/C-11/" style="font-size: 13.33px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/echoserver/" style="font-size: 11.67px;">echoserver</a> <a href="/tags/epoll/" style="font-size: 11.67px;">epoll</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 11.67px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/select/" style="font-size: 11.67px;">select</a> <a href="/tags/socket/" style="font-size: 11.67px;">socket</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 15px;">书单</a> <a href="/tags/北京车展/" style="font-size: 10px;">北京车展</a> <a href="/tags/协程/" style="font-size: 10px;">协程</a> <a href="/tags/学习笔记/" style="font-size: 10px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/广州/" style="font-size: 10px;">广州</a> <a href="/tags/旅行/" style="font-size: 10px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 16.67px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 11.67px;">查证记录</a> <a href="/tags/游戏开发/" style="font-size: 10px;">游戏开发</a> <a href="/tags/爱好/" style="font-size: 10px;">爱好</a> <a href="/tags/生活/" style="font-size: 11.67px;">生活</a> <a href="/tags/知乎/" style="font-size: 10px;">知乎</a> <a href="/tags/读书笔记/" style="font-size: 18.33px;">读书笔记</a> <a href="/tags/读后感/" style="font-size: 10px;">读后感</a>
+  </div>
+</div>
+
+    
+      
+      
+
+<div class="widget recent-posts">
+  <h3 class="title">最近文章</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2016/07/22/virtualenv-trick/">使用virtualenv管理多个Python版本</a>
+      </li>
+    
+      <li>
+        <a href="/2016/07/21/learn-redis-basic-commands/">Redis学习笔记1-基础命令及数据结构</a>
+      </li>
+    
+      <li>
+        <a href="/2016/07/17/python-vim/">Vim中编辑Python的利器</a>
+      </li>
+    
+      <li>
+        <a href="/2016/07/09/cpp11-4/">C++11新特性之容器相关特性</a>
+      </li>
+    
+      <li>
+        <a href="/2016/07/03/python-coroutine/">Python协程：从yield/send到async/await</a>
+      </li>
+    
+  </ul>
+</div>
+
+    
+      
+      
+<div class="widget tag">
+  <h3 class="title">友情链接</h3>
+  <ul class="entry">
+  
+    
+    <li><a href="http://www.linkedin.com/in/yubo-guo-739b0071" target="_blank">LinkedIn</a></li>
+  
+    
+    <li><a href="http://www.tuicool.com/sites/2emeIjb" target="_blank">推酷站点</a></li>
+  
+  </ul>
+</div>
+
+    
+  
+</aside>
+<div class="clearfix"></div>
+  <footer id="footer"><div class="copyright">
+  
+  &copy; 2016 <a href="/">Yubo Guo</a>
+  
+</div>
+<div class="theme-copyright">
+  Theme by <a href="https://github.com/orderedlist" target="_blank">orderedlist</a>
+   | 
+  Redesign by <a href="http://heroicyang.com/" target="_blank">Heroic Yang</a>
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+<script src="/js/scale.fix.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = { short_name: 'guoyb' };
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';
+    ds.async = true;
+    ds.src = 'http://static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+  (function($){
+    $('.fancybox').fancybox();
+  })(jQuery);
+</script>
+
+</body>
+</html>
