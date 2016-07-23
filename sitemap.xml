@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://blog.guoyb.com/2016/07/23/learn-c-the-hard-way/</loc>
+    
+    <lastmod>2016-07-23T12:44:32.446Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://blog.guoyb.com/2016/07/22/virtualenv-trick/</loc>
     
     <lastmod>2016-07-23T00:47:24.652Z</lastmod>
