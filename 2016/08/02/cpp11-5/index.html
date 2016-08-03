@@ -1,0 +1,257 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  
+  <title>C++11新特性之智能指针(shared_ptr, unique_ptr和weak_ptr) | 一根笨茄子</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  
+    <meta name="author" content="Yubo Guo">
+  
+  
+    <meta name="description" content="前四篇在这里：C++11新特性之新类型与初始化: http://blog.guoyb.com/2016/06/18/cpp11-1/C++11新特性之类型推断与类型获取: http://blog.guoyb.com/2016/06/25/cpp11-2/C++11新特性之lambda： http://blog.guoyb.com/2016/06/30/cpp11-3/C++11新特性之容器相关特">
+  
+  <meta name="description" content="前四篇在这里：C++11新特性之新类型与初始化: http://blog.guoyb.com/2016/06/18/cpp11-1/C++11新特性之类型推断与类型获取: http://blog.guoyb.com/2016/06/25/cpp11-2/C++11新特性之lambda： http://blog.guoyb.com/2016/06/30/cpp11-3/C++11新特性之容器相关特">
+<meta property="og:type" content="article">
+<meta property="og:title" content="C++11新特性之智能指针(shared_ptr, unique_ptr和weak_ptr)">
+<meta property="og:url" content="http://blog.guoyb.com/2016/08/02/cpp11-5/index.html">
+<meta property="og:site_name" content="一根笨茄子">
+<meta property="og:description" content="前四篇在这里：C++11新特性之新类型与初始化: http://blog.guoyb.com/2016/06/18/cpp11-1/C++11新特性之类型推断与类型获取: http://blog.guoyb.com/2016/06/25/cpp11-2/C++11新特性之lambda： http://blog.guoyb.com/2016/06/30/cpp11-3/C++11新特性之容器相关特">
+<meta property="og:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/qrcode.jpg">
+<meta property="og:updated_time" content="2016-08-03T12:30:58.344Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="C++11新特性之智能指针(shared_ptr, unique_ptr和weak_ptr)">
+<meta name="twitter:description" content="前四篇在这里：C++11新特性之新类型与初始化: http://blog.guoyb.com/2016/06/18/cpp11-1/C++11新特性之类型推断与类型获取: http://blog.guoyb.com/2016/06/25/cpp11-2/C++11新特性之lambda： http://blog.guoyb.com/2016/06/30/cpp11-3/C++11新特性之容器相关特">
+<meta name="twitter:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/qrcode.jpg">
+  
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+  
+<script type="text/javascript">
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?996ee0fca2512b4c29f37f60cf6387ca";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+</head>
+
+<body>
+  <div class="wrapper">
+    <header id="header">
+  <div class="title">
+    <h1><a href="/">一根笨茄子</a></h1>
+    <p><a href="/"></a></p>
+  </div>
+  <nav class="nav">
+    <ul>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/about">关于我</a></li>
+      
+      
+    </ul>
+    <div class="clearfix"></div>
+  </nav>
+  <div class="clearfix"></div>
+</header>
+    <div class="content">
+		<article class="post">
+  <header>
+    
+      <div class="icon"></div>
+      <a href="/2016/08/02/cpp11-5/">
+  <time datetime="2016-08-02T00:58:15.000Z">
+    2016-08-02
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title">C++11新特性之智能指针(shared_ptr, unique_ptr和weak_ptr)</h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>前四篇在这里：<br>C++11新特性之新类型与初始化: <a href="http://blog.guoyb.com/2016/06/18/cpp11-1/">http://blog.guoyb.com/2016/06/18/cpp11-1/</a><br>C++11新特性之类型推断与类型获取: <a href="http://blog.guoyb.com/2016/06/25/cpp11-2/">http://blog.guoyb.com/2016/06/25/cpp11-2/</a><br>C++11新特性之lambda： <a href="http://blog.guoyb.com/2016/06/30/cpp11-3/">http://blog.guoyb.com/2016/06/30/cpp11-3/</a><br>C++11新特性之容器相关特性： <a href="http://blog.guoyb.com/2016/07/09/cpp11-4">http://blog.guoyb.com/2016/07/09/cpp11-4/</a>  </p>
+<hr>
+<p>这是C++11新特性介绍的第五部分，涉及到智能指针的相关内容（shared_ptr, unique_ptr, weak_ptr)。<br>不想看toy code的读者可以直接拉到文章最后看这部分的总结。  </p>
+<h1 id="shared-ptr"><a href="#shared-ptr" class="headerlink" title="shared_ptr"></a>shared_ptr</h1><h2 id="shared-ptr基本用法"><a href="#shared-ptr基本用法" class="headerlink" title="shared_ptr基本用法"></a>shared_ptr基本用法</h2><p>shared_ptr采用引用计数的方式管理所指向的对象。当有一个新的shared_ptr指向同一个对象时（复制shared_ptr等），引用计数加1。当shared_ptr离开作用域时，引用计数减1。当引用计数为0时，释放所管理的内存。  </p>
+<p>这样做的好处在于解放了程序员手动释放内存的压力。之前，为了处理程序中的异常情况，往往需要将指针手动封装到类中，通过析构函数来释放动态分配的内存；现在这一过程就可以交给shared_ptr去做了。  </p>
+<p>一般我们使用make_shared来获得shared_ptr。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="string">"test shared_ptr base usage:"</span>&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line"><span class="built_in">shared_ptr</span>&lt;<span class="built_in">string</span>&gt; p1 = make_shared&lt;<span class="built_in">string</span>&gt;(<span class="string">""</span>);</span><br><span class="line"><span class="keyword">if</span>(p1 &amp;&amp; p1-&gt;empty())</span><br><span class="line">	*p1 = <span class="string">"hello"</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">auto</span> p2 = make_shared&lt;<span class="built_in">string</span>&gt;(<span class="string">"world"</span>);</span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;*p1&lt;&lt;<span class="string">' '</span>&lt;&lt;*p2&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line"></span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="string">"test shared_ptr use_count:"</span>&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="string">"p1 cnt:"</span>&lt;&lt;p1.use_count()&lt;&lt;<span class="string">"\tp2 cnt:"</span>&lt;&lt;p2.use_count()&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">auto</span> p3 = p2;</span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="string">"p1 cnt:"</span>&lt;&lt;p1.use_count()&lt;&lt;<span class="string">"\tp2 cnt:"</span>&lt;&lt;p2.use_count()&lt;&lt;<span class="string">"\tp3 cnt:"</span>&lt;&lt;p3.use_count()&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">p2 = p1;</span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="string">"p1 cnt:"</span>&lt;&lt;p1.use_count()&lt;&lt;<span class="string">"\tp2 cnt:"</span>&lt;&lt;p2.use_count()&lt;&lt;<span class="string">"\tp3 cnt:"</span>&lt;&lt;p3.use_count()&lt;&lt;<span class="built_in">endl</span>;</span><br></pre></td></tr></table></figure><br><a id="more"></a>   </p>
+<h2 id="shared-ptr和new"><a href="#shared-ptr和new" class="headerlink" title="shared_ptr和new"></a>shared_ptr和new</h2><p>shared_ptr可以使用一个new表达式返回的指针进行初始化。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="string">"test shared_ptr and new:"</span>&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line"><span class="built_in">shared_ptr</span>&lt;<span class="keyword">int</span>&gt; p4(new <span class="keyword">int</span>(<span class="number">1024</span>));</span><br><span class="line"><span class="comment">//shared_ptr&lt;int&gt; p5 = new int(1024); // wrong, no implicit constructor</span></span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;*p4&lt;&lt;<span class="built_in">endl</span>;</span><br></pre></td></tr></table></figure>    </p>
+<p>但是，不能将一个new表达式返回的指针赋值给shared_ptr。  </p>
+<p>另外，特别需要注意的是，不要混用new和shared_ptr!<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">process</span><span class="params">(<span class="built_in">shared_ptr</span>&lt;<span class="keyword">int</span>&gt; ptr)</span></span><br><span class="line"></span>&#123;</span><br><span class="line">	<span class="built_in">cout</span>&lt;&lt;<span class="string">"in process use_count:"</span>&lt;&lt;ptr.use_count()&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="string">"don't mix shared_ptr and normal pointer:"</span>&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line"><span class="built_in">shared_ptr</span>&lt;<span class="keyword">int</span>&gt; p5(new <span class="keyword">int</span>(<span class="number">1024</span>));</span><br><span class="line">process(p5);</span><br><span class="line"><span class="keyword">int</span> v5 = *p5;</span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="string">"v5: "</span>&lt;&lt;v5&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> *p6 = new <span class="keyword">int</span>(<span class="number">1024</span>);</span><br><span class="line">process(<span class="built_in">shared_ptr</span>&lt;<span class="keyword">int</span>&gt;(p6));</span><br><span class="line"><span class="keyword">int</span> v6 = *p6;</span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="string">"v6: "</span>&lt;&lt;v6&lt;&lt;<span class="built_in">endl</span>;</span><br></pre></td></tr></table></figure>    </p>
+<p>上面的程序片段会输出：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">in process use_count:2</span><br><span class="line">v5: 1024</span><br><span class="line">in process use_count:1</span><br><span class="line">v6: 0</span><br></pre></td></tr></table></figure>  </p>
+<p>可以看到，第二次process p6时，shared_ptr的引用计数为1，当离开process的作用域时，会释放对应的内存，此时p6成为了悬挂指针。  </p>
+<p>所以，一旦将一个new表达式返回的指针交由shared_ptr管理之后，就不要再通过普通指针访问这块内存！  </p>
+<h2 id="shared-ptr-reset"><a href="#shared-ptr-reset" class="headerlink" title="shared_ptr.reset"></a>shared_ptr.reset</h2><p>shared_ptr可以通过reset方法重置指向另一个对象，此时原对象的引用计数减一。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="string">"test shared_ptr reset:"</span>&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="string">"p1 cnt:"</span>&lt;&lt;p1.use_count()&lt;&lt;<span class="string">"\tp2 cnt:"</span>&lt;&lt;p2.use_count()&lt;&lt;<span class="string">"\tp3 nt:"</span>&lt;&lt;p3.use_count()&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">p1.reset(new <span class="built_in">string</span>(<span class="string">"cpp11"</span>));</span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="string">"p1 cnt:"</span>&lt;&lt;p1.use_count()&lt;&lt;<span class="string">"\tp2 cnt:"</span>&lt;&lt;p2.use_count()&lt;&lt;<span class="string">"\tp3 cnt:"</span>&lt;&lt;p3.use_count()&lt;&lt;<span class="built_in">endl</span>;</span><br></pre></td></tr></table></figure>  </p>
+<h2 id="shared-ptr-deleter"><a href="#shared-ptr-deleter" class="headerlink" title="shared_ptr deleter"></a>shared_ptr deleter</h2><p>可以定制一个deleter函数，用于在shared_ptr释放对象时调用。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">print_at_delete</span><span class="params">(<span class="keyword">int</span> *p)</span></span><br><span class="line"></span>&#123;</span><br><span class="line">	<span class="built_in">cout</span>&lt;&lt;<span class="string">"deleting..."</span>&lt;&lt;p&lt;&lt;<span class="string">'\t'</span>&lt;&lt;*p&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">	<span class="keyword">delete</span> p;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="string">"test shared_ptr deleter:"</span>&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line"><span class="keyword">int</span> *p7 = new <span class="keyword">int</span>(<span class="number">1024</span>);</span><br><span class="line"><span class="built_in">shared_ptr</span>&lt;<span class="keyword">int</span>&gt; p8(p7, print_at_delete);</span><br><span class="line">p8 = make_shared&lt;<span class="keyword">int</span>&gt;(<span class="number">1025</span>);</span><br></pre></td></tr></table></figure>  </p>
+<h1 id="unique-ptr"><a href="#unique-ptr" class="headerlink" title="unique_ptr"></a>unique_ptr</h1><h2 id="unique-ptr基本用法"><a href="#unique-ptr基本用法" class="headerlink" title="unique_ptr基本用法"></a>unique_ptr基本用法</h2><p>unique_ptr对于所指向的对象，正如其名字所示，是<strong>独占</strong>的。所以，不可以对unique_ptr进行拷贝、赋值等操作，但是可以通过release函数在unique_ptr之间转移控制权。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="string">"test unique_ptr base usage:"</span>&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line"><span class="built_in">unique_ptr</span>&lt;<span class="keyword">int</span>&gt; up1(new <span class="keyword">int</span>(<span class="number">1024</span>));</span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="string">"up1: "</span>&lt;&lt;*up1&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line"><span class="built_in">unique_ptr</span>&lt;<span class="keyword">int</span>&gt; up2(up1.release());</span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="string">"up2: "</span>&lt;&lt;*up2&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line"><span class="comment">//unique_ptr&lt;int&gt; up3(up1); // wrong, unique_ptr can not copy</span></span><br><span class="line"><span class="comment">//up2 = up1; // wrong, unique_ptr can not copy</span></span><br><span class="line"><span class="built_in">unique_ptr</span>&lt;<span class="keyword">int</span>&gt; up4(new <span class="keyword">int</span>(<span class="number">1025</span>));</span><br><span class="line">up4.reset(up2.release());</span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="string">"up4: "</span>&lt;&lt;*up4&lt;&lt;<span class="built_in">endl</span>;</span><br></pre></td></tr></table></figure>    </p>
+<h2 id="unique-ptr作为参数和返回值"><a href="#unique-ptr作为参数和返回值" class="headerlink" title="unique_ptr作为参数和返回值"></a>unique_ptr作为参数和返回值</h2><p>上述对于拷贝的限制，有两个特殊情况，即unique_ptr可以作为函数的返回值和参数使用，这时虽然也有隐含的拷贝存在，但是并非不可行的。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">unique_ptr</span>&lt;<span class="keyword">int</span>&gt; clone(<span class="keyword">int</span> p)</span><br><span class="line">&#123;</span><br><span class="line">	return <span class="built_in">unique_ptr</span>&lt;<span class="keyword">int</span>&gt;(new int(p));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">process_unique_ptr</span><span class="params">(<span class="built_in">unique_ptr</span>&lt;<span class="keyword">int</span>&gt; up)</span></span><br><span class="line"></span>&#123;</span><br><span class="line">	<span class="built_in">cout</span>&lt;&lt;<span class="string">"process unique ptr: "</span>&lt;&lt;*up&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="string">"test unique_ptr parameter and return value:"</span>&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line"><span class="keyword">auto</span> up5 = clone(<span class="number">1024</span>);</span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="string">"up5: "</span>&lt;&lt;*up5&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">process_unique_ptr(move(up5));</span><br><span class="line"><span class="comment">//cout&lt;&lt;"up5 after process: "&lt;&lt;*up5&lt;&lt;endl; // would cause segmentfault</span></span><br></pre></td></tr></table></figure>    </p>
+<p>这里的std::move函数，以后再单独具体细说^_^  </p>
+<h2 id="unique-ptr-deleter"><a href="#unique-ptr-deleter" class="headerlink" title="unique_ptr deleter"></a>unique_ptr deleter</h2><p>unique_ptr同样可以设置deleter，和shared_ptr不同的是，它需要在模板参数中指定deleter的类型。好在我们有decltype这个利器，不然写起来好麻烦。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="string">"test unique_ptr deleter:"</span>&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line"><span class="keyword">int</span> *p9 = new <span class="keyword">int</span>(<span class="number">1024</span>);</span><br><span class="line"><span class="built_in">unique_ptr</span>&lt;<span class="keyword">int</span>, <span class="keyword">decltype</span>(print_at_delete) *&gt; up6(p9, print_at_delete);</span><br><span class="line"><span class="built_in">unique_ptr</span>&lt;<span class="keyword">int</span>&gt; up7(new <span class="keyword">int</span>(<span class="number">1025</span>));</span><br><span class="line">up6.reset(up7.release());</span><br></pre></td></tr></table></figure>    </p>
+<h1 id="weak-ptr"><a href="#weak-ptr" class="headerlink" title="weak_ptr"></a>weak_ptr</h1><p>weak_ptr一般和shared_ptr配合使用。它可以指向shared_ptr所指向的对象，但是却不增加对象的引用计数。这样就有可能出现weak_ptr所指向的对象实际上已经被释放了的情况。因此，weak_ptr有一个lock函数，尝试取回一个指向对象的shared_ptr。  </p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="string">"test weak_ptr basic usage:"</span>&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line"><span class="keyword">auto</span> p10 = make_shared&lt;<span class="keyword">int</span>&gt;(<span class="number">1024</span>);</span><br><span class="line">weak_ptr&lt;<span class="keyword">int</span>&gt; wp1(p10);</span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="string">"p10 use_count: "</span>&lt;&lt;p10.use_count()&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line"><span class="comment">//p10.reset(new int(1025)); // this will cause wp1.lock() return a false obj</span></span><br><span class="line"><span class="built_in">shared_ptr</span>&lt;<span class="keyword">int</span>&gt; p11 = wp1.lock();</span><br><span class="line"><span class="keyword">if</span>(p11) <span class="built_in">cout</span>&lt;&lt;<span class="string">"wp1: "</span>&lt;&lt;*p11&lt;&lt;<span class="string">" use count: "</span>&lt;&lt;p11.use_count()&lt;&lt;<span class="built_in">endl</span>;</span><br></pre></td></tr></table></figure>    
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><ol>
+<li>shared_ptr采用引用计数的方式管理所指向的对象。</li>
+<li>shared_ptr可以使用一个new表达式返回的指针进行初始化；但是，不能将一个new表达式返回的指针赋值给shared_ptr。 </li>
+<li>一旦将一个new表达式返回的指针交由shared_ptr管理之后，就不要再通过普通指针访问这块内存。</li>
+<li>shared_ptr可以通过reset方法重置指向另一个对象，此时原对象的引用计数减一。</li>
+<li>可以定制一个deleter函数，用于在shared_ptr释放对象时调用。 </li>
+<li>unique_ptr对于所指向的对象，是独占的。</li>
+<li>不可以对unique_ptr进行拷贝、赋值等操作，但是可以通过release函数在unique_ptr之间转移控制权。 </li>
+<li>unique_ptr可以作为函数的返回值和参数使用。</li>
+<li>unique_ptr同样可以设置deleter，需要在模板参数中指定deleter的类型。</li>
+<li>weak_ptr一般和shared_ptr配合使用。它可以指向shared_ptr所指向的对象，但是却不增加对象的引用计数。</li>
+<li>weak_ptr有一个lock函数，尝试取回一个指向对象的shared_ptr。</li>
+</ol>
+<p>完整代码详见<a href="https://github.com/yubo1911/saber/blob/master/learncpp11/smart_pointer.cpp" target="_blank" rel="external">smart_pointer.cpp</a>  </p>
+<p>转载请注明出处： <a href="http://blog.guoyb.com/2016/08/02/cpp11-5">http://blog.guoyb.com/2016/08/02/cpp11-5/</a>  </p>
+<p>欢迎使用微信扫描下方二维码，关注我的微信公众号TechTalking，技术·生活·思考：<br><img src="http://7d9lwm.com1.z0.glb.clouddn.com/qrcode.jpg" alt="后端技术小黑屋"></p>
+
+    
+  </div>
+  <footer>
+    
+      
+      
+  <div class="tags">
+    <a class="tags-link" href="/tags/C/">C++</a>, <a class="tags-link" href="/tags/C-11/">C++11</a>
+  </div>
+
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+<!-- JiaThis Button BEGIN -->
+<script type="text/javascript">
+var jiathis_config = {data_track_clickback:'true'};
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?move=0&amp;uid=1706898" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+<section id="comment">
+  <h1 class="title">Comments</h1>
+  <div class="ds-thread" data-title="C++11新特性之智能指针(shared_ptr, unique_ptr和weak_ptr)">
+  </div>
+</section>
+
+	</div>
+  </div>
+	<aside id="sidebar">
+  
+  
+    
+      
+      
+
+<div class="widget tagcloud first">
+  <h3 class="title">Tags</h3>
+  <div class="entry">
+    <a href="/tags/C/" style="font-size: 10px;">C</a> <a href="/tags/C/" style="font-size: 13.33px;">C++</a> <a href="/tags/C-11/" style="font-size: 13.33px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/echoserver/" style="font-size: 11.67px;">echoserver</a> <a href="/tags/epoll/" style="font-size: 11.67px;">epoll</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 11.67px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/select/" style="font-size: 11.67px;">select</a> <a href="/tags/socket/" style="font-size: 11.67px;">socket</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 15px;">书单</a> <a href="/tags/北京车展/" style="font-size: 10px;">北京车展</a> <a href="/tags/协程/" style="font-size: 10px;">协程</a> <a href="/tags/学习笔记/" style="font-size: 11.67px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/广州/" style="font-size: 10px;">广州</a> <a href="/tags/旅行/" style="font-size: 10px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 16.67px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 11.67px;">查证记录</a> <a href="/tags/游戏开发/" style="font-size: 10px;">游戏开发</a> <a href="/tags/爱好/" style="font-size: 10px;">爱好</a> <a href="/tags/生活/" style="font-size: 11.67px;">生活</a> <a href="/tags/知乎/" style="font-size: 10px;">知乎</a> <a href="/tags/读书笔记/" style="font-size: 18.33px;">读书笔记</a> <a href="/tags/读后感/" style="font-size: 10px;">读后感</a>
+  </div>
+</div>
+
+    
+      
+      
+
+<div class="widget recent-posts">
+  <h3 class="title">最近文章</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2016/08/02/cpp11-5/">C++11新特性之智能指针(shared_ptr, unique_ptr和weak_ptr)</a>
+      </li>
+    
+      <li>
+        <a href="/2016/07/28/2015-booklist/">2015年书单</a>
+      </li>
+    
+      <li>
+        <a href="/2016/07/23/learn-c-the-hard-way/">Learn C The Hard Way示例代码</a>
+      </li>
+    
+      <li>
+        <a href="/2016/07/22/virtualenv-trick/">使用virtualenv管理多个Python版本</a>
+      </li>
+    
+      <li>
+        <a href="/2016/07/21/learn-redis-basic-commands/">Redis学习笔记1-基础命令及数据结构</a>
+      </li>
+    
+  </ul>
+</div>
+
+    
+      
+      
+<div class="widget tag">
+  <h3 class="title">友情链接</h3>
+  <ul class="entry">
+  
+    
+    <li><a href="http://www.linkedin.com/in/yubo-guo-739b0071" target="_blank">LinkedIn</a></li>
+  
+    
+    <li><a href="http://www.tuicool.com/sites/2emeIjb" target="_blank">推酷站点</a></li>
+  
+  </ul>
+</div>
+
+    
+  
+</aside>
+<div class="clearfix"></div>
+  <footer id="footer"><div class="copyright">
+  
+  &copy; 2016 <a href="/">Yubo Guo</a>
+  
+</div>
+<div class="theme-copyright">
+  Theme by <a href="https://github.com/orderedlist" target="_blank">orderedlist</a>
+   | 
+  Redesign by <a href="http://heroicyang.com/" target="_blank">Heroic Yang</a>
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+<script src="/js/scale.fix.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = { short_name: 'guoyb' };
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';
+    ds.async = true;
+    ds.src = 'http://static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+  (function($){
+    $('.fancybox').fancybox();
+  })(jQuery);
+</script>
+
+</body>
+</html>
