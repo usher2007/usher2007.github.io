@@ -1,0 +1,274 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  
+  <title>从string.strip()引起的一个bug说起 | 一根笨茄子</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  
+    <meta name="author" content="Yubo Guo">
+  
+  
+    <meta name="description" content="前两天修正了一个string.strip()函数引起的bug，bug很普通，但是查bug的过程值得思考。  
+起
+事情是这样的，那天我正在欢快的写着程序，突然一个策划在popo上叫我了。  
+“hi，麻烦帮忙查个问题。现在给玩家的一个弹幕提示中，某某玦被显示成了‘某某？’”  
+我一看，这个”玦“我都不知道怎么读，看来是个生僻字，可能是编码出了问题吧：“看上去好像是生僻字的编码导致乱码了，你找个">
+  
+  <meta name="description" content="前两天修正了一个string.strip()函数引起的bug，bug很普通，但是查bug的过程值得思考。  
+起
+事情是这样的，那天我正在欢快的写着程序，突然一个策划在popo上叫我了。  
+“hi，麻烦帮忙查个问题。现在给玩家的一个弹幕提示中，某某玦被显示成了‘某某？’”  
+我一看，这个”玦“我都不知道怎么读，看来是个生僻字，可能是编码出了问题吧：“看上去好像是生僻字的编码导致乱码了，你找个">
+<meta property="og:type" content="article">
+<meta property="og:title" content="从string.strip()引起的一个bug说起">
+<meta property="og:url" content="http://blog.guoyb.com/2016/08/06/something-about-strip/index.html">
+<meta property="og:site_name" content="一根笨茄子">
+<meta property="og:description" content="前两天修正了一个string.strip()函数引起的bug，bug很普通，但是查bug的过程值得思考。  
+起
+事情是这样的，那天我正在欢快的写着程序，突然一个策划在popo上叫我了。  
+“hi，麻烦帮忙查个问题。现在给玩家的一个弹幕提示中，某某玦被显示成了‘某某？’”  
+我一看，这个”玦“我都不知道怎么读，看来是个生僻字，可能是编码出了问题吧：“看上去好像是生僻字的编码导致乱码了，你找个">
+<meta property="og:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/qrcode.jpg">
+<meta property="og:updated_time" content="2016-08-06T13:33:02.687Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="从string.strip()引起的一个bug说起">
+<meta name="twitter:description" content="前两天修正了一个string.strip()函数引起的bug，bug很普通，但是查bug的过程值得思考。  
+起
+事情是这样的，那天我正在欢快的写着程序，突然一个策划在popo上叫我了。  
+“hi，麻烦帮忙查个问题。现在给玩家的一个弹幕提示中，某某玦被显示成了‘某某？’”  
+我一看，这个”玦“我都不知道怎么读，看来是个生僻字，可能是编码出了问题吧：“看上去好像是生僻字的编码导致乱码了，你找个">
+<meta name="twitter:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/qrcode.jpg">
+  
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+  
+<script type="text/javascript">
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?996ee0fca2512b4c29f37f60cf6387ca";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+</head>
+
+<body>
+  <div class="wrapper">
+    <header id="header">
+  <div class="title">
+    <h1><a href="/">一根笨茄子</a></h1>
+    <p><a href="/"></a></p>
+  </div>
+  <nav class="nav">
+    <ul>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/about">关于我</a></li>
+      
+      
+    </ul>
+    <div class="clearfix"></div>
+  </nav>
+  <div class="clearfix"></div>
+</header>
+    <div class="content">
+		<article class="post">
+  <header>
+    
+      <div class="icon"></div>
+      <a href="/2016/08/06/something-about-strip/">
+  <time datetime="2016-08-06T13:08:06.000Z">
+    2016-08-06
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title">从string.strip()引起的一个bug说起</h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>前两天修正了一个string.strip()函数引起的bug，bug很普通，但是查bug的过程值得思考。  </p>
+<h2 id="起"><a href="#起" class="headerlink" title="起"></a>起</h2><hr>
+<p>事情是这样的，那天我正在欢快的写着程序，突然一个策划在popo上叫我了。  </p>
+<p>“hi，麻烦帮忙查个问题。现在给玩家的一个弹幕提示中，某某玦被显示成了‘某某？’”  </p>
+<p>我一看，这个”玦“我都不知道怎么读，看来是个生僻字，可能是编码出了问题吧：<br>“看上去好像是生僻字的编码导致乱码了，你找个客户端程序GG问问？”  </p>
+<p>“好的”  </p>
+<p>……<br>……<br>很久无事<br>……<br>……<br>“找客总（某资深客户端程序）问过了，他说客户端就是直接显示服务端传过来的数据的，没做修改”  </p>
+<p>这，锅又回到我头上了，不接也得接了：<br>“好，我查一下先”<br><a id="more"></a>  </p>
+<h2 id="承"><a href="#承" class="headerlink" title="承"></a>承</h2><hr>
+<p>这时，我还是有点不信这是服务端的黑锅，所以打开内服测试了一下，确实可以稳定重现。又通过几个GM指令让这个名称分别出现在包裹、系统频道等位置，发现只有当“玦”字出现在弹幕提示中时，会显示成问号。  </p>
+<p>那么这时基本可以确定，不是客户端字符编码的问题了。（的确不应该有问题，这个字虽然生僻，但也是策划们喜欢用的道具名称之一，有问题应该早就发现了）。  </p>
+<p>接着，我找到了相关代码片段，发现发送给客户端的道具名称是直接从数据表中读出来的，按理说不应该有错。这不就陷入死胡同了么，难道是策划填表填错了？也不可能，毕竟“玦”出现在其他地方的时候都是显示正常的。  </p>
+<h2 id="转"><a href="#转" class="headerlink" title="转"></a>转</h2><hr>
+<p>再仔细看一遍代码。  </p>
+<p>发现问题了，刚才找到的代码片段，是一个外层封装函数。直接向客户端发送数据的函数，还在更里一层。  </p>
+<p>就是在这更里一层，做了一些对信息的处理：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">msg.strip(<span class="string">'#hshow_clan_fort_info#h'</span>)</span><br></pre></td></tr></table></figure> </p>
+<p>可以看到，这里的本意是，信息中如果有#h #h包裹的字符串，是不需要显示的，所以需要去除掉。但是strip的用法却不是这样的：</p>
+<blockquote>
+<p>strip(s, chars=None)<br>   strip(s [,chars]) -&gt; string<br>   Return a copy of the string s with leading and trailing whitespace removed.<br>   If chars is given and not None, remove characters in chars instead.<br>   If chars is unicode, S will be converted to unicode before stripping.  </p>
+</blockquote>
+<p>而”玦“字的编码是’\xabi’，这样strip函数就导致了”玦“字变成了’\xab’，这样客户端显示成”？”也不足为奇了。  </p>
+<p>这里，用<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">msg.replace(<span class="string">'#hshow_clan_fort_info#h'</span>, <span class="string">''</span>)</span><br></pre></td></tr></table></figure> </p>
+<p>即可解决这个bug。  </p>
+<h2 id="合"><a href="#合" class="headerlink" title="合"></a>合</h2><hr>
+<p>到这里bug修好了。一个很简单的bug，正常应该十分钟就能搞定，但是这次却消耗了一个多小时。我觉得主要是没有注意以下几点：  </p>
+<ul>
+<li><p><strong>第一反应一般是不准的。</strong>对于这个“玦”字，虽然不常见，但是也不能归为生僻字，尤其在游戏中，更是常用。如果当时能多思考一下下，就能省去让客户端程序帮忙的时间。</p>
+</li>
+<li><p><strong>拿到现象，先看代码，再找逻辑。</strong>在上面的处理中，我确定问题在服务端之后，并没有直接看代码，而是先去内服重现了一遍情况。对于这种简单的问题，并不需要保留bug现场查看数据，所以其实应该直接去看代码逻辑，这样也能节省不少时间。程序员的工作是面向代码的，而重现bug的工作就交给QA大大们好了，术业有专攻嘛。</p>
+</li>
+<li><p><strong>不要推卸责任，要用于承担，及时反馈。</strong>程序员不知不觉就会推卸责任，虽然大多数时候是无意的。比如，经常说“这个东西在我这里是好的啊”（<em>是你的机器有问题</em>）“这个东西昨天还是好的啊”（<em>这段时间肯定有其他人改坏了</em>）“这块逻辑我都没改过”（<em>是其他人的问题</em>），这种行为可能只是个条件反射，但是其实是挺影响自己的“<em>可合作性</em>”的。遇到PM/QA反馈来的问题，不如先应下来（“我先查一下”），再及时的反馈检查的结果，这样既省去了扯皮的时间，又给人留下一个敢于承担责任的靠谱印象，何乐不为。对于带团队的Leader来说，对于背锅更是要有舍我其谁的勇气，不然谁愿意死心塌地跟你混呢？  </p>
+</li>
+</ul>
+<p>最后，与诸位共勉，做一个靠谱的程（bei）序（guo）员（xia）^_^  </p>
+<hr>
+<p>转载请注明出处： <a href="http://blog.guoyb.com/2016/08/06/something-about-strip/">http://blog.guoyb.com/2016/08/06/something-about-strip/</a>  </p>
+<p>欢迎关注我的微信公众号TechTalking，技术·生活·思考：<br><img src="http://7d9lwm.com1.z0.glb.clouddn.com/qrcode.jpg" alt="后端技术小黑屋"></p>
+
+    
+  </div>
+  <footer>
+    
+      
+      
+  <div class="tags">
+    <a class="tags-link" href="/tags/查证记录/">查证记录</a>, <a class="tags-link" href="/tags/程序人生/">程序人生</a>
+  </div>
+
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+<!-- JiaThis Button BEGIN -->
+<script type="text/javascript">
+var jiathis_config = {data_track_clickback:'true'};
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?move=0&amp;uid=1706898" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+<section id="comment">
+  <h1 class="title">Comments</h1>
+  <div class="ds-thread" data-title="从string.strip()引起的一个bug说起">
+  </div>
+</section>
+
+	</div>
+  </div>
+	<aside id="sidebar">
+  
+  
+    
+      
+      
+
+<div class="widget tagcloud first">
+  <h3 class="title">Tags</h3>
+  <div class="entry">
+    <a href="/tags/C/" style="font-size: 10px;">C</a> <a href="/tags/C/" style="font-size: 14.29px;">C++</a> <a href="/tags/C-11/" style="font-size: 14.29px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/echoserver/" style="font-size: 11.43px;">echoserver</a> <a href="/tags/epoll/" style="font-size: 11.43px;">epoll</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 11.43px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/select/" style="font-size: 11.43px;">select</a> <a href="/tags/socket/" style="font-size: 11.43px;">socket</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 15.71px;">书单</a> <a href="/tags/北京车展/" style="font-size: 10px;">北京车展</a> <a href="/tags/协程/" style="font-size: 10px;">协程</a> <a href="/tags/学习笔记/" style="font-size: 11.43px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/广州/" style="font-size: 10px;">广州</a> <a href="/tags/旅行/" style="font-size: 10px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 17.14px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 12.86px;">查证记录</a> <a href="/tags/游戏开发/" style="font-size: 10px;">游戏开发</a> <a href="/tags/爱好/" style="font-size: 10px;">爱好</a> <a href="/tags/生活/" style="font-size: 11.43px;">生活</a> <a href="/tags/知乎/" style="font-size: 10px;">知乎</a> <a href="/tags/程序人生/" style="font-size: 10px;">程序人生</a> <a href="/tags/读书笔记/" style="font-size: 18.57px;">读书笔记</a> <a href="/tags/读后感/" style="font-size: 10px;">读后感</a>
+  </div>
+</div>
+
+    
+      
+      
+
+<div class="widget recent-posts">
+  <h3 class="title">最近文章</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2016/08/06/something-about-strip/">从string.strip()引起的一个bug说起</a>
+      </li>
+    
+      <li>
+        <a href="/2016/08/02/cpp11-5/">C++11新特性之智能指针(shared_ptr, unique_ptr和weak_ptr)</a>
+      </li>
+    
+      <li>
+        <a href="/2016/07/28/2015-booklist/">2015年书单</a>
+      </li>
+    
+      <li>
+        <a href="/2016/07/23/learn-c-the-hard-way/">Learn C The Hard Way示例代码</a>
+      </li>
+    
+      <li>
+        <a href="/2016/07/22/virtualenv-trick/">使用virtualenv管理多个Python版本</a>
+      </li>
+    
+  </ul>
+</div>
+
+    
+      
+      
+<div class="widget tag">
+  <h3 class="title">友情链接</h3>
+  <ul class="entry">
+  
+    
+    <li><a href="http://www.linkedin.com/in/yubo-guo-739b0071" target="_blank">LinkedIn</a></li>
+  
+    
+    <li><a href="http://www.tuicool.com/sites/2emeIjb" target="_blank">推酷站点</a></li>
+  
+  </ul>
+</div>
+
+    
+  
+</aside>
+<div class="clearfix"></div>
+  <footer id="footer"><div class="copyright">
+  
+  &copy; 2016 <a href="/">Yubo Guo</a>
+  
+</div>
+<div class="theme-copyright">
+  Theme by <a href="https://github.com/orderedlist" target="_blank">orderedlist</a>
+   | 
+  Redesign by <a href="http://heroicyang.com/" target="_blank">Heroic Yang</a>
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+<script src="/js/scale.fix.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = { short_name: 'guoyb' };
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';
+    ds.async = true;
+    ds.src = 'http://static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+  (function($){
+    $('.fancybox').fancybox();
+  })(jQuery);
+</script>
+
+</body>
+</html>
