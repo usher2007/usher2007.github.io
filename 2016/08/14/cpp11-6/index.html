@@ -1,0 +1,248 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  
+  <title>C++11新特性之Class | 一根笨茄子</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  
+    <meta name="author" content="Yubo Guo">
+  
+  
+    <meta name="description" content="前五篇在这里：C++11新特性之新类型与初始化: http://blog.guoyb.com/2016/06/18/cpp11-1/C++11新特性之类型推断与类型获取: http://blog.guoyb.com/2016/06/25/cpp11-2/C++11新特性之lambda： http://blog.guoyb.com/2016/06/30/cpp11-3/C++11新特性之容器相关特">
+  
+  <meta name="description" content="前五篇在这里：C++11新特性之新类型与初始化: http://blog.guoyb.com/2016/06/18/cpp11-1/C++11新特性之类型推断与类型获取: http://blog.guoyb.com/2016/06/25/cpp11-2/C++11新特性之lambda： http://blog.guoyb.com/2016/06/30/cpp11-3/C++11新特性之容器相关特">
+<meta property="og:type" content="article">
+<meta property="og:title" content="C++11新特性之Class">
+<meta property="og:url" content="http://blog.guoyb.com/2016/08/14/cpp11-6/index.html">
+<meta property="og:site_name" content="一根笨茄子">
+<meta property="og:description" content="前五篇在这里：C++11新特性之新类型与初始化: http://blog.guoyb.com/2016/06/18/cpp11-1/C++11新特性之类型推断与类型获取: http://blog.guoyb.com/2016/06/25/cpp11-2/C++11新特性之lambda： http://blog.guoyb.com/2016/06/30/cpp11-3/C++11新特性之容器相关特">
+<meta property="og:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/qrcode.jpg">
+<meta property="og:updated_time" content="2016-08-14T01:32:58.114Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="C++11新特性之Class">
+<meta name="twitter:description" content="前五篇在这里：C++11新特性之新类型与初始化: http://blog.guoyb.com/2016/06/18/cpp11-1/C++11新特性之类型推断与类型获取: http://blog.guoyb.com/2016/06/25/cpp11-2/C++11新特性之lambda： http://blog.guoyb.com/2016/06/30/cpp11-3/C++11新特性之容器相关特">
+<meta name="twitter:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/qrcode.jpg">
+  
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+  
+<script type="text/javascript">
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?996ee0fca2512b4c29f37f60cf6387ca";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+</head>
+
+<body>
+  <div class="wrapper">
+    <header id="header">
+  <div class="title">
+    <h1><a href="/">一根笨茄子</a></h1>
+    <p><a href="/"></a></p>
+  </div>
+  <nav class="nav">
+    <ul>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/about">关于我</a></li>
+      
+      
+    </ul>
+    <div class="clearfix"></div>
+  </nav>
+  <div class="clearfix"></div>
+</header>
+    <div class="content">
+		<article class="post">
+  <header>
+    
+      <div class="icon"></div>
+      <a href="/2016/08/14/cpp11-6/">
+  <time datetime="2016-08-14T00:14:04.000Z">
+    2016-08-14
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title">C++11新特性之Class</h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>前五篇在这里：<br>C++11新特性之新类型与初始化: <a href="http://blog.guoyb.com/2016/06/18/cpp11-1/">http://blog.guoyb.com/2016/06/18/cpp11-1/</a><br>C++11新特性之类型推断与类型获取: <a href="http://blog.guoyb.com/2016/06/25/cpp11-2/">http://blog.guoyb.com/2016/06/25/cpp11-2/</a><br>C++11新特性之lambda： <a href="http://blog.guoyb.com/2016/06/30/cpp11-3/">http://blog.guoyb.com/2016/06/30/cpp11-3/</a><br>C++11新特性之容器相关特性： <a href="http://blog.guoyb.com/2016/07/09/cpp11-4">http://blog.guoyb.com/2016/07/09/cpp11-4/</a><br>C++11新特性之智能指针： <a href="http://blog.guoyb.com/2016/08/02/cpp11-5">http://blog.guoyb.com/2016/08/02/cpp11-5</a>  </p>
+<hr>
+<p>这是C++11新特性介绍的第六部分，涉及到Class的相关内容。<br>不想看toy code的读者可以直接拉到文章最后看这部分的总结。  </p>
+<h2 id="sizeof"><a href="#sizeof" class="headerlink" title="sizeof"></a>sizeof</h2><p>新标准中，sizeof可以直接用于获取Class::member的大小，而不用通过Class的实例。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> TestClass</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="keyword">int</span> member_i;</span><br><span class="line">	<span class="keyword">char</span> member_c;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="string">"test sizeof class member:\n"</span>;</span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="keyword">sizeof</span>(TestClass::member_i)&lt;&lt;<span class="string">"\t"</span>&lt;&lt;<span class="keyword">sizeof</span>(TestClass::member_c)&lt;&lt;<span class="built_in">endl</span>;</span><br></pre></td></tr></table></figure><br><a id="more"></a>     </p>
+<h2 id="default-constructor"><a href="#default-constructor" class="headerlink" title="default constructor"></a>default constructor</h2><p>新标准中，可以通过=default强制编译器生成一个默认constructor。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> TestClass</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	TestClass() = <span class="keyword">default</span>;</span><br><span class="line">	TestClass(<span class="keyword">const</span> <span class="keyword">int</span> i, <span class="keyword">const</span> <span class="keyword">char</span> c): member_i(i), member_c(c) &#123;&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">int</span> member_i;</span><br><span class="line">	<span class="keyword">char</span> member_c;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="string">"test =default class construct:\n"</span>;</span><br><span class="line">TestClass tc; <span class="comment">// may cause error if no default construct.</span></span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;tc.member_i&lt;&lt;<span class="string">'\t'</span>&lt;&lt;(<span class="keyword">short</span>)tc.member_c&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="string">"test =default done."</span>&lt;&lt;<span class="built_in">endl</span>;</span><br></pre></td></tr></table></figure>  </p>
+<p>在上面的代码中，如果我们不提供默认constructor的话，无法通过TestClass tc定义一个实例。  </p>
+<h2 id="delegate-constructor"><a href="#delegate-constructor" class="headerlink" title="delegate constructor"></a>delegate constructor</h2><p>新标准中，可以在初始化列表中将一个constructor初始化的工作委托给另一个constructor。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> TestClass</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	TestClass() = <span class="keyword">default</span>;</span><br><span class="line">	TestClass(<span class="keyword">const</span> <span class="keyword">int</span> i, <span class="keyword">const</span> <span class="keyword">char</span> c): member_i(i), member_c(c) &#123;&#125;</span><br><span class="line">	TestClass(<span class="keyword">const</span> <span class="keyword">int</span> i): TestClass(i, <span class="number">0</span>) &#123; member_c = <span class="string">'T'</span>;&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">int</span> member_i;</span><br><span class="line">	<span class="keyword">char</span> member_c;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="string">"test delegating constructor:\n"</span>;</span><br><span class="line"><span class="function">TestClass <span class="title">tc2</span><span class="params">(<span class="number">2</span>)</span></span>;</span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;tc2.member_i&lt;&lt;<span class="string">'\t'</span>&lt;&lt;tc2.member_c&lt;&lt;<span class="built_in">endl</span>;</span><br></pre></td></tr></table></figure>  </p>
+<h2 id="allocator-construct"><a href="#allocator-construct" class="headerlink" title="allocator.construct"></a>allocator.construct</h2><p>新标准中，allocator.construct可以使用任意的构造函数。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> TestClass</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	TestClass() = <span class="keyword">default</span>;</span><br><span class="line">	TestClass(<span class="keyword">const</span> <span class="keyword">int</span> i, <span class="keyword">const</span> <span class="keyword">char</span> c): member_i(i), member_c(c) &#123;&#125;</span><br><span class="line">	TestClass(<span class="keyword">const</span> <span class="keyword">int</span> i): TestClass(i, <span class="number">0</span>) &#123; member_c = <span class="string">'T'</span>;&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">int</span> member_i;</span><br><span class="line">	<span class="keyword">char</span> member_c;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="string">"test allocator:\n"</span>;</span><br><span class="line">allocator&lt;TestClass&gt; alloc;</span><br><span class="line"><span class="keyword">auto</span> p = alloc.allocate(<span class="number">10</span>);</span><br><span class="line">alloc.construct(p, <span class="number">10</span>);</span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;p-&gt;member_i&lt;&lt;<span class="string">'\t'</span>&lt;&lt;p-&gt;member_c&lt;&lt;<span class="built_in">endl</span>;</span><br></pre></td></tr></table></figure>  </p>
+<h2 id="copy-constructor"><a href="#copy-constructor" class="headerlink" title="copy constructor"></a>copy constructor</h2><p>新标准中，可以通过=default要求编译器合成默认的拷贝/赋值构造函数。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> TestClass</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	TestClass() = <span class="keyword">default</span>;</span><br><span class="line">	TestClass(<span class="keyword">const</span> <span class="keyword">int</span> i, <span class="keyword">const</span> <span class="keyword">char</span> c): member_i(i), member_c(c) &#123;&#125;</span><br><span class="line">	TestClass(<span class="keyword">const</span> <span class="keyword">int</span> i): TestClass(i, <span class="number">0</span>) &#123; member_c = <span class="string">'T'</span>;&#125;</span><br><span class="line">	TestClass(<span class="keyword">const</span> TestClass&amp;) = <span class="keyword">default</span>;</span><br><span class="line">	TestClass&amp; <span class="keyword">operator</span>=(const TestClass&amp;);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">int</span> member_i;</span><br><span class="line">	<span class="keyword">char</span> member_c;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="string">"test =default class copy construct:\n"</span>;</span><br><span class="line"><span class="function">TestClass <span class="title">tc3</span><span class="params">(tc2)</span></span>;</span><br><span class="line">TestClass tc4 = tc2;</span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;tc3.member_i&lt;&lt;<span class="string">'\t'</span>&lt;&lt;tc3.member_c&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;tc4.member_i&lt;&lt;<span class="string">'\t'</span>&lt;&lt;tc4.member_c&lt;&lt;<span class="built_in">endl</span>;</span><br></pre></td></tr></table></figure>  </p>
+<p>同样，新标准中也允许用=delete禁止拷贝。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> TestClass</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	TestClass() = <span class="keyword">default</span>;</span><br><span class="line">	TestClass(<span class="keyword">const</span> <span class="keyword">int</span> i, <span class="keyword">const</span> <span class="keyword">char</span> c): member_i(i), member_c(c) &#123;&#125;</span><br><span class="line">	TestClass(<span class="keyword">const</span> <span class="keyword">int</span> i): TestClass(i, <span class="number">0</span>) &#123; member_c = <span class="string">'T'</span>;&#125;</span><br><span class="line">	TestClass(<span class="keyword">const</span> TestClass&amp;) = <span class="keyword">delete</span>;</span><br><span class="line">	TestClass&amp; <span class="keyword">operator</span>=(const TestClass&amp;);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">int</span> member_i;</span><br><span class="line">	<span class="keyword">char</span> member_c;</span><br><span class="line">&#125;;</span><br><span class="line">TestClass&amp; TestClass::<span class="keyword">operator</span>=(const TestClass&amp;) = <span class="keyword">default</span>;</span><br><span class="line"></span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="string">"test =delete class copy construct:\n"</span>;</span><br><span class="line"><span class="comment">//TestClass tc5(tc2); // error: use of deleted function ‘TestClass::TestClass(const TestClass&amp;)’</span></span><br><span class="line"><span class="comment">//cout&lt;&lt;tc5.member_i&lt;&lt;'\t'&lt;&lt;tc5.member_c&lt;&lt;endl;</span></span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="string">"test =delete done."</span>&lt;&lt;<span class="built_in">endl</span>;</span><br></pre></td></tr></table></figure>  </p>
+<h2 id="override和final"><a href="#override和final" class="headerlink" title="override和final"></a>override和final</h2><p>新标准中提供了override和final两个关键字，用于标识子类对父类中虚函数的重写（override）或禁止重写（final）。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> TestClass</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	TestClass() = <span class="keyword">default</span>;</span><br><span class="line">	TestClass(<span class="keyword">const</span> <span class="keyword">int</span> i, <span class="keyword">const</span> <span class="keyword">char</span> c): member_i(i), member_c(c) &#123;&#125;</span><br><span class="line">	TestClass(<span class="keyword">const</span> <span class="keyword">int</span> i): TestClass(i, <span class="number">0</span>) &#123; member_c = <span class="string">'T'</span>;&#125;</span><br><span class="line">	TestClass(<span class="keyword">const</span> TestClass&amp;) = <span class="keyword">default</span>;</span><br><span class="line">	TestClass&amp; <span class="keyword">operator</span>=(const TestClass&amp;);</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">print_msg</span><span class="params">()</span> </span>&#123;<span class="built_in">cout</span>&lt;&lt;member_i&lt;&lt;<span class="string">'\t'</span>&lt;&lt;member_c&lt;&lt;<span class="built_in">endl</span>;&#125;</span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">final_foo</span><span class="params">()</span> final </span>&#123;&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">int</span> member_i;</span><br><span class="line">	<span class="keyword">char</span> member_c;</span><br><span class="line">&#125;;</span><br><span class="line">TestClass&amp; TestClass::<span class="keyword">operator</span>=(const TestClass&amp;) = <span class="keyword">default</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> SubTestClass final: <span class="keyword">public</span> TestClass</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">public</span>:</span><br><span class="line">		<span class="keyword">using</span> TestClass::TestClass;</span><br><span class="line">		SubTestClass(<span class="keyword">const</span> <span class="keyword">int</span> i): TestClass(i, <span class="string">'S'</span>) &#123;&#125;</span><br><span class="line">		<span class="function"><span class="keyword">void</span> <span class="title">print_msg</span><span class="params">()</span> override</span>;</span><br><span class="line">		<span class="comment">//void print_msg(char c) override;</span></span><br><span class="line">		<span class="comment">//‘void SubTestClass::print_msg(char)’ marked override, but does not override</span></span><br><span class="line">		</span><br><span class="line">		<span class="comment">//void final_foo() &#123;&#125;</span></span><br><span class="line">		<span class="comment">//overriding final function ‘virtual void TestClass::final_foo()’</span></span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">//class SubSubTestClass: public SubTestClass &#123;&#125;; </span></span><br><span class="line"><span class="comment">// cannot derive from ‘final’ base ‘SubTestClass’ in derived type ‘SubSubTestClass’</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">void</span> SubTestClass::print_msg() </span><br><span class="line">&#123;</span><br><span class="line">	<span class="built_in">cout</span>&lt;&lt;<span class="string">"i: "</span>&lt;&lt;member_i&lt;&lt;<span class="string">'\t'</span>&lt;&lt;<span class="string">"c: "</span>&lt;&lt;member_c&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="string">"test override:\n"</span>;</span><br><span class="line">TestClass *stc_ptr = new SubTestClass(<span class="number">10</span>); </span><br><span class="line">stc_ptr-&gt;print_msg();</span><br><span class="line"><span class="function">SubTestClass <span class="title">stc</span><span class="params">(<span class="number">10</span>)</span></span>;</span><br><span class="line">TestClass tc6 = (TestClass)stc;</span><br><span class="line">tc6.print_msg();</span><br></pre></td></tr></table></figure>  </p>
+<p>如果标识了override的函数实际上没有重写父类中的函数，或者标识final的函数被子类重写，编译器都会报错。  </p>
+<p>通样的，标识为final的类也不允许作为父类被继承。  </p>
+<h2 id="委托父类构造函数"><a href="#委托父类构造函数" class="headerlink" title="委托父类构造函数"></a>委托父类构造函数</h2><p>新标准中，也支持子类在初始化列表中直接委托父类的构造函数完成初始化。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> SubTestClass final: <span class="keyword">public</span> TestClass</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">public</span>:</span><br><span class="line">		<span class="keyword">using</span> TestClass::TestClass;</span><br><span class="line">		SubTestClass(<span class="keyword">const</span> <span class="keyword">int</span> i): TestClass(i, <span class="string">'S'</span>) &#123;&#125;</span><br><span class="line">		<span class="function"><span class="keyword">void</span> <span class="title">print_msg</span><span class="params">()</span> override</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="string">"test inherit base class contructor:\n"</span>;</span><br><span class="line"><span class="function">SubTestClass <span class="title">stc2</span><span class="params">(<span class="number">1024</span>, <span class="string">'H'</span>)</span></span>;</span><br><span class="line">stc2.print_msg();</span><br></pre></td></tr></table></figure>  </p>
+<h2 id="多继承与默认constructor"><a href="#多继承与默认constructor" class="headerlink" title="多继承与默认constructor"></a>多继承与默认constructor</h2><p>多重继承的子类可以直接继承父类的构造函数，但是如果父类中有形参列表完全相同的构造函数，则会产生冲突，这时需要子类自己定义一个自己版本的构造函数。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> TestClass2</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	TestClass2() = <span class="keyword">default</span>;</span><br><span class="line">	TestClass2(<span class="keyword">const</span> <span class="keyword">int</span> i) &#123;&#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> MultiSubClass: <span class="keyword">public</span> TestClass, <span class="keyword">public</span> TestClass2</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="keyword">using</span> TestClass::TestClass;</span><br><span class="line">	<span class="keyword">using</span> TestClass2::TestClass2;</span><br><span class="line">	<span class="comment">// conflicts with version inherited from ‘TestClass’</span></span><br><span class="line">	MultiSubClass(<span class="keyword">const</span> <span class="keyword">int</span> i): TestClass(i) &#123;&#125;</span><br><span class="line">	MultiSubClass() = <span class="keyword">default</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="string">"test multi inherit constructor:\n"</span>;</span><br><span class="line"><span class="function">MultiSubClass <span class="title">mtc</span><span class="params">(<span class="number">1024</span>)</span></span>;</span><br><span class="line">mtc.print_msg();</span><br><span class="line">return <span class="number">0</span>;</span><br></pre></td></tr></table></figure>  </p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ol>
+<li>sizeof可以直接用于获取Class::member的大小，而不用通过Class的实例。</li>
+<li>可以通过=default强制编译器生成一个默认constructor。</li>
+<li>可以在初始化列表中将一个constructor初始化的工作委托给另一个constructor，以及父类的constructor。</li>
+<li>allocator.construct可以使用任意的构造函数。 </li>
+<li>可以通过=default要求编译器合成默认的拷贝/赋值构造函数，也可以通过=delete禁止拷贝。</li>
+<li>新标准中提供了override和final两个关键字，用于标识子类对父类中虚函数的重写（override）或禁止重写（final），编译会对这两种情况进行检查。final还可以用于类的标识，表示禁止继承。</li>
+<li>多重继承的子类可以直接继承父类的构造函数，但是如果父类中有形参列表完全相同的构造函数，则会产生冲突，这时需要子类自己定义一个自己版本的构造函数。  </li>
+</ol>
+<p>完整代码详见<a href="https://github.com/yubo1911/saber/blob/master/learncpp11/class.cpp" target="_blank" rel="external">class.cpp</a>  </p>
+<p>转载请注明出处： <a href="http://blog.guoyb.com/2016/08/14/cpp11-6">http://blog.guoyb.com/2016/08/14/cpp11-6/</a>  </p>
+<p>欢迎使用微信扫描下方二维码，关注我的微信公众号TechTalking，技术·生活·思考：<br><img src="http://7d9lwm.com1.z0.glb.clouddn.com/qrcode.jpg" alt="后端技术小黑屋"></p>
+
+    
+  </div>
+  <footer>
+    
+      
+      
+  <div class="tags">
+    <a class="tags-link" href="/tags/C/">C++</a>, <a class="tags-link" href="/tags/C-11/">C++11</a>
+  </div>
+
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+<!-- JiaThis Button BEGIN -->
+<script type="text/javascript">
+var jiathis_config = {data_track_clickback:'true'};
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?move=0&amp;uid=1706898" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+<section id="comment">
+  <h1 class="title">Comments</h1>
+  <div class="ds-thread" data-title="C++11新特性之Class">
+  </div>
+</section>
+
+	</div>
+  </div>
+	<aside id="sidebar">
+  
+  
+    
+      
+      
+
+<div class="widget tagcloud first">
+  <h3 class="title">Tags</h3>
+  <div class="entry">
+    <a href="/tags/C/" style="font-size: 10px;">C</a> <a href="/tags/C/" style="font-size: 15px;">C++</a> <a href="/tags/C-11/" style="font-size: 15px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/echoserver/" style="font-size: 11.67px;">echoserver</a> <a href="/tags/epoll/" style="font-size: 11.67px;">epoll</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 11.67px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/select/" style="font-size: 11.67px;">select</a> <a href="/tags/socket/" style="font-size: 11.67px;">socket</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 15px;">书单</a> <a href="/tags/北京车展/" style="font-size: 10px;">北京车展</a> <a href="/tags/协程/" style="font-size: 10px;">协程</a> <a href="/tags/学习笔记/" style="font-size: 11.67px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/广州/" style="font-size: 10px;">广州</a> <a href="/tags/旅行/" style="font-size: 10px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 16.67px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 13.33px;">查证记录</a> <a href="/tags/游戏开发/" style="font-size: 10px;">游戏开发</a> <a href="/tags/爱好/" style="font-size: 10px;">爱好</a> <a href="/tags/生活/" style="font-size: 11.67px;">生活</a> <a href="/tags/知乎/" style="font-size: 10px;">知乎</a> <a href="/tags/程序人生/" style="font-size: 10px;">程序人生</a> <a href="/tags/读书笔记/" style="font-size: 18.33px;">读书笔记</a> <a href="/tags/读后感/" style="font-size: 10px;">读后感</a>
+  </div>
+</div>
+
+    
+      
+      
+
+<div class="widget recent-posts">
+  <h3 class="title">最近文章</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2016/08/14/cpp11-6/">C++11新特性之Class</a>
+      </li>
+    
+      <li>
+        <a href="/2016/08/06/something-about-strip/">从string.strip()引起的一个bug说起</a>
+      </li>
+    
+      <li>
+        <a href="/2016/08/02/cpp11-5/">C++11新特性之智能指针(shared_ptr, unique_ptr和weak_ptr)</a>
+      </li>
+    
+      <li>
+        <a href="/2016/07/28/2015-booklist/">2015年书单</a>
+      </li>
+    
+      <li>
+        <a href="/2016/07/23/learn-c-the-hard-way/">Learn C The Hard Way示例代码</a>
+      </li>
+    
+  </ul>
+</div>
+
+    
+      
+      
+<div class="widget tag">
+  <h3 class="title">友情链接</h3>
+  <ul class="entry">
+  
+    
+    <li><a href="http://www.linkedin.com/in/yubo-guo-739b0071" target="_blank">LinkedIn</a></li>
+  
+    
+    <li><a href="http://www.tuicool.com/sites/2emeIjb" target="_blank">推酷站点</a></li>
+  
+  </ul>
+</div>
+
+    
+  
+</aside>
+<div class="clearfix"></div>
+  <footer id="footer"><div class="copyright">
+  
+  &copy; 2016 <a href="/">Yubo Guo</a>
+  
+</div>
+<div class="theme-copyright">
+  Theme by <a href="https://github.com/orderedlist" target="_blank">orderedlist</a>
+   | 
+  Redesign by <a href="http://heroicyang.com/" target="_blank">Heroic Yang</a>
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+<script src="/js/scale.fix.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = { short_name: 'guoyb' };
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';
+    ds.async = true;
+    ds.src = 'http://static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+  (function($){
+    $('.fancybox').fancybox();
+  })(jQuery);
+</script>
+
+</body>
+</html>
