@@ -21,13 +21,13 @@
 <meta property="og:site_name" content="一根笨茄子">
 <meta property="og:description" content="Python由于众所周知的GIL的原因，导致其线程无法发挥多核的并行计算能力（当然，后来有了multiprocessing，可以实现多进程并行），显得比较鸡肋。既然在GIL之下，同一时刻只能有一个线程在运行，那么对于CPU密集的程序来说，线程之间的切换开销就成了拖累，而以I/O为瓶颈的程序正是协程所擅长的：  
 多任务并发（非并行），每个任务在合适的时候挂起（发起I/O）和恢复(I/O结束)">
-<meta property="og:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/qrcode.jpg">
-<meta property="og:updated_time" content="2016-07-04T00:40:48.203Z">
+<meta property="og:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.jpg">
+<meta property="og:updated_time" content="2016-08-17T00:00:22.790Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Python协程：从yield/send到async/await">
 <meta name="twitter:description" content="Python由于众所周知的GIL的原因，导致其线程无法发挥多核的并行计算能力（当然，后来有了multiprocessing，可以实现多进程并行），显得比较鸡肋。既然在GIL之下，同一时刻只能有一个线程在运行，那么对于CPU密集的程序来说，线程之间的切换开销就成了拖累，而以I/O为瓶颈的程序正是协程所擅长的：  
 多任务并发（非并行），每个任务在合适的时候挂起（发起I/O）和恢复(I/O结束)">
-<meta name="twitter:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/qrcode.jpg">
+<meta name="twitter:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.jpg">
   
   
   <link rel="stylesheet" href="/css/style.css">
@@ -123,7 +123,7 @@ var _hmt = _hmt || [];
 <p>至此，Python中的协程就介绍完毕了。示例程序中都是以sleep为异步I/O的代表，在实际项目中，可以使用协程异步的读写网络、读写文件、渲染界面等，而在等待协程完成的同时，CPU还可以进行其他的计算。协程的作用正在于此。  </p>
 <p>相关代码可以在GitHub上找到<a href="https://github.com/yubo1911/saber/tree/master/coroutine" target="_blank" rel="external">https://github.com/yubo1911/saber/tree/master/coroutine</a>。  </p>
 <p>转载请注明出处： <a href="http://blog.guoyb.com/2016/07/03/python-coroutine/">http://blog.guoyb.com/2016/07/03/python-coroutine/</a>。  </p>
-<p>欢迎使用微信扫描下方二维码，关注我的微信公众号TechTalking，技术·生活·思考：<br><img src="http://7d9lwm.com1.z0.glb.clouddn.com/qrcode.jpg" alt="后端技术小黑屋"></p>
+<p>欢迎使用微信扫描下方二维码，关注我的微信公众号TechTalking，技术·生活·思考：<br><img src="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.jpg" alt="后端技术小黑屋"></p>
 
     
   </div>

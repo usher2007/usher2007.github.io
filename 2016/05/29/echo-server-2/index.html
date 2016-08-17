@@ -18,12 +18,12 @@
 <meta property="og:url" content="http://blog.guoyb.com/2016/05/29/echo-server-2/index.html">
 <meta property="og:site_name" content="一根笨茄子">
 <meta property="og:description" content="在echoserver的几种实现-1中，通过socket、select、epoll几种方式实现了echoserver，了解了select和epoll模型的优劣。接下来，我将通过libuv实现另一个echoserver，学习libuv的使用。libuv的源码在这里，一个比较好的教程在这里。libuv是node.js实现时所用到的事件库，可以通过注册事件回调的方式实现异步处理系统中的IO事件。">
-<meta property="og:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/qrcode.jpg">
-<meta property="og:updated_time" content="2016-06-25T02:00:56.586Z">
+<meta property="og:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.jpg">
+<meta property="og:updated_time" content="2016-08-16T23:59:55.313Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="echoserver的几种实现-2(libuv)">
 <meta name="twitter:description" content="在echoserver的几种实现-1中，通过socket、select、epoll几种方式实现了echoserver，了解了select和epoll模型的优劣。接下来，我将通过libuv实现另一个echoserver，学习libuv的使用。libuv的源码在这里，一个比较好的教程在这里。libuv是node.js实现时所用到的事件库，可以通过注册事件回调的方式实现异步处理系统中的IO事件。">
-<meta name="twitter:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/qrcode.jpg">
+<meta name="twitter:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.jpg">
   
   
   <link rel="stylesheet" href="/css/style.css">
@@ -98,7 +98,7 @@ var _hmt = _hmt || [];
 <hr>
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>在使用libuv开发echoserver的过程中，libuv封装了大多数的socket操作，也不用关心异步的具体实现方式，通过提炼出<strong>事件+回调</strong>的编程模型，极大的简化了异步网络编程的步骤。libuv也开放了源代码，源码阅读可以从uv_loop_t(uv_loop_s)数据结构入手，理解uv_run函数如何实现这种事件+回调的异步模型。<br>本文的完整代码放在<a href="https://github.com/yubo1911/saber/blob/master/echo-server/libuv-echo-server.c" target="_blank" rel="external">我的GuitHub</a>。另外，一个使用libuv实现的客户端程序也放在<a href="https://github.com/yubo1911/saber/blob/master/echo-server/libuv-echo-client.c" target="_blank" rel="external">这里</a>。  </p>
 <p>转载请注明出处： <a href="http://blog.guoyb.com/2016/05/29/echo-server-2/">http://blog.guoyb.com/2016/05/29/echo-server-2/</a>  </p>
-<p>欢迎关注我的微信公众号TechTalking，技术·生活·思考：<br><img src="http://7d9lwm.com1.z0.glb.clouddn.com/qrcode.jpg" alt="后端技术小黑屋"></p>
+<p>欢迎关注我的微信公众号TechTalking，技术·生活·思考：<br><img src="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.jpg" alt="后端技术小黑屋"></p>
 
     
   </div>

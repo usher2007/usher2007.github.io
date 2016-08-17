@@ -2,44 +2,149 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>http://blog.guoyb.com/2016/08/14/cpp11-6/</loc>
+    <loc>http://blog.guoyb.com/2013/12/30/2013-booklist-2/</loc>
     
-    <lastmod>2016-08-14T01:32:58.114Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://blog.guoyb.com/2016/08/06/something-about-strip/</loc>
-    
-    <lastmod>2016-08-06T13:33:02.687Z</lastmod>
+    <lastmod>2016-08-17T00:02:33.485Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://blog.guoyb.com/2016/08/02/cpp11-5/</loc>
+    <loc>http://blog.guoyb.com/2014/10/01/2014-booklist-1/</loc>
     
-    <lastmod>2016-08-03T12:30:58.344Z</lastmod>
+    <lastmod>2016-08-17T00:02:26.692Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://blog.guoyb.com/2015/01/01/2014-booklist-2/</loc>
+    
+    <lastmod>2016-08-17T00:02:10.596Z</lastmod>
     
   </url>
   
   <url>
     <loc>http://blog.guoyb.com/2016/07/28/2015-booklist/</loc>
     
-    <lastmod>2016-07-28T00:41:14.455Z</lastmod>
+    <lastmod>2016-08-17T00:02:04.093Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://blog.guoyb.com/2016/07/23/learn-c-the-hard-way/</loc>
+    <loc>http://blog.guoyb.com/2016/06/25/2016-booklist-1/</loc>
     
-    <lastmod>2016-07-23T12:44:32.446Z</lastmod>
+    <lastmod>2016-08-17T00:01:56.653Z</lastmod>
     
   </url>
   
   <url>
     <loc>http://blog.guoyb.com/2016/07/22/virtualenv-trick/</loc>
     
-    <lastmod>2016-07-23T00:47:24.652Z</lastmod>
+    <lastmod>2016-08-17T00:01:25.197Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://blog.guoyb.com/2016/08/06/something-about-strip/</loc>
+    
+    <lastmod>2016-08-17T00:01:17.831Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://blog.guoyb.com/2016/07/17/python-vim/</loc>
+    
+    <lastmod>2016-08-17T00:01:09.837Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://blog.guoyb.com/2016/04/19/python-decorator/</loc>
+    
+    <lastmod>2016-08-17T00:00:39.878Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://blog.guoyb.com/2016/07/03/python-coroutine/</loc>
+    
+    <lastmod>2016-08-17T00:00:22.790Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://blog.guoyb.com/2016/05/25/makefile-ld/</loc>
+    
+    <lastmod>2016-08-17T00:00:11.959Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://blog.guoyb.com/2016/07/23/learn-c-the-hard-way/</loc>
+    
+    <lastmod>2016-08-17T00:00:03.230Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://blog.guoyb.com/2016/05/29/echo-server-2/</loc>
+    
+    <lastmod>2016-08-16T23:59:55.313Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://blog.guoyb.com/2016/05/22/echo-server/</loc>
+    
+    <lastmod>2016-08-16T23:59:23.810Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://blog.guoyb.com/2016/06/12/gz-travel/</loc>
+    
+    <lastmod>2016-08-16T23:59:01.766Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://blog.guoyb.com/2016/07/09/cpp11-4/</loc>
+    
+    <lastmod>2016-08-16T23:58:23.239Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://blog.guoyb.com/2016/06/30/cpp11-3/</loc>
+    
+    <lastmod>2016-08-16T23:58:08.670Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://blog.guoyb.com/2016/06/25/cpp11-2/</loc>
+    
+    <lastmod>2016-08-16T23:57:49.614Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://blog.guoyb.com/2016/06/18/cpp11-1/</loc>
+    
+    <lastmod>2016-08-16T23:57:28.763Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://blog.guoyb.com/2016/08/02/cpp11-5/</loc>
+    
+    <lastmod>2016-08-16T23:51:41.194Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://blog.guoyb.com/2016/08/14/cpp11-6/</loc>
+    
+    <lastmod>2016-08-16T23:51:31.315Z</lastmod>
     
   </url>
   
@@ -51,114 +156,9 @@
   </url>
   
   <url>
-    <loc>http://blog.guoyb.com/2016/07/17/python-vim/</loc>
-    
-    <lastmod>2016-07-17T03:30:16.166Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://blog.guoyb.com/2016/07/09/cpp11-4/</loc>
-    
-    <lastmod>2016-07-09T10:39:39.500Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://blog.guoyb.com/2016/07/03/python-coroutine/</loc>
-    
-    <lastmod>2016-07-04T00:40:48.203Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://blog.guoyb.com/2016/06/30/cpp11-3/</loc>
-    
-    <lastmod>2016-06-30T00:53:13.012Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://blog.guoyb.com/2016/06/25/2016-booklist-1/</loc>
-    
-    <lastmod>2016-06-26T10:22:42.996Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://blog.guoyb.com/2016/06/25/cpp11-2/</loc>
-    
-    <lastmod>2016-06-25T02:03:47.656Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://blog.guoyb.com/2016/04/19/python-decorator/</loc>
-    
-    <lastmod>2016-06-25T02:02:49.120Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://blog.guoyb.com/2016/05/25/makefile-ld/</loc>
-    
-    <lastmod>2016-06-25T02:01:58.120Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>http://blog.guoyb.com/2016/06/19/hexo-server/</loc>
     
     <lastmod>2016-06-25T02:01:35.913Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://blog.guoyb.com/2016/06/12/gz-travel/</loc>
-    
-    <lastmod>2016-06-25T02:01:21.792Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://blog.guoyb.com/2016/05/29/echo-server-2/</loc>
-    
-    <lastmod>2016-06-25T02:00:56.586Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://blog.guoyb.com/2016/05/22/echo-server/</loc>
-    
-    <lastmod>2016-06-25T02:00:42.497Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://blog.guoyb.com/2016/06/18/cpp11-1/</loc>
-    
-    <lastmod>2016-06-25T02:00:19.937Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://blog.guoyb.com/2014/10/01/2014-booklist-1/</loc>
-    
-    <lastmod>2016-06-19T03:04:57.730Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://blog.guoyb.com/2015/01/01/2014-booklist-2/</loc>
-    
-    <lastmod>2016-06-19T03:04:54.873Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://blog.guoyb.com/2013/12/30/2013-booklist-2/</loc>
-    
-    <lastmod>2016-06-19T03:04:00.749Z</lastmod>
     
   </url>
   
