@@ -63,6 +63,50 @@ var _hmt = _hmt || [];
   <header>
     
       <div class="icon"></div>
+      <a href="/2016/05/08/wedding/">
+  <time datetime="2016-05-08T04:26:08.000Z">
+    2016-05-08
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title"><a href="/2016/05/08/wedding/">说说婚礼</a></h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>五一回老家办了婚礼，由于我和我老婆两人来自同一个县城，所以时间上倒也没什么耗费，只请了一天年假就搞定了。小县城亲戚多朋友多习俗多，大家对于我们这种三四天搞定的婚礼十分不解。然而谁又知道，我们从一开始就认为这是一场为家里人而办的婚礼呢。  </p>
+<p>在我的理解中，婚礼，首先是一个仪式，它是一男一女结为夫妻的见证。从这一点上说，婚礼和去民政局领证，并无本质区别。然而，在筹备婚礼的过程中，我发现当代中国的婚礼，仪式感并不是最主要的——各种杂七杂八的风俗，并不是为了营造神圣的氛围，而是为了折腾两位新人。这一点有点像军营中，新兵蛋子一定要被老兵欺负，这样过后回想起来，一届入伍的士兵们才有“兄弟情”。或许这种风俗本无恶意，也仅仅是为了让新人对“结婚”印象深刻罢了。<br>
+    
+  </div>
+  <footer class="end-sep">
+    
+      
+        <div class="alignleft">
+          <a href="/2016/05/08/wedding/#more" class="more-link">Read More</a>
+        </div>
+      
+      
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+<!-- JiaThis Button BEGIN -->
+<script type="text/javascript">
+var jiathis_config = {data_track_clickback:'true'};
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?move=0&amp;uid=1706898" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+
+  <article class="post">
+  <header>
+    
+      <div class="icon"></div>
       <a href="/2016/04/19/python-decorator/">
   <time datetime="2016-04-19T13:00:28.000Z">
     2016-04-19
@@ -481,61 +525,6 @@ var jiathis_config = {data_track_clickback:'true'};
 <!-- JiaThis Button END -->
 
 
-  <article class="post">
-  <header>
-    
-      <div class="icon"></div>
-      <a href="/2014/05/07/python-source-10/">
-  <time datetime="2014-05-07T09:13:40.000Z">
-    2014-05-07
-  </time>
-</a>
-    
-    
-  
-    <h1 class="title"><a href="/2014/05/07/python-source-10/">《Python源码剖析》读书笔记-10 Python虚拟机中的控制流</a></h1>
-  
-
-  </header>
-  
-  <div class="entry">
-    
-      <hr>
-<h3 id="第10章-Python虚拟机中的控制流"><a href="#第10章-Python虚拟机中的控制流" class="headerlink" title="第10章 Python虚拟机中的控制流"></a>第10章 Python虚拟机中的控制流</h3><ul>
-<li><p>if条件判断语句，在虚拟机中对应了COMPARE_OP，其中有几个地方需要理解：</p>
-<ul>
-<li>在slow_compare中的cmp_outcome函数，处理了Python自定义的一些比较操作，例如is，is not，in等。</li>
-<li>对于那些一般类型的比较操作（非数字，非is，is not这类Python特殊比较符），会通过PyObject_RichCompare来进行。这个函数里面的核心任务，是把待比较对象的类型对象（ob_type)上定义的比较函数指针（tp_richcompare或者tp_compare，优先tp_richcompare）取出，用这个比较函数来进行比较。如果这两个函数都不能进行比较，虚拟机还会调用更普适但是也更慢的do_richcmp。</li>
-<li>比较操作最后返回的结果，是两个对象，Py_True和Py_False。这两个对象其实都是PyIntObject类型的，包装了1和0。</li>
-<li><p>位于比较操作最后的PREDICT宏，用于预测下一条指令，如果预测正确则可以跳过许多不必要的步骤，直接执行下一条指令。这种做法的基础是，在Python源码编译出的字节码中，有一些指令经常是成对出现的，例如COMPARE_OP 和 POP_JUMP_IF_FALSE&amp;POP_JUMP_IF_TRUE。所以在处理COMPARE_OP的最后，可以添加如下预测语句。</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">PREDICT(POP_JUMP_IF_FALSE);</span><br><span class="line">PREDICT(POP_JUMP_IF_TRUE);</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>PREDICT宏的定义为：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> PREDICT(op) <span class="meta-keyword">if</span> (*next_instr == op) goto PRED_##op</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>正好就是判断下一条字节码，预测成功就直接执行下一条字节码的节奏。</p>
-    
-  </div>
-  <footer class="end-sep">
-    
-      
-        <div class="alignleft">
-          <a href="/2014/05/07/python-source-10/#more" class="more-link">Read More</a>
-        </div>
-      
-      
-    
-    <div class="clearfix"></div>
-  </footer>
-</article>
-<!-- JiaThis Button BEGIN -->
-<script type="text/javascript">
-var jiathis_config = {data_track_clickback:'true'};
-</script>
-<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?move=0&amp;uid=1706898" charset="utf-8"></script>
-<!-- JiaThis Button END -->
-
-
 
 <nav id="pagination">
   
@@ -558,7 +547,7 @@ var jiathis_config = {data_track_clickback:'true'};
 <div class="widget tagcloud first">
   <h3 class="title">Tags</h3>
   <div class="entry">
-    <a href="/tags/C/" style="font-size: 10px;">C</a> <a href="/tags/C/" style="font-size: 15px;">C++</a> <a href="/tags/C-11/" style="font-size: 15px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/echoserver/" style="font-size: 11.67px;">echoserver</a> <a href="/tags/epoll/" style="font-size: 11.67px;">epoll</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 11.67px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/select/" style="font-size: 11.67px;">select</a> <a href="/tags/socket/" style="font-size: 11.67px;">socket</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 15px;">书单</a> <a href="/tags/北京车展/" style="font-size: 10px;">北京车展</a> <a href="/tags/协程/" style="font-size: 10px;">协程</a> <a href="/tags/学习笔记/" style="font-size: 11.67px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/广州/" style="font-size: 10px;">广州</a> <a href="/tags/旅行/" style="font-size: 10px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 16.67px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 13.33px;">查证记录</a> <a href="/tags/游戏开发/" style="font-size: 10px;">游戏开发</a> <a href="/tags/爱好/" style="font-size: 10px;">爱好</a> <a href="/tags/生活/" style="font-size: 11.67px;">生活</a> <a href="/tags/知乎/" style="font-size: 10px;">知乎</a> <a href="/tags/程序人生/" style="font-size: 10px;">程序人生</a> <a href="/tags/读书笔记/" style="font-size: 18.33px;">读书笔记</a> <a href="/tags/读后感/" style="font-size: 10px;">读后感</a>
+    <a href="/tags/C/" style="font-size: 10px;">C</a> <a href="/tags/C/" style="font-size: 15px;">C++</a> <a href="/tags/C-11/" style="font-size: 15px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/echoserver/" style="font-size: 11.67px;">echoserver</a> <a href="/tags/epoll/" style="font-size: 11.67px;">epoll</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 11.67px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/select/" style="font-size: 11.67px;">select</a> <a href="/tags/socket/" style="font-size: 11.67px;">socket</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 15px;">书单</a> <a href="/tags/北京车展/" style="font-size: 10px;">北京车展</a> <a href="/tags/协程/" style="font-size: 10px;">协程</a> <a href="/tags/学习笔记/" style="font-size: 11.67px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/广州/" style="font-size: 10px;">广州</a> <a href="/tags/旅行/" style="font-size: 10px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 16.67px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 13.33px;">查证记录</a> <a href="/tags/游戏开发/" style="font-size: 10px;">游戏开发</a> <a href="/tags/爱好/" style="font-size: 10px;">爱好</a> <a href="/tags/生活/" style="font-size: 11.67px;">生活</a> <a href="/tags/知乎/" style="font-size: 10px;">知乎</a> <a href="/tags/程序人生/" style="font-size: 10px;">程序人生</a> <a href="/tags/读书笔记/" style="font-size: 18.33px;">读书笔记</a> <a href="/tags/读后感/" style="font-size: 10px;">读后感</a>
   </div>
 </div>
 
@@ -569,6 +558,10 @@ var jiathis_config = {data_track_clickback:'true'};
 <div class="widget recent-posts">
   <h3 class="title">最近文章</h3>
   <ul class="entry">
+    
+      <li>
+        <a href="/2016/08/17/mysql-select-order/">一个潜伏了5年的bug</a>
+      </li>
     
       <li>
         <a href="/2016/08/14/cpp11-6/">C++11新特性之Class</a>
@@ -584,10 +577,6 @@ var jiathis_config = {data_track_clickback:'true'};
     
       <li>
         <a href="/2016/07/28/2015-booklist/">2015年书单</a>
-      </li>
-    
-      <li>
-        <a href="/2016/07/23/learn-c-the-hard-way/">Learn C The Hard Way示例代码</a>
       </li>
     
   </ul>

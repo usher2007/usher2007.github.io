@@ -1,0 +1,254 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  
+  <title>一个潜伏了5年的bug | 一根笨茄子</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  
+    <meta name="author" content="Yubo Guo">
+  
+  
+    <meta name="description" content="前两天策划反馈某项活动中，理论上大概千分之一中奖率的一个奖品，连续四次被同一个玩家得到了。他之前已经找了几个程序复查过代码，都说没啥问题，但是从概率上讲，肯定是有问题的，所以希望我“为程序员正名”。经过一上午的奋战，我也算不辱使命，找出了这个潜伏了5年的bug，也了解了关于mysql的一个潜规则。  
+整个业务场景大概是这样的（下面代码仅为示意，不可直接运行）：  
+首先，每个玩家报名的时候，向">
+  
+  <meta name="description" content="前两天策划反馈某项活动中，理论上大概千分之一中奖率的一个奖品，连续四次被同一个玩家得到了。他之前已经找了几个程序复查过代码，都说没啥问题，但是从概率上讲，肯定是有问题的，所以希望我“为程序员正名”。经过一上午的奋战，我也算不辱使命，找出了这个潜伏了5年的bug，也了解了关于mysql的一个潜规则。  
+整个业务场景大概是这样的（下面代码仅为示意，不可直接运行）：  
+首先，每个玩家报名的时候，向">
+<meta property="og:type" content="article">
+<meta property="og:title" content="一个潜伏了5年的bug">
+<meta property="og:url" content="http://blog.guoyb.com/2016/08/17/mysql-select-order/index.html">
+<meta property="og:site_name" content="一根笨茄子">
+<meta property="og:description" content="前两天策划反馈某项活动中，理论上大概千分之一中奖率的一个奖品，连续四次被同一个玩家得到了。他之前已经找了几个程序复查过代码，都说没啥问题，但是从概率上讲，肯定是有问题的，所以希望我“为程序员正名”。经过一上午的奋战，我也算不辱使命，找出了这个潜伏了5年的bug，也了解了关于mysql的一个潜规则。  
+整个业务场景大概是这样的（下面代码仅为示意，不可直接运行）：  
+首先，每个玩家报名的时候，向">
+<meta property="og:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.png">
+<meta property="og:updated_time" content="2016-08-17T00:43:12.116Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="一个潜伏了5年的bug">
+<meta name="twitter:description" content="前两天策划反馈某项活动中，理论上大概千分之一中奖率的一个奖品，连续四次被同一个玩家得到了。他之前已经找了几个程序复查过代码，都说没啥问题，但是从概率上讲，肯定是有问题的，所以希望我“为程序员正名”。经过一上午的奋战，我也算不辱使命，找出了这个潜伏了5年的bug，也了解了关于mysql的一个潜规则。  
+整个业务场景大概是这样的（下面代码仅为示意，不可直接运行）：  
+首先，每个玩家报名的时候，向">
+<meta name="twitter:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.png">
+  
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+  
+<script type="text/javascript">
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?996ee0fca2512b4c29f37f60cf6387ca";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+</head>
+
+<body>
+  <div class="wrapper">
+    <header id="header">
+  <div class="title">
+    <h1><a href="/">一根笨茄子</a></h1>
+    <p><a href="/"></a></p>
+  </div>
+  <nav class="nav">
+    <ul>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/about">关于我</a></li>
+      
+      
+    </ul>
+    <div class="clearfix"></div>
+  </nav>
+  <div class="clearfix"></div>
+</header>
+    <div class="content">
+		<article class="post">
+  <header>
+    
+      <div class="icon"></div>
+      <a href="/2016/08/17/mysql-select-order/">
+  <time datetime="2016-08-17T00:28:56.000Z">
+    2016-08-17
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title">一个潜伏了5年的bug</h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>前两天策划反馈某项活动中，理论上大概千分之一中奖率的一个奖品，连续四次被同一个玩家得到了。他之前已经找了几个程序复查过代码，都说没啥问题，但是从概率上讲，肯定是有问题的，所以希望我“为程序员正名”。经过一上午的奋战，我也算不辱使命，找出了这个潜伏了5年的bug，也了解了关于mysql的一个潜规则。  </p>
+<p>整个业务场景大概是这样的（下面代码仅为示意，不可直接运行）：  </p>
+<p>首先，每个玩家报名的时候，向数据库中插入一行，记录下活动id（activity_id），玩家uuid（player_uuid），申请序号（apply_no）以及一些其他的玩家相关信息。  </p>
+<p>同时，在内存中维护一个整数，记录当前活动的申请总人数apply_total_num。同时使用这个整数来获得下一个插入行的apply_no。<br><a id="more"></a><br>第二，由策划填写的数据表导成数据结构表示奖励结构，即每个等级的奖励各有多少份，如下所示：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">awards = &#123;</span><br><span class="line">	<span class="number">1</span>: <span class="number">1</span>, </span><br><span class="line">	<span class="number">2</span>: <span class="number">15</span>, </span><br><span class="line">	<span class="number">3</span>: <span class="number">50</span>, </span><br><span class="line">	...</span><br><span class="line">	&#125;  </span><br></pre></td></tr></table></figure>  </p>
+<p>第三，当活动报名完毕时，根据当前的apply_total_num和总奖励份数sum(awards.values())，生成一个长度为总奖励份数的随机的apply_no序列。比如有10000人报名，总奖励分数是1000，那么我们有可能生成如下的一个包含1000个apply_no的序列：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lucky_apply_nos = [<span class="number">234</span>, <span class="number">123</span>, <span class="number">1356</span>, <span class="number">8765</span>, <span class="number">12</span>, ...]</span><br></pre></td></tr></table></figure>   </p>
+<p>第四，从MySQL数据库中取出lucky_apply_nos对应的uuid：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lucky_uuids = SELECT player_uuid FROM world_lottery WHERE apply_no IN lucky_apply_nos;</span><br></pre></td></tr></table></figure>  </p>
+<p>拿到lucky_uuids之后，根据awards对应分配奖励：lucky_uuids[0]对应1等奖，lucky_uuids[1]~lucky_uuids[15]对应2等奖，依此类推。  </p>
+<p>看上去没有什么问题吧。其实问题就出现在SELECT语句这里了。在这段流程中有一个想当然的推论，就是lucky_uuids的顺序是和lucky_apply_nos中的顺序一致的。但是，其实这里踩了MySQL的一个潜规则坑：<br>对于没有ORDER BY子句的SELECT语句，其返回顺序是和所使用的引擎有关：  </p>
+<blockquote>
+<p>对于MyISAM引擎来说，其返回顺序是其物理存储顺序；<br>对于InnoDB引擎来说，其返回顺序是按照主键排序的。  </p>
+</blockquote>
+<p>也就是说，无论哪种情况，都不会按照IN子句里的列表lucky_apply_nos的顺序返回……  </p>
+<p>具体到我们这里的情况来说，引擎使用的是InnoDB，主键是player_uuid，也就是说返回的lucky_uuids是依据palyer_uuid排过序的。  </p>
+<p>那这样会导致什么问题呢？  </p>
+<p>如果某个玩家的uuid特别小，那么只要这个玩家进入了奖励大名单（lucky_apply_nos），那么他就一定会获得价值最高的1等奖。这样这个玩家连中四次一等奖的概率就是0.1^4，而不是0.0001^4。  </p>
+<p>这个玩法如果在奖励大名单的中奖概率和各个奖项的中奖概率相差不大的时候，bug体现的就不太明显。但是在这次活动中，策划加大了奖励大名单的数量（主要是通过增加低价值奖励的数量），这样就比较容易出现某位玩家连中几次高价值奖励的情况了。  </p>
+<p>解决方法也很简单，拿到数据库的返回结果lucky_uuids之后，再进行一次shuffle即可。  </p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><hr>
+<p>MySQL对于无ORDER BY子句的SELECT的语句的返回结果有潜规则：  </p>
+<ul>
+<li>对于MyISAM引擎来说，其返回顺序是其物理存储顺序；</li>
+<li>对于InnoDB引擎来说，其返回顺序是按照主键排序的。</li>
+</ul>
+<p>转载请注明出处： <a href="http://blog.guoyb.com/2016/08/17/mysql-select-order">http://blog.guoyb.com/2016/08/17/mysql-select-order/</a>  </p>
+<p>欢迎使用微信扫描下方二维码，关注我的微信公众号TechTalking，技术·生活·思考：<br><img src="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.png" alt="后端技术小黑屋"></p>
+
+    
+  </div>
+  <footer>
+    
+      
+      
+  <div class="tags">
+    <a class="tags-link" href="/tags/MySQL/">MySQL</a>, <a class="tags-link" href="/tags/查证记录/">查证记录</a>
+  </div>
+
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+<!-- JiaThis Button BEGIN -->
+<script type="text/javascript">
+var jiathis_config = {data_track_clickback:'true'};
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?move=0&amp;uid=1706898" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+<section id="comment">
+  <h1 class="title">Comments</h1>
+  <div class="ds-thread" data-title="一个潜伏了5年的bug">
+  </div>
+</section>
+
+	</div>
+  </div>
+	<aside id="sidebar">
+  
+  
+    
+      
+      
+
+<div class="widget tagcloud first">
+  <h3 class="title">Tags</h3>
+  <div class="entry">
+    <a href="/tags/C/" style="font-size: 10px;">C</a> <a href="/tags/C/" style="font-size: 15px;">C++</a> <a href="/tags/C-11/" style="font-size: 15px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/echoserver/" style="font-size: 11.67px;">echoserver</a> <a href="/tags/epoll/" style="font-size: 11.67px;">epoll</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 11.67px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/select/" style="font-size: 11.67px;">select</a> <a href="/tags/socket/" style="font-size: 11.67px;">socket</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 15px;">书单</a> <a href="/tags/北京车展/" style="font-size: 10px;">北京车展</a> <a href="/tags/协程/" style="font-size: 10px;">协程</a> <a href="/tags/学习笔记/" style="font-size: 11.67px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/广州/" style="font-size: 10px;">广州</a> <a href="/tags/旅行/" style="font-size: 10px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 16.67px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 13.33px;">查证记录</a> <a href="/tags/游戏开发/" style="font-size: 10px;">游戏开发</a> <a href="/tags/爱好/" style="font-size: 10px;">爱好</a> <a href="/tags/生活/" style="font-size: 11.67px;">生活</a> <a href="/tags/知乎/" style="font-size: 10px;">知乎</a> <a href="/tags/程序人生/" style="font-size: 10px;">程序人生</a> <a href="/tags/读书笔记/" style="font-size: 18.33px;">读书笔记</a> <a href="/tags/读后感/" style="font-size: 10px;">读后感</a>
+  </div>
+</div>
+
+    
+      
+      
+
+<div class="widget recent-posts">
+  <h3 class="title">最近文章</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2016/08/17/mysql-select-order/">一个潜伏了5年的bug</a>
+      </li>
+    
+      <li>
+        <a href="/2016/08/14/cpp11-6/">C++11新特性之Class</a>
+      </li>
+    
+      <li>
+        <a href="/2016/08/06/something-about-strip/">从string.strip()引起的一个bug说起</a>
+      </li>
+    
+      <li>
+        <a href="/2016/08/02/cpp11-5/">C++11新特性之智能指针(shared_ptr, unique_ptr和weak_ptr)</a>
+      </li>
+    
+      <li>
+        <a href="/2016/07/28/2015-booklist/">2015年书单</a>
+      </li>
+    
+  </ul>
+</div>
+
+    
+      
+      
+<div class="widget tag">
+  <h3 class="title">友情链接</h3>
+  <ul class="entry">
+  
+    
+    <li><a href="http://www.linkedin.com/in/yubo-guo-739b0071" target="_blank">LinkedIn</a></li>
+  
+    
+    <li><a href="http://www.tuicool.com/sites/2emeIjb" target="_blank">推酷站点</a></li>
+  
+  </ul>
+</div>
+
+    
+  
+</aside>
+<div class="clearfix"></div>
+  <footer id="footer"><div class="copyright">
+  
+  &copy; 2016 <a href="/">Yubo Guo</a>
+  
+</div>
+<div class="theme-copyright">
+  Theme by <a href="https://github.com/orderedlist" target="_blank">orderedlist</a>
+   | 
+  Redesign by <a href="http://heroicyang.com/" target="_blank">Heroic Yang</a>
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+<script src="/js/scale.fix.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = { short_name: 'guoyb' };
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';
+    ds.async = true;
+    ds.src = 'http://static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+  (function($){
+    $('.fancybox').fancybox();
+  })(jQuery);
+</script>
+
+</body>
+</html>
