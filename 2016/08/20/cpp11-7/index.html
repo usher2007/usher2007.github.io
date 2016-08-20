@@ -1,0 +1,261 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  
+  <title>C++11新特性之右值引用与移动 | 一根笨茄子</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  
+    <meta name="author" content="Yubo Guo">
+  
+  
+    <meta name="description" content="前六篇在这里：C++11新特性之新类型与初始化: http://blog.guoyb.com/2016/06/18/cpp11-1C++11新特性之类型推断与类型获取: http://blog.guoyb.com/2016/06/25/cpp11-2C++11新特性之lambda： http://blog.guoyb.com/2016/06/30/cpp11-3C++11新特性之容器相关特性：">
+  
+  <meta name="description" content="前六篇在这里：C++11新特性之新类型与初始化: http://blog.guoyb.com/2016/06/18/cpp11-1C++11新特性之类型推断与类型获取: http://blog.guoyb.com/2016/06/25/cpp11-2C++11新特性之lambda： http://blog.guoyb.com/2016/06/30/cpp11-3C++11新特性之容器相关特性：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="C++11新特性之右值引用与移动">
+<meta property="og:url" content="http://blog.guoyb.com/2016/08/20/cpp11-7/index.html">
+<meta property="og:site_name" content="一根笨茄子">
+<meta property="og:description" content="前六篇在这里：C++11新特性之新类型与初始化: http://blog.guoyb.com/2016/06/18/cpp11-1C++11新特性之类型推断与类型获取: http://blog.guoyb.com/2016/06/25/cpp11-2C++11新特性之lambda： http://blog.guoyb.com/2016/06/30/cpp11-3C++11新特性之容器相关特性：">
+<meta property="og:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.png">
+<meta property="og:updated_time" content="2016-08-20T09:02:42.309Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="C++11新特性之右值引用与移动">
+<meta name="twitter:description" content="前六篇在这里：C++11新特性之新类型与初始化: http://blog.guoyb.com/2016/06/18/cpp11-1C++11新特性之类型推断与类型获取: http://blog.guoyb.com/2016/06/25/cpp11-2C++11新特性之lambda： http://blog.guoyb.com/2016/06/30/cpp11-3C++11新特性之容器相关特性：">
+<meta name="twitter:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.png">
+  
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+  
+<script type="text/javascript">
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?996ee0fca2512b4c29f37f60cf6387ca";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+</head>
+
+<body>
+  <div class="wrapper">
+    <header id="header">
+  <div class="title">
+    <h1><a href="/">一根笨茄子</a></h1>
+    <p><a href="/"></a></p>
+  </div>
+  <nav class="nav">
+    <ul>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/about">关于我</a></li>
+      
+      
+    </ul>
+    <div class="clearfix"></div>
+  </nav>
+  <div class="clearfix"></div>
+</header>
+    <div class="content">
+		<article class="post">
+  <header>
+    
+      <div class="icon"></div>
+      <a href="/2016/08/20/cpp11-7/">
+  <time datetime="2016-08-20T06:45:34.000Z">
+    2016-08-20
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title">C++11新特性之右值引用与移动</h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>前六篇在这里：<br>C++11新特性之新类型与初始化: <a href="http://blog.guoyb.com/2016/06/18/cpp11-1/">http://blog.guoyb.com/2016/06/18/cpp11-1</a><br>C++11新特性之类型推断与类型获取: <a href="http://blog.guoyb.com/2016/06/25/cpp11-2/">http://blog.guoyb.com/2016/06/25/cpp11-2</a><br>C++11新特性之lambda： <a href="http://blog.guoyb.com/2016/06/30/cpp11-3/">http://blog.guoyb.com/2016/06/30/cpp11-3</a><br>C++11新特性之容器相关特性： <a href="http://blog.guoyb.com/2016/07/09/cpp11-4">http://blog.guoyb.com/2016/07/09/cpp11-4</a><br>C++11新特性之智能指针： <a href="http://blog.guoyb.com/2016/08/02/cpp11-5">http://blog.guoyb.com/2016/08/02/cpp11-5</a><br>C++11新特性之Class: <a href="http://blog.guoyb.com/2016/08/14/cpp11-6">http://blog.guoyb.com/2016/08/14/cpp11-6</a></p>
+<hr>
+<p>这是C++11新特性介绍的第七部分，涉及到左右值引用、移动构造、移动赋值、完美转发等。<br>不想看toy code的读者可以直接拉到文章最后看这部分的总结。  </p>
+<h2 id="右值引用"><a href="#右值引用" class="headerlink" title="右值引用"></a>右值引用</h2><p>右值是一个行将销毁的值，例如（i * 10）这种表达式的值。新标准中允许通过&amp;&amp;标识定义一个右值引用，将其绑定到一个右值上。但是，一个右值引用<strong>变量</strong>又是一个左值，因为它是一个变量了嘛。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"test rvalue reference:\n"</span>;</span><br><span class="line"><span class="keyword">int</span> j = <span class="number">42</span>;</span><br><span class="line"><span class="keyword">int</span> &amp;lr = j;</span><br><span class="line"><span class="comment">//int &amp;&amp;rr = j; // Wrong. Can't bind a rvalue ref to a lvalue.</span></span><br><span class="line"><span class="comment">//int &amp;lr2 = i * 42; // Wrong. Can't bind a lvalue ref to a rvalue.</span></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> &amp;lr3 = j * <span class="number">42</span>;</span><br><span class="line"><span class="keyword">int</span> &amp;&amp;rr2 = j * <span class="number">42</span>;</span><br><span class="line"><span class="comment">//int &amp;&amp;rr3 = rr2; // Wrong. rr2 is a rvalue ref and rvalue ref is a lvalue.</span></span><br><span class="line"><span class="keyword">int</span> &amp;lr4 = rr2;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;j&lt;&lt;<span class="string">'\t'</span>&lt;&lt;lr&lt;&lt;<span class="string">'\t'</span>&lt;&lt;lr3&lt;&lt;<span class="string">'\t'</span>&lt;&lt;rr2&lt;&lt;<span class="string">'\t'</span>&lt;&lt;lr4&lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"test rvalue ref done.\n"</span>&lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br></pre></td></tr></table></figure><br><a id="more"></a>  </p>
+<h2 id="std-move"><a href="#std-move" class="headerlink" title="std::move"></a>std::move</h2><p>std::move函数的作用很简单，就是获得一个左值的右值引用，这样我们就找到了一种途径将一个右值引用绑定到一个左值上。  </p>
+<p>但是，使用std::move也意味着交出左值的控制权，之后就不能再使用这个左值了，因为使用std::move之后，无法对这个左值做任何保证。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"test std::move:\n"</span>;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">string</span> str5 = <span class="string">"asdf"</span>;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">string</span> &amp;lr5 = str5;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">string</span> &amp;&amp;rr5 = <span class="built_in">std</span>::move(str5);</span><br><span class="line">rr5[<span class="number">0</span>] = <span class="string">'b'</span>;</span><br><span class="line">lr5[<span class="number">1</span>] = <span class="string">'z'</span>;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;rr5&lt;&lt;<span class="string">'\t'</span>&lt;&lt;lr5&lt;&lt;<span class="string">'\t'</span>&lt;&lt;str5&lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"test std::move done.\n"</span>&lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br></pre></td></tr></table></figure>  </p>
+<h2 id="移动构造"><a href="#移动构造" class="headerlink" title="移动构造"></a>移动构造</h2><p>新标准中一些内置类型（如string）都实现了移动构造函数。所谓移动构造，就是接受一个右值引用，从而接受该右值引用所引用的对象，而没有实际的大块内存拷贝操作（可以想象成只拷贝了一个指针而不是整块的内存）。调用移动构造函数的关键是要传入一个相应的右值引用，这时上面提到的std::move函数就派上用场了。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"test move constructor:\n"</span>;</span><br><span class="line"><span class="built_in">std</span>::allocator&lt;<span class="built_in">std</span>::<span class="built_in">string</span>&gt; alloc;</span><br><span class="line"><span class="keyword">size_t</span> size = <span class="number">5</span>;</span><br><span class="line"><span class="keyword">auto</span> old_strs = alloc.allocate(size);</span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">size_t</span> i = <span class="number">0</span>; i &lt; size; i++)</span><br><span class="line">&#123;</span><br><span class="line">	alloc.construct(old_strs + i, <span class="string">"abcde"</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"old_strs[0]: "</span>&lt;&lt;old_strs[<span class="number">0</span>]&lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line"><span class="keyword">auto</span> new_strs = alloc.allocate(size);</span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">size_t</span> i = <span class="number">0</span>; i &lt; size; i++)</span><br><span class="line">&#123;</span><br><span class="line">	alloc.construct(new_strs + i, <span class="built_in">std</span>::move(*(old_strs + i)));</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"new_strs[0]: "</span>&lt;&lt;new_strs[<span class="number">0</span>]&lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"old_strs[0]: "</span>&lt;&lt;old_strs[<span class="number">0</span>]&lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">size_t</span> i = <span class="number">0</span>; i &lt; size; i++)</span><br><span class="line">&#123;</span><br><span class="line">	alloc.destroy(old_strs + i);</span><br><span class="line">&#125;</span><br><span class="line">alloc.deallocate(old_strs, size);</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"test move constructor done.\n"</span>&lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br></pre></td></tr></table></figure>  </p>
+<p>调用移动构造函数之后，右值引用所绑定的对象保证可析构可销毁的状态。  </p>
+<h2 id="定义自己的移动构造函数"><a href="#定义自己的移动构造函数" class="headerlink" title="定义自己的移动构造函数"></a>定义自己的移动构造函数</h2><p>上面说到了，移动构造函数的关键是接受一个右值引用，<strong>窃取</strong>该对象的内容为己所用（不拷贝），并且保证被窃取的对象保持可析构可销毁的状态。那么，我们当然可以定义一个自己的移动构造函数。  </p>
+<p>一个整型数组的定义如下：<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> IntVec</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	IntVec() = <span class="keyword">default</span>;</span><br><span class="line">	IntVec(<span class="keyword">size_t</span> capacity);</span><br><span class="line">	IntVec(IntVec &amp;rhs);</span><br><span class="line">	IntVec(IntVec &amp;&amp;rhs) <span class="keyword">noexcept</span>;</span><br><span class="line">	IntVec &amp;<span class="keyword">operator</span>=(IntVec &amp;&amp;rhs) &amp; <span class="keyword">noexcept</span>;</span><br><span class="line">	~IntVec();</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">int</span> <span class="title">push_back</span><span class="params">(<span class="keyword">int</span> val)</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">print_info</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">size_t</span> capacity;</span><br><span class="line">	<span class="keyword">size_t</span> size;</span><br><span class="line">	<span class="keyword">int</span> *pointer;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>  </p>
+<p>其中各个函数的定义为：<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">IntVec::IntVec(IntVec &amp;rhs)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">this</span>-&gt;capacity = rhs.capacity;</span><br><span class="line">	<span class="keyword">this</span>-&gt;size = rhs.size;</span><br><span class="line">	<span class="keyword">this</span>-&gt;pointer = new <span class="keyword">int</span>[<span class="keyword">this</span>-&gt;capacity];</span><br><span class="line">	<span class="keyword">for</span>(<span class="keyword">size_t</span> i = <span class="number">0</span>; i &lt; size; i++)</span><br><span class="line">		<span class="keyword">this</span>-&gt;pointer[i] = rhs.pointer[i];</span><br><span class="line">	<span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"IntVect copy constructor.\n"</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">IntVec::IntVec(<span class="keyword">size_t</span> capacity)</span><br><span class="line">	: capacity(capacity), size(<span class="number">0</span>)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">this</span>-&gt;pointer = new <span class="keyword">int</span>[capacity];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">IntVec::IntVec(IntVec &amp;&amp;rhs) <span class="keyword">noexcept</span></span><br><span class="line">	: capacity(rhs.capacity), size(rhs.size), pointer(rhs.pointer)</span><br><span class="line">&#123;</span><br><span class="line">		rhs.pointer = <span class="literal">nullptr</span>;</span><br><span class="line">		rhs.capacity = rhs.size = <span class="number">0</span>;</span><br><span class="line">		<span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"IntVect move constructor.\n"</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">IntVec &amp;IntVec::<span class="keyword">operator</span>=(IntVec &amp;&amp;rhs) &amp; <span class="keyword">noexcept</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">if</span>(this != &amp;rhs)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">if</span>(this-&gt;pointer)</span><br><span class="line">			<span class="keyword">delete</span> [] <span class="keyword">this</span>-&gt;pointer;</span><br><span class="line">		<span class="keyword">this</span>-&gt;pointer = rhs.pointer;</span><br><span class="line">		<span class="keyword">this</span>-&gt;capacity = rhs.capacity;</span><br><span class="line">		<span class="keyword">this</span>-&gt;size = rhs.size;</span><br><span class="line">		rhs.pointer = <span class="literal">nullptr</span>;</span><br><span class="line">		rhs.capacity = rhs.size = <span class="number">0</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"IntVect move assign constructor.\n"</span>;</span><br><span class="line">	return *<span class="keyword">this</span>;</span><br><span class="line">&#125;</span><br><span class="line">IntVec::~IntVec()</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">if</span>(<span class="keyword">this</span>-&gt;pointer)</span><br><span class="line">		<span class="keyword">delete</span> [] <span class="keyword">this</span>-&gt;pointer;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>  </p>
+<p>push_back和print_info的定义就不赘述了。  </p>
+<p>可以看到，在移动构造函数里，只需要<strong>窃取</strong>指针及其状态，并将右值引用对象的状态重置，即可完成移动构造的操作。  </p>
+<p>同样的，我们还可以定义移动赋值运算。  </p>
+<p>值得注意的是，两个移动函数都添加了noexcept标识符。这也是C++11新标准中引入的，用于向标准库指明此函数不会抛出异常，以避免标准库在和我们定义的这个类进行交互时做一些不必要的工作。如果我们不承诺noexcept，那么当标准库容器扩展容量时，就不能调用移动构造函数来<strong>移动</strong>容器内的现存元素，而只能采取比较耗费资源的拷贝构造函数。  </p>
+<p>这一部分的测试代码如下：<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">std::cout&lt;&lt;"test custom move copy constructor/move assign operator.\n";</span><br><span class="line">IntVec iv1(10);</span><br><span class="line">for(size_t i = 0; i &lt; 5; i++)</span><br><span class="line">	iv1.push_back(i);</span><br><span class="line">std::cout&lt;&lt;"-------iv1:\n";</span><br><span class="line">iv1.print_info();</span><br><span class="line"></span><br><span class="line">IntVec iv2(std::move(iv1));</span><br><span class="line">std::cout&lt;&lt;"-------iv2:\n";</span><br><span class="line">iv2.print_info();</span><br><span class="line">std::cout&lt;&lt;"-------iv1:\n";</span><br><span class="line">iv1.print_info();</span><br><span class="line"></span><br><span class="line">IntVec iv3 = iv2;</span><br><span class="line">std::cout&lt;&lt;"-------iv3:\n";</span><br><span class="line">iv3.print_info();</span><br><span class="line">std::cout&lt;&lt;"-------iv2:\n";</span><br><span class="line">iv2.print_info();</span><br><span class="line"></span><br><span class="line">IntVec iv4(5);</span><br><span class="line">std::cout&lt;&lt;"-------iv4:\n";</span><br><span class="line">iv4.print_info();</span><br><span class="line">iv4 = std::move(iv2);</span><br><span class="line">std::cout&lt;&lt;"-------iv4:\n";</span><br><span class="line">iv4.print_info();</span><br><span class="line">std::cout&lt;&lt;"-------iv2:\n";</span><br><span class="line">iv2.print_info();</span><br><span class="line"></span><br><span class="line">std::cout&lt;&lt;"test custom move copy constructor/move assign operator done.\n"&lt;&lt;std::endl;</span><br></pre></td></tr></table></figure>  </p>
+<h2 id="移动迭代器"><a href="#移动迭代器" class="headerlink" title="移动迭代器"></a>移动迭代器</h2><p>新标准中提供了std::make_move_iterator函数用于从普通迭代器获得移动迭代器。对移动迭代器解引用将会获得对应的右值引用，从而方便的对整个容器进行移动操作。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"test move iterator:\n"</span>;</span><br><span class="line"><span class="keyword">auto</span> new_strs2 = alloc.allocate(size);</span><br><span class="line"><span class="built_in">std</span>::uninitialized_copy(<span class="built_in">std</span>::make_move_iterator(new_strs),</span><br><span class="line">		<span class="built_in">std</span>::make_move_iterator(new_strs + size),</span><br><span class="line">		new_strs2);</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"new_strs[0]: "</span>&lt;&lt;new_strs[<span class="number">0</span>]&lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"new_strs2[0]: "</span>&lt;&lt;new_strs2[<span class="number">0</span>]&lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">size_t</span> i = <span class="number">0</span>; i &lt; size; i++)</span><br><span class="line">&#123;</span><br><span class="line">	alloc.destroy(new_strs + i);</span><br><span class="line">&#125;</span><br><span class="line">alloc.deallocate(new_strs, size);</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"test move iterator done.\n"</span>&lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br></pre></td></tr></table></figure>  </p>
+<h2 id="引用折叠规则"><a href="#引用折叠规则" class="headerlink" title="引用折叠规则"></a>引用折叠规则</h2><p>当左右引用遇到模板参数的时候，需要用到引用折叠规则来获得最终的模板推断类型和形参类型。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">vague_func</span><span class="params">(T&amp;&amp; val)</span></span><br><span class="line"></span>&#123;</span><br><span class="line">	<span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"val: "</span>&lt;&lt;val&lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">	T val2 = val;</span><br><span class="line">	val2++;</span><br><span class="line">	<span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"val2: "</span>&lt;&lt;val2&lt;&lt;<span class="string">'\t'</span>&lt;&lt;<span class="string">"val: "</span>&lt;&lt;val&lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"test ref folding:\n"</span>;</span><br><span class="line"><span class="keyword">int</span> val = <span class="number">2</span>;</span><br><span class="line"><span class="keyword">int</span> &amp;lref = val;</span><br><span class="line"><span class="keyword">int</span> &amp;&amp;rref = <span class="number">2</span>;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"-------with val:\n"</span>;</span><br><span class="line">vague_func(<span class="number">2</span>);</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"-------with lref:\n"</span>;</span><br><span class="line">vague_func(lref);</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"-------with rref:\n"</span>;</span><br><span class="line">vague_func(rref);</span><br><span class="line">vague_func(<span class="built_in">std</span>::move(val));</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"test ref done.\n"</span>&lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br></pre></td></tr></table></figure>  </p>
+<p>在上述vague_func中，虽然val的类型是T&amp;&amp;，看上去是个右值引用，但是实际上也是可以接受左值引用的类型的。当传入一个左值时，如lref，编译器会推断T = int&amp;而不是T = int。那么这时实际实例化的vague_func实际是：  </p>
+<p>void vague_func(int&amp; &amp;&amp; val)  </p>
+<p>根据引用折叠规则，除了T&amp;&amp; &amp;&amp;折叠为T&amp;&amp;之外的所有情况均折叠为T&amp;,那么最终vague_func为：  </p>
+<p>void vague_func(int&amp; val)</p>
+<p>因此，vague_func也可以接受一个左值实参。这种引用折叠规则，也是std::move得以实现的基础，有兴趣的读者可以自行去了解下其实现，就一行代码^o^  </p>
+<p>但是，vague_func的模板类型推断规则，也造成了T类型的不确定（int还是int&amp;？），这给后续的编码也带来了困难。  </p>
+<h2 id="std-forward"><a href="#std-forward" class="headerlink" title="std::forward"></a>std::forward</h2><p>在上述vague_func中，如果传入一个右值，但是val却是一个变量，也就是一个左值。那么如何保持原来实参的类型信息呢，这时需要用到std::forward。  </p>
+<p>std::forward<t>（val）返回类型是T&amp;&amp;,这时，根据折叠规则，如果实参val是个左值，则返回T&amp;;如果是右值，则返回T&amp;&amp;。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">f</span><span class="params">(<span class="keyword">int</span> &amp;&amp;i)</span></span><br><span class="line"></span>&#123;</span><br><span class="line">	<span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;i&lt;&lt;<span class="string">"\t i is a right ref.\n"</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">g</span><span class="params">(<span class="keyword">int</span> &amp;i)</span></span><br><span class="line"></span>&#123;</span><br><span class="line">	<span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;i&lt;&lt;<span class="string">"\t i is a left ref.\n"</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> F, <span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">forward_func</span><span class="params">(F f, T&amp;&amp; val)</span></span><br><span class="line"></span>&#123;</span><br><span class="line">	f(<span class="built_in">std</span>::forward&lt;T&gt;(val));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"test forward:\n"</span>;</span><br><span class="line">forward_func(f, <span class="number">5</span>);</span><br><span class="line">forward_func(g, rref);</span><br><span class="line">forward_func(g, val);</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"test forward done.\n"</span>&lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br></pre></td></tr></table></figure>  </t></p>
+<h2 id="程序输出"><a href="#程序输出" class="headerlink" title="程序输出"></a>程序输出</h2><p>程序的整体输出如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br></pre></td><td class="code"><pre><span class="line">test move constructor:</span><br><span class="line">old_strs[0]: abcde</span><br><span class="line">new_strs[0]: abcde</span><br><span class="line">old_strs[0]: </span><br><span class="line">test move constructor done.</span><br><span class="line"></span><br><span class="line">test rvalue reference:</span><br><span class="line">42      42      1764    1764    1764</span><br><span class="line">test rvalue ref done.</span><br><span class="line"></span><br><span class="line">test std::move:</span><br><span class="line">bzdf    bzdf    bzdf</span><br><span class="line">test std::move done.</span><br><span class="line"></span><br><span class="line">test custom move copy constructor/move assign operator.</span><br><span class="line">-------iv1:</span><br><span class="line">capacity: 10</span><br><span class="line">size: 5</span><br><span class="line">pointer: 0x1523160</span><br><span class="line">IntVect move constructor.</span><br><span class="line">-------iv2:</span><br><span class="line">capacity: 10</span><br><span class="line">size: 5</span><br><span class="line">pointer: 0x1523160</span><br><span class="line">-------iv1:</span><br><span class="line">capacity: 0</span><br><span class="line">size: 0</span><br><span class="line">pointer: nullptr</span><br><span class="line">IntVect copy constructor.</span><br><span class="line">-------iv3:</span><br><span class="line">capacity: 10</span><br><span class="line">size: 5</span><br><span class="line">pointer: 0x1523190</span><br><span class="line">-------iv2:</span><br><span class="line">capacity: 10</span><br><span class="line">size: 5</span><br><span class="line">pointer: 0x1523160</span><br><span class="line">-------iv4:</span><br><span class="line">capacity: 5</span><br><span class="line">size: 0</span><br><span class="line">pointer: 0x15231c0</span><br><span class="line">IntVect move assign constructor.</span><br><span class="line">-------iv4:</span><br><span class="line">capacity: 10</span><br><span class="line">size: 5</span><br><span class="line">pointer: 0x1523160</span><br><span class="line">-------iv2:</span><br><span class="line">capacity: 0</span><br><span class="line">size: 0</span><br><span class="line">pointer: nullptr</span><br><span class="line">test custom move copy constructor/move assign operator done.</span><br><span class="line"></span><br><span class="line">test move iterator:</span><br><span class="line">new_strs[0]: </span><br><span class="line">new_strs2[0]: abcde</span><br><span class="line">test move iterator done.</span><br><span class="line"></span><br><span class="line">test ref folding:</span><br><span class="line">-------with val:</span><br><span class="line">val: 2</span><br><span class="line">val2: 3 val: 2</span><br><span class="line">-------with lref:</span><br><span class="line">val: 2</span><br><span class="line">val2: 3 val: 3</span><br><span class="line">-------with rref:</span><br><span class="line">val: 2</span><br><span class="line">val2: 3 val: 3</span><br><span class="line">val: 3</span><br><span class="line">val2: 4 val: 3</span><br><span class="line">test ref done.</span><br><span class="line"></span><br><span class="line">test forward:</span><br><span class="line">5        i is a right ref.</span><br><span class="line">3        i is a left ref.</span><br><span class="line">3        i is a left ref.</span><br><span class="line">test forward done.</span><br></pre></td></tr></table></figure>  </p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ol>
+<li>新标准中允许通过&amp;&amp;标识定义一个右值引用，将其绑定到一个右值上。</li>
+<li>std::move函数的作用是获得一个变量的右值引用。</li>
+<li>移动构造，就是接受一个右值引用，从而接受（窃取）该右值引用所引用的对象，而没有实际的大块内存拷贝操作，并且保证被窃取后的对象可析构可销毁。</li>
+<li>可以定义自己的移动构造函数以及移动赋值运算。</li>
+<li>noexcept用于向标准库指明此函数不会抛出异常。声明移动构造函数和移动赋值运算为noexcept以避免标准库在和我们定义的这个类进行交互时做一些不必要的工作。</li>
+<li>新标准中提供了std::make_move_iterator函数用于从普通迭代器获得移动迭代器。对移动迭代器解引用将会获得对应的右值引用，从而方便的对整个容器进行移动操作。 </li>
+<li>引用折叠规则，除了T&amp;&amp; &amp;&amp;折叠为T&amp;&amp;之外的所有情况均折叠为T&amp;，主要用于模板类型推断中。</li>
+<li>std::forward<t>（val）用于保持实参的左右值信息。</t></li>
+</ol>
+<p>完整代码详见<a href="https://github.com/yubo1911/saber/blob/master/learncpp11/move_and_forward.cpp" target="_blank" rel="external">move_and_forward.cpp</a>  </p>
+<p>转载请注明出处： <a href="http://blog.guoyb.com/2016/08/20/cpp11-7">http://blog.guoyb.com/2016/08/20/cpp11-7/</a>  </p>
+<p>欢迎使用微信扫描下方二维码，关注我的微信公众号TechTalking，技术·生活·思考：<br><img src="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.png" alt="后端技术小黑屋"></p>
+
+    
+  </div>
+  <footer>
+    
+      
+      
+  <div class="tags">
+    <a class="tags-link" href="/tags/C/">C++</a>, <a class="tags-link" href="/tags/C-11/">C++11</a>
+  </div>
+
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+<!-- JiaThis Button BEGIN -->
+<script type="text/javascript">
+var jiathis_config = {data_track_clickback:'true'};
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?move=0&amp;uid=1706898" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+<section id="comment">
+  <h1 class="title">评论</h1>
+  <div class="ds-thread" data-title="C++11新特性之右值引用与移动">
+  </div>
+</section>
+
+	</div>
+  </div>
+	<aside id="sidebar">
+  
+  
+    
+      
+      
+
+<div class="widget tagcloud first">
+  <h3 class="title">Tags</h3>
+  <div class="entry">
+    <a href="/tags/C/" style="font-size: 10px;">C</a> <a href="/tags/C/" style="font-size: 15.71px;">C++</a> <a href="/tags/C-11/" style="font-size: 15.71px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/echoserver/" style="font-size: 11.43px;">echoserver</a> <a href="/tags/epoll/" style="font-size: 11.43px;">epoll</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 11.43px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/select/" style="font-size: 11.43px;">select</a> <a href="/tags/socket/" style="font-size: 11.43px;">socket</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 14.29px;">书单</a> <a href="/tags/北京车展/" style="font-size: 10px;">北京车展</a> <a href="/tags/协程/" style="font-size: 10px;">协程</a> <a href="/tags/学习笔记/" style="font-size: 11.43px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/广州/" style="font-size: 10px;">广州</a> <a href="/tags/旅行/" style="font-size: 10px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 17.14px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 12.86px;">查证记录</a> <a href="/tags/游戏开发/" style="font-size: 10px;">游戏开发</a> <a href="/tags/爱好/" style="font-size: 10px;">爱好</a> <a href="/tags/生活/" style="font-size: 11.43px;">生活</a> <a href="/tags/知乎/" style="font-size: 10px;">知乎</a> <a href="/tags/程序人生/" style="font-size: 10px;">程序人生</a> <a href="/tags/读书笔记/" style="font-size: 18.57px;">读书笔记</a> <a href="/tags/读后感/" style="font-size: 10px;">读后感</a>
+  </div>
+</div>
+
+    
+      
+      
+
+<div class="widget recent-posts">
+  <h3 class="title">最近文章</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2016/08/20/cpp11-7/">C++11新特性之右值引用与移动</a>
+      </li>
+    
+      <li>
+        <a href="/2016/08/17/mysql-select-order/">一个潜伏了5年的bug</a>
+      </li>
+    
+      <li>
+        <a href="/2016/08/14/cpp11-6/">C++11新特性之Class</a>
+      </li>
+    
+      <li>
+        <a href="/2016/08/06/something-about-strip/">从string.strip()引起的一个bug说起</a>
+      </li>
+    
+      <li>
+        <a href="/2016/08/02/cpp11-5/">C++11新特性之智能指针(shared_ptr, unique_ptr和weak_ptr)</a>
+      </li>
+    
+  </ul>
+</div>
+
+    
+      
+      
+<div class="widget tag">
+  <h3 class="title">友情链接</h3>
+  <ul class="entry">
+  
+    
+    <li><a href="http://www.linkedin.com/in/yubo-guo-739b0071" target="_blank">LinkedIn</a></li>
+  
+    
+    <li><a href="http://www.tuicool.com/sites/2emeIjb" target="_blank">推酷站点</a></li>
+  
+  </ul>
+</div>
+
+    
+  
+</aside>
+<div class="clearfix"></div>
+  <footer id="footer"><div class="copyright">
+  
+  &copy; 2016 <a href="/">Yubo Guo</a>
+  
+</div>
+<div class="theme-copyright">
+  Theme by <a href="https://github.com/orderedlist" target="_blank">orderedlist</a>
+   | 
+  Redesign by <a href="http://heroicyang.com/" target="_blank">Heroic Yang</a>
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+<script src="/js/scale.fix.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = { short_name: 'guoyb' };
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';
+    ds.async = true;
+    ds.src = 'http://static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+  (function($){
+    $('.fancybox').fancybox();
+  })(jQuery);
+</script>
+
+</body>
+</html>

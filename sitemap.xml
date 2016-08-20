@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://blog.guoyb.com/2016/08/20/cpp11-7/</loc>
+    
+    <lastmod>2016-08-20T09:02:42.309Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://blog.guoyb.com/2016/08/17/mysql-select-order/</loc>
     
     <lastmod>2016-08-17T00:43:12.116Z</lastmod>

@@ -63,6 +63,52 @@ var _hmt = _hmt || [];
   <header>
     
       <div class="icon"></div>
+      <a href="/2016/08/20/cpp11-7/">
+  <time datetime="2016-08-20T06:45:34.000Z">
+    2016-08-20
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title"><a href="/2016/08/20/cpp11-7/">C++11新特性之右值引用与移动</a></h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>前六篇在这里：<br>C++11新特性之新类型与初始化: <a href="http://blog.guoyb.com/2016/06/18/cpp11-1/">http://blog.guoyb.com/2016/06/18/cpp11-1</a><br>C++11新特性之类型推断与类型获取: <a href="http://blog.guoyb.com/2016/06/25/cpp11-2/">http://blog.guoyb.com/2016/06/25/cpp11-2</a><br>C++11新特性之lambda： <a href="http://blog.guoyb.com/2016/06/30/cpp11-3/">http://blog.guoyb.com/2016/06/30/cpp11-3</a><br>C++11新特性之容器相关特性： <a href="http://blog.guoyb.com/2016/07/09/cpp11-4">http://blog.guoyb.com/2016/07/09/cpp11-4</a><br>C++11新特性之智能指针： <a href="http://blog.guoyb.com/2016/08/02/cpp11-5">http://blog.guoyb.com/2016/08/02/cpp11-5</a><br>C++11新特性之Class: <a href="http://blog.guoyb.com/2016/08/14/cpp11-6">http://blog.guoyb.com/2016/08/14/cpp11-6</a></p>
+<hr>
+<p>这是C++11新特性介绍的第七部分，涉及到左右值引用、移动构造、移动赋值、完美转发等。<br>不想看toy code的读者可以直接拉到文章最后看这部分的总结。  </p>
+<h2 id="右值引用"><a href="#右值引用" class="headerlink" title="右值引用"></a>右值引用</h2><p>右值是一个行将销毁的值，例如（i * 10）这种表达式的值。新标准中允许通过&amp;&amp;标识定义一个右值引用，将其绑定到一个右值上。但是，一个右值引用<strong>变量</strong>又是一个左值，因为它是一个变量了嘛。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"test rvalue reference:\n"</span>;</span><br><span class="line"><span class="keyword">int</span> j = <span class="number">42</span>;</span><br><span class="line"><span class="keyword">int</span> &amp;lr = j;</span><br><span class="line"><span class="comment">//int &amp;&amp;rr = j; // Wrong. Can't bind a rvalue ref to a lvalue.</span></span><br><span class="line"><span class="comment">//int &amp;lr2 = i * 42; // Wrong. Can't bind a lvalue ref to a rvalue.</span></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> &amp;lr3 = j * <span class="number">42</span>;</span><br><span class="line"><span class="keyword">int</span> &amp;&amp;rr2 = j * <span class="number">42</span>;</span><br><span class="line"><span class="comment">//int &amp;&amp;rr3 = rr2; // Wrong. rr2 is a rvalue ref and rvalue ref is a lvalue.</span></span><br><span class="line"><span class="keyword">int</span> &amp;lr4 = rr2;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;j&lt;&lt;<span class="string">'\t'</span>&lt;&lt;lr&lt;&lt;<span class="string">'\t'</span>&lt;&lt;lr3&lt;&lt;<span class="string">'\t'</span>&lt;&lt;rr2&lt;&lt;<span class="string">'\t'</span>&lt;&lt;lr4&lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"test rvalue ref done.\n"</span>&lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br></pre></td></tr></table></figure><br>
+    
+  </div>
+  <footer class="end-sep">
+    
+      
+        <div class="alignleft">
+          <a href="/2016/08/20/cpp11-7/#more" class="more-link">阅读全文</a>
+        </div>
+      
+      
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+<!-- JiaThis Button BEGIN -->
+<script type="text/javascript">
+var jiathis_config = {data_track_clickback:'true'};
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?move=0&amp;uid=1706898" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+
+  <article class="post">
+  <header>
+    
+      <div class="icon"></div>
       <a href="/2016/08/17/mysql-select-order/">
   <time datetime="2016-08-17T00:28:56.000Z">
     2016-08-17
@@ -89,7 +135,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2016/08/17/mysql-select-order/#more" class="more-link">Read More</a>
+          <a href="/2016/08/17/mysql-select-order/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -135,7 +181,7 @@ var jiathis_config = {data_track_clickback:'true'};
     
       
         <div class="alignleft">
-          <a href="/2016/08/14/cpp11-6/#more" class="more-link">Read More</a>
+          <a href="/2016/08/14/cpp11-6/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -185,7 +231,7 @@ var jiathis_config = {data_track_clickback:'true'};
     
       
         <div class="alignleft">
-          <a href="/2016/08/06/something-about-strip/#more" class="more-link">Read More</a>
+          <a href="/2016/08/06/something-about-strip/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -233,7 +279,7 @@ var jiathis_config = {data_track_clickback:'true'};
     
       
         <div class="alignleft">
-          <a href="/2016/08/02/cpp11-5/#more" class="more-link">Read More</a>
+          <a href="/2016/08/02/cpp11-5/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -279,7 +325,7 @@ var jiathis_config = {data_track_clickback:'true'};
     
       
         <div class="alignleft">
-          <a href="/2016/07/28/2015-booklist/#more" class="more-link">Read More</a>
+          <a href="/2016/07/28/2015-booklist/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -324,7 +370,7 @@ var jiathis_config = {data_track_clickback:'true'};
     
       
         <div class="alignleft">
-          <a href="/2016/07/23/learn-c-the-hard-way/#more" class="more-link">Read More</a>
+          <a href="/2016/07/23/learn-c-the-hard-way/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -370,7 +416,7 @@ var jiathis_config = {data_track_clickback:'true'};
     
       
         <div class="alignleft">
-          <a href="/2016/07/22/virtualenv-trick/#more" class="more-link">Read More</a>
+          <a href="/2016/07/22/virtualenv-trick/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -429,7 +475,7 @@ var jiathis_config = {data_track_clickback:'true'};
     
       
         <div class="alignleft">
-          <a href="/2016/07/21/learn-redis-basic-commands/#more" class="more-link">Read More</a>
+          <a href="/2016/07/21/learn-redis-basic-commands/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -475,53 +521,7 @@ var jiathis_config = {data_track_clickback:'true'};
     
       
         <div class="alignleft">
-          <a href="/2016/07/17/python-vim/#more" class="more-link">Read More</a>
-        </div>
-      
-      
-    
-    <div class="clearfix"></div>
-  </footer>
-</article>
-<!-- JiaThis Button BEGIN -->
-<script type="text/javascript">
-var jiathis_config = {data_track_clickback:'true'};
-</script>
-<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?move=0&amp;uid=1706898" charset="utf-8"></script>
-<!-- JiaThis Button END -->
-
-
-  <article class="post">
-  <header>
-    
-      <div class="icon"></div>
-      <a href="/2016/07/09/cpp11-4/">
-  <time datetime="2016-07-09T01:19:54.000Z">
-    2016-07-09
-  </time>
-</a>
-    
-    
-  
-    <h1 class="title"><a href="/2016/07/09/cpp11-4/">C++11新特性之容器相关特性</a></h1>
-  
-
-  </header>
-  
-  <div class="entry">
-    
-      <hr>
-<p>前三篇在这里：<br>C++11新特性之新类型与初始化: <a href="http://blog.guoyb.com/2016/06/18/cpp11-1/">http://blog.guoyb.com/2016/06/18/cpp11-1/</a><br>C++11新特性之类型推断与类型获取: <a href="http://blog.guoyb.com/2016/06/25/cpp11-2/">http://blog.guoyb.com/2016/06/25/cpp11-2/</a><br>C++11新特性之lambda： <a href="http://blog.guoyb.com/2016/06/30/cpp11-3/">http://blog.guoyb.com/2016/06/30/cpp11-3/</a>  </p>
-<hr>
-<p>这是C++11新特性介绍的第四部分，涉及到C++11这次更新中与容器有关的新特性。<br>不想看toy code的读者可以直接拉到文章最后看这部分的总结。  </p>
-<h2 id="cbegin和cend"><a href="#cbegin和cend" class="headerlink" title="cbegin和cend"></a>cbegin和cend</h2><p>原来的begin和end返回的iterator是否是常量取决于对应的容器类型，但是有时，即使容器不是常量类型，我们也希望获得一个const_iterator，以避免不必要的修改行为。C++11新标准中提供了cbegin和cend函数，无论容器类型，都固定返回const_iterator。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; c1 = &#123;<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>&#125;;</span><br><span class="line"><span class="keyword">auto</span> it1_1 = c1.begin();</span><br><span class="line"><span class="keyword">auto</span> it1_2 = c1.cbegin();</span><br><span class="line">*it1_1 = <span class="number">4</span>;</span><br><span class="line"><span class="comment">//*it1_2 = 5; // wrong, const iterator's value can't be changed via this iterator.</span></span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;*it1_1&lt;&lt;<span class="string">'\t'</span>&lt;&lt;*it1_2&lt;&lt;<span class="built_in">endl</span>;</span><br></pre></td></tr></table></figure><br>
-    
-  </div>
-  <footer class="end-sep">
-    
-      
-        <div class="alignleft">
-          <a href="/2016/07/09/cpp11-4/#more" class="more-link">Read More</a>
+          <a href="/2016/07/17/python-vim/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -541,7 +541,7 @@ var jiathis_config = {data_track_clickback:'true'};
 <nav id="pagination">
   
   
-    <a href="/page/2/" class="next">Next</a>
+    <a href="/page/2/" class="next">下一页</a>
   
   <div class="clearfix"></div>
 </nav>
@@ -557,7 +557,7 @@ var jiathis_config = {data_track_clickback:'true'};
 <div class="widget tagcloud first">
   <h3 class="title">Tags</h3>
   <div class="entry">
-    <a href="/tags/C/" style="font-size: 10px;">C</a> <a href="/tags/C/" style="font-size: 15px;">C++</a> <a href="/tags/C-11/" style="font-size: 15px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/echoserver/" style="font-size: 11.67px;">echoserver</a> <a href="/tags/epoll/" style="font-size: 11.67px;">epoll</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 11.67px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/select/" style="font-size: 11.67px;">select</a> <a href="/tags/socket/" style="font-size: 11.67px;">socket</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 15px;">书单</a> <a href="/tags/北京车展/" style="font-size: 10px;">北京车展</a> <a href="/tags/协程/" style="font-size: 10px;">协程</a> <a href="/tags/学习笔记/" style="font-size: 11.67px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/广州/" style="font-size: 10px;">广州</a> <a href="/tags/旅行/" style="font-size: 10px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 16.67px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 13.33px;">查证记录</a> <a href="/tags/游戏开发/" style="font-size: 10px;">游戏开发</a> <a href="/tags/爱好/" style="font-size: 10px;">爱好</a> <a href="/tags/生活/" style="font-size: 11.67px;">生活</a> <a href="/tags/知乎/" style="font-size: 10px;">知乎</a> <a href="/tags/程序人生/" style="font-size: 10px;">程序人生</a> <a href="/tags/读书笔记/" style="font-size: 18.33px;">读书笔记</a> <a href="/tags/读后感/" style="font-size: 10px;">读后感</a>
+    <a href="/tags/C/" style="font-size: 10px;">C</a> <a href="/tags/C/" style="font-size: 15.71px;">C++</a> <a href="/tags/C-11/" style="font-size: 15.71px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/echoserver/" style="font-size: 11.43px;">echoserver</a> <a href="/tags/epoll/" style="font-size: 11.43px;">epoll</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 11.43px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/select/" style="font-size: 11.43px;">select</a> <a href="/tags/socket/" style="font-size: 11.43px;">socket</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 14.29px;">书单</a> <a href="/tags/北京车展/" style="font-size: 10px;">北京车展</a> <a href="/tags/协程/" style="font-size: 10px;">协程</a> <a href="/tags/学习笔记/" style="font-size: 11.43px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/广州/" style="font-size: 10px;">广州</a> <a href="/tags/旅行/" style="font-size: 10px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 17.14px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 12.86px;">查证记录</a> <a href="/tags/游戏开发/" style="font-size: 10px;">游戏开发</a> <a href="/tags/爱好/" style="font-size: 10px;">爱好</a> <a href="/tags/生活/" style="font-size: 11.43px;">生活</a> <a href="/tags/知乎/" style="font-size: 10px;">知乎</a> <a href="/tags/程序人生/" style="font-size: 10px;">程序人生</a> <a href="/tags/读书笔记/" style="font-size: 18.57px;">读书笔记</a> <a href="/tags/读后感/" style="font-size: 10px;">读后感</a>
   </div>
 </div>
 
@@ -568,6 +568,10 @@ var jiathis_config = {data_track_clickback:'true'};
 <div class="widget recent-posts">
   <h3 class="title">最近文章</h3>
   <ul class="entry">
+    
+      <li>
+        <a href="/2016/08/20/cpp11-7/">C++11新特性之右值引用与移动</a>
+      </li>
     
       <li>
         <a href="/2016/08/17/mysql-select-order/">一个潜伏了5年的bug</a>
@@ -583,10 +587,6 @@ var jiathis_config = {data_track_clickback:'true'};
     
       <li>
         <a href="/2016/08/02/cpp11-5/">C++11新特性之智能指针(shared_ptr, unique_ptr和weak_ptr)</a>
-      </li>
-    
-      <li>
-        <a href="/2016/07/28/2015-booklist/">2015年书单</a>
       </li>
     
   </ul>
