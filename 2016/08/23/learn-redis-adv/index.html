@@ -1,0 +1,267 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  
+  <title>Redis学习笔记2-进阶 | 一根笨茄子</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  
+    <meta name="author" content="Yubo Guo">
+  
+  
+    <meta name="description" content="Redis学习笔记1-基础命令及数据结构： http://blog.guoyb.com/2016/07/21/learn-redis-basic-commands/   
+
+学习笔记的第二部分记录Redis的进阶内容，如事务、过期时间等。  
+
+事务Redis通过MULTI…EXEC…来创建执行一个事务。Redis的事务要么不执行，要是开始EXEC执行，则会全部执行，且中间不会插入其他操作，类似">
+  
+  <meta name="description" content="Redis学习笔记1-基础命令及数据结构： http://blog.guoyb.com/2016/07/21/learn-redis-basic-commands/   
+
+学习笔记的第二部分记录Redis的进阶内容，如事务、过期时间等。  
+
+事务Redis通过MULTI…EXEC…来创建执行一个事务。Redis的事务要么不执行，要是开始EXEC执行，则会全部执行，且中间不会插入其他操作，类似">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis学习笔记2-进阶">
+<meta property="og:url" content="http://blog.guoyb.com/2016/08/23/learn-redis-adv/index.html">
+<meta property="og:site_name" content="一根笨茄子">
+<meta property="og:description" content="Redis学习笔记1-基础命令及数据结构： http://blog.guoyb.com/2016/07/21/learn-redis-basic-commands/   
+
+学习笔记的第二部分记录Redis的进阶内容，如事务、过期时间等。  
+
+事务Redis通过MULTI…EXEC…来创建执行一个事务。Redis的事务要么不执行，要是开始EXEC执行，则会全部执行，且中间不会插入其他操作，类似">
+<meta property="og:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/qrcode.jpg">
+<meta property="og:updated_time" content="2016-08-23T00:27:30.851Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Redis学习笔记2-进阶">
+<meta name="twitter:description" content="Redis学习笔记1-基础命令及数据结构： http://blog.guoyb.com/2016/07/21/learn-redis-basic-commands/   
+
+学习笔记的第二部分记录Redis的进阶内容，如事务、过期时间等。  
+
+事务Redis通过MULTI…EXEC…来创建执行一个事务。Redis的事务要么不执行，要是开始EXEC执行，则会全部执行，且中间不会插入其他操作，类似">
+<meta name="twitter:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/qrcode.jpg">
+  
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+  
+<script type="text/javascript">
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?996ee0fca2512b4c29f37f60cf6387ca";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+</head>
+
+<body>
+  <div class="wrapper">
+    <header id="header">
+  <div class="title">
+    <h1><a href="/">一根笨茄子</a></h1>
+    <p><a href="/"></a></p>
+  </div>
+  <nav class="nav">
+    <ul>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/about">关于我</a></li>
+      
+      
+    </ul>
+    <div class="clearfix"></div>
+  </nav>
+  <div class="clearfix"></div>
+</header>
+    <div class="content">
+		<article class="post">
+  <header>
+    
+      <div class="icon"></div>
+      <a href="/2016/08/23/learn-redis-adv/">
+  <time datetime="2016-08-22T23:46:52.000Z">
+    2016-08-23
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title">Redis学习笔记2-进阶</h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>Redis学习笔记1-基础命令及数据结构： <a href="http://blog.guoyb.com/2016/07/21/learn-redis-basic-commands">http://blog.guoyb.com/2016/07/21/learn-redis-basic-commands/</a>   </p>
+<hr>
+<p>学习笔记的第二部分记录Redis的进阶内容，如事务、过期时间等。  </p>
+<hr>
+<h2 id="事务"><a href="#事务" class="headerlink" title="事务"></a>事务</h2><p>Redis通过MULTI…EXEC…来创建执行一个事务。Redis的事务要么不执行，要是开始EXEC执行，则会全部执行，且中间不会插入其他操作，类似原子操作；但是对于执行期错误的事务，没有回滚功能（即，会执行事务中的正确的命令）。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379&gt; MULTI</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; LPUSH numbers 101</span><br><span class="line">QUEUED</span><br><span class="line">127.0.0.1:6379&gt; LPUSH numbers 102</span><br><span class="line">QUEUED</span><br><span class="line">127.0.0.1:6379&gt; EXEC</span><br><span class="line">1) (integer) 7</span><br><span class="line">2) (integer) 8</span><br></pre></td></tr></table></figure><br><a id="more"></a><br>对于有语法错误的情况，事务不会执行。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379&gt; MULTI</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; LPUSH numbers 1001</span><br><span class="line">QUEUED</span><br><span class="line">127.0.0.1:6379&gt; LPUSH numbers</span><br><span class="line">(error) ERR wrong number of arguments for &apos;lpush&apos; command</span><br><span class="line">127.0.0.1:6379&gt; EXEC</span><br><span class="line">(error) EXECABORT Transaction discarded because of previous errors.</span><br></pre></td></tr></table></figure>  </p>
+<p>对于执行期错误，事务会执行其中正确的部分，跳过出错的部分。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379&gt; MULTI</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; set numbers 100</span><br><span class="line">QUEUED</span><br><span class="line">127.0.0.1:6379&gt; LPUSH numbers 1000</span><br><span class="line">QUEUED</span><br><span class="line">127.0.0.1:6379&gt; SET numbers 101</span><br><span class="line">QUEUED</span><br><span class="line">127.0.0.1:6379&gt; EXEC</span><br><span class="line">1) OK</span><br><span class="line">2) (error) WRONGTYPE Operation against a key holding the wrong kind of value</span><br><span class="line">3) OK</span><br></pre></td></tr></table></figure>  </p>
+<p>Redis为事务还提供了一个WATCH命令，它用于监控一个Key，当这个Key在WATCH之后被改动，则后续的事务不会执行。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379&gt; SET key 1</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; WATCH key</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; SET key 2</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; MULTI</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; SET key 3</span><br><span class="line">QUEUED</span><br><span class="line">127.0.0.1:6379&gt; EXEC</span><br><span class="line">(nil)</span><br></pre></td></tr></table></figure>  </p>
+<h2 id="过期时间"><a href="#过期时间" class="headerlink" title="过期时间"></a>过期时间</h2><p>Redis经常被用作缓存系统，那么过期时间功能就是必不可少的。  </p>
+<p>Redis可以通过EXPIRE/TTL命令设置/查看过期时间。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379&gt; SET session:29e3d uid1314</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; EXPIRE session:29e3d 15</span><br><span class="line">(integer) 1</span><br><span class="line">127.0.0.1:6379&gt; TTL session:29e3d</span><br><span class="line">(integer) 9</span><br><span class="line">127.0.0.1:6379&gt; TTL session:29e3d</span><br><span class="line">(integer) 6</span><br><span class="line">127.0.0.1:6379&gt; TTL session:29e3d</span><br><span class="line">(integer) -2 # 过期/已被删除的键返回-2</span><br><span class="line">127.0.0.1:6379&gt; TTL numbers</span><br><span class="line">(integer) -1 # 没有设置过期时间的键返回-1</span><br></pre></td></tr></table></figure>  </p>
+<p>可以用PERSIST命令删除过期时间，使Key不会过期。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379&gt; EXPIRE numbers 150</span><br><span class="line">(integer) 1</span><br><span class="line">127.0.0.1:6379&gt; TTL numbers</span><br><span class="line">(integer) 145</span><br><span class="line">127.0.0.1:6379&gt; PERSIST numbers</span><br><span class="line">(integer) 1</span><br><span class="line">127.0.0.1:6379&gt; TTL numbers</span><br><span class="line">(integer) -1</span><br></pre></td></tr></table></figure>  </p>
+<p>重新设置Key也会使得过期时间失效。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379&gt; EXPIRE numbers 150</span><br><span class="line">(integer) 1</span><br><span class="line">127.0.0.1:6379&gt; TTL numbers</span><br><span class="line">(integer) 148</span><br><span class="line">127.0.0.1:6379&gt; SET numbers 101 #重新设置键会令过期时间失效</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; TTL numbers</span><br><span class="line">(integer) -1</span><br></pre></td></tr></table></figure>  </p>
+<p>但是只对Key的Value进行的操作不会影响Key的过期时间，如INCR LPUSH HSET ZREM等。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379&gt; EXPIRE numbers 150</span><br><span class="line">(integer) 1</span><br><span class="line">127.0.0.1:6379&gt; TTL numbers</span><br><span class="line">(integer) 149</span><br><span class="line">127.0.0.1:6379&gt; INCR numbers</span><br><span class="line">(integer) 102</span><br><span class="line">127.0.0.1:6379&gt; TTL numbers</span><br><span class="line">(integer) 121</span><br></pre></td></tr></table></figure>  </p>
+<p>上面的过期时间命令都是以<strong>秒</strong>为单位的，Redis也支持使用<strong>毫秒</strong>为单位。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379&gt; PEXPIRE numbers 100000 # 毫秒</span><br><span class="line">(integer) 1</span><br><span class="line">127.0.0.1:6379&gt; PTTL numbers</span><br><span class="line">(integer) 94800</span><br><span class="line">127.0.0.1:6379&gt; PTTL numbers</span><br><span class="line">(integer) 93904</span><br></pre></td></tr></table></figure>  </p>
+<p>Redis也支持将一个绝对时间戳作为过期时间。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379&gt; EXPIREAT numbers 1569145984</span><br><span class="line">(integer) 1</span><br><span class="line">127.0.0.1:6379&gt; TTL numbers</span><br><span class="line">(integer) 99999968</span><br><span class="line">127.0.0.1:6379&gt; PEXPIREAT numbers 15691459840000</span><br><span class="line">(integer) 1</span><br><span class="line">127.0.0.1:6379&gt; PTTL numbers</span><br><span class="line">(integer) 14222312072159</span><br></pre></td></tr></table></figure>  </p>
+<p>注意： 键的过期并不会被WATCH命令认为是修改了键。  </p>
+<p>将Redis作为缓存系统使用，可以设置配置文件中maxmemory参数，限制Redis的最大可用内存；当超出此限制时，Redis会按照maxmemory-policy参数来删除键值。  </p>
+<p>maxmemory-policy参数可以设置为以下之一：  </p>
+<blockquote>
+<ol>
+<li>volatile-lru</li>
+<li>allkeys-lru</li>
+<li>volatile-random</li>
+<li>allkeys-random</li>
+<li>volatile-ttl</li>
+<li>noeviction</li>
+</ol>
+</blockquote>
+<hr>
+<p>转载请注明出处： <a href="http://blog.guoyb.com/2016/08/23/learn-redis-adv">http://blog.guoyb.com/2016/08/23/learn-redis-adv/</a>  </p>
+<p>欢迎使用微信扫描下方二维码，关注我的微信公众号TechTalking，技术·生活·思考：<br><img src="http://7d9lwm.com1.z0.glb.clouddn.com/qrcode.jpg" alt="后端技术小黑屋"></p>
+
+    
+  </div>
+  <footer>
+    
+      
+      
+  <div class="tags">
+    <a class="tags-link" href="/tags/redis/">redis</a>, <a class="tags-link" href="/tags/学习笔记/">学习笔记</a>
+  </div>
+
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+<!-- JiaThis Button BEGIN -->
+<script type="text/javascript">
+var jiathis_config = {data_track_clickback:'true'};
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?move=0&amp;uid=1706898" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+<section id="comment">
+  <h1 class="title">Comments</h1>
+  <div class="ds-thread" data-title="Redis学习笔记2-进阶">
+  </div>
+</section>
+
+	</div>
+  </div>
+	<aside id="sidebar">
+  
+  
+    
+      
+      
+
+<div class="widget tagcloud first">
+  <h3 class="title">Tags</h3>
+  <div class="entry">
+    <a href="/tags/C/" style="font-size: 10px;">C</a> <a href="/tags/C/" style="font-size: 16.25px;">C++</a> <a href="/tags/C-11/" style="font-size: 16.25px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/echoserver/" style="font-size: 11.25px;">echoserver</a> <a href="/tags/epoll/" style="font-size: 11.25px;">epoll</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 11.25px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/redis/" style="font-size: 11.25px;">redis</a> <a href="/tags/select/" style="font-size: 11.25px;">select</a> <a href="/tags/socket/" style="font-size: 11.25px;">socket</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 15px;">书单</a> <a href="/tags/北京车展/" style="font-size: 10px;">北京车展</a> <a href="/tags/协程/" style="font-size: 10px;">协程</a> <a href="/tags/学习笔记/" style="font-size: 12.5px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/广州/" style="font-size: 10px;">广州</a> <a href="/tags/旅行/" style="font-size: 10px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 17.5px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 13.75px;">查证记录</a> <a href="/tags/游戏开发/" style="font-size: 10px;">游戏开发</a> <a href="/tags/爱好/" style="font-size: 10px;">爱好</a> <a href="/tags/生活/" style="font-size: 11.25px;">生活</a> <a href="/tags/知乎/" style="font-size: 10px;">知乎</a> <a href="/tags/程序人生/" style="font-size: 10px;">程序人生</a> <a href="/tags/读书笔记/" style="font-size: 18.75px;">读书笔记</a> <a href="/tags/读后感/" style="font-size: 10px;">读后感</a>
+  </div>
+</div>
+
+    
+      
+      
+
+<div class="widget recent-posts">
+  <h3 class="title">最近文章</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2016/08/23/learn-redis-adv/">Redis学习笔记2-进阶</a>
+      </li>
+    
+      <li>
+        <a href="/2016/08/20/cpp11-7/">C++11新特性之右值引用与移动</a>
+      </li>
+    
+      <li>
+        <a href="/2016/08/17/mysql-select-order/">一个潜伏了5年的bug</a>
+      </li>
+    
+      <li>
+        <a href="/2016/08/14/cpp11-6/">C++11新特性之Class</a>
+      </li>
+    
+      <li>
+        <a href="/2016/08/06/something-about-strip/">从string.strip()引起的一个bug说起</a>
+      </li>
+    
+  </ul>
+</div>
+
+    
+      
+      
+<div class="widget tag">
+  <h3 class="title">友情链接</h3>
+  <ul class="entry">
+  
+    
+    <li><a href="http://www.linkedin.com/in/yubo-guo-739b0071" target="_blank">LinkedIn</a></li>
+  
+    
+    <li><a href="http://www.tuicool.com/sites/2emeIjb" target="_blank">推酷站点</a></li>
+  
+  </ul>
+</div>
+
+    
+  
+</aside>
+<div class="clearfix"></div>
+  <footer id="footer"><div class="copyright">
+  
+  &copy; 2016 <a href="/">Yubo Guo</a>
+  
+</div>
+<div class="theme-copyright">
+  Theme by <a href="https://github.com/orderedlist" target="_blank">orderedlist</a>
+   | 
+  Redesign by <a href="http://heroicyang.com/" target="_blank">Heroic Yang</a>
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+<script src="/js/scale.fix.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = { short_name: 'guoyb' };
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';
+    ds.async = true;
+    ds.src = 'http://static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+  (function($){
+    $('.fancybox').fancybox();
+  })(jQuery);
+</script>
+
+</body>
+</html>
