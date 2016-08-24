@@ -1,0 +1,264 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  
+  <title>Redis学习笔记3-排序与消息通知 | 一根笨茄子</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  
+    <meta name="author" content="Yubo Guo">
+  
+  
+    <meta name="description" content="Redis学习笔记1-基础命令及数据结构： http://blog.guoyb.com/2016/07/21/learn-redis-basic-commands/Redis学习笔记2-事务与过期时间： http://blog.guoyb.com/2016/08/23/learn-redis-adv/  
+
+学习笔记的第三部分记录Redis的进阶内容，如排序、消息通知等。  
+
+排序可以通过SO">
+  
+  <meta name="description" content="Redis学习笔记1-基础命令及数据结构： http://blog.guoyb.com/2016/07/21/learn-redis-basic-commands/Redis学习笔记2-事务与过期时间： http://blog.guoyb.com/2016/08/23/learn-redis-adv/  
+
+学习笔记的第三部分记录Redis的进阶内容，如排序、消息通知等。  
+
+排序可以通过SO">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis学习笔记3-排序与消息通知">
+<meta property="og:url" content="http://blog.guoyb.com/2016/08/24/learn-redis-adv-2/index.html">
+<meta property="og:site_name" content="一根笨茄子">
+<meta property="og:description" content="Redis学习笔记1-基础命令及数据结构： http://blog.guoyb.com/2016/07/21/learn-redis-basic-commands/Redis学习笔记2-事务与过期时间： http://blog.guoyb.com/2016/08/23/learn-redis-adv/  
+
+学习笔记的第三部分记录Redis的进阶内容，如排序、消息通知等。  
+
+排序可以通过SO">
+<meta property="og:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/qrcode.jpg">
+<meta property="og:updated_time" content="2016-08-24T00:48:39.846Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Redis学习笔记3-排序与消息通知">
+<meta name="twitter:description" content="Redis学习笔记1-基础命令及数据结构： http://blog.guoyb.com/2016/07/21/learn-redis-basic-commands/Redis学习笔记2-事务与过期时间： http://blog.guoyb.com/2016/08/23/learn-redis-adv/  
+
+学习笔记的第三部分记录Redis的进阶内容，如排序、消息通知等。  
+
+排序可以通过SO">
+<meta name="twitter:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/qrcode.jpg">
+  
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+  
+<script type="text/javascript">
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?996ee0fca2512b4c29f37f60cf6387ca";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+</head>
+
+<body>
+  <div class="wrapper">
+    <header id="header">
+  <div class="title">
+    <h1><a href="/">一根笨茄子</a></h1>
+    <p><a href="/"></a></p>
+  </div>
+  <nav class="nav">
+    <ul>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/about">关于我</a></li>
+      
+      
+    </ul>
+    <div class="clearfix"></div>
+  </nav>
+  <div class="clearfix"></div>
+</header>
+    <div class="content">
+		<article class="post">
+  <header>
+    
+      <div class="icon"></div>
+      <a href="/2016/08/24/learn-redis-adv-2/">
+  <time datetime="2016-08-24T00:09:48.000Z">
+    2016-08-24
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title">Redis学习笔记3-排序与消息通知</h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>Redis学习笔记1-基础命令及数据结构： <a href="http://blog.guoyb.com/2016/07/21/learn-redis-basic-commands">http://blog.guoyb.com/2016/07/21/learn-redis-basic-commands/</a><br>Redis学习笔记2-事务与过期时间： <a href="http://blog.guoyb.com/2016/08/23/learn-redis-adv">http://blog.guoyb.com/2016/08/23/learn-redis-adv/</a>  </p>
+<hr>
+<p>学习笔记的第三部分记录Redis的进阶内容，如排序、消息通知等。  </p>
+<hr>
+<h2 id="排序"><a href="#排序" class="headerlink" title="排序"></a>排序</h2><p>可以通过SORT命令对集合、列表、有序集合进行排序。其中，对有序集合进行排序时是以元素本身为准的（忽略分数）。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379&gt; SADD tag:ruby:posts 2 6 12 26</span><br><span class="line">(integer) 4</span><br><span class="line">127.0.0.1:6379&gt; SORT tag:ruby:posts</span><br><span class="line">1) &quot;2&quot;</span><br><span class="line">2) &quot;6&quot;</span><br><span class="line">3) &quot;12&quot;</span><br><span class="line">4) &quot;26&quot;</span><br><span class="line">127.0.0.1:6379&gt; LPUSH list 4 5 2 3 8</span><br><span class="line">(integer) 5</span><br><span class="line">127.0.0.1:6379&gt; SORT list</span><br><span class="line">1) &quot;2&quot;</span><br><span class="line">2) &quot;3&quot;</span><br><span class="line">3) &quot;4&quot;</span><br><span class="line">4) &quot;5&quot;</span><br><span class="line">5) &quot;8&quot;</span><br><span class="line">127.0.0.1:6379&gt; ZADD zset 50 2 100 3 87 1</span><br><span class="line">(integer) 3</span><br><span class="line">127.0.0.1:6379&gt; SORT zset</span><br><span class="line">1) &quot;1&quot;</span><br><span class="line">2) &quot;2&quot;</span><br><span class="line">3) &quot;3&quot;</span><br></pre></td></tr></table></figure><br><a id="more"></a></p>
+<p>还可以给SORT添加ALPHA参数实现字典序排序。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379&gt; LPUSH charlist a b d e c f</span><br><span class="line">(integer) 6</span><br><span class="line">127.0.0.1:6379&gt; SORT charlist</span><br><span class="line">(error) ERR One or more scores can&apos;t be converted into double</span><br><span class="line">127.0.0.1:6379&gt; SORT charlist ALPHA</span><br><span class="line">1) &quot;a&quot;</span><br><span class="line">2) &quot;b&quot;</span><br><span class="line">3) &quot;c&quot;</span><br><span class="line">4) &quot;d&quot;</span><br><span class="line">5) &quot;e&quot;</span><br><span class="line">6) &quot;f&quot;</span><br></pre></td></tr></table></figure>  </p>
+<p>DESC参数指定按照逆序排序。LIMIT offset count参数用于选取返回结果范围。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379&gt; SORT tag:ruby:posts DESC</span><br><span class="line">1) &quot;26&quot;</span><br><span class="line">2) &quot;12&quot;</span><br><span class="line">3) &quot;6&quot;</span><br><span class="line">4) &quot;2&quot;</span><br><span class="line">127.0.0.1:6379&gt; SORT tag:ruby:posts DESC LIMIT 0 1</span><br><span class="line">1) &quot;26&quot;</span><br><span class="line">127.0.0.1:6379&gt; SORT tag:ruby:posts DESC LIMIT 0 2</span><br><span class="line">1) &quot;26&quot;</span><br><span class="line">2) &quot;12&quot;</span><br></pre></td></tr></table></figure>  </p>
+<p>BY参数用于选定排序的基准参考值。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379&gt; HSET post:2 time 1000</span><br><span class="line">(integer) 1</span><br><span class="line">127.0.0.1:6379&gt; HSET post:6 time 900</span><br><span class="line">(integer) 1</span><br><span class="line">127.0.0.1:6379&gt; HSET post:12 time 1900</span><br><span class="line">(integer) 1</span><br><span class="line">127.0.0.1:6379&gt; HSET post:26 time 100</span><br><span class="line">(integer) 1</span><br><span class="line">127.0.0.1:6379&gt; SORT tag:ruby:posts BY post:*-&gt;time DESC</span><br><span class="line">1) &quot;12&quot;</span><br><span class="line">2) &quot;2&quot;</span><br><span class="line">3) &quot;6&quot;</span><br><span class="line">4) &quot;26&quot;</span><br></pre></td></tr></table></figure>  </p>
+<p>其中，Redis会自动用SORT后的元素值替换BY参数中的*值。  </p>
+<p>当BY参数中不包含*值时，排序操作不会进行。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379&gt; LPUSH sortbylist 2 1 3</span><br><span class="line">(integer) 3</span><br><span class="line">127.0.0.1:6379&gt; SET itemscore:1 50</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; SET itemscore:2 100</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; SET itemscore:3 -10</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; SORT sortbylist BY itemscore:* DESC</span><br><span class="line">1) &quot;2&quot;</span><br><span class="line">2) &quot;1&quot;</span><br><span class="line">3) &quot;3&quot;</span><br><span class="line">127.0.0.1:6379&gt; SORT sortbylist BY any</span><br><span class="line">1) &quot;3&quot;</span><br><span class="line">2) &quot;1&quot;</span><br><span class="line">3) &quot;2&quot;</span><br></pre></td></tr></table></figure>  </p>
+<p>SORT语句中可以增加GET参数，用于替换排序返回的结果。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379&gt; HSET post:2 title redis</span><br><span class="line">(integer) 1</span><br><span class="line">127.0.0.1:6379&gt; HSET post:6 title python</span><br><span class="line">(integer) 1</span><br><span class="line">127.0.0.1:6379&gt; HSET post:12 title linux</span><br><span class="line">(integer) 1</span><br><span class="line">127.0.0.1:6379&gt; HSET post:26 title libuv</span><br><span class="line">(integer) 1</span><br><span class="line">127.0.0.1:6379&gt; SORT tag:ruby:posts BY post:*-&gt;time DESC GET post:*-&gt;title</span><br><span class="line">1) &quot;linux&quot;</span><br><span class="line">2) &quot;redis&quot;</span><br><span class="line">3) &quot;python&quot;</span><br><span class="line">4) &quot;libuv&quot;</span><br></pre></td></tr></table></figure>  </p>
+<p>SORT语句可以有多个GET参数，将一并返回。原始的SORT返回结果可以用GET #。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379&gt; SORT tag:ruby:posts BY post:*-&gt;time DESC GET post:*-&gt;title GET post:*-&gt;time GET #</span><br><span class="line"> 1) &quot;linux&quot;</span><br><span class="line"> 2) &quot;1900&quot;</span><br><span class="line"> 3) &quot;12&quot;</span><br><span class="line"> 4) &quot;redis&quot;</span><br><span class="line"> 5) &quot;1000&quot;</span><br><span class="line"> 6) &quot;2&quot;</span><br><span class="line"> 7) &quot;python&quot;</span><br><span class="line"> 8) &quot;900&quot;</span><br><span class="line"> 9) &quot;6&quot;</span><br><span class="line">10) &quot;libuv&quot;</span><br><span class="line">11) &quot;100&quot;</span><br><span class="line">12) &quot;26&quot;</span><br></pre></td></tr></table></figure>  </p>
+<p>STORE参数可以将排序后的结果保存到一个键中，保存结果为列表类型。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379&gt; SORT tag:ruby:posts BY post:*-&gt;time DESC GET post:*-&gt;title GET post:*-&gt;time GET # STORE sort.result</span><br><span class="line">(integer) 12</span><br><span class="line">127.0.0.1:6379&gt; LRANGE sort.result 0 -1</span><br><span class="line"> 1) &quot;linux&quot;</span><br><span class="line"> 2) &quot;1900&quot;</span><br><span class="line"> 3) &quot;12&quot;</span><br><span class="line"> 4) &quot;redis&quot;</span><br><span class="line"> 5) &quot;1000&quot;</span><br><span class="line"> 6) &quot;2&quot;</span><br><span class="line"> 7) &quot;python&quot;</span><br><span class="line"> 8) &quot;900&quot;</span><br><span class="line"> 9) &quot;6&quot;</span><br><span class="line">10) &quot;libuv&quot;</span><br><span class="line">11) &quot;100&quot;</span><br><span class="line">12) &quot;26&quot;</span><br></pre></td></tr></table></figure>  </p>
+<h2 id="消息通知"><a href="#消息通知" class="headerlink" title="消息通知"></a>消息通知</h2><p>Redis中，可以通过LPUSH/RPOP操作实现一个简单的消息队列。生产者不断的LPUSH消息到队列中，而消费者则不断的从队列中RPOP消息。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379&gt; LPUSH queue 1 2 3</span><br><span class="line">(integer) 3</span><br><span class="line">127.0.0.1:6379&gt; RPOP queue </span><br><span class="line">1) &quot;queue&quot;</span><br><span class="line">2) &quot;1&quot;</span><br><span class="line">127.0.0.1:6379&gt; RPOP queue </span><br><span class="line">1) &quot;queue&quot;</span><br><span class="line">2) &quot;2&quot;</span><br><span class="line">127.0.0.1:6379&gt; RPOP queue </span><br><span class="line">1) &quot;queue&quot;</span><br><span class="line">2) &quot;3&quot;</span><br></pre></td></tr></table></figure>  </p>
+<p>Redis还提供了一个BRPOP操作，它有两个参数，一个是键值，一个是超时时间。超时时间填0时，如果队列中是空的，那么BRPOP将一直阻塞知道队列中有值。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379&gt; BRPOP queue 0</span><br><span class="line"># another redis-client begin</span><br><span class="line">127.0.0.1:6379&gt; LPUSH queue 4</span><br><span class="line"># another redis-client end</span><br><span class="line">(integer) 1</span><br><span class="line">1) &quot;queue&quot;</span><br><span class="line">2) &quot;4&quot;</span><br><span class="line">(5.34s)</span><br></pre></td></tr></table></figure>  </p>
+<p>BRPOP还可以同时接受多个键，任何一个键中有值，那么BRPOP就返回。多个键中均有值，则按照从左到右的优先级返回。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379&gt; BRPOP queue queue2 0</span><br><span class="line"># another redis-client begin</span><br><span class="line">127.0.0.1:6379&gt; LPUSH queue2 5</span><br><span class="line"># another redis-client end</span><br><span class="line">(integer) 1</span><br><span class="line">1) &quot;queue2&quot;</span><br><span class="line">2) &quot;5&quot;</span><br><span class="line">(6.01s)</span><br></pre></td></tr></table></figure>  </p>
+<p>Redis还提供了发布/订阅模式用于进程间消息传递。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"># client A</span><br><span class="line">127.0.0.1:6379&gt; PUBLISH channel.1 hi</span><br><span class="line">(integer) 0</span><br><span class="line">127.0.0.1:6379&gt; SUBSCRIBE channel.1</span><br><span class="line">Reading messages... (press Ctrl-C to quit)</span><br><span class="line">1) &quot;subscribe&quot;</span><br><span class="line">2) &quot;channel.1&quot;</span><br><span class="line">3) (integer) 1</span><br><span class="line"># client B</span><br><span class="line">127.0.0.1:6379&gt; PUBLISH channel.1 hello</span><br><span class="line">(integer) 1</span><br><span class="line"># client A</span><br><span class="line">1) &quot;message&quot;</span><br><span class="line">2) &quot;channel.1&quot;</span><br><span class="line">3) &quot;hello&quot;</span><br></pre></td></tr></table></figure>  </p>
+<p>此外，更复杂一些，可以通过PSUBSCRIBE按照规则订阅，支持通配符匹配。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"># client A</span><br><span class="line">127.0.0.1:6379&gt; PSUBSCRIBE channel.?*</span><br><span class="line">Reading messages... (press Ctrl-C to quit)</span><br><span class="line">1) &quot;psubscribe&quot;</span><br><span class="line">2) &quot;channel.?*&quot;</span><br><span class="line">3) (integer) 1</span><br><span class="line"># client B</span><br><span class="line">127.0.0.1:6379&gt; PUBLISH channel.10 hello</span><br><span class="line">(integer) 1</span><br><span class="line">127.0.0.1:6379&gt; PUBLISH channel.12 hello</span><br><span class="line">(integer) 1</span><br><span class="line"># client A</span><br><span class="line">1) &quot;pmessage&quot;</span><br><span class="line">2) &quot;channel.?*&quot;</span><br><span class="line">3) &quot;channel.10&quot;</span><br><span class="line">4) &quot;hello&quot;</span><br><span class="line">1) &quot;pmessage&quot;</span><br><span class="line">2) &quot;channel.?*&quot;</span><br><span class="line">3) &quot;channel.12&quot;</span><br><span class="line">4) &quot;hello&quot;</span><br></pre></td></tr></table></figure>  </p>
+<h2 id="节省空间"><a href="#节省空间" class="headerlink" title="节省空间"></a>节省空间</h2><p>下面有一些节省存储空间的小建议：  </p>
+<ol>
+<li>精简键名</li>
+<li>内部编码优化（由redis自动选择，可以通过 OBJECT ENCODING car查看）</li>
+<li>当数据量较小时，采用牺牲一定速度的方式来减少内存用量；数据量变大后，则优先保证存取速度；</li>
+</ol>
+<hr>
+<p>转载请注明出处： <a href="http://blog.guoyb.com/2016/08/24/learn-redis-adv-2">http://blog.guoyb.com/2016/08/24/learn-redis-adv-2/</a>  </p>
+<p>欢迎使用微信扫描下方二维码，关注我的微信公众号TechTalking，技术·生活·思考：<br><img src="http://7d9lwm.com1.z0.glb.clouddn.com/qrcode.jpg" alt="后端技术小黑屋"></p>
+
+    
+  </div>
+  <footer>
+    
+      
+      
+  <div class="tags">
+    <a class="tags-link" href="/tags/redis/">redis</a>, <a class="tags-link" href="/tags/学习笔记/">学习笔记</a>
+  </div>
+
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+<!-- JiaThis Button BEGIN -->
+<script type="text/javascript">
+var jiathis_config = {data_track_clickback:'true'};
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?move=0&amp;uid=1706898" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+<section id="comment">
+  <h1 class="title">评论</h1>
+  <div class="ds-thread" data-title="Redis学习笔记3-排序与消息通知">
+  </div>
+</section>
+
+	</div>
+  </div>
+	<aside id="sidebar">
+  
+  
+    
+      
+      
+
+<div class="widget tagcloud first">
+  <h3 class="title">Tags</h3>
+  <div class="entry">
+    <a href="/tags/C/" style="font-size: 10px;">C</a> <a href="/tags/C/" style="font-size: 16.25px;">C++</a> <a href="/tags/C-11/" style="font-size: 16.25px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/echoserver/" style="font-size: 11.25px;">echoserver</a> <a href="/tags/epoll/" style="font-size: 11.25px;">epoll</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 11.25px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/redis/" style="font-size: 12.5px;">redis</a> <a href="/tags/select/" style="font-size: 11.25px;">select</a> <a href="/tags/socket/" style="font-size: 11.25px;">socket</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 15px;">书单</a> <a href="/tags/北京车展/" style="font-size: 10px;">北京车展</a> <a href="/tags/协程/" style="font-size: 10px;">协程</a> <a href="/tags/学习笔记/" style="font-size: 13.75px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/广州/" style="font-size: 10px;">广州</a> <a href="/tags/旅行/" style="font-size: 10px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 17.5px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 13.75px;">查证记录</a> <a href="/tags/游戏开发/" style="font-size: 10px;">游戏开发</a> <a href="/tags/爱好/" style="font-size: 10px;">爱好</a> <a href="/tags/生活/" style="font-size: 11.25px;">生活</a> <a href="/tags/知乎/" style="font-size: 10px;">知乎</a> <a href="/tags/程序人生/" style="font-size: 10px;">程序人生</a> <a href="/tags/读书笔记/" style="font-size: 18.75px;">读书笔记</a> <a href="/tags/读后感/" style="font-size: 10px;">读后感</a>
+  </div>
+</div>
+
+    
+      
+      
+
+<div class="widget recent-posts">
+  <h3 class="title">最近文章</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2016/08/24/learn-redis-adv-2/">Redis学习笔记3-排序与消息通知</a>
+      </li>
+    
+      <li>
+        <a href="/2016/08/23/learn-redis-adv/">Redis学习笔记2-事务与过期时间</a>
+      </li>
+    
+      <li>
+        <a href="/2016/08/20/cpp11-7/">C++11新特性之右值引用与移动</a>
+      </li>
+    
+      <li>
+        <a href="/2016/08/17/mysql-select-order/">一个潜伏了5年的bug</a>
+      </li>
+    
+      <li>
+        <a href="/2016/08/14/cpp11-6/">C++11新特性之Class</a>
+      </li>
+    
+  </ul>
+</div>
+
+    
+      
+      
+<div class="widget tag">
+  <h3 class="title">友情链接</h3>
+  <ul class="entry">
+  
+    
+    <li><a href="http://www.linkedin.com/in/yubo-guo-739b0071" target="_blank">LinkedIn</a></li>
+  
+    
+    <li><a href="http://www.tuicool.com/sites/2emeIjb" target="_blank">推酷站点</a></li>
+  
+  </ul>
+</div>
+
+    
+  
+</aside>
+<div class="clearfix"></div>
+  <footer id="footer"><div class="copyright">
+  
+  &copy; 2016 <a href="/">Yubo Guo</a>
+  
+</div>
+<div class="theme-copyright">
+  Theme by <a href="https://github.com/orderedlist" target="_blank">orderedlist</a>
+   | 
+  Redesign by <a href="http://heroicyang.com/" target="_blank">Heroic Yang</a>
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+<script src="/js/scale.fix.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = { short_name: 'guoyb' };
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';
+    ds.async = true;
+    ds.src = 'http://static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+  (function($){
+    $('.fancybox').fancybox();
+  })(jQuery);
+</script>
+
+</body>
+</html>

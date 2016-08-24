@@ -2,9 +2,16 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://blog.guoyb.com/2016/08/24/learn-redis-adv-2/</loc>
+    
+    <lastmod>2016-08-24T00:48:39.846Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://blog.guoyb.com/2016/08/23/learn-redis-adv/</loc>
     
-    <lastmod>2016-08-23T00:27:30.851Z</lastmod>
+    <lastmod>2016-08-24T00:12:15.198Z</lastmod>
     
   </url>
   

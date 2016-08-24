@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="chrome=1">
   
-  <title>Redis学习笔记2-进阶 | 一根笨茄子</title>
+  <title>Redis学习笔记2-事务与过期时间 | 一根笨茄子</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   
     <meta name="author" content="Yubo Guo">
@@ -22,7 +22,7 @@
 
 事务Redis通过MULTI…EXEC…来创建执行一个事务。Redis的事务要么不执行，要是开始EXEC执行，则会全部执行，且中间不会插入其他操作，类似">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Redis学习笔记2-进阶">
+<meta property="og:title" content="Redis学习笔记2-事务与过期时间">
 <meta property="og:url" content="http://blog.guoyb.com/2016/08/23/learn-redis-adv/index.html">
 <meta property="og:site_name" content="一根笨茄子">
 <meta property="og:description" content="Redis学习笔记1-基础命令及数据结构： http://blog.guoyb.com/2016/07/21/learn-redis-basic-commands/   
@@ -31,9 +31,9 @@
 
 事务Redis通过MULTI…EXEC…来创建执行一个事务。Redis的事务要么不执行，要是开始EXEC执行，则会全部执行，且中间不会插入其他操作，类似">
 <meta property="og:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/qrcode.jpg">
-<meta property="og:updated_time" content="2016-08-23T00:27:30.851Z">
+<meta property="og:updated_time" content="2016-08-24T00:12:15.198Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Redis学习笔记2-进阶">
+<meta name="twitter:title" content="Redis学习笔记2-事务与过期时间">
 <meta name="twitter:description" content="Redis学习笔记1-基础命令及数据结构： http://blog.guoyb.com/2016/07/21/learn-redis-basic-commands/   
 
 学习笔记的第二部分记录Redis的进阶内容，如事务、过期时间等。  
@@ -91,7 +91,7 @@ var _hmt = _hmt || [];
     
     
   
-    <h1 class="title">Redis学习笔记2-进阶</h1>
+    <h1 class="title">Redis学习笔记2-事务与过期时间</h1>
   
 
   </header>
@@ -152,8 +152,8 @@ var jiathis_config = {data_track_clickback:'true'};
 <!-- JiaThis Button END -->
 
 <section id="comment">
-  <h1 class="title">Comments</h1>
-  <div class="ds-thread" data-title="Redis学习笔记2-进阶">
+  <h1 class="title">评论</h1>
+  <div class="ds-thread" data-title="Redis学习笔记2-事务与过期时间">
   </div>
 </section>
 
@@ -169,7 +169,7 @@ var jiathis_config = {data_track_clickback:'true'};
 <div class="widget tagcloud first">
   <h3 class="title">Tags</h3>
   <div class="entry">
-    <a href="/tags/C/" style="font-size: 10px;">C</a> <a href="/tags/C/" style="font-size: 16.25px;">C++</a> <a href="/tags/C-11/" style="font-size: 16.25px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/echoserver/" style="font-size: 11.25px;">echoserver</a> <a href="/tags/epoll/" style="font-size: 11.25px;">epoll</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 11.25px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/redis/" style="font-size: 11.25px;">redis</a> <a href="/tags/select/" style="font-size: 11.25px;">select</a> <a href="/tags/socket/" style="font-size: 11.25px;">socket</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 15px;">书单</a> <a href="/tags/北京车展/" style="font-size: 10px;">北京车展</a> <a href="/tags/协程/" style="font-size: 10px;">协程</a> <a href="/tags/学习笔记/" style="font-size: 12.5px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/广州/" style="font-size: 10px;">广州</a> <a href="/tags/旅行/" style="font-size: 10px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 17.5px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 13.75px;">查证记录</a> <a href="/tags/游戏开发/" style="font-size: 10px;">游戏开发</a> <a href="/tags/爱好/" style="font-size: 10px;">爱好</a> <a href="/tags/生活/" style="font-size: 11.25px;">生活</a> <a href="/tags/知乎/" style="font-size: 10px;">知乎</a> <a href="/tags/程序人生/" style="font-size: 10px;">程序人生</a> <a href="/tags/读书笔记/" style="font-size: 18.75px;">读书笔记</a> <a href="/tags/读后感/" style="font-size: 10px;">读后感</a>
+    <a href="/tags/C/" style="font-size: 10px;">C</a> <a href="/tags/C/" style="font-size: 16.25px;">C++</a> <a href="/tags/C-11/" style="font-size: 16.25px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/echoserver/" style="font-size: 11.25px;">echoserver</a> <a href="/tags/epoll/" style="font-size: 11.25px;">epoll</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 11.25px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/redis/" style="font-size: 12.5px;">redis</a> <a href="/tags/select/" style="font-size: 11.25px;">select</a> <a href="/tags/socket/" style="font-size: 11.25px;">socket</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 15px;">书单</a> <a href="/tags/北京车展/" style="font-size: 10px;">北京车展</a> <a href="/tags/协程/" style="font-size: 10px;">协程</a> <a href="/tags/学习笔记/" style="font-size: 13.75px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/广州/" style="font-size: 10px;">广州</a> <a href="/tags/旅行/" style="font-size: 10px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 17.5px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 13.75px;">查证记录</a> <a href="/tags/游戏开发/" style="font-size: 10px;">游戏开发</a> <a href="/tags/爱好/" style="font-size: 10px;">爱好</a> <a href="/tags/生活/" style="font-size: 11.25px;">生活</a> <a href="/tags/知乎/" style="font-size: 10px;">知乎</a> <a href="/tags/程序人生/" style="font-size: 10px;">程序人生</a> <a href="/tags/读书笔记/" style="font-size: 18.75px;">读书笔记</a> <a href="/tags/读后感/" style="font-size: 10px;">读后感</a>
   </div>
 </div>
 
@@ -182,7 +182,11 @@ var jiathis_config = {data_track_clickback:'true'};
   <ul class="entry">
     
       <li>
-        <a href="/2016/08/23/learn-redis-adv/">Redis学习笔记2-进阶</a>
+        <a href="/2016/08/24/learn-redis-adv-2/">Redis学习笔记3-排序与消息通知</a>
+      </li>
+    
+      <li>
+        <a href="/2016/08/23/learn-redis-adv/">Redis学习笔记2-事务与过期时间</a>
       </li>
     
       <li>
@@ -195,10 +199,6 @@ var jiathis_config = {data_track_clickback:'true'};
     
       <li>
         <a href="/2016/08/14/cpp11-6/">C++11新特性之Class</a>
-      </li>
-    
-      <li>
-        <a href="/2016/08/06/something-about-strip/">从string.strip()引起的一个bug说起</a>
       </li>
     
   </ul>
