@@ -63,6 +63,102 @@ var _hmt = _hmt || [];
   <header>
     
       <div class="icon"></div>
+      <a href="/2014/04/07/python-source-7/">
+  <time datetime="2014-04-07T13:30:45.000Z">
+    2014-04-07
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title"><a href="/2014/04/07/python-source-7/">《Python源码剖析》读书笔记-7 Python的编译结果</a></h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<h3 id="第7章-Python的编译结果——Code对象与pyc文件"><a href="#第7章-Python的编译结果——Code对象与pyc文件" class="headerlink" title="第7章 Python的编译结果——Code对象与pyc文件"></a>第7章 Python的编译结果——Code对象与pyc文件</h3><ul>
+<li>Python的执行流程大致是：Python源代码(.py)-&gt;Python解释器(python27.dll)-&gt;Python字节码(.pyc)-&gt;Python虚拟机(python27.dll)-&gt;执行结果</li>
+<li>pyc文件中存储了编译的结果，一个嵌套的PyCodeObject对象，import会触发pyc文件的生成，import其实也就是把pyc文件中保存的PyCodeObject加载到内存中</li>
+<li><p>PyCodeObject的定义如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> &#123;</span><br><span class="line">    PyObject_HEAD</span><br><span class="line">    <span class="keyword">int</span> co_argcount;	 <span class="comment">/* #arguments, except *args */</span></span><br><span class="line">    <span class="keyword">int</span> co_nlocals;	 <span class="comment">/* #local variables */</span></span><br><span class="line">    <span class="keyword">int</span> co_stacksize;	 <span class="comment">/* #entries needed for evaluation stack */</span></span><br><span class="line">    <span class="keyword">int</span> co_flags;	 <span class="comment">/* CO_..., see below */</span></span><br><span class="line">    PyObject *co_code;	 <span class="comment">/* instruction opcodes */</span></span><br><span class="line">    PyObject *co_consts;	<span class="comment">/* list (constants used) */</span></span><br><span class="line">    PyObject *co_names;	 <span class="comment">/* list of strings (names used) */</span></span><br><span class="line">    PyObject *co_varnames;	<span class="comment">/* tuple of strings (local variable names) */</span></span><br><span class="line">    PyObject *co_freevars;	<span class="comment">/* tuple of strings (free variable names) */</span></span><br><span class="line">    PyObject *co_cellvars; <span class="comment">/* tuple of strings (cell variable names) */</span></span><br><span class="line">    <span class="comment">/* The rest doesn't count for hash/cmp */</span></span><br><span class="line">    PyObject *co_filename;	<span class="comment">/* string (where it was loaded from) */</span></span><br><span class="line">    PyObject *co_name;	 <span class="comment">/* string (name, for reference) */</span></span><br><span class="line">    <span class="keyword">int</span> co_firstlineno;	 <span class="comment">/* first source line number */</span></span><br><span class="line">    PyObject *co_lnotab;	<span class="comment">/* string (encoding addr&lt;-&gt;lineno mapping) See</span><br><span class="line">       Objects/lnotab_notes.txt for details. */</span></span><br><span class="line">    <span class="keyword">void</span> *co_zombieframe; <span class="comment">/* for optimization only (see frameobject.c) */</span></span><br><span class="line">    PyObject *co_weakreflist; <span class="comment">/* to support weakrefs to code objects */</span></span><br><span class="line">&#125; PyCodeObject;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>从PyObject_HEAD宏可以看出它也是一个普通的PyObject对象。</p>
+    
+  </div>
+  <footer class="end-sep">
+    
+      
+        <div class="alignleft">
+          <a href="/2014/04/07/python-source-7/#more" class="more-link">Read More</a>
+        </div>
+      
+      
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+<!-- JiaThis Button BEGIN -->
+<script type="text/javascript">
+var jiathis_config = {data_track_clickback:'true'};
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?move=0&amp;uid=1706898" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+
+  <article class="post">
+  <header>
+    
+      <div class="icon"></div>
+      <a href="/2014/04/01/python-source-6/">
+  <time datetime="2014-04-01T14:13:42.000Z">
+    2014-04-01
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title"><a href="/2014/04/01/python-source-6/">《Python源码剖析》读书笔记-6 Small Python</a></h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<h2 id="第6章-最简单的Python模拟——Small-Python"><a href="#第6章-最简单的Python模拟——Small-Python" class="headerlink" title="第6章 最简单的Python模拟——Small Python"></a>第6章 最简单的Python模拟——Small Python</h2><ul>
+<li>这一章模拟了一个python解释器，这个解释器只能处理整数和字符串，以及赋值和加法操作。</li>
+<li>其中类型对象的定义、创建、加法操作等和之前几章讲的没有不同，只是更为简化。</li>
+<li>其中出现了一个关键的字典对象<strong>m_LocalEnvironment</strong>。</li>
+<li>这个字典以字符串为键，以PyObject*为值，保存了python运行时的所有已经定义的变量。它的作用是将一个表达式中的变量名和内存中的变量对象联系起来。
+    
+  </div>
+  <footer class="end-sep">
+    
+      
+        <div class="alignleft">
+          <a href="/2014/04/01/python-source-6/#more" class="more-link">Read More</a>
+        </div>
+      
+      
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+<!-- JiaThis Button BEGIN -->
+<script type="text/javascript">
+var jiathis_config = {data_track_clickback:'true'};
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?move=0&amp;uid=1706898" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+
+  <article class="post">
+  <header>
+    
+      <div class="icon"></div>
       <a href="/2014/03/29/python-source-5/">
   <time datetime="2014-03-28T23:28:47.000Z">
     2014-03-29
@@ -89,7 +185,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2014/03/29/python-source-5/#more" class="more-link">阅读全文</a>
+          <a href="/2014/03/29/python-source-5/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -136,7 +232,7 @@ var jiathis_config = {data_track_clickback:'true'};
     
       
         <div class="alignleft">
-          <a href="/2014/03/26/python-source-4/#more" class="more-link">阅读全文</a>
+          <a href="/2014/03/26/python-source-4/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -184,7 +280,7 @@ var jiathis_config = {data_track_clickback:'true'};
     
       
         <div class="alignleft">
-          <a href="/2014/03/23/python-source-3/#more" class="more-link">阅读全文</a>
+          <a href="/2014/03/23/python-source-3/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -230,7 +326,7 @@ var jiathis_config = {data_track_clickback:'true'};
     
       
         <div class="alignleft">
-          <a href="/2014/03/21/python-source-2/#more" class="more-link">阅读全文</a>
+          <a href="/2014/03/21/python-source-2/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -278,7 +374,7 @@ var jiathis_config = {data_track_clickback:'true'};
     
       
         <div class="alignleft">
-          <a href="/2014/03/18/python-source-1/#more" class="more-link">阅读全文</a>
+          <a href="/2014/03/18/python-source-1/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -323,7 +419,7 @@ var jiathis_config = {data_track_clickback:'true'};
     
       
         <div class="alignleft">
-          <a href="/2013/12/30/2013-booklist-2/#more" class="more-link">阅读全文</a>
+          <a href="/2013/12/30/2013-booklist-2/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -342,7 +438,7 @@ var jiathis_config = {data_track_clickback:'true'};
 
 <nav id="pagination">
   
-    <a href="/page/4/" class="prev">上一页</a>
+    <a href="/page/4/" class="prev">Prev</a>
   
   
   <div class="clearfix"></div>
@@ -359,7 +455,7 @@ var jiathis_config = {data_track_clickback:'true'};
 <div class="widget tagcloud first">
   <h3 class="title">Tags</h3>
   <div class="entry">
-    <a href="/tags/C/" style="font-size: 10px;">C</a> <a href="/tags/C/" style="font-size: 16.25px;">C++</a> <a href="/tags/C-11/" style="font-size: 16.25px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/echoserver/" style="font-size: 11.25px;">echoserver</a> <a href="/tags/epoll/" style="font-size: 11.25px;">epoll</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 11.25px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/redis/" style="font-size: 12.5px;">redis</a> <a href="/tags/select/" style="font-size: 11.25px;">select</a> <a href="/tags/socket/" style="font-size: 11.25px;">socket</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 15px;">书单</a> <a href="/tags/北京车展/" style="font-size: 10px;">北京车展</a> <a href="/tags/协程/" style="font-size: 10px;">协程</a> <a href="/tags/学习笔记/" style="font-size: 13.75px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/广州/" style="font-size: 10px;">广州</a> <a href="/tags/旅行/" style="font-size: 10px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 17.5px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 13.75px;">查证记录</a> <a href="/tags/游戏开发/" style="font-size: 10px;">游戏开发</a> <a href="/tags/爱好/" style="font-size: 10px;">爱好</a> <a href="/tags/生活/" style="font-size: 11.25px;">生活</a> <a href="/tags/知乎/" style="font-size: 10px;">知乎</a> <a href="/tags/程序人生/" style="font-size: 10px;">程序人生</a> <a href="/tags/读书笔记/" style="font-size: 18.75px;">读书笔记</a> <a href="/tags/读后感/" style="font-size: 10px;">读后感</a>
+    <a href="/tags/C/" style="font-size: 10px;">C</a> <a href="/tags/C/" style="font-size: 16.25px;">C++</a> <a href="/tags/C-11/" style="font-size: 16.25px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/echoserver/" style="font-size: 11.25px;">echoserver</a> <a href="/tags/epoll/" style="font-size: 11.25px;">epoll</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 11.25px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/redis/" style="font-size: 12.5px;">redis</a> <a href="/tags/select/" style="font-size: 11.25px;">select</a> <a href="/tags/socket/" style="font-size: 11.25px;">socket</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 15px;">书单</a> <a href="/tags/勘误，MySQL，C-11/" style="font-size: 10px;">勘误，MySQL，C++11</a> <a href="/tags/北京车展/" style="font-size: 10px;">北京车展</a> <a href="/tags/协程/" style="font-size: 10px;">协程</a> <a href="/tags/学习笔记/" style="font-size: 13.75px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/广州/" style="font-size: 10px;">广州</a> <a href="/tags/新西兰/" style="font-size: 10px;">新西兰</a> <a href="/tags/旅行/" style="font-size: 11.25px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 17.5px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 13.75px;">查证记录</a> <a href="/tags/游戏开发/" style="font-size: 10px;">游戏开发</a> <a href="/tags/爱好/" style="font-size: 10px;">爱好</a> <a href="/tags/生活/" style="font-size: 11.25px;">生活</a> <a href="/tags/知乎/" style="font-size: 10px;">知乎</a> <a href="/tags/程序人生/" style="font-size: 10px;">程序人生</a> <a href="/tags/读书笔记/" style="font-size: 18.75px;">读书笔记</a> <a href="/tags/读后感/" style="font-size: 10px;">读后感</a>
   </div>
 </div>
 
@@ -372,6 +468,14 @@ var jiathis_config = {data_track_clickback:'true'};
   <ul class="entry">
     
       <li>
+        <a href="/2016/08/27/nz-visa/">新西兰签证终于出签</a>
+      </li>
+    
+      <li>
+        <a href="/2016/08/27/correct-errors/">勘误</a>
+      </li>
+    
+      <li>
         <a href="/2016/08/24/learn-redis-adv-2/">Redis学习笔记3-排序与消息通知</a>
       </li>
     
@@ -381,14 +485,6 @@ var jiathis_config = {data_track_clickback:'true'};
     
       <li>
         <a href="/2016/08/20/cpp11-7/">C++11新特性之右值引用与移动</a>
-      </li>
-    
-      <li>
-        <a href="/2016/08/17/mysql-select-order/">一个潜伏了5年的bug</a>
-      </li>
-    
-      <li>
-        <a href="/2016/08/14/cpp11-6/">C++11新特性之Class</a>
       </li>
     
   </ul>

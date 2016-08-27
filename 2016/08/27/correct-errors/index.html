@@ -1,0 +1,250 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  
+  <title>勘误 | 一根笨茄子</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  
+    <meta name="author" content="Yubo Guo">
+  
+  
+    <meta name="description" content="最近伯乐在线旗下的几个公众号（CPP开发者，数据库开发等）转载了我的几篇文章，带来了很大的阅读量，也引发了激烈的讨论。评论中，有几位经验丰富的老司机，指出了我文章中的错误；当然，也有一些人在没有营养地纯喷啦，这个我也已经习惯了……  
+在C++11新特性之容器相关特性的评论中，@少跟网线设置路由写到：">
+  
+  <meta name="description" content="最近伯乐在线旗下的几个公众号（CPP开发者，数据库开发等）转载了我的几篇文章，带来了很大的阅读量，也引发了激烈的讨论。评论中，有几位经验丰富的老司机，指出了我文章中的错误；当然，也有一些人在没有营养地纯喷啦，这个我也已经习惯了……  
+在C++11新特性之容器相关特性的评论中，@少跟网线设置路由写到：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="勘误">
+<meta property="og:url" content="http://blog.guoyb.com/2016/08/27/correct-errors/index.html">
+<meta property="og:site_name" content="一根笨茄子">
+<meta property="og:description" content="最近伯乐在线旗下的几个公众号（CPP开发者，数据库开发等）转载了我的几篇文章，带来了很大的阅读量，也引发了激烈的讨论。评论中，有几位经验丰富的老司机，指出了我文章中的错误；当然，也有一些人在没有营养地纯喷啦，这个我也已经习惯了……  
+在C++11新特性之容器相关特性的评论中，@少跟网线设置路由写到：">
+<meta property="og:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.png">
+<meta property="og:updated_time" content="2016-08-26T23:39:03.315Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="勘误">
+<meta name="twitter:description" content="最近伯乐在线旗下的几个公众号（CPP开发者，数据库开发等）转载了我的几篇文章，带来了很大的阅读量，也引发了激烈的讨论。评论中，有几位经验丰富的老司机，指出了我文章中的错误；当然，也有一些人在没有营养地纯喷啦，这个我也已经习惯了……  
+在C++11新特性之容器相关特性的评论中，@少跟网线设置路由写到：">
+<meta name="twitter:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.png">
+  
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+  
+<script type="text/javascript">
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?996ee0fca2512b4c29f37f60cf6387ca";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+</head>
+
+<body>
+  <div class="wrapper">
+    <header id="header">
+  <div class="title">
+    <h1><a href="/">一根笨茄子</a></h1>
+    <p><a href="/"></a></p>
+  </div>
+  <nav class="nav">
+    <ul>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/about">关于我</a></li>
+      
+      
+    </ul>
+    <div class="clearfix"></div>
+  </nav>
+  <div class="clearfix"></div>
+</header>
+    <div class="content">
+		<article class="post">
+  <header>
+    
+      <div class="icon"></div>
+      <a href="/2016/08/27/correct-errors/">
+  <time datetime="2016-08-26T23:20:25.000Z">
+    2016-08-27
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title">勘误</h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>最近伯乐在线旗下的几个公众号（CPP开发者，数据库开发等）转载了我的几篇文章，带来了很大的阅读量，也引发了激烈的讨论。评论中，有几位经验丰富的老司机，指出了我文章中的错误；当然，也有一些人在没有营养地纯喷啦，这个我也已经习惯了……  </p>
+<p>在<a href="http://blog.guoyb.com/2016/07/09/cpp11-4/">C++11新特性之容器相关特性</a>的评论中，<strong>@少跟网线设置路由</strong>写到：<br><a id="more"></a>    </p>
+<blockquote>
+<p>“每当在程序中出现一段以{}包围的字面量时，就会自动构造一个initializer_list对象。” 这段话是错误的，这个要看情况，假如将{}包含的字段当做实参传递给一个接受 std::initializer_list 作为参数的函数，那这句话是正确的，在使用std ::initializer_list {}调用构造函数也要看列表中的数据是否跟某个构造函数的参数一一对应，此时也只是相当于使用“（）”方式调用构造函数，生成对象，至于传统的数组也还可以使用{}来初始化，此时更不可能生成std::initializer_list 对象。  </p>
+<p>生成std::initializer_list对象的过程中构建了一个临时数组，并将{}列表中的元素拷贝到数组中，应该{}中的元素必须可拷贝，生成的过程也相对有些消耗，因此std::initializer_list 对象的生成要考虑考虑拷贝的性能，另外使用它的时候也要注意底层关联的临时数组的生命期！一般情况下，为了保存数据，接受生成的std::initializer_list 的一方还要二次拷贝数据！</p>
+</blockquote>
+<p>这里确实是我想当然的写了一句推论，没有经过深思熟虑，谢谢指正~  </p>
+<p>在<a href="http://blog.guoyb.com/2016/08/17/mysql-select-order/">一个潜伏了5年的bug</a>中，我这样总结MySQL SELECT语句的返回顺序：  </p>
+<blockquote>
+<p>MySQL对于无ORDER BY子句的SELECT的语句的返回结果有潜规则：</p>
+<ul>
+<li>对于MyISAM引擎来说，其返回顺序是其物理存储顺序；  </li>
+<li>对于InnoDB引擎来说，其返回顺序是按照主键排序的。</li>
+</ul>
+</blockquote>
+<p>这是当时在查bug时google到的一篇文章中说到的，也正好能够解释我当时看到的现象。但是事实证明，我这里的理解是有偏差的。    </p>
+<p>但是，老司机<strong>@逝水fox</strong>指出：  </p>
+<blockquote>
+<p>什么都说得好，就是总结的太胡扯了。[尴尬]结果顺序和具体引擎对数据结构的使用有关。举个例子，innodb使用辅助索引进行筛选的结果，有无启用mrr优化，返回记录顺序是可能不同的，不一定就是主键序。其实，遇到过最奇怪的顺序问题，不是MySQL，而是Oracle，即使用了order by，数据记录的顺序仍然可能是不一定的  </p>
+</blockquote>
+<p>另外，也有老司机指出，可以通过ORDER BY FIELD来控制MySQL直接按照WHERE IN子句内的顺序返回。  </p>
+<hr>
+<p>谢谢各位老司机，暴露自己理解上的问题，纠正自己的错误认识，这也是写技术博客的很重要的收获~  </p>
+<p>转载请注明出处： <a href="http://blog.guoyb.com/2016/08/27/correct-errors">http://blog.guoyb.com/2016/08/27/correct-errors/</a>  </p>
+<p>欢迎使用微信扫描下方二维码，关注我的微信公众号TechTalking，技术·生活·思考：<br><img src="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.png" alt="后端技术小黑屋"></p>
+
+    
+  </div>
+  <footer>
+    
+      
+      
+  <div class="tags">
+    <a class="tags-link" href="/tags/勘误，MySQL，C-11/">勘误，MySQL，C++11</a>
+  </div>
+
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+<!-- JiaThis Button BEGIN -->
+<script type="text/javascript">
+var jiathis_config = {data_track_clickback:'true'};
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?move=0&amp;uid=1706898" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+<section id="comment">
+  <h1 class="title">Comments</h1>
+  <div class="ds-thread" data-title="勘误">
+  </div>
+</section>
+
+	</div>
+  </div>
+	<aside id="sidebar">
+  
+  
+    
+      
+      
+
+<div class="widget tagcloud first">
+  <h3 class="title">Tags</h3>
+  <div class="entry">
+    <a href="/tags/C/" style="font-size: 10px;">C</a> <a href="/tags/C/" style="font-size: 16.25px;">C++</a> <a href="/tags/C-11/" style="font-size: 16.25px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/echoserver/" style="font-size: 11.25px;">echoserver</a> <a href="/tags/epoll/" style="font-size: 11.25px;">epoll</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 11.25px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/redis/" style="font-size: 12.5px;">redis</a> <a href="/tags/select/" style="font-size: 11.25px;">select</a> <a href="/tags/socket/" style="font-size: 11.25px;">socket</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 15px;">书单</a> <a href="/tags/勘误，MySQL，C-11/" style="font-size: 10px;">勘误，MySQL，C++11</a> <a href="/tags/北京车展/" style="font-size: 10px;">北京车展</a> <a href="/tags/协程/" style="font-size: 10px;">协程</a> <a href="/tags/学习笔记/" style="font-size: 13.75px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/广州/" style="font-size: 10px;">广州</a> <a href="/tags/新西兰/" style="font-size: 10px;">新西兰</a> <a href="/tags/旅行/" style="font-size: 11.25px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 17.5px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 13.75px;">查证记录</a> <a href="/tags/游戏开发/" style="font-size: 10px;">游戏开发</a> <a href="/tags/爱好/" style="font-size: 10px;">爱好</a> <a href="/tags/生活/" style="font-size: 11.25px;">生活</a> <a href="/tags/知乎/" style="font-size: 10px;">知乎</a> <a href="/tags/程序人生/" style="font-size: 10px;">程序人生</a> <a href="/tags/读书笔记/" style="font-size: 18.75px;">读书笔记</a> <a href="/tags/读后感/" style="font-size: 10px;">读后感</a>
+  </div>
+</div>
+
+    
+      
+      
+
+<div class="widget recent-posts">
+  <h3 class="title">最近文章</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2016/08/27/nz-visa/">新西兰签证终于出签</a>
+      </li>
+    
+      <li>
+        <a href="/2016/08/27/correct-errors/">勘误</a>
+      </li>
+    
+      <li>
+        <a href="/2016/08/24/learn-redis-adv-2/">Redis学习笔记3-排序与消息通知</a>
+      </li>
+    
+      <li>
+        <a href="/2016/08/23/learn-redis-adv/">Redis学习笔记2-事务与过期时间</a>
+      </li>
+    
+      <li>
+        <a href="/2016/08/20/cpp11-7/">C++11新特性之右值引用与移动</a>
+      </li>
+    
+  </ul>
+</div>
+
+    
+      
+      
+<div class="widget tag">
+  <h3 class="title">友情链接</h3>
+  <ul class="entry">
+  
+    
+    <li><a href="http://www.linkedin.com/in/yubo-guo-739b0071" target="_blank">LinkedIn</a></li>
+  
+    
+    <li><a href="http://www.tuicool.com/sites/2emeIjb" target="_blank">推酷站点</a></li>
+  
+  </ul>
+</div>
+
+    
+  
+</aside>
+<div class="clearfix"></div>
+  <footer id="footer"><div class="copyright">
+  
+  &copy; 2016 <a href="/">Yubo Guo</a>
+  
+</div>
+<div class="theme-copyright">
+  Theme by <a href="https://github.com/orderedlist" target="_blank">orderedlist</a>
+   | 
+  Redesign by <a href="http://heroicyang.com/" target="_blank">Heroic Yang</a>
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+<script src="/js/scale.fix.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = { short_name: 'guoyb' };
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';
+    ds.async = true;
+    ds.src = 'http://static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+  (function($){
+    $('.fancybox').fancybox();
+  })(jQuery);
+</script>
+
+</body>
+</html>
