@@ -1,0 +1,249 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  
+  <title>C++11新特性之template | 一根笨茄子</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  
+    <meta name="author" content="Yubo Guo">
+  
+  
+    <meta name="description" content="前七篇在这里：C++11新特性之新类型与初始化: http://blog.guoyb.com/2016/06/18/cpp11-1C++11新特性之类型推断与类型获取: http://blog.guoyb.com/2016/06/25/cpp11-2C++11新特性之lambda： http://blog.guoyb.com/2016/06/30/cpp11-3C++11新特性之容器相关特性：">
+  
+  <meta name="description" content="前七篇在这里：C++11新特性之新类型与初始化: http://blog.guoyb.com/2016/06/18/cpp11-1C++11新特性之类型推断与类型获取: http://blog.guoyb.com/2016/06/25/cpp11-2C++11新特性之lambda： http://blog.guoyb.com/2016/06/30/cpp11-3C++11新特性之容器相关特性：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="C++11新特性之template">
+<meta property="og:url" content="http://blog.guoyb.com/2016/08/31/cpp11-8/index.html">
+<meta property="og:site_name" content="一根笨茄子">
+<meta property="og:description" content="前七篇在这里：C++11新特性之新类型与初始化: http://blog.guoyb.com/2016/06/18/cpp11-1C++11新特性之类型推断与类型获取: http://blog.guoyb.com/2016/06/25/cpp11-2C++11新特性之lambda： http://blog.guoyb.com/2016/06/30/cpp11-3C++11新特性之容器相关特性：">
+<meta property="og:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.png">
+<meta property="og:updated_time" content="2016-09-03T00:52:59.096Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="C++11新特性之template">
+<meta name="twitter:description" content="前七篇在这里：C++11新特性之新类型与初始化: http://blog.guoyb.com/2016/06/18/cpp11-1C++11新特性之类型推断与类型获取: http://blog.guoyb.com/2016/06/25/cpp11-2C++11新特性之lambda： http://blog.guoyb.com/2016/06/30/cpp11-3C++11新特性之容器相关特性：">
+<meta name="twitter:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.png">
+  
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+  
+<script type="text/javascript">
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?996ee0fca2512b4c29f37f60cf6387ca";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+</head>
+
+<body>
+  <div class="wrapper">
+    <header id="header">
+  <div class="title">
+    <h1><a href="/">一根笨茄子</a></h1>
+    <p><a href="/"></a></p>
+  </div>
+  <nav class="nav">
+    <ul>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/about">关于我</a></li>
+      
+      
+    </ul>
+    <div class="clearfix"></div>
+  </nav>
+  <div class="clearfix"></div>
+</header>
+    <div class="content">
+		<article class="post">
+  <header>
+    
+      <div class="icon"></div>
+      <a href="/2016/08/31/cpp11-8/">
+  <time datetime="2016-08-30T23:59:15.000Z">
+    2016-08-31
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title">C++11新特性之template</h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>前七篇在这里：<br>C++11新特性之新类型与初始化: <a href="http://blog.guoyb.com/2016/06/18/cpp11-1/">http://blog.guoyb.com/2016/06/18/cpp11-1</a><br>C++11新特性之类型推断与类型获取: <a href="http://blog.guoyb.com/2016/06/25/cpp11-2/">http://blog.guoyb.com/2016/06/25/cpp11-2</a><br>C++11新特性之lambda： <a href="http://blog.guoyb.com/2016/06/30/cpp11-3/">http://blog.guoyb.com/2016/06/30/cpp11-3</a><br>C++11新特性之容器相关特性： <a href="http://blog.guoyb.com/2016/07/09/cpp11-4">http://blog.guoyb.com/2016/07/09/cpp11-4</a><br>C++11新特性之智能指针： <a href="http://blog.guoyb.com/2016/08/02/cpp11-5">http://blog.guoyb.com/2016/08/02/cpp11-5</a><br>C++11新特性之Class: <a href="http://blog.guoyb.com/2016/08/14/cpp11-6">http://blog.guoyb.com/2016/08/14/cpp11-6</a><br>C++11新特性之右值引用与移动： <a href="http://blog.guoyb.com/2016/08/20/cpp11-7">http://blog.guoyb.com/2016/08/20/cpp11-7</a></p>
+<hr>
+<p>这是C++11新特性介绍的第八部分，涉及到template相关的新特性。<br>不想看toy code的读者可以直接拉到文章最后看这部分的总结。  </p>
+<h2 id="function"><a href="#function" class="headerlink" title="function"></a>function<t></t></h2><p>C++提供了很多种可调用对象，例如函数指针、lambda、重载了operator()的对象等。有时我们需要将这些对象统一管理，这时使用如下这种方式是不行的：<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">add</span><span class="params">(<span class="keyword">int</span> i, <span class="keyword">int</span> j)</span> </span>&#123; return i + j; &#125;</span><br><span class="line"><span class="keyword">struct</span> divide</span><br><span class="line">&#123;</span><br><span class="line">	<span class="function"><span class="keyword">int</span> <span class="title">operator</span><span class="params">()</span><span class="params">(<span class="keyword">int</span> i, <span class="keyword">int</span> j)</span></span><br><span class="line">	</span>&#123;</span><br><span class="line">		return i / j;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">map</span>&lt;<span class="built_in">std</span>::<span class="built_in">string</span>, <span class="keyword">int</span>(*)(<span class="keyword">int</span>, <span class="keyword">int</span>)&gt;&gt; binops = &#123;</span><br><span class="line">	&#123;<span class="string">"+"</span>, add&#125;,</span><br><span class="line">	&#123;<span class="string">"-"</span>, <span class="built_in">std</span>::minus&lt;<span class="keyword">int</span>&gt;()&#125;,</span><br><span class="line">	&#123;<span class="string">"*"</span>, [](int i, int j) &#123;return i * j; &#125;&#125;,</span><br><span class="line">	&#123;<span class="string">"/"</span>, divide()&#125;,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure><br><a id="more"></a>  </p>
+<p>无法直接将binops中的可调用对象直接转换成int(*)(int, int)。  </p>
+<p>C++11新标准中提供了一个名为function的标准库类，可以用function来表示以上所有的函数调用，只要这些函数调用的参数类型和返回类型是一致的。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"test function&lt;T&gt;:\n"</span>;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">map</span>&lt;<span class="built_in">std</span>::<span class="built_in">string</span>, <span class="built_in">std</span>::function&lt;<span class="keyword">int</span>(<span class="keyword">int</span>, <span class="keyword">int</span>)&gt;&gt; binops = &#123;</span><br><span class="line">	&#123;<span class="string">"+"</span>, add&#125;,</span><br><span class="line">	&#123;<span class="string">"-"</span>, <span class="built_in">std</span>::minus&lt;<span class="keyword">int</span>&gt;()&#125;,</span><br><span class="line">	&#123;<span class="string">"*"</span>, [](int i, int j) &#123;return i * j; &#125;&#125;,</span><br><span class="line">	&#123;<span class="string">"/"</span>, divide()&#125;,</span><br><span class="line">&#125;;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"+:\t"</span>&lt;&lt;binops[<span class="string">"+"</span>](<span class="number">1</span>, <span class="number">2</span>)&lt;&lt;<span class="string">"\n"</span>;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"-:\t"</span>&lt;&lt;binops[<span class="string">"-"</span>](<span class="number">1</span>, <span class="number">2</span>)&lt;&lt;<span class="string">"\n"</span>;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"*:\t"</span>&lt;&lt;binops[<span class="string">"*"</span>](<span class="number">1</span>, <span class="number">2</span>)&lt;&lt;<span class="string">"\n"</span>;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"/:\t"</span>&lt;&lt;binops[<span class="string">"/"</span>](<span class="number">1</span>, <span class="number">2</span>)&lt;&lt;<span class="string">"\n"</span>;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"test function&lt;T&gt; done.\n"</span>&lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br></pre></td></tr></table></figure>  </p>
+<h2 id="模板友元"><a href="#模板友元" class="headerlink" title="模板友元"></a>模板友元</h2><p>在新标准中，可以声明一个类的模板参数类型为类的友元。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt; <span class="keyword">class</span> Bar</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">friend</span> T;</span><br><span class="line"><span class="keyword">protected</span>:</span><br><span class="line">	<span class="keyword">int</span> val = <span class="number">100</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> Foo</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">print_bar</span><span class="params">(Bar&lt;Foo&gt; &amp;bar)</span> </span>&#123;<span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"bar:\t"</span>&lt;&lt;bar.val&lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;&#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"test friend template type:\n"</span>;</span><br><span class="line">Bar&lt;Foo&gt; bar;</span><br><span class="line">Foo foo;</span><br><span class="line">foo.print_bar(bar);</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"test friend template type done.\n"</span>&lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br></pre></td></tr></table></figure>  </p>
+<p>可以看到，由于友元机制，在Foo中可以直接访问到Bar的protected属性。  </p>
+<h2 id="模板别名"><a href="#模板别名" class="headerlink" title="模板别名"></a>模板别名</h2><p>新标准中，可以使用using为模板声明别名。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt; <span class="keyword">using</span> twin = <span class="built_in">std</span>::pair&lt;T, T&gt;;</span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt; <span class="keyword">using</span> str_int = <span class="built_in">std</span>::pair&lt;T, <span class="keyword">int</span>&gt;;</span><br><span class="line"></span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"test template alias:\n"</span>;</span><br><span class="line">twin&lt;<span class="built_in">std</span>::<span class="built_in">string</span>&gt; twin_str = &#123;<span class="string">"abc"</span>, <span class="string">"def"</span>&#125;;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"twin_str:\t"</span>&lt;&lt;twin_str.first&lt;&lt;<span class="string">'\t'</span>&lt;&lt;twin_str.second&lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">str_int&lt;<span class="built_in">std</span>::<span class="built_in">string</span>&gt; strno = &#123;<span class="string">"abc"</span>, <span class="number">100</span>&#125;;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"strno:\t"</span>&lt;&lt;strno.first&lt;&lt;<span class="string">'\t'</span>&lt;&lt;strno.second&lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"test template alias done.\n"</span>&lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br></pre></td></tr></table></figure>  </p>
+<p>可以看到，在声明str_int的时候，还可以用某一类型部分实例化模板。这是一个挺好用的特性。  </p>
+<h2 id="默认参数"><a href="#默认参数" class="headerlink" title="默认参数"></a>默认参数</h2><p>新标准中，可以像为函数提供默认参数一样，为模板参数提供默认值。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span> F=<span class="built_in">std</span>::less&lt;T&gt;&gt;</span><br><span class="line"><span class="keyword">int</span> compare(const T &amp;v1, const T &amp;v2, F f=F())</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">if</span>(f(v1, v2)) return <span class="number">-1</span>;</span><br><span class="line">	<span class="keyword">if</span>(f(v2, v1)) return <span class="number">1</span>;</span><br><span class="line">	return <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"test default template parameter:\n"</span>;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"compare int 1 2:\t"</span>&lt;&lt;compare(<span class="number">1</span>, <span class="number">2</span>)&lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"compare int 2.0 1.0:\t"</span>&lt;&lt;compare(<span class="number">2.0</span>, <span class="number">1.0</span>)&lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line"><span class="comment">//std::cout&lt;&lt;"compare int 2.0 1:\t"&lt;&lt;compare(2.0, 1)&lt;&lt;std::endl; // wrong. can't determine which type is T</span></span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"test default template parameter done.\n"</span>&lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br></pre></td></tr></table></figure>  </p>
+<h2 id="尾置返回类型"><a href="#尾置返回类型" class="headerlink" title="尾置返回类型"></a>尾置返回类型</h2><p>当时用模板定义一个函数时，有时函数的返回类型是和模板参数相关的，这时可以通过decltype获得返回类型。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> It&gt;</span><br><span class="line"><span class="keyword">decltype</span>(*beg) get_begin(It beg)</span><br><span class="line">&#123;</span><br><span class="line">	return *beg;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>  </p>
+<p>但是这样写是无法通过编译的，因为decltype进行类型推断时，beg还不存在。所以这时需要使用尾置返回类型。<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">template&lt;typename It&gt;</span><br><span class="line">auto get_begin(It beg) -&gt; decltype(*beg)</span><br><span class="line">&#123;</span><br><span class="line">	return *beg;</span><br><span class="line">&#125;</span><br><span class="line">std::cout&lt;&lt;"test tail return type of template:\n";</span><br><span class="line">std::vector&lt;int&gt; numbers = &#123;1, 2, 3, 4, 5&#125;;</span><br><span class="line">std::cout&lt;&lt;"get_begin:\t"&lt;&lt;get_begin(numbers.begin())&lt;&lt;std::endl;</span><br><span class="line">std::cout&lt;&lt;"test tail return type of template done.\n";</span><br></pre></td></tr></table></figure>  </p>
+<h2 id="不定长模板"><a href="#不定长模板" class="headerlink" title="不定长模板"></a>不定长模板</h2><p>新标准中，可以定义一个不定长度的模板参数列表。这种形式，一般和递归结合使用。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="built_in">std</span>::<span class="function">ostream &amp;<span class="title">print_variadic</span><span class="params">(<span class="built_in">std</span>::ostream &amp;os, <span class="keyword">const</span> T &amp;t)</span></span><br><span class="line"></span>&#123;</span><br><span class="line">	return os&lt;&lt;t&lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span>... Args&gt;</span><br><span class="line"><span class="built_in">std</span>::<span class="function">ostream &amp;<span class="title">print_variadic</span><span class="params">(<span class="built_in">std</span>::ostream &amp;os, <span class="keyword">const</span> T &amp;t, <span class="keyword">const</span> Args&amp;... rest)</span></span><br><span class="line"></span>&#123;</span><br><span class="line">	os&lt;&lt;t&lt;&lt;<span class="string">"(remain size: "</span>&lt;&lt;<span class="keyword">sizeof</span>...(Args)&lt;&lt;<span class="string">"), "</span>;</span><br><span class="line">	return print_variadic(os, rest...);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"test variadic template:\n"</span>;</span><br><span class="line">print_variadic(<span class="built_in">std</span>::<span class="built_in">cout</span>, <span class="number">100</span>, <span class="string">"s"</span>, <span class="number">56.76</span>, <span class="number">101</span>);</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"test variadic template done.\n"</span>;</span><br></pre></td></tr></table></figure>  </p>
+<p>第一次为print_variadic传入了4个需要打印的对象，则实例化第二个不定长模板函数，将100赋值给t，并将剩余的3个参数打包成rest。  </p>
+<p>在内部递归中，将不断的将rest包中的第一个参数拿出来付给t，剩余参数打包进行下一次递归调用。  </p>
+<p>最后只剩一个参数时，两种形式的print_variadic都可以匹配，但是第一种没有模版参数包的版本更加特例化，因此将调用第一种形式的print_variadic，结束递归。  </p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ol>
+<li>提供了一个名为function的标准库类，可以用function来表示多个不同形式的函数调用，只要这些函数调用的参数类型和返回类型是一致的。  </li>
+<li>在新标准中，可以声明一个类的模板参数类型为类的友元。  </li>
+<li>新标准中，可以使用using为模板声明别名。  </li>
+<li>新标准中，可以像为函数提供默认参数一样，为模板参数提供默认值。  </li>
+<li>部分模板函数返回值需要使用尾置返回类型。  </li>
+<li>新标准中，可以定义一个不定长度的模板参数列表，将参数打包。这种形式，一般和递归结合使用。 </li>
+</ol>
+<p>完整代码详见<a href="https://github.com/yubo1911/saber/blob/master/learncpp11/template.cpp" target="_blank" rel="external">template.cpp</a>  </p>
+<p>转载请注明出处： <a href="http://blog.guoyb.com/2016/08/31/cpp11-8">http://blog.guoyb.com/2016/08/31/cpp11-8/</a>  </p>
+<p>欢迎使用微信扫描下方二维码，关注我的微信公众号TechTalking，技术·生活·思考：<br><img src="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.png" alt="后端技术小黑屋"> </p>
+
+    
+  </div>
+  <footer>
+    
+      
+      
+  <div class="tags">
+    <a class="tags-link" href="/tags/C/">C++</a>, <a class="tags-link" href="/tags/C-11/">C++11</a>
+  </div>
+
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+<!-- JiaThis Button BEGIN -->
+<script type="text/javascript">
+var jiathis_config = {data_track_clickback:'true'};
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?move=0&amp;uid=1706898" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+<section id="comment">
+  <h1 class="title">Comments</h1>
+  <div class="ds-thread" data-title="C++11新特性之template">
+  </div>
+</section>
+
+	</div>
+  </div>
+	<aside id="sidebar">
+  
+  
+    
+      
+      
+
+<div class="widget tagcloud first">
+  <h3 class="title">Tags</h3>
+  <div class="entry">
+    <a href="/tags/C/" style="font-size: 10px;">C</a> <a href="/tags/C/" style="font-size: 16.25px;">C++</a> <a href="/tags/C-11/" style="font-size: 16.25px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/echoserver/" style="font-size: 11.25px;">echoserver</a> <a href="/tags/epoll/" style="font-size: 11.25px;">epoll</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 11.25px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/redis/" style="font-size: 12.5px;">redis</a> <a href="/tags/select/" style="font-size: 11.25px;">select</a> <a href="/tags/socket/" style="font-size: 11.25px;">socket</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 15px;">书单</a> <a href="/tags/勘误，MySQL，C-11/" style="font-size: 10px;">勘误，MySQL，C++11</a> <a href="/tags/北京车展/" style="font-size: 10px;">北京车展</a> <a href="/tags/协程/" style="font-size: 10px;">协程</a> <a href="/tags/学习笔记/" style="font-size: 13.75px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/广州/" style="font-size: 10px;">广州</a> <a href="/tags/新西兰/" style="font-size: 10px;">新西兰</a> <a href="/tags/旅行/" style="font-size: 11.25px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 17.5px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 13.75px;">查证记录</a> <a href="/tags/游戏开发/" style="font-size: 10px;">游戏开发</a> <a href="/tags/爱好/" style="font-size: 10px;">爱好</a> <a href="/tags/生活/" style="font-size: 11.25px;">生活</a> <a href="/tags/知乎/" style="font-size: 10px;">知乎</a> <a href="/tags/程序人生/" style="font-size: 10px;">程序人生</a> <a href="/tags/读书笔记/" style="font-size: 18.75px;">读书笔记</a> <a href="/tags/读后感/" style="font-size: 10px;">读后感</a>
+  </div>
+</div>
+
+    
+      
+      
+
+<div class="widget recent-posts">
+  <h3 class="title">最近文章</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2016/08/31/cpp11-8/">C++11新特性之template</a>
+      </li>
+    
+      <li>
+        <a href="/2016/08/27/nz-visa/">新西兰签证终于出签</a>
+      </li>
+    
+      <li>
+        <a href="/2016/08/27/correct-errors/">勘误</a>
+      </li>
+    
+      <li>
+        <a href="/2016/08/24/learn-redis-adv-2/">Redis学习笔记3-排序与消息通知</a>
+      </li>
+    
+      <li>
+        <a href="/2016/08/23/learn-redis-adv/">Redis学习笔记2-事务与过期时间</a>
+      </li>
+    
+  </ul>
+</div>
+
+    
+      
+      
+<div class="widget tag">
+  <h3 class="title">友情链接</h3>
+  <ul class="entry">
+  
+    
+    <li><a href="http://www.linkedin.com/in/yubo-guo-739b0071" target="_blank">LinkedIn</a></li>
+  
+    
+    <li><a href="http://www.tuicool.com/sites/2emeIjb" target="_blank">推酷站点</a></li>
+  
+  </ul>
+</div>
+
+    
+  
+</aside>
+<div class="clearfix"></div>
+  <footer id="footer"><div class="copyright">
+  
+  &copy; 2016 <a href="/">Yubo Guo</a>
+  
+</div>
+<div class="theme-copyright">
+  Theme by <a href="https://github.com/orderedlist" target="_blank">orderedlist</a>
+   | 
+  Redesign by <a href="http://heroicyang.com/" target="_blank">Heroic Yang</a>
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+<script src="/js/scale.fix.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = { short_name: 'guoyb' };
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';
+    ds.async = true;
+    ds.src = 'http://static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+  (function($){
+    $('.fancybox').fancybox();
+  })(jQuery);
+</script>
+
+</body>
+</html>
