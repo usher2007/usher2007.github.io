@@ -63,6 +63,54 @@ var _hmt = _hmt || [];
   <header>
     
       <div class="icon"></div>
+      <a href="/2016/08/02/cpp11-5/">
+  <time datetime="2016-08-02T00:58:15.000Z">
+    2016-08-02
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title"><a href="/2016/08/02/cpp11-5/">C++11新特性之智能指针(shared_ptr, unique_ptr和weak_ptr)</a></h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>前四篇在这里：<br>C++11新特性之新类型与初始化: <a href="http://blog.guoyb.com/2016/06/18/cpp11-1/">http://blog.guoyb.com/2016/06/18/cpp11-1/</a><br>C++11新特性之类型推断与类型获取: <a href="http://blog.guoyb.com/2016/06/25/cpp11-2/">http://blog.guoyb.com/2016/06/25/cpp11-2/</a><br>C++11新特性之lambda： <a href="http://blog.guoyb.com/2016/06/30/cpp11-3/">http://blog.guoyb.com/2016/06/30/cpp11-3/</a><br>C++11新特性之容器相关特性： <a href="http://blog.guoyb.com/2016/07/09/cpp11-4">http://blog.guoyb.com/2016/07/09/cpp11-4/</a>  </p>
+<hr>
+<p>这是C++11新特性介绍的第五部分，涉及到智能指针的相关内容（shared_ptr, unique_ptr, weak_ptr)。<br>不想看toy code的读者可以直接拉到文章最后看这部分的总结。  </p>
+<h1 id="shared-ptr"><a href="#shared-ptr" class="headerlink" title="shared_ptr"></a>shared_ptr</h1><h2 id="shared-ptr基本用法"><a href="#shared-ptr基本用法" class="headerlink" title="shared_ptr基本用法"></a>shared_ptr基本用法</h2><p>shared_ptr采用引用计数的方式管理所指向的对象。当有一个新的shared_ptr指向同一个对象时（复制shared_ptr等），引用计数加1。当shared_ptr离开作用域时，引用计数减1。当引用计数为0时，释放所管理的内存。  </p>
+<p>这样做的好处在于解放了程序员手动释放内存的压力。之前，为了处理程序中的异常情况，往往需要将指针手动封装到类中，通过析构函数来释放动态分配的内存；现在这一过程就可以交给shared_ptr去做了。  </p>
+<p>一般我们使用make_shared来获得shared_ptr。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="string">"test shared_ptr base usage:"</span>&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line"><span class="built_in">shared_ptr</span>&lt;<span class="built_in">string</span>&gt; p1 = make_shared&lt;<span class="built_in">string</span>&gt;(<span class="string">""</span>);</span><br><span class="line"><span class="keyword">if</span>(p1 &amp;&amp; p1-&gt;empty())</span><br><span class="line">	*p1 = <span class="string">"hello"</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">auto</span> p2 = make_shared&lt;<span class="built_in">string</span>&gt;(<span class="string">"world"</span>);</span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;*p1&lt;&lt;<span class="string">' '</span>&lt;&lt;*p2&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line"></span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="string">"test shared_ptr use_count:"</span>&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="string">"p1 cnt:"</span>&lt;&lt;p1.use_count()&lt;&lt;<span class="string">"\tp2 cnt:"</span>&lt;&lt;p2.use_count()&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">auto</span> p3 = p2;</span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="string">"p1 cnt:"</span>&lt;&lt;p1.use_count()&lt;&lt;<span class="string">"\tp2 cnt:"</span>&lt;&lt;p2.use_count()&lt;&lt;<span class="string">"\tp3 cnt:"</span>&lt;&lt;p3.use_count()&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">p2 = p1;</span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="string">"p1 cnt:"</span>&lt;&lt;p1.use_count()&lt;&lt;<span class="string">"\tp2 cnt:"</span>&lt;&lt;p2.use_count()&lt;&lt;<span class="string">"\tp3 cnt:"</span>&lt;&lt;p3.use_count()&lt;&lt;<span class="built_in">endl</span>;</span><br></pre></td></tr></table></figure><br>
+    
+  </div>
+  <footer class="end-sep">
+    
+      
+        <div class="alignleft">
+          <a href="/2016/08/02/cpp11-5/#more" class="more-link">Read More</a>
+        </div>
+      
+      
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+<!-- JiaThis Button BEGIN -->
+<script type="text/javascript">
+var jiathis_config = {data_track_clickback:'true'};
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?move=0&amp;uid=1706898" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+
+  <article class="post">
+  <header>
+    
+      <div class="icon"></div>
       <a href="/2016/07/28/2015-booklist/">
   <time datetime="2016-07-28T00:15:50.000Z">
     2016-07-28
@@ -504,56 +552,6 @@ var jiathis_config = {data_track_clickback:'true'};
 <!-- JiaThis Button END -->
 
 
-  <article class="post">
-  <header>
-    
-      <div class="icon"></div>
-      <a href="/2016/06/25/cpp11-2/">
-  <time datetime="2016-06-25T00:30:41.000Z">
-    2016-06-25
-  </time>
-</a>
-    
-    
-  
-    <h1 class="title"><a href="/2016/06/25/cpp11-2/">C++11新特性之类型推断与类型获取</a></h1>
-  
-
-  </header>
-  
-  <div class="entry">
-    
-      <hr>
-<p>C++11新特性之新类型与初始化: <a href="http://blog.guoyb.com/2016/06/18/cpp11-1/">http://blog.guoyb.com/2016/06/18/cpp11-1/</a>  </p>
-<hr>
-<p>这是C++11新特性介绍的第二部分，涉及到C++11这次更新中较为重要的特性类型推断(auto)与类型获取（decltype）。<br>不想看toy code的读者可以直接拉到文章最后看这部分的总结。   </p>
-<h2 id="简单的类型推断"><a href="#简单的类型推断" class="headerlink" title="简单的类型推断"></a>简单的类型推断</h2><p>C++11新标准中增加了auto类型说明符，可以让编译器帮我们分析表达式的类型。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">double</span> val1 = <span class="number">1.1</span>, val2 = <span class="number">2.2</span>;</span><br><span class="line"><span class="keyword">auto</span> sum = val1 + val2;</span><br><span class="line"><span class="keyword">auto</span> val3 = <span class="number">0.3</span>, *p = &amp;val3;</span><br><span class="line"><span class="comment">//auto val4 = 0, val5 = 0.0; // wrong. different types.</span></span><br><span class="line"><span class="comment">//auto sum2; // wrong, auto type must be initialized.</span></span><br><span class="line"><span class="keyword">double</span> val6 = <span class="number">1.6</span>, &amp;rval6 = val6;</span><br><span class="line"><span class="keyword">auto</span> aval6 = rval6;</span><br><span class="line">aval6 = <span class="number">6.0</span>; <span class="comment">// aval6 is not a reference.</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="string">"test simple auto:\n"</span>&lt;&lt;val1&lt;&lt;<span class="string">'\t'</span>&lt;&lt;val2&lt;&lt;<span class="string">'\t'</span>&lt;&lt;sum&lt;&lt;<span class="string">'\t'</span>&lt;&lt;val3&lt;&lt;<span class="string">'\t'</span>&lt;&lt;p&lt;&lt;<span class="string">'\t'</span>&lt;&lt;val6&lt;&lt;<span class="string">'\t'</span>&lt;&lt;rval6&lt;&lt;<span class="string">'\t'</span>&lt;&lt;aval6&lt;&lt;<span class="built_in">endl</span>;</span><br></pre></td></tr></table></figure>  </p>
-<p>需要注意的是</p>
-<blockquote>
-<p>1.使用auto定义的变量必须有初始值，不然无法进行类型推断<br>2.在同一条语句中使用auto定义的变量，其基础类型必须一致  </p>
-</blockquote>
-    
-  </div>
-  <footer class="end-sep">
-    
-      
-        <div class="alignleft">
-          <a href="/2016/06/25/cpp11-2/#more" class="more-link">Read More</a>
-        </div>
-      
-      
-    
-    <div class="clearfix"></div>
-  </footer>
-</article>
-<!-- JiaThis Button BEGIN -->
-<script type="text/javascript">
-var jiathis_config = {data_track_clickback:'true'};
-</script>
-<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?move=0&amp;uid=1706898" charset="utf-8"></script>
-<!-- JiaThis Button END -->
-
-
 
 <nav id="pagination">
   
@@ -576,7 +574,7 @@ var jiathis_config = {data_track_clickback:'true'};
 <div class="widget tagcloud first">
   <h3 class="title">Tags</h3>
   <div class="entry">
-    <a href="/tags/C/" style="font-size: 10px;">C</a> <a href="/tags/C/" style="font-size: 16.25px;">C++</a> <a href="/tags/C-11/" style="font-size: 16.25px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/echoserver/" style="font-size: 11.25px;">echoserver</a> <a href="/tags/epoll/" style="font-size: 11.25px;">epoll</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 11.25px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/redis/" style="font-size: 12.5px;">redis</a> <a href="/tags/select/" style="font-size: 11.25px;">select</a> <a href="/tags/socket/" style="font-size: 11.25px;">socket</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 15px;">书单</a> <a href="/tags/勘误，MySQL，C-11/" style="font-size: 10px;">勘误，MySQL，C++11</a> <a href="/tags/北京车展/" style="font-size: 10px;">北京车展</a> <a href="/tags/协程/" style="font-size: 10px;">协程</a> <a href="/tags/学习笔记/" style="font-size: 13.75px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/广州/" style="font-size: 10px;">广州</a> <a href="/tags/新西兰/" style="font-size: 10px;">新西兰</a> <a href="/tags/旅行/" style="font-size: 11.25px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 17.5px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 13.75px;">查证记录</a> <a href="/tags/游戏开发/" style="font-size: 10px;">游戏开发</a> <a href="/tags/爱好/" style="font-size: 10px;">爱好</a> <a href="/tags/生活/" style="font-size: 11.25px;">生活</a> <a href="/tags/知乎/" style="font-size: 10px;">知乎</a> <a href="/tags/程序人生/" style="font-size: 10px;">程序人生</a> <a href="/tags/读书笔记/" style="font-size: 18.75px;">读书笔记</a> <a href="/tags/读后感/" style="font-size: 10px;">读后感</a>
+    <a href="/tags/C/" style="font-size: 10px;">C</a> <a href="/tags/C/" style="font-size: 16.25px;">C++</a> <a href="/tags/C-11/" style="font-size: 16.25px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/echoserver/" style="font-size: 11.25px;">echoserver</a> <a href="/tags/epoll/" style="font-size: 11.25px;">epoll</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 11.25px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/redis/" style="font-size: 12.5px;">redis</a> <a href="/tags/select/" style="font-size: 11.25px;">select</a> <a href="/tags/socket/" style="font-size: 11.25px;">socket</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 15px;">书单</a> <a href="/tags/勘误，MySQL，C-11/" style="font-size: 10px;">勘误，MySQL，C++11</a> <a href="/tags/北京车展/" style="font-size: 10px;">北京车展</a> <a href="/tags/协程/" style="font-size: 10px;">协程</a> <a href="/tags/学习笔记/" style="font-size: 13.75px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/广州/" style="font-size: 10px;">广州</a> <a href="/tags/新西兰/" style="font-size: 10px;">新西兰</a> <a href="/tags/旅行/" style="font-size: 11.25px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 17.5px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 12.5px;">查证记录</a> <a href="/tags/游戏开发/" style="font-size: 10px;">游戏开发</a> <a href="/tags/爱好/" style="font-size: 10px;">爱好</a> <a href="/tags/生活/" style="font-size: 11.25px;">生活</a> <a href="/tags/知乎/" style="font-size: 10px;">知乎</a> <a href="/tags/程序人生/" style="font-size: 10px;">程序人生</a> <a href="/tags/读书笔记/" style="font-size: 18.75px;">读书笔记</a> <a href="/tags/读后感/" style="font-size: 10px;">读后感</a>
   </div>
 </div>
 
@@ -587,6 +585,10 @@ var jiathis_config = {data_track_clickback:'true'};
 <div class="widget recent-posts">
   <h3 class="title">最近文章</h3>
   <ul class="entry">
+    
+      <li>
+        <a href="/2016/09/09/learn-redis-other/">Redis学习笔记4-脚本、持久化和集群</a>
+      </li>
     
       <li>
         <a href="/2016/08/31/cpp11-8/">C++11新特性之template</a>
@@ -602,10 +604,6 @@ var jiathis_config = {data_track_clickback:'true'};
     
       <li>
         <a href="/2016/08/24/learn-redis-adv-2/">Redis学习笔记3-排序与消息通知</a>
-      </li>
-    
-      <li>
-        <a href="/2016/08/23/learn-redis-adv/">Redis学习笔记2-事务与过期时间</a>
       </li>
     
   </ul>
