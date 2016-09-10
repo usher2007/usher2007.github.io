@@ -1,0 +1,243 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  
+  <title>C++11新特性之正则表达式 | 一根笨茄子</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  
+    <meta name="author" content="Yubo Guo">
+  
+  
+    <meta name="description" content="前八篇在这里：C++11新特性之新类型与初始化: http://blog.guoyb.com/2016/06/18/cpp11-1C++11新特性之类型推断与类型获取: http://blog.guoyb.com/2016/06/25/cpp11-2C++11新特性之lambda： http://blog.guoyb.com/2016/06/30/cpp11-3C++11新特性之容器相关特性：">
+  
+  <meta name="description" content="前八篇在这里：C++11新特性之新类型与初始化: http://blog.guoyb.com/2016/06/18/cpp11-1C++11新特性之类型推断与类型获取: http://blog.guoyb.com/2016/06/25/cpp11-2C++11新特性之lambda： http://blog.guoyb.com/2016/06/30/cpp11-3C++11新特性之容器相关特性：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="C++11新特性之正则表达式">
+<meta property="og:url" content="http://blog.guoyb.com/2016/09/10/cpp11-9/index.html">
+<meta property="og:site_name" content="一根笨茄子">
+<meta property="og:description" content="前八篇在这里：C++11新特性之新类型与初始化: http://blog.guoyb.com/2016/06/18/cpp11-1C++11新特性之类型推断与类型获取: http://blog.guoyb.com/2016/06/25/cpp11-2C++11新特性之lambda： http://blog.guoyb.com/2016/06/30/cpp11-3C++11新特性之容器相关特性：">
+<meta property="og:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.png">
+<meta property="og:updated_time" content="2016-09-10T01:07:16.527Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="C++11新特性之正则表达式">
+<meta name="twitter:description" content="前八篇在这里：C++11新特性之新类型与初始化: http://blog.guoyb.com/2016/06/18/cpp11-1C++11新特性之类型推断与类型获取: http://blog.guoyb.com/2016/06/25/cpp11-2C++11新特性之lambda： http://blog.guoyb.com/2016/06/30/cpp11-3C++11新特性之容器相关特性：">
+<meta name="twitter:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.png">
+  
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+  
+<script type="text/javascript">
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?996ee0fca2512b4c29f37f60cf6387ca";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+</head>
+
+<body>
+  <div class="wrapper">
+    <header id="header">
+  <div class="title">
+    <h1><a href="/">一根笨茄子</a></h1>
+    <p><a href="/"></a></p>
+  </div>
+  <nav class="nav">
+    <ul>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/about">关于我</a></li>
+      
+      
+    </ul>
+    <div class="clearfix"></div>
+  </nav>
+  <div class="clearfix"></div>
+</header>
+    <div class="content">
+		<article class="post">
+  <header>
+    
+      <div class="icon"></div>
+      <a href="/2016/09/10/cpp11-9/">
+  <time datetime="2016-09-10T00:15:46.000Z">
+    2016-09-10
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title">C++11新特性之正则表达式</h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>前八篇在这里：<br>C++11新特性之新类型与初始化: <a href="http://blog.guoyb.com/2016/06/18/cpp11-1/">http://blog.guoyb.com/2016/06/18/cpp11-1</a><br>C++11新特性之类型推断与类型获取: <a href="http://blog.guoyb.com/2016/06/25/cpp11-2/">http://blog.guoyb.com/2016/06/25/cpp11-2</a><br>C++11新特性之lambda： <a href="http://blog.guoyb.com/2016/06/30/cpp11-3/">http://blog.guoyb.com/2016/06/30/cpp11-3</a><br>C++11新特性之容器相关特性： <a href="http://blog.guoyb.com/2016/07/09/cpp11-4">http://blog.guoyb.com/2016/07/09/cpp11-4</a><br>C++11新特性之智能指针： <a href="http://blog.guoyb.com/2016/08/02/cpp11-5">http://blog.guoyb.com/2016/08/02/cpp11-5</a><br>C++11新特性之Class: <a href="http://blog.guoyb.com/2016/08/14/cpp11-6">http://blog.guoyb.com/2016/08/14/cpp11-6</a><br>C++11新特性之右值引用与移动： <a href="http://blog.guoyb.com/2016/08/20/cpp11-7">http://blog.guoyb.com/2016/08/20/cpp11-7</a><br>C++11新特性之template： <a href="http://blog.guoyb.com/2016/08/31/cpp11-8">http://blog.guoyb.com/2016/08/31/cpp11-8</a>  </p>
+<hr>
+<p>这是C++11新特性介绍的第九部分，涉及到正则表达式相关的新特性。<br>不想看toy code的读者可以直接拉到文章最后看这部分的总结。<br><a id="more"></a>  </p>
+<h2 id="题外话"><a href="#题外话" class="headerlink" title="题外话"></a>题外话</h2><p>对regex的完整支持，直到g++4.9才算完善。我使用的系统是Ubuntu14.04，默认g++版本号是4.8.x，所以有一些regex功能无法编译通过。可以通过以下方法安装g++4.9：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo add-apt-repository ppa:ubuntu-toolchain-r/test</span><br><span class="line">sudo apt-get update</span><br><span class="line">sudo apt=get install gcc-4.9 g++-4.9 c++-4.9</span><br></pre></td></tr></table></figure>  </p>
+<p>安装完成之后，需要在Makefile中强制指定所使用的g++版本。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CXX=g++-4.9</span><br></pre></td></tr></table></figure>  </p>
+<h2 id="简单用法"><a href="#简单用法" class="headerlink" title="简单用法"></a>简单用法</h2><p>一切就绪，先看看如何用C++11中的regex匹配一个电子邮箱地址。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"test regex simple usage:\n"</span>;</span><br><span class="line"><span class="built_in">std</span>::<span class="function"><span class="built_in">string</span> <span class="title">email_pattern</span><span class="params">(<span class="string">"(\\w)+(\\.\\w+)*@(\\w)+((\\.\\w+)+)"</span>)</span></span>;</span><br><span class="line"><span class="keyword">try</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="built_in">std</span>::<span class="function">regex <span class="title">email_regex</span><span class="params">(email_pattern)</span></span>;</span><br><span class="line">	<span class="built_in">std</span>::smatch results;</span><br><span class="line">	<span class="built_in">std</span>::<span class="built_in">string</span> test_email_str = <span class="string">"My email is yubo1911@163.com"</span>;</span><br><span class="line">	<span class="keyword">if</span>(<span class="built_in">std</span>::regex_search(test_email_str, results, email_regex))</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;results.str()&lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">catch</span> (<span class="built_in">std</span>::regex_error e)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;e.what()&lt;&lt;<span class="string">'\t'</span>&lt;&lt;e.code()&lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"test regex simple usage done.\n"</span>&lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br></pre></td></tr></table></figure>  </p>
+<p>C++中的regex默认使用ECMA-262正则表达式规范，这也是众多浏览器所使用的标准。<br>注意到email_pattern中有好多双斜线，这是因为除了regex模块要做一次转义解析外，C++ string也会对字符串做一次转义解析。  </p>
+<h2 id="regex选项"><a href="#regex选项" class="headerlink" title="regex选项"></a>regex选项</h2><p>在构造regex对象时，可以指定多种标识已实现特定的效果。这里以使用regex::icase达到不区分大小写的匹配为例。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"test regex icase:\n"</span>;</span><br><span class="line"><span class="keyword">try</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="built_in">std</span>::<span class="function">regex <span class="title">cpp_regex</span><span class="params">(<span class="string">"(\\w)+\\.(cpp|hpp)$"</span>, <span class="built_in">std</span>::regex::icase)</span></span>;</span><br><span class="line">	<span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="built_in">std</span>::<span class="built_in">string</span>&gt; test_filenames = &#123;<span class="string">"regex.cpp"</span>, <span class="string">"iostream.h"</span>, <span class="string">"template.CPP"</span>, <span class="string">"class.hPP"</span>, <span class="string">"Ah, regex.cpp"</span>, <span class="string">"regex.cpp Ah"</span>&#125;;</span><br><span class="line">	<span class="keyword">for</span>(<span class="keyword">auto</span> fn : test_filenames)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">if</span>(<span class="built_in">std</span>::regex_match(fn, cpp_regex))</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"cpp file: "</span>&lt;&lt;fn&lt;&lt;<span class="string">'\n'</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">catch</span> (<span class="built_in">std</span>::regex_error e)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;e.what()&lt;&lt;<span class="string">'\t'</span>&lt;&lt;e.code()&lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"test regex icase done.\n"</span>&lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br></pre></td></tr></table></figure>  </p>
+<h2 id="regex-iterator"><a href="#regex-iterator" class="headerlink" title="regex iterator"></a>regex iterator</h2><p>regex提供了一个迭代器，这个迭代器生成时需要一个所搜寻字符串的范围以及一个regex对象。之后，迭代器在迭代时，会遍历搜寻字符串中的所有匹配位置。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"test regex iterator usage:\n"</span>;</span><br><span class="line"><span class="keyword">try</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="built_in">std</span>::<span class="function">regex <span class="title">email_regex</span><span class="params">(email_pattern)</span></span>;</span><br><span class="line">	<span class="built_in">std</span>::<span class="built_in">string</span> test_email_str = <span class="string">"I have three emails, yubo1911@163.com, yubo@gmail.com and guoyubo@gmail.com."</span>;</span><br><span class="line">	<span class="keyword">for</span>(<span class="built_in">std</span>::sregex_iterator it(std::begin(test_email_str), std::end(test_email_str), email_regex), end_it; it != end_it; it++)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;it-&gt;str()&lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">catch</span> (<span class="built_in">std</span>::regex_error e)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;e.what()&lt;&lt;<span class="string">'\t'</span>&lt;&lt;e.code()&lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"test regex iterator usage done.\n"</span>&lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br></pre></td></tr></table></figure>  </p>
+<h2 id="子表达式"><a href="#子表达式" class="headerlink" title="子表达式"></a>子表达式</h2><p>regex也支持子表达式，和其他正则表达式一样，使用括号括起来的构成一个子表达式。在匹配结果中，序号0表示整个匹配结果，序号1表示子表达式1的匹配结果……  </p>
+<p>下面以一个座机电话号码的匹配验证为例，说明子表达式的运用：<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"test regex sub_match usage:\n"</span>;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">string</span> phone_pattern = <span class="string">"(\\()?(\\d&#123;3,4&#125;)(\\))?([- ])?(\\d&#123;7,8&#125;)"</span>;</span><br><span class="line"><span class="keyword">try</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="built_in">std</span>::<span class="function">regex <span class="title">phone_regex</span><span class="params">(phone_pattern)</span></span>;</span><br><span class="line">	<span class="built_in">std</span>::smatch results;</span><br><span class="line">	<span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="built_in">std</span>::<span class="built_in">string</span>&gt; test_phones = &#123;<span class="string">"010-82224567"</span>, <span class="string">"(010-83332345"</span>, <span class="string">"(020)62334567"</span>, <span class="string">"(021) 22346543"</span>, <span class="string">"0357-4223456"</span>, <span class="string">"0358-465788"</span>&#125;;</span><br><span class="line">	<span class="keyword">for</span>(<span class="keyword">auto</span> fn : test_phones)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">if</span>(<span class="built_in">std</span>::regex_match(fn, results, phone_regex))</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">if</span>(results[<span class="number">1</span>].matched)</span><br><span class="line">			&#123;</span><br><span class="line">				<span class="keyword">if</span>(!results[<span class="number">3</span>].matched) <span class="keyword">continue</span>;</span><br><span class="line">				<span class="keyword">if</span>(results[<span class="number">4</span>].matched &amp;&amp; results[<span class="number">4</span>].str() == <span class="string">"-"</span>) <span class="keyword">continue</span>;</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">else</span></span><br><span class="line">			&#123;</span><br><span class="line">				<span class="keyword">if</span>(results[<span class="number">3</span>].matched) <span class="keyword">continue</span>;</span><br><span class="line">				<span class="keyword">if</span>(!(results[<span class="number">4</span>].matched &amp;&amp; results[<span class="number">4</span>].str() == <span class="string">"-"</span>)) <span class="keyword">continue</span>;</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;results.str()&lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">catch</span> (<span class="built_in">std</span>::regex_error e)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;e.what()&lt;&lt;<span class="string">'\t'</span>&lt;&lt;e.code()&lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"test regex sub_match usage done.\n"</span>&lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br></pre></td></tr></table></figure>  </p>
+<h2 id="replace"><a href="#replace" class="headerlink" title="replace"></a>replace</h2><p>regex同样提供了替换功能。将替换功能和子表达式结合起来，可以实现字符串的格式化功能：<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"test regex replace usage:\n"</span>;</span><br><span class="line"><span class="keyword">try</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="built_in">std</span>::<span class="built_in">string</span> format = <span class="string">"$2-$5"</span>;</span><br><span class="line">	<span class="built_in">std</span>::<span class="function">regex <span class="title">phone_regex</span><span class="params">(phone_pattern)</span></span>;</span><br><span class="line">	<span class="built_in">std</span>::<span class="built_in">string</span> ori_phone = <span class="string">"yubo: (020)85776452"</span>;</span><br><span class="line">	<span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"formated phone: "</span>&lt;&lt;<span class="built_in">std</span>::regex_replace(ori_phone, phone_regex, format) &lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">catch</span> (<span class="built_in">std</span>::regex_error e)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;e.what()&lt;&lt;<span class="string">'\t'</span>&lt;&lt;e.code()&lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"test regex replace usage done.\n"</span>&lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br></pre></td></tr></table></figure>  </p>
+<p>其中format字符串中$2和$5就分别表示第二个子表达式和第5个子表达式。  </p>
+<h2 id="输出"><a href="#输出" class="headerlink" title="输出"></a>输出</h2><p>整个测试程序的输出结果如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">test regex simple usage:</span><br><span class="line">yubo1911@163.com</span><br><span class="line">test regex simple usage done.</span><br><span class="line"></span><br><span class="line">test regex icase:</span><br><span class="line">cpp file: regex.cpp</span><br><span class="line">cpp file: template.CPP</span><br><span class="line">cpp file: class.hPP</span><br><span class="line">test regex icase done.</span><br><span class="line"></span><br><span class="line">test regex iterator usage:</span><br><span class="line">yubo1911@163.com</span><br><span class="line">yubo@gmail.com</span><br><span class="line">guoyubo@gmail.com</span><br><span class="line">test regex iterator usage done.</span><br><span class="line"></span><br><span class="line">test regex sub_match usage:</span><br><span class="line">010-82224567</span><br><span class="line">(020)62334567</span><br><span class="line">(021) 22346543</span><br><span class="line">0357-4223456</span><br><span class="line">test regex sub_match usage done.</span><br><span class="line"></span><br><span class="line">test regex replace usage:</span><br><span class="line">formated phone: yubo: 020-85776452</span><br><span class="line">test regex replace usage done.</span><br></pre></td></tr></table></figure>  </p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ol>
+<li>C++11种提供了regex模块，需要g++-4.9以上才能完整支持。</li>
+<li>regex默认采用ECMA-262标准，和浏览器中使用的一样。</li>
+<li>regex提供了查找、匹配、迭代器、子表达式、替换等常用用法。  </li>
+</ol>
+<p>完整代码详见<a href="https://github.com/yubo1911/saber/blob/master/learncpp11/regex.cpp" target="_blank" rel="external">regex.cpp</a>  </p>
+<p>转载请注明出处： <a href="http://blog.guoyb.com/2016/09/10/cpp11-9">http://blog.guoyb.com/2016/09/10/cpp11-9/</a>  </p>
+<p>欢迎使用微信扫描下方二维码，关注我的微信公众号TechTalking，技术·生活·思考：<br><img src="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.png" alt="后端技术小黑屋">   </p>
+
+    
+  </div>
+  <footer>
+    
+      
+      
+  <div class="tags">
+    <a class="tags-link" href="/tags/C/">C++</a>, <a class="tags-link" href="/tags/C-11/">C++11</a>
+  </div>
+
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+<!-- JiaThis Button BEGIN -->
+<script type="text/javascript">
+var jiathis_config = {data_track_clickback:'true'};
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?move=0&amp;uid=1706898" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+<section id="comment">
+  <h1 class="title">Comments</h1>
+  <div class="ds-thread" data-title="C++11新特性之正则表达式">
+  </div>
+</section>
+
+	</div>
+  </div>
+	<aside id="sidebar">
+  
+  
+    
+      
+      
+
+<div class="widget tagcloud first">
+  <h3 class="title">Tags</h3>
+  <div class="entry">
+    <a href="/tags/C/" style="font-size: 10px;">C</a> <a href="/tags/C/" style="font-size: 17.14px;">C++</a> <a href="/tags/C-11/" style="font-size: 17.14px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/echoserver/" style="font-size: 11.43px;">echoserver</a> <a href="/tags/epoll/" style="font-size: 11.43px;">epoll</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 11.43px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/redis/" style="font-size: 12.86px;">redis</a> <a href="/tags/select/" style="font-size: 11.43px;">select</a> <a href="/tags/socket/" style="font-size: 11.43px;">socket</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 15.71px;">书单</a> <a href="/tags/勘误，MySQL，C-11/" style="font-size: 10px;">勘误，MySQL，C++11</a> <a href="/tags/北京车展/" style="font-size: 10px;">北京车展</a> <a href="/tags/协程/" style="font-size: 10px;">协程</a> <a href="/tags/学习笔记/" style="font-size: 14.29px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/广州/" style="font-size: 10px;">广州</a> <a href="/tags/新西兰/" style="font-size: 10px;">新西兰</a> <a href="/tags/旅行/" style="font-size: 11.43px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 17.14px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 12.86px;">查证记录</a> <a href="/tags/游戏开发/" style="font-size: 10px;">游戏开发</a> <a href="/tags/爱好/" style="font-size: 10px;">爱好</a> <a href="/tags/生活/" style="font-size: 11.43px;">生活</a> <a href="/tags/知乎/" style="font-size: 10px;">知乎</a> <a href="/tags/程序人生/" style="font-size: 10px;">程序人生</a> <a href="/tags/读书笔记/" style="font-size: 18.57px;">读书笔记</a> <a href="/tags/读后感/" style="font-size: 10px;">读后感</a>
+  </div>
+</div>
+
+    
+      
+      
+
+<div class="widget recent-posts">
+  <h3 class="title">最近文章</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2016/09/10/cpp11-9/">C++11新特性之正则表达式</a>
+      </li>
+    
+      <li>
+        <a href="/2016/09/09/learn-redis-other/">Redis学习笔记4-脚本、持久化和集群</a>
+      </li>
+    
+      <li>
+        <a href="/2016/08/31/cpp11-8/">C++11新特性之template</a>
+      </li>
+    
+      <li>
+        <a href="/2016/08/27/nz-visa/">新西兰签证终于出签</a>
+      </li>
+    
+      <li>
+        <a href="/2016/08/27/correct-errors/">勘误</a>
+      </li>
+    
+  </ul>
+</div>
+
+    
+      
+      
+<div class="widget tag">
+  <h3 class="title">友情链接</h3>
+  <ul class="entry">
+  
+    
+    <li><a href="http://www.linkedin.com/in/yubo-guo-739b0071" target="_blank">LinkedIn</a></li>
+  
+    
+    <li><a href="http://www.tuicool.com/sites/2emeIjb" target="_blank">推酷站点</a></li>
+  
+  </ul>
+</div>
+
+    
+  
+</aside>
+<div class="clearfix"></div>
+  <footer id="footer"><div class="copyright">
+  
+  &copy; 2016 <a href="/">Yubo Guo</a>
+  
+</div>
+<div class="theme-copyright">
+  Theme by <a href="https://github.com/orderedlist" target="_blank">orderedlist</a>
+   | 
+  Redesign by <a href="http://heroicyang.com/" target="_blank">Heroic Yang</a>
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+<script src="/js/scale.fix.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = { short_name: 'guoyb' };
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';
+    ds.async = true;
+    ds.src = 'http://static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+  (function($){
+    $('.fancybox').fancybox();
+  })(jQuery);
+</script>
+
+</body>
+</html>
