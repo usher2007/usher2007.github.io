@@ -1,0 +1,240 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  
+  <title>C++11新特性之随机数库 | 一根笨茄子</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  
+    <meta name="author" content="Yubo Guo">
+  
+  
+    <meta name="description" content="前九篇在这里：C++11新特性之新类型与初始化: http://blog.guoyb.com/2016/06/18/cpp11-1C++11新特性之类型推断与类型获取: http://blog.guoyb.com/2016/06/25/cpp11-2C++11新特性之lambda： http://blog.guoyb.com/2016/06/30/cpp11-3C++11新特性之容器相关特性：">
+  
+  <meta name="description" content="前九篇在这里：C++11新特性之新类型与初始化: http://blog.guoyb.com/2016/06/18/cpp11-1C++11新特性之类型推断与类型获取: http://blog.guoyb.com/2016/06/25/cpp11-2C++11新特性之lambda： http://blog.guoyb.com/2016/06/30/cpp11-3C++11新特性之容器相关特性：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="C++11新特性之随机数库">
+<meta property="og:url" content="http://blog.guoyb.com/2016/09/12/cpp11-10/index.html">
+<meta property="og:site_name" content="一根笨茄子">
+<meta property="og:description" content="前九篇在这里：C++11新特性之新类型与初始化: http://blog.guoyb.com/2016/06/18/cpp11-1C++11新特性之类型推断与类型获取: http://blog.guoyb.com/2016/06/25/cpp11-2C++11新特性之lambda： http://blog.guoyb.com/2016/06/30/cpp11-3C++11新特性之容器相关特性：">
+<meta property="og:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.png">
+<meta property="og:updated_time" content="2016-09-12T15:30:08.392Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="C++11新特性之随机数库">
+<meta name="twitter:description" content="前九篇在这里：C++11新特性之新类型与初始化: http://blog.guoyb.com/2016/06/18/cpp11-1C++11新特性之类型推断与类型获取: http://blog.guoyb.com/2016/06/25/cpp11-2C++11新特性之lambda： http://blog.guoyb.com/2016/06/30/cpp11-3C++11新特性之容器相关特性：">
+<meta name="twitter:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.png">
+  
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+  
+<script type="text/javascript">
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?996ee0fca2512b4c29f37f60cf6387ca";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+</head>
+
+<body>
+  <div class="wrapper">
+    <header id="header">
+  <div class="title">
+    <h1><a href="/">一根笨茄子</a></h1>
+    <p><a href="/"></a></p>
+  </div>
+  <nav class="nav">
+    <ul>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/about">关于我</a></li>
+      
+      
+    </ul>
+    <div class="clearfix"></div>
+  </nav>
+  <div class="clearfix"></div>
+</header>
+    <div class="content">
+		<article class="post">
+  <header>
+    
+      <div class="icon"></div>
+      <a href="/2016/09/12/cpp11-10/">
+  <time datetime="2016-09-12T13:51:23.000Z">
+    2016-09-12
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title">C++11新特性之随机数库</h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>前九篇在这里：<br>C++11新特性之新类型与初始化: <a href="http://blog.guoyb.com/2016/06/18/cpp11-1/">http://blog.guoyb.com/2016/06/18/cpp11-1</a><br>C++11新特性之类型推断与类型获取: <a href="http://blog.guoyb.com/2016/06/25/cpp11-2/">http://blog.guoyb.com/2016/06/25/cpp11-2</a><br>C++11新特性之lambda： <a href="http://blog.guoyb.com/2016/06/30/cpp11-3/">http://blog.guoyb.com/2016/06/30/cpp11-3</a><br>C++11新特性之容器相关特性： <a href="http://blog.guoyb.com/2016/07/09/cpp11-4">http://blog.guoyb.com/2016/07/09/cpp11-4</a><br>C++11新特性之智能指针： <a href="http://blog.guoyb.com/2016/08/02/cpp11-5">http://blog.guoyb.com/2016/08/02/cpp11-5</a><br>C++11新特性之Class: <a href="http://blog.guoyb.com/2016/08/14/cpp11-6">http://blog.guoyb.com/2016/08/14/cpp11-6</a><br>C++11新特性之右值引用与移动： <a href="http://blog.guoyb.com/2016/08/20/cpp11-7">http://blog.guoyb.com/2016/08/20/cpp11-7</a><br>C++11新特性之template： <a href="http://blog.guoyb.com/2016/08/31/cpp11-8">http://blog.guoyb.com/2016/08/31/cpp11-8</a><br>C++11新特性之正则表达式： <a href="http://blog.guoyb.com/2016/09/10/cpp11-9">http://blog.guoyb.com/2016/09/10/cpp11-9</a>  </p>
+<hr>
+<p>这是C++11新特性介绍的第十部分，涉及到随机数库相关的新特性。<br>不想看toy code的读者可以直接拉到文章最后看这部分的总结。<br><a id="more"></a>  </p>
+<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>之前，C++中的随机数生成都依赖于一个简单的rand函数。这个函数产生一定范围内的一个均匀随机整数。如果需要其他随机分布或者其他范围的随机数，就需要根据rand函数产生的随机数进行再加工，不过这时，就容易引入非随机性了。  </p>
+<p>C++11新标准中引入了一个新的随机数库，相关功能定义在random头文件中，通过多个互相协作的类，可以生成任意范围内、服从多种随机分布的随机数。  </p>
+<h2 id="随机引擎"><a href="#随机引擎" class="headerlink" title="随机引擎"></a>随机引擎</h2><p>新的随机数库中引入了随机引擎的概念。一个随机引擎将产生一组<strong>原始的</strong>随机数列，一般这些<strong>原始的</strong>随机数不能直接使用，要配合随机分布类产生符合某分布的随机数后才能进行使用。  </p>
+<p>一般，最常用的随机引擎是default_random_engine。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"test default random engine:\n"</span>;</span><br><span class="line"><span class="built_in">std</span>::default_random_engine e;</span><br><span class="line">e.seed(time(<span class="number">0</span>));</span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">size_t</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++)</span><br><span class="line">	<span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;e()&lt;&lt;<span class="string">'\t'</span>;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">'\n'</span>;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"test default random engine done.\n"</span>&lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br></pre></td></tr></table></figure>  </p>
+<h2 id="随机分布"><a href="#随机分布" class="headerlink" title="随机分布"></a>随机分布</h2><p>可以用uniform_int_distribution和随机引擎配合来产生均匀分布的随机<strong>整数</strong>。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"test random distribution:\n"</span>;</span><br><span class="line">e.seed(time(<span class="number">0</span>));</span><br><span class="line"><span class="built_in">std</span>::uniform_int_distribution&lt;<span class="keyword">unsigned</span>&gt; u(<span class="number">0</span>, <span class="number">9</span>);</span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">size_t</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++)</span><br><span class="line">	<span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;u(e)&lt;&lt;<span class="string">'\t'</span>;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">'\n'</span>;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"test random distribution done.\n"</span>&lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br></pre></td></tr></table></figure>    </p>
+<p>类似的，uniform_real_distribution则可以产生一个均匀分布的<strong>实数</strong>。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"test real distribution:\n"</span>;</span><br><span class="line">e.seed(time(<span class="number">0</span>));</span><br><span class="line"><span class="built_in">std</span>::uniform_real_distribution&lt;<span class="keyword">double</span>&gt; u2(<span class="number">0</span>, <span class="number">1</span>);</span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">size_t</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++)</span><br><span class="line">	<span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;u2(e)&lt;&lt;<span class="string">'\t'</span>;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">'\n'</span>;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"test real distribution done.\n"</span>&lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br></pre></td></tr></table></figure></p>
+<p>换一个分布，试试正态分布：<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"test normal distribution:\n"</span>;</span><br><span class="line">e.seed(time(<span class="number">0</span>));</span><br><span class="line"><span class="built_in">std</span>::normal_distribution&lt;&gt; n(<span class="number">4</span>, <span class="number">1.5</span>);</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="keyword">unsigned</span>&gt; vals(<span class="number">9</span>);</span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">size_t</span> i = <span class="number">0</span>; i &lt; <span class="number">250</span>; i++)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">unsigned</span> v = lround(n(e));</span><br><span class="line">	<span class="keyword">if</span>(v &lt; vals.size()) vals[v]++;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">size_t</span> i = <span class="number">0</span>; i &lt; vals.size(); i++)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;i&lt;&lt;<span class="string">": "</span>&lt;&lt;<span class="built_in">std</span>::<span class="built_in">string</span>(vals[i], <span class="string">'*'</span>)&lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"test normal distribution done.\n"</span>&lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br></pre></td></tr></table></figure></p>
+<p>伯努利分布也是经常会使用到的：<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"test bernoulli distribution:\n"</span>;</span><br><span class="line">e.seed(time(<span class="number">0</span>));</span><br><span class="line"><span class="built_in">std</span>::<span class="function">bernoulli_distribution <span class="title">b</span><span class="params">(<span class="number">0.7</span>)</span></span>;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="keyword">unsigned</span>&gt; bers(<span class="number">2</span>);</span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">size_t</span> i = <span class="number">0</span>; i &lt; <span class="number">200</span>; i++)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">if</span>(b(e)) bers[<span class="number">1</span>]++;</span><br><span class="line">	<span class="keyword">else</span> bers[<span class="number">0</span>]++;</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"True: "</span>&lt;&lt;bers[<span class="number">1</span>]&lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"False: "</span>&lt;&lt;bers[<span class="number">0</span>]&lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"test bernoulli distribution done.\n"</span>;</span><br></pre></td></tr></table></figure></p>
+<h2 id="输出"><a href="#输出" class="headerlink" title="输出"></a>输出</h2><p>整个测试程序的输出结果如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">test default random engine:</span><br><span class="line">1446291605      455604842       1571377939      395129967       929918845       1907528696      51427609        1055398369      2012947210      146383632</span><br><span class="line">test default random engine done.</span><br><span class="line"></span><br><span class="line">test random distribution:</span><br><span class="line">6       2       7       1       4       8       0       4       9       0</span><br><span class="line">test random distribution done.</span><br><span class="line"></span><br><span class="line">test real distribution:</span><br><span class="line">0.212158        0.183997        0.888262        0.491458        0.0681652       0.173643        0.128234        0.954471        0.891836        0.912416</span><br><span class="line">test real distribution done.</span><br><span class="line"></span><br><span class="line">test normal distribution:</span><br><span class="line">0: **</span><br><span class="line">1: ********</span><br><span class="line">2: ******************************</span><br><span class="line">3: *************************************************</span><br><span class="line">4: *****************************************************************</span><br><span class="line">5: *******************************************************</span><br><span class="line">6: *****************************</span><br><span class="line">7: *********</span><br><span class="line">8: *</span><br><span class="line">test normal distribution done.</span><br><span class="line"></span><br><span class="line">test bernoulli distribution:</span><br><span class="line">True: 132</span><br><span class="line">False: 68</span><br><span class="line">test bernoulli distribution done.</span><br></pre></td></tr></table></figure></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ol>
+<li>C++11新标准中引入了比rand更强大的随机数库。  </li>
+<li>随机数引擎和随机分布类配合，共同产生符合某一分布、在某一范围内的随机数。</li>
+</ol>
+<p>完整代码详见<a href="https://github.com/yubo1911/saber/blob/master/learncpp11/random.cpp" target="_blank" rel="external">random.cpp</a>  </p>
+<p>转载请注明出处： <a href="http://blog.guoyb.com/2016/09/12/cpp11-10">http://blog.guoyb.com/2016/09/12/cpp11-10/</a>  </p>
+<p>欢迎使用微信扫描下方二维码，关注我的微信公众号TechTalking，技术·生活·思考：<br><img src="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.png" alt="后端技术小黑屋">       </p>
+
+    
+  </div>
+  <footer>
+    
+      
+      
+  <div class="tags">
+    <a class="tags-link" href="/tags/C/">C++</a>, <a class="tags-link" href="/tags/C-11/">C++11</a>
+  </div>
+
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+<!-- JiaThis Button BEGIN -->
+<script type="text/javascript">
+var jiathis_config = {data_track_clickback:'true'};
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?move=0&amp;uid=1706898" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+<section id="comment">
+  <h1 class="title">评论</h1>
+  <div class="ds-thread" data-title="C++11新特性之随机数库">
+  </div>
+</section>
+
+	</div>
+  </div>
+	<aside id="sidebar">
+  
+  
+    
+      
+      
+
+<div class="widget tagcloud first">
+  <h3 class="title">Tags</h3>
+  <div class="entry">
+    <a href="/tags/C/" style="font-size: 10px;">C</a> <a href="/tags/C/" style="font-size: 17.5px;">C++</a> <a href="/tags/C-11/" style="font-size: 17.5px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/echoserver/" style="font-size: 11.25px;">echoserver</a> <a href="/tags/epoll/" style="font-size: 11.25px;">epoll</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 11.25px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/redis/" style="font-size: 12.5px;">redis</a> <a href="/tags/select/" style="font-size: 11.25px;">select</a> <a href="/tags/socket/" style="font-size: 11.25px;">socket</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 15px;">书单</a> <a href="/tags/勘误，MySQL，C-11/" style="font-size: 10px;">勘误，MySQL，C++11</a> <a href="/tags/北京车展/" style="font-size: 10px;">北京车展</a> <a href="/tags/协程/" style="font-size: 10px;">协程</a> <a href="/tags/学习笔记/" style="font-size: 13.75px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/广州/" style="font-size: 10px;">广州</a> <a href="/tags/新西兰/" style="font-size: 10px;">新西兰</a> <a href="/tags/旅行/" style="font-size: 11.25px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 16.25px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 12.5px;">查证记录</a> <a href="/tags/游戏开发/" style="font-size: 10px;">游戏开发</a> <a href="/tags/爱好/" style="font-size: 10px;">爱好</a> <a href="/tags/生活/" style="font-size: 11.25px;">生活</a> <a href="/tags/知乎/" style="font-size: 10px;">知乎</a> <a href="/tags/程序人生/" style="font-size: 10px;">程序人生</a> <a href="/tags/读书笔记/" style="font-size: 18.75px;">读书笔记</a> <a href="/tags/读后感/" style="font-size: 10px;">读后感</a>
+  </div>
+</div>
+
+    
+      
+      
+
+<div class="widget recent-posts">
+  <h3 class="title">最近文章</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2016/09/12/cpp11-10/">C++11新特性之随机数库</a>
+      </li>
+    
+      <li>
+        <a href="/2016/09/10/cpp11-9/">C++11新特性之正则表达式</a>
+      </li>
+    
+      <li>
+        <a href="/2016/09/09/learn-redis-other/">Redis学习笔记4-脚本、持久化和集群</a>
+      </li>
+    
+      <li>
+        <a href="/2016/08/31/cpp11-8/">C++11新特性之template</a>
+      </li>
+    
+      <li>
+        <a href="/2016/08/27/nz-visa/">新西兰签证终于出签</a>
+      </li>
+    
+  </ul>
+</div>
+
+    
+      
+      
+<div class="widget tag">
+  <h3 class="title">友情链接</h3>
+  <ul class="entry">
+  
+    
+    <li><a href="http://www.linkedin.com/in/yubo-guo-739b0071" target="_blank">LinkedIn</a></li>
+  
+    
+    <li><a href="http://www.tuicool.com/sites/2emeIjb" target="_blank">推酷站点</a></li>
+  
+  </ul>
+</div>
+
+    
+  
+</aside>
+<div class="clearfix"></div>
+  <footer id="footer"><div class="copyright">
+  
+  &copy; 2016 <a href="/">Yubo Guo</a>
+  
+</div>
+<div class="theme-copyright">
+  Theme by <a href="https://github.com/orderedlist" target="_blank">orderedlist</a>
+   | 
+  Redesign by <a href="http://heroicyang.com/" target="_blank">Heroic Yang</a>
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+<script src="/js/scale.fix.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = { short_name: 'guoyb' };
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';
+    ds.async = true;
+    ds.src = 'http://static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+  (function($){
+    $('.fancybox').fancybox();
+  })(jQuery);
+</script>
+
+</body>
+</html>
