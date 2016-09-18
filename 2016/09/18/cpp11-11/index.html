@@ -1,0 +1,267 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  
+  <title>C++11新特性之杂项 | 一根笨茄子</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  
+    <meta name="author" content="Yubo Guo">
+  
+  
+    <meta name="description" content="前十篇在这里：C++11新特性之新类型与初始化: http://blog.guoyb.com/2016/06/18/cpp11-1C++11新特性之类型推断与类型获取: http://blog.guoyb.com/2016/06/25/cpp11-2C++11新特性之lambda： http://blog.guoyb.com/2016/06/30/cpp11-3C++11新特性之容器相关特性：">
+  
+  <meta name="description" content="前十篇在这里：C++11新特性之新类型与初始化: http://blog.guoyb.com/2016/06/18/cpp11-1C++11新特性之类型推断与类型获取: http://blog.guoyb.com/2016/06/25/cpp11-2C++11新特性之lambda： http://blog.guoyb.com/2016/06/30/cpp11-3C++11新特性之容器相关特性：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="C++11新特性之杂项">
+<meta property="og:url" content="http://blog.guoyb.com/2016/09/18/cpp11-11/index.html">
+<meta property="og:site_name" content="一根笨茄子">
+<meta property="og:description" content="前十篇在这里：C++11新特性之新类型与初始化: http://blog.guoyb.com/2016/06/18/cpp11-1C++11新特性之类型推断与类型获取: http://blog.guoyb.com/2016/06/25/cpp11-2C++11新特性之lambda： http://blog.guoyb.com/2016/06/30/cpp11-3C++11新特性之容器相关特性：">
+<meta property="og:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.png">
+<meta property="og:updated_time" content="2016-09-18T00:48:01.176Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="C++11新特性之杂项">
+<meta name="twitter:description" content="前十篇在这里：C++11新特性之新类型与初始化: http://blog.guoyb.com/2016/06/18/cpp11-1C++11新特性之类型推断与类型获取: http://blog.guoyb.com/2016/06/25/cpp11-2C++11新特性之lambda： http://blog.guoyb.com/2016/06/30/cpp11-3C++11新特性之容器相关特性：">
+<meta name="twitter:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.png">
+  
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+  
+<script type="text/javascript">
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?996ee0fca2512b4c29f37f60cf6387ca";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+</head>
+
+<body>
+  <div class="wrapper">
+    <header id="header">
+  <div class="title">
+    <h1><a href="/">一根笨茄子</a></h1>
+    <p><a href="/"></a></p>
+  </div>
+  <nav class="nav">
+    <ul>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/about">关于我</a></li>
+      
+      
+    </ul>
+    <div class="clearfix"></div>
+  </nav>
+  <div class="clearfix"></div>
+</header>
+    <div class="content">
+		<article class="post">
+  <header>
+    
+      <div class="icon"></div>
+      <a href="/2016/09/18/cpp11-11/">
+  <time datetime="2016-09-17T23:52:17.000Z">
+    2016-09-18
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title">C++11新特性之杂项</h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>前十篇在这里：<br>C++11新特性之新类型与初始化: <a href="http://blog.guoyb.com/2016/06/18/cpp11-1/">http://blog.guoyb.com/2016/06/18/cpp11-1</a><br>C++11新特性之类型推断与类型获取: <a href="http://blog.guoyb.com/2016/06/25/cpp11-2/">http://blog.guoyb.com/2016/06/25/cpp11-2</a><br>C++11新特性之lambda： <a href="http://blog.guoyb.com/2016/06/30/cpp11-3/">http://blog.guoyb.com/2016/06/30/cpp11-3</a><br>C++11新特性之容器相关特性： <a href="http://blog.guoyb.com/2016/07/09/cpp11-4">http://blog.guoyb.com/2016/07/09/cpp11-4</a><br>C++11新特性之智能指针： <a href="http://blog.guoyb.com/2016/08/02/cpp11-5">http://blog.guoyb.com/2016/08/02/cpp11-5</a><br>C++11新特性之Class: <a href="http://blog.guoyb.com/2016/08/14/cpp11-6">http://blog.guoyb.com/2016/08/14/cpp11-6</a><br>C++11新特性之右值引用与移动： <a href="http://blog.guoyb.com/2016/08/20/cpp11-7">http://blog.guoyb.com/2016/08/20/cpp11-7</a><br>C++11新特性之template： <a href="http://blog.guoyb.com/2016/08/31/cpp11-8">http://blog.guoyb.com/2016/08/31/cpp11-8</a><br>C++11新特性之正则表达式： <a href="http://blog.guoyb.com/2016/09/10/cpp11-9">http://blog.guoyb.com/2016/09/10/cpp11-9</a><br>C++11新特性之随机数库： <a href="http://blog.guoyb.com/2016/09/12/cpp11-10">http://blog.guoyb.com/2016/09/12/cpp11-10/</a>  </p>
+<hr>
+<p>这是C++11新特性介绍的第十一部分，涉及到一些不好归类的新特性。<br>不想看toy code的读者可以直接拉到文章最后看这部分的总结。<br><a id="more"></a>  </p>
+<h2 id="类型别名声明"><a href="#类型别名声明" class="headerlink" title="类型别名声明"></a>类型别名声明</h2><p>类似typedef，新标准中可以使用using为类型声明一个别名（alias）。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"test using alias:\n"</span>;</span><br><span class="line"><span class="keyword">using</span> HT = <span class="keyword">double</span>;</span><br><span class="line"><span class="keyword">using</span> NAME = <span class="built_in">std</span>::<span class="built_in">string</span>;</span><br><span class="line">HT h = <span class="number">1.78</span>;</span><br><span class="line">NAME name = <span class="string">"Robert"</span>;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;name&lt;&lt;<span class="string">"'s height is "</span>&lt;&lt;h&lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"test using alias done.\n"</span>&lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br></pre></td></tr></table></figure>  </p>
+<h2 id="range-for"><a href="#range-for" class="headerlink" title="range for"></a>range for</h2><p>range for语句在之前的章节中已经见识过了：<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"test range for:\n"</span>;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">string</span> nation = <span class="string">"CHINA"</span>;</span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">auto</span> c : nation)</span><br><span class="line">	<span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;c&lt;&lt;<span class="string">" "</span>;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"\n"</span>;</span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">auto</span> &amp;rc : nation)</span><br><span class="line">	rc = <span class="built_in">tolower</span>(rc);</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"lower: "</span>&lt;&lt;nation&lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"test range for done.\n"</span>;</span><br></pre></td></tr></table></figure>  </p>
+<p>这里需要注意的是，在第二个例子中，range for语句中可以直接使用引用，从而修改被迭代遍历的对象本身。  </p>
+<p>另外，range for不能用于动态分配内存的数组，因为动态分配的内存中没有begin、end方法可供调用。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"test range for of dynamic array:\n"</span>;</span><br><span class="line"><span class="keyword">int</span> *darr = new <span class="keyword">int</span>[<span class="number">5</span>]&#123;<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>&#125;;</span><br><span class="line"><span class="comment">// wrong. dynamic array don't has a begin method,</span></span><br><span class="line"><span class="comment">// so we can't use range for here.</span></span><br><span class="line"><span class="comment">//for(auto i : darr) 	</span></span><br><span class="line"><span class="comment">//	std::cout&lt;&lt;i&lt;&lt;'\t';</span></span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">size_t</span> i = <span class="number">0</span>; i &lt; <span class="number">5</span>; i++)</span><br><span class="line">	<span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;darr[i]&lt;&lt;<span class="string">'\t'</span>;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">'\n'</span>;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"test range for of dynamic array done.\n"</span>;</span><br></pre></td></tr></table></figure>  </p>
+<h2 id="新的除法舍入规则"><a href="#新的除法舍入规则" class="headerlink" title="新的除法舍入规则"></a>新的除法舍入规则</h2><p>新标准中，重新统一了除法的舍入规则。主要需要留意两数符号不同时的规则：  </p>
+<blockquote>
+<p>(-x) / y = x / (-y) = - (x / y)<br>x % (-y) = x % y<br>(-x) % y = - (x % y)  </p>
+</blockquote>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"test divide:\n"</span>;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"10 / 3 = "</span>&lt;&lt;(<span class="number">10</span> / <span class="number">3</span>)&lt;&lt;<span class="string">"\n"</span>;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"-10 / 3 = "</span>&lt;&lt;(<span class="number">-10</span> / <span class="number">3</span>)&lt;&lt;<span class="string">"\n"</span>;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"-10 / -3 = "</span>&lt;&lt;(<span class="number">-10</span> / (<span class="number">-3</span>))&lt;&lt;<span class="string">"\n"</span>;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"10 % 3 = "</span>&lt;&lt;(<span class="number">10</span> % <span class="number">3</span>)&lt;&lt;<span class="string">"\n"</span>;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"-10 % 3 = "</span>&lt;&lt;(<span class="number">-10</span> % <span class="number">3</span>)&lt;&lt;<span class="string">"\n"</span>;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"-10 % -3 = "</span>&lt;&lt;(<span class="number">-10</span> % (<span class="number">-3</span>))&lt;&lt;<span class="string">"\n"</span>;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"10 % -3 = "</span>&lt;&lt;(<span class="number">10</span> % (<span class="number">-3</span>))&lt;&lt;<span class="string">"\n"</span>;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"test divide done.\n"</span>&lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br></pre></td></tr></table></figure>  
+<h2 id="尾置返回类型"><a href="#尾置返回类型" class="headerlink" title="尾置返回类型"></a>尾置返回类型</h2><p>之前，我们也见识过尾置返回类型和decltype的配合使用。有时，采用尾置返回类型，代码的可读性更高。<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">int (*dummy_ret1(int i))[5]</span><br><span class="line">&#123;</span><br><span class="line">	static int ret1[5] = &#123;i, i*2, i*3, i*4, i*5&#125;;</span><br><span class="line">	int(*pret)[5] = &amp;ret1;</span><br><span class="line">	return pret;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">auto dummy_ret2(int i) -&gt; int (*)[5]</span><br><span class="line">&#123;</span><br><span class="line">	static int ret2[5] = &#123;i+1, i+2, i+3, i+4, i+5&#125;;</span><br><span class="line">	int(*pret)[5] = &amp;ret2;</span><br><span class="line">	return pret;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">std::cout&lt;&lt;"test trailing return type:\n";</span><br><span class="line">int (*arr1)[5] = dummy_ret1(1);</span><br><span class="line">std::cout&lt;&lt;(*arr1)[0]&lt;&lt;'\t'&lt;&lt;(*arr1)[4]&lt;&lt;std::endl;</span><br><span class="line">int (*arr2)[5] = dummy_ret2(2);</span><br><span class="line">std::cout&lt;&lt;(*arr2)[0]&lt;&lt;'\t'&lt;&lt;(*arr2)[4]&lt;&lt;std::endl;</span><br><span class="line">std::cout&lt;&lt;"test trailing return type done.\n";</span><br></pre></td></tr></table></figure>  </p>
+<h2 id="使用字符串作为文件名"><a href="#使用字符串作为文件名" class="headerlink" title="使用字符串作为文件名"></a>使用字符串作为文件名</h2><p>在新标准中，可以直接使用string作为文件名进行文件流处理，而不必要求C风格字符数组。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"test string filename:\n"</span>;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">string</span> filename = <span class="string">"regex.cpp"</span>;</span><br><span class="line"><span class="built_in">std</span>::<span class="function">ifstream <span class="title">in</span><span class="params">(filename)</span></span>;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">string</span> head_ctx;</span><br><span class="line">in&gt;&gt;head_ctx;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;head_ctx&lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"test string filename done.\n"</span>&lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br></pre></td></tr></table></figure>  </p>
+<h2 id="字符串和数值的转换"><a href="#字符串和数值的转换" class="headerlink" title="字符串和数值的转换"></a>字符串和数值的转换</h2><p>新标准中，添加了多个函数用于string和数值之间的转换。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"test str number cvt:\n"</span>;</span><br><span class="line"><span class="keyword">int</span> age = <span class="number">15</span>;</span><br><span class="line"><span class="keyword">double</span> weight = <span class="number">137.5</span>;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">string</span> str_age = <span class="built_in">std</span>::to_string(age);</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">string</span> str_weight = <span class="built_in">std</span>::to_string(weight);</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"str age: "</span>&lt;&lt;str_age&lt;&lt;<span class="string">"\tstr weight: "</span>&lt;&lt;str_weight&lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line"><span class="keyword">int</span> int_age = <span class="built_in">std</span>::stoi(str_age);</span><br><span class="line"><span class="keyword">double</span> d_weight = <span class="built_in">std</span>::stod(str_weight);</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"int age: "</span>&lt;&lt;int_age&lt;&lt;<span class="string">"\tdouble weight: "</span>&lt;&lt;d_weight&lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"test str number cvt done.\n"</span>&lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br></pre></td></tr></table></figure>  </p>
+<h2 id="bind函数"><a href="#bind函数" class="headerlink" title="bind函数"></a>bind函数</h2><p>新标准中，提供了功能更强大的参数绑定函数bind，用于替换原有的bind1st和bind2nd。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">add_int</span><span class="params">(<span class="keyword">int</span> a, <span class="keyword">int</span> b)</span></span><br><span class="line"></span>&#123;</span><br><span class="line">	return a + b;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"test bind:\n"</span>;</span><br><span class="line"><span class="keyword">auto</span> add5 = <span class="built_in">std</span>::bind(add_int, std::placeholders::_1, <span class="number">5</span>);</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"add5(6): "</span>&lt;&lt;add5(<span class="number">6</span>)&lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"test bind done.\n"</span>&lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br></pre></td></tr></table></figure>  </p>
+<p>std::placeholders::_1表示占位符，指代第1个参数，等待后续真正调用时由用户传入。  </p>
+<h2 id="显式类型转换"><a href="#显式类型转换" class="headerlink" title="显式类型转换"></a>显式类型转换</h2><p>新标准中，可以指定一个类型转换为显式（explicit）的。指定为显式的类型转换，不能再进行隐式转换。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> OtherType</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	OtherType(<span class="keyword">int</span> i) : val(i)&#123;&#125;</span><br><span class="line">	<span class="function"><span class="keyword">explicit</span> <span class="keyword">operator</span> <span class="title">int</span><span class="params">()</span> </span>&#123;return val;&#125;</span><br><span class="line">	<span class="function"><span class="keyword">explicit</span> <span class="keyword">operator</span> <span class="title">bool</span><span class="params">()</span> </span>&#123;return val != <span class="number">0</span>;&#125;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">	<span class="keyword">int</span> val;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"test explicit type cvt:\n"</span>;</span><br><span class="line"><span class="function">OtherType <span class="title">c</span><span class="params">(<span class="number">10</span>)</span></span>;</span><br><span class="line"><span class="comment">//int i = c + 10; // wrong. can't implicit cvt c to int.</span></span><br><span class="line"><span class="keyword">int</span> j = <span class="keyword">static_cast</span>&lt;<span class="keyword">int</span>&gt;(c) + <span class="number">10</span>;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"OtherType(10) + 10: "</span>&lt;&lt;j&lt;&lt;<span class="string">"\n"</span>;</span><br><span class="line"><span class="keyword">if</span>(c)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"OtherType can be cvt to bool implicitly in if clause.\n"</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"test explicit type cvt done.\n"</span>&lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br></pre></td></tr></table></figure>  </p>
+<p>这其中有一个例外，即，即使指定一个类型和bool类型之间的转换是显式的，在if语句中，也仍然可以执行隐式类型转换。  </p>
+<h2 id="内联命名空间"><a href="#内联命名空间" class="headerlink" title="内联命名空间"></a>内联命名空间</h2><p>新标准中引入了内联命名空间。内联命名空间内的名字可以不加命名空间名字前缀，直接在外层命名空间中使用。这为我们设置一个默认的命名空间提供了方便。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">inline</span> <span class="keyword">namespace</span> InlineSpace</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">int</span> inline_val1 = <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> InlineSpace</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">int</span> inline_val2 = <span class="number">2</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> NormalSpace</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">int</span> normal_val3 = <span class="number">3</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"test inline namespace:\n"</span>;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"inline vals: "</span>&lt;&lt;inline_val1&lt;&lt;<span class="string">'\t'</span>&lt;&lt;inline_val2&lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line"><span class="comment">//std::cout&lt;&lt;"normal vals: "&lt;&lt;normal_val3&lt;&lt;std::endl;</span></span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"normal vals: "</span>&lt;&lt;NormalSpace::normal_val3&lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"test inline namespace done.\n"</span>&lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br></pre></td></tr></table></figure>    </p>
+<p>只需在第一次声明内联命名空间时加上inline关键字，之后就可以省略了。  </p>
+<h2 id="限定作用域的enum"><a href="#限定作用域的enum" class="headerlink" title="限定作用域的enum"></a>限定作用域的enum</h2><p>新标准中，可以通过enum class foo这样的形式定义一个限定作用域的枚举，其中的枚举变量在作用域之外不可见。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"test scoped enum:\n"</span>;</span><br><span class="line"><span class="keyword">enum</span> <span class="keyword">class</span> number &#123;one, two, three&#125;;</span><br><span class="line"><span class="keyword">enum</span> nation &#123;CHN, USA, FRA&#125;;</span><br><span class="line"><span class="keyword">enum</span> nation n1 = CHN;</span><br><span class="line"><span class="comment">//enum nation n2 = nation::USA;</span></span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"unscoped enum: "</span>&lt;&lt;n1&lt;&lt;<span class="string">'\t'</span>&lt;&lt;<span class="string">'\n'</span>;</span><br><span class="line"><span class="comment">//number num1 = one;</span></span><br><span class="line">number num2 = number::two;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"scoped enum: "</span>&lt;&lt;(<span class="keyword">int</span>)num2&lt;&lt;<span class="string">'\n'</span>;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"test scoped enum done.\n"</span>;</span><br></pre></td></tr></table></figure>  </p>
+<p>其中，one、two、three就只能在number限定的作用域中可见，而CHN、USA、FRA就没有这个限制。  </p>
+<h2 id="指定枚举的数据类型"><a href="#指定枚举的数据类型" class="headerlink" title="指定枚举的数据类型"></a>指定枚举的数据类型</h2><p>新标准中，可以指定枚举的数据类型为除了int之外的其他整数类型。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"test enum type declare:\n"</span>;</span><br><span class="line"><span class="keyword">enum</span> long_enum</span><br><span class="line">&#123;</span><br><span class="line">	firstl = LLONG_MAX - <span class="number">1</span>,</span><br><span class="line">	secondl = ULLONG_MAX,</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">enum</span> longlong_enum : <span class="keyword">long</span> <span class="keyword">long</span></span><br><span class="line">&#123;</span><br><span class="line">	firstll = LLONG_MAX - <span class="number">1</span>,</span><br><span class="line">	secondll = LLONG_MAX</span><br><span class="line">	<span class="comment">//secondll = ULLONG_MAX</span></span><br><span class="line">&#125;;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;firstl&lt;&lt;<span class="string">'\n'</span>&lt;&lt;secondl&lt;&lt;<span class="string">'\n'</span>;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;firstll&lt;&lt;<span class="string">'\n'</span>&lt;&lt;secondll&lt;&lt;<span class="string">'\n'</span>;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"test enum type declare done.\n"</span>;</span><br></pre></td></tr></table></figure>  </p>
+<h2 id="输出"><a href="#输出" class="headerlink" title="输出"></a>输出</h2><p>整个测试程序的输出结果如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line">test using alias:</span><br><span class="line">Robert&apos;s height is 1.78</span><br><span class="line">test using alias done.</span><br><span class="line"></span><br><span class="line">test range for:</span><br><span class="line">C H I N A </span><br><span class="line">lower: china</span><br><span class="line">test range for done.</span><br><span class="line">test divide:</span><br><span class="line">10 / 3 = 3</span><br><span class="line">-10 / 3 = -3</span><br><span class="line">-10 / -3 = 3</span><br><span class="line">10 % 3 = 1</span><br><span class="line">-10 % 3 = -1</span><br><span class="line">-10 % -3 = -1</span><br><span class="line">10 % -3 = 1</span><br><span class="line">test divide done.</span><br><span class="line"></span><br><span class="line">test trailing return type:</span><br><span class="line">1       5</span><br><span class="line">3       7</span><br><span class="line">test trailing return type done.</span><br><span class="line">test string filename:</span><br><span class="line">#include</span><br><span class="line">test string filename done.</span><br><span class="line"></span><br><span class="line">test str number cvt:</span><br><span class="line">str age: 15     str weight: 137.500000</span><br><span class="line">int age: 15     double weight: 137.5</span><br><span class="line">test str number cvt done.</span><br><span class="line"></span><br><span class="line">test bind:</span><br><span class="line">add5(6): 11</span><br><span class="line">test bind done.</span><br><span class="line"></span><br><span class="line">test range for of dynamic array:</span><br><span class="line">0       1       2       3       4</span><br><span class="line">test range for of dynamic array done.</span><br><span class="line">test explicit type cvt:</span><br><span class="line">OtherType(10) + 10: 20</span><br><span class="line">OtherType can be cvt to bool implicitly in if clause.</span><br><span class="line">test explicit type cvt done.</span><br><span class="line"></span><br><span class="line">test inline namespace:</span><br><span class="line">inline vals: 1  2</span><br><span class="line">normal vals: 3</span><br><span class="line">test inline namespace done.</span><br><span class="line"></span><br><span class="line">test scoped enum:</span><br><span class="line">unscoped enum: 0</span><br><span class="line">scoped enum: 1</span><br><span class="line">test scoped enum done.</span><br><span class="line"></span><br><span class="line">test enum type declare:</span><br><span class="line">9223372036854775806</span><br><span class="line">18446744073709551615</span><br><span class="line">9223372036854775806</span><br><span class="line">9223372036854775807</span><br><span class="line">test enum type declare done.</span><br></pre></td></tr></table></figure>  </p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ol>
+<li>类似typedef，新标准中可以使用using为类型声明一个别名（alias）。</li>
+<li>range for语句可以方便的迭代对象，并且支持引用迭代。</li>
+<li>range for不能用于动态分配内存的数组。</li>
+<li>新标准中，重新统一了除法的舍入规则。主要需要留意两数符号不同时的规则：  <blockquote>
+<p>(-x) / y = x / (-y) = - (x / y)<br>x % (-y) = x % y<br>(-x) % y = - (x % y)  </p>
+</blockquote>
+</li>
+<li>可以采用尾置返回类型，提高代码的可读性。  </li>
+<li>可以直接使用string作为文件名进行文件流处理，而不必要求C风格字符数组。</li>
+<li>添加了多个函数用于string和数值之间的转换。</li>
+<li>提供了功能更强大的参数绑定函数bind，用于替换原有的bind1st和bind2nd。</li>
+<li>可以指定一个类型转换为显式（explicit）的。指定为显式的类型转换，不能再进行隐式转换。有一个例外，即，即使指定一个类型和bool类型之间的转换是显式的，在if语句中，也仍然可以执行隐式类型转换。</li>
+<li>引入了内联命名空间。内联命名空间内的名字可以不加命名空间名字前缀，直接在外层命名空间中使用。</li>
+<li>可以通过enum class foo这样的形式定义一个限定作用域的枚举，其中的枚举变量在作用域之外不可见。</li>
+<li>可以指定枚举的数据类型为除了int之外的其他整数类型。</li>
+</ol>
+<hr>
+<p>完整代码详见<a href="https://github.com/yubo1911/saber/blob/master/learncpp11/misc.cpp" target="_blank" rel="external">misc.cpp</a>  </p>
+<p>转载请注明出处： <a href="http://blog.guoyb.com/2016/09/18/cpp11-11">http://blog.guoyb.com/2016/09/18/cpp11-11/</a>  </p>
+<p>欢迎使用微信扫描下方二维码，关注我的微信公众号TechTalking，技术·生活·思考：<br><img src="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.png" alt="后端技术小黑屋">   </p>
+
+    
+  </div>
+  <footer>
+    
+      
+      
+  <div class="tags">
+    <a class="tags-link" href="/tags/C/">C++</a>, <a class="tags-link" href="/tags/C-11/">C++11</a>
+  </div>
+
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+<!-- JiaThis Button BEGIN -->
+<script type="text/javascript">
+var jiathis_config = {data_track_clickback:'true'};
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?move=0&amp;uid=1706898" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+<section id="comment">
+  <h1 class="title">评论</h1>
+  <div class="ds-thread" data-title="C++11新特性之杂项">
+  </div>
+</section>
+
+	</div>
+  </div>
+	<aside id="sidebar">
+  
+  
+    
+      
+      
+
+<div class="widget tagcloud first">
+  <h3 class="title">Tags</h3>
+  <div class="entry">
+    <a href="/tags/C/" style="font-size: 10px;">C</a> <a href="/tags/C/" style="font-size: 18.57px;">C++</a> <a href="/tags/C-11/" style="font-size: 18.57px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/echoserver/" style="font-size: 11.43px;">echoserver</a> <a href="/tags/epoll/" style="font-size: 11.43px;">epoll</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 11.43px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/redis/" style="font-size: 12.86px;">redis</a> <a href="/tags/select/" style="font-size: 11.43px;">select</a> <a href="/tags/socket/" style="font-size: 11.43px;">socket</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 15.71px;">书单</a> <a href="/tags/勘误，MySQL，C-11/" style="font-size: 10px;">勘误，MySQL，C++11</a> <a href="/tags/北京车展/" style="font-size: 10px;">北京车展</a> <a href="/tags/协程/" style="font-size: 10px;">协程</a> <a href="/tags/学习笔记/" style="font-size: 14.29px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/广州/" style="font-size: 10px;">广州</a> <a href="/tags/新西兰/" style="font-size: 10px;">新西兰</a> <a href="/tags/旅行/" style="font-size: 11.43px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 17.14px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 12.86px;">查证记录</a> <a href="/tags/游戏开发/" style="font-size: 10px;">游戏开发</a> <a href="/tags/爱好/" style="font-size: 10px;">爱好</a> <a href="/tags/生活/" style="font-size: 11.43px;">生活</a> <a href="/tags/知乎/" style="font-size: 10px;">知乎</a> <a href="/tags/程序人生/" style="font-size: 10px;">程序人生</a> <a href="/tags/读书笔记/" style="font-size: 18.57px;">读书笔记</a> <a href="/tags/读后感/" style="font-size: 10px;">读后感</a>
+  </div>
+</div>
+
+    
+      
+      
+
+<div class="widget recent-posts">
+  <h3 class="title">最近文章</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2016/09/18/cpp11-11/">C++11新特性之杂项</a>
+      </li>
+    
+      <li>
+        <a href="/2016/09/14/mooncake/">阿里月饼事件中的一个有趣现象</a>
+      </li>
+    
+      <li>
+        <a href="/2016/09/12/cpp11-10/">C++11新特性之随机数库</a>
+      </li>
+    
+      <li>
+        <a href="/2016/09/10/cpp11-9/">C++11新特性之正则表达式</a>
+      </li>
+    
+      <li>
+        <a href="/2016/09/09/learn-redis-other/">Redis学习笔记4-脚本、持久化和集群</a>
+      </li>
+    
+  </ul>
+</div>
+
+    
+      
+      
+<div class="widget tag">
+  <h3 class="title">友情链接</h3>
+  <ul class="entry">
+  
+    
+    <li><a href="http://www.linkedin.com/in/yubo-guo-739b0071" target="_blank">LinkedIn</a></li>
+  
+    
+    <li><a href="http://www.tuicool.com/sites/2emeIjb" target="_blank">推酷站点</a></li>
+  
+  </ul>
+</div>
+
+    
+  
+</aside>
+<div class="clearfix"></div>
+  <footer id="footer"><div class="copyright">
+  
+  &copy; 2016 <a href="/">Yubo Guo</a>
+  
+</div>
+<div class="theme-copyright">
+  Theme by <a href="https://github.com/orderedlist" target="_blank">orderedlist</a>
+   | 
+  Redesign by <a href="http://heroicyang.com/" target="_blank">Heroic Yang</a>
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+<script src="/js/scale.fix.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = { short_name: 'guoyb' };
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';
+    ds.async = true;
+    ds.src = 'http://static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+  (function($){
+    $('.fancybox').fancybox();
+  })(jQuery);
+</script>
+
+</body>
+</html>
