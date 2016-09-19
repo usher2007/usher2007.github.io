@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://blog.guoyb.com/2016/09/19/cpp11-all/</loc>
+    
+    <lastmod>2016-09-19T13:14:04.004Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://blog.guoyb.com/2016/09/18/cpp11-11/</loc>
     
     <lastmod>2016-09-18T00:48:01.176Z</lastmod>
