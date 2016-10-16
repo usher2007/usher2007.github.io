@@ -1,0 +1,252 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  
+  <title>grpc：google官方的rpc框架 | 一根笨茄子</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  
+    <meta name="author" content="Yubo Guo">
+  
+  
+    <meta name="description" content="protobuf是在项目中经常会用到的一个库，它提供了方便的工具和接口，可以对结构化数据进行序列化和反序列化，便于网络传输。  
+其实，如果将一个函数调用用结构化数据表示出来，利用protobuf序列化后通过网络传递到远端，在远端进行反序列化解析，就自然地实现了rpc（Remote Procedure Call）的功能。  
+protobuf中保留了关键字rpc，并且提供了一个RpcChanne">
+  
+  <meta name="description" content="protobuf是在项目中经常会用到的一个库，它提供了方便的工具和接口，可以对结构化数据进行序列化和反序列化，便于网络传输。  
+其实，如果将一个函数调用用结构化数据表示出来，利用protobuf序列化后通过网络传递到远端，在远端进行反序列化解析，就自然地实现了rpc（Remote Procedure Call）的功能。  
+protobuf中保留了关键字rpc，并且提供了一个RpcChanne">
+<meta property="og:type" content="article">
+<meta property="og:title" content="grpc：google官方的rpc框架">
+<meta property="og:url" content="http://blog.guoyb.com/2016/10/15/grpc/index.html">
+<meta property="og:site_name" content="一根笨茄子">
+<meta property="og:description" content="protobuf是在项目中经常会用到的一个库，它提供了方便的工具和接口，可以对结构化数据进行序列化和反序列化，便于网络传输。  
+其实，如果将一个函数调用用结构化数据表示出来，利用protobuf序列化后通过网络传递到远端，在远端进行反序列化解析，就自然地实现了rpc（Remote Procedure Call）的功能。  
+protobuf中保留了关键字rpc，并且提供了一个RpcChanne">
+<meta property="og:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/grpc.svg">
+<meta property="og:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.png">
+<meta property="og:updated_time" content="2016-10-16T08:09:43.688Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="grpc：google官方的rpc框架">
+<meta name="twitter:description" content="protobuf是在项目中经常会用到的一个库，它提供了方便的工具和接口，可以对结构化数据进行序列化和反序列化，便于网络传输。  
+其实，如果将一个函数调用用结构化数据表示出来，利用protobuf序列化后通过网络传递到远端，在远端进行反序列化解析，就自然地实现了rpc（Remote Procedure Call）的功能。  
+protobuf中保留了关键字rpc，并且提供了一个RpcChanne">
+<meta name="twitter:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/grpc.svg">
+  
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+  
+<script type="text/javascript">
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?996ee0fca2512b4c29f37f60cf6387ca";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+</head>
+
+<body>
+  <div class="wrapper">
+    <header id="header">
+  <div class="title">
+    <h1><a href="/">一根笨茄子</a></h1>
+    <p><a href="/"></a></p>
+  </div>
+  <nav class="nav">
+    <ul>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/about">关于我</a></li>
+      
+      
+    </ul>
+    <div class="clearfix"></div>
+  </nav>
+  <div class="clearfix"></div>
+</header>
+    <div class="content">
+		<article class="post">
+  <header>
+    
+      <div class="icon"></div>
+      <a href="/2016/10/15/grpc/">
+  <time datetime="2016-10-15T06:55:51.000Z">
+    2016-10-15
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title">grpc：google官方的rpc框架</h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>protobuf是在项目中经常会用到的一个库，它提供了方便的工具和接口，可以对结构化数据进行序列化和反序列化，便于网络传输。  </p>
+<p>其实，如果将一个函数调用用结构化数据表示出来，利用protobuf序列化后通过网络传递到远端，在远端进行反序列化解析，就自然地实现了rpc（Remote Procedure Call）的功能。  </p>
+<p>protobuf中保留了关键字rpc，并且提供了一个RpcChannel的类，供开发者自己实现rpc框架。实现这个rpc框架，其实主要是实现RpcChannel::CallMethod这个接口。我们自己的项目中，就使用了一套自己实现的基于ansyncore的RpcChannel，而某度最近也开源了其基于protobuf的<a href="https://github.com/baidu/sofa-pbrpc" target="_blank" rel="external">rpc框架</a>，网络部分是使用的Boost::Asio，有兴趣的读者可以自行前往其github wiki页面学习。<br><a id="more"></a><br>那grpc呢，则是google自己基于protobuf（也是google自己开发的库）实现的一套rpc框架。这里使用一张官网的图，表示下其基础架构：  </p>
+<p><img src="http://7d9lwm.com1.z0.glb.clouddn.com/grpc.svg" alt="grpc框架">  </p>
+<h2 id="一个简单的例子"><a href="#一个简单的例子" class="headerlink" title="一个简单的例子"></a>一个简单的例子</h2><p>可能光说不练有点抽象，那么下面用一个例子说明下grpc的基本用法。  </p>
+<p>说到网络相关的例子，简单而又实用的当属EchoServer了。  </p>
+<p>定义一个EchoServer只需一个接口Echo，它接受一条字符串消息，并原样返回一条字符串消息。因此，echo_server.proto文件定义如下：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">syntax = <span class="string">"proto3"</span>;</span><br><span class="line"></span><br><span class="line">package echo_server;</span><br><span class="line"></span><br><span class="line">service EchoServer</span><br><span class="line">&#123;</span><br><span class="line">    rpc Echo (EchoRequest) returns (EchoReply) &#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">message EchoRequest</span><br><span class="line">&#123;</span><br><span class="line">    string msg = <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">message EchoReply</span><br><span class="line">&#123;</span><br><span class="line">    string msg = <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>  </p>
+<p>首先，grpc使用protobuf3.x版本，因此需要在开头声明syntax=”proto3”，剩下的部分和c语言的语法很类似，基本上有了例子之后，照猫画虎很容易就可以写出来自己需要的proto文件。  </p>
+<p>有了proto文件之后，需要使用protoc将其编译生成对应的py文件。这里grpc提供了一个grpc_tools的库，可以将这一过程程序化：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> grpc.tools <span class="keyword">import</span> protoc</span><br><span class="line"></span><br><span class="line">protoc.main(</span><br><span class="line">    (</span><br><span class="line">        <span class="string">''</span>,</span><br><span class="line">        <span class="string">'-I.'</span>,</span><br><span class="line">        <span class="string">'--python_out=.'</span>,</span><br><span class="line">        <span class="string">'--grpc_python_out=.'</span>,</span><br><span class="line">        <span class="string">'./echo_server.proto'</span>,</span><br><span class="line">    )</span><br><span class="line">)</span><br></pre></td></tr></table></figure>  </p>
+<p>生成的echo_server_pb2.py文件中，就定义了我们实现这个EchoServer所需的Servicer类和Stub类。  </p>
+<h3 id="Server"><a href="#Server" class="headerlink" title="Server"></a>Server</h3><p>先看server的实现。  </p>
+<p>首先，需要定义一个类，继承自xxxServicer（这里是EchoServerServicer),并重写其Echo方法。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">EchoServer</span><span class="params">(echo_server_pb2.EchoServerServicer)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">Echo</span><span class="params">(self, request, context)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> echo_server_pb2.EchoReply(msg=<span class="string">'echo:%s'</span> % request.msg)</span><br></pre></td></tr></table></figure>  </p>
+<p>可以看到，其中的request和return值，都是按照我们在proto文件中的定义生成的python类型，非常直观。  </p>
+<p>如何将这个EchoServer类和rpc服务绑定在一起，也是有套路的：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">server = grpc.server(futures.ThreadPoolExecutor(max_workers=<span class="number">10</span>))</span><br><span class="line">echo_server_pb2.add_EchoServerServicer_to_server(EchoServer(), server)</span><br><span class="line">server.add_insecure_port(<span class="string">'[::]:50015'</span>)</span><br><span class="line">server.start()</span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    <span class="keyword">while</span> <span class="keyword">True</span>:</span><br><span class="line">        time.sleep(<span class="number">60</span>*<span class="number">60</span>)</span><br><span class="line"><span class="keyword">except</span> KeyboardInterrupt:</span><br><span class="line">    server.stop(<span class="number">0</span>)</span><br></pre></td></tr></table></figure>  </p>
+<p>由于server.start()是一个非阻塞式调用，因此需要在后面用一个死循环来防止程序终止/GC导致rpc服务不可用。  </p>
+<h3 id="Client"><a href="#Client" class="headerlink" title="Client"></a>Client</h3><p>Client的实现就更简单了，只需通过ip和port创建一个channel，然后利用这个channel创建一个本地的Stub，然后就可以直接Stub.Echo调用远端的Echo方法了，Stub会帮你处理好一切其他事务（构造调用的结构化数据，序列化，网络传输等等）。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> __future__ <span class="keyword">import</span> print_function</span><br><span class="line"><span class="keyword">import</span> grpc</span><br><span class="line"><span class="keyword">import</span> echo_server_pb2</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> sys.version_info.major == <span class="number">3</span>:</span><br><span class="line">    raw_input = input</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    raw_input = raw_input</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">run</span><span class="params">()</span>:</span></span><br><span class="line">    channel = grpc.insecure_channel(<span class="string">'localhost:50015'</span>)</span><br><span class="line">    stub = echo_server_pb2.EchoServerStub(channel)</span><br><span class="line">    <span class="keyword">while</span> <span class="keyword">True</span>:</span><br><span class="line">        msg = raw_input(<span class="string">'you say:'</span>)</span><br><span class="line">        reply = stub.Echo(echo_server_pb2.EchoRequest(msg=msg))</span><br><span class="line">        print(reply.msg)</span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:</span><br><span class="line">    run()</span><br></pre></td></tr></table></figure>  </p>
+<p>这段代码中对print和raw_input这两个py2和py3不兼容的调用打了Monkey Patch，从而使得这段程序可以同时运行在py2和py3的环境中~  </p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>至此，grpc的最基础的应用就说的差不多了。除了上面的阻塞式调用，grpc还提供了非阻塞式调用（future)。另外，对于传递的参数和返回值，grpc还支持流式参数（stream、yield）。具体的相关例子，有兴趣的读者可以前往grpc的官网查询。  </p>
+<p>接下来，我将会使用grpc做一个message hub的应用，功能上应该可以替代目前项目中使用的hub（性能上就不指望替代了，毕竟当前hub使用c++实现的），当作一个练手的实际项目。敬请期待^_^  </p>
+<p>完整代码详见<a href="https://github.com/yubo1911/saber/tree/master/pylibtravel/grpc" target="_blank" rel="external">grpc</a>  </p>
+<p>转载请注明出处： <a href="http://blog.guoyb.com/2016/10/15/grpc">http://blog.guoyb.com/2016/10/15/grpc/</a>  </p>
+<p>欢迎使用微信扫描下方二维码，关注我的微信公众号TechTalking，技术·生活·思考：<br><img src="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.png" alt="后端技术小黑屋">  </p>
+
+    
+  </div>
+  <footer>
+    
+      
+      
+  <div class="tags">
+    <a class="tags-link" href="/tags/grpc/">grpc</a>, <a class="tags-link" href="/tags/protobuf/">protobuf</a>
+  </div>
+
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+<!-- JiaThis Button BEGIN -->
+<script type="text/javascript">
+var jiathis_config = {data_track_clickback:'true'};
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?move=0&amp;uid=1706898" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+<section id="comment">
+  <h1 class="title">评论</h1>
+  <div class="ds-thread" data-title="grpc：google官方的rpc框架">
+  </div>
+</section>
+
+	</div>
+  </div>
+	<aside id="sidebar">
+  
+  
+    
+      
+      
+
+<div class="widget tagcloud first">
+  <h3 class="title">Tags</h3>
+  <div class="entry">
+    <a href="/tags/C/" style="font-size: 10px;">C</a> <a href="/tags/C/" style="font-size: 18.75px;">C++</a> <a href="/tags/C-11/" style="font-size: 18.75px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/docopt/" style="font-size: 10px;">docopt</a> <a href="/tags/echoserver/" style="font-size: 11.25px;">echoserver</a> <a href="/tags/epoll/" style="font-size: 11.25px;">epoll</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/grpc/" style="font-size: 10px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 11.25px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/protobuf/" style="font-size: 10px;">protobuf</a> <a href="/tags/redis/" style="font-size: 12.5px;">redis</a> <a href="/tags/select/" style="font-size: 11.25px;">select</a> <a href="/tags/socket/" style="font-size: 11.25px;">socket</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 15px;">书单</a> <a href="/tags/勘误，MySQL，C-11/" style="font-size: 10px;">勘误，MySQL，C++11</a> <a href="/tags/北京车展/" style="font-size: 10px;">北京车展</a> <a href="/tags/协程/" style="font-size: 10px;">协程</a> <a href="/tags/学习笔记/" style="font-size: 13.75px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/广州/" style="font-size: 10px;">广州</a> <a href="/tags/新西兰/" style="font-size: 10px;">新西兰</a> <a href="/tags/旅行/" style="font-size: 11.25px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 16.25px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 12.5px;">查证记录</a> <a href="/tags/游戏开发/" style="font-size: 10px;">游戏开发</a> <a href="/tags/爱好/" style="font-size: 10px;">爱好</a> <a href="/tags/生活/" style="font-size: 11.25px;">生活</a> <a href="/tags/知乎/" style="font-size: 10px;">知乎</a> <a href="/tags/程序人生/" style="font-size: 10px;">程序人生</a> <a href="/tags/读书笔记/" style="font-size: 17.5px;">读书笔记</a> <a href="/tags/读后感/" style="font-size: 10px;">读后感</a>
+  </div>
+</div>
+
+    
+      
+      
+
+<div class="widget recent-posts">
+  <h3 class="title">最近文章</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2016/10/15/grpc/">grpc：google官方的rpc框架</a>
+      </li>
+    
+      <li>
+        <a href="/2016/09/26/docopt/">docopt：构造一个漂亮的命令行工具</a>
+      </li>
+    
+      <li>
+        <a href="/2016/09/19/cpp11-all/">C++11新特性合集</a>
+      </li>
+    
+      <li>
+        <a href="/2016/09/18/cpp11-11/">C++11新特性之杂项</a>
+      </li>
+    
+      <li>
+        <a href="/2016/09/14/mooncake/">阿里月饼事件中的一个有趣现象</a>
+      </li>
+    
+  </ul>
+</div>
+
+    
+      
+      
+<div class="widget tag">
+  <h3 class="title">友情链接</h3>
+  <ul class="entry">
+  
+    
+    <li><a href="http://www.linkedin.com/in/yubo-guo-739b0071" target="_blank">LinkedIn</a></li>
+  
+    
+    <li><a href="http://www.tuicool.com/sites/2emeIjb" target="_blank">推酷站点</a></li>
+  
+  </ul>
+</div>
+
+    
+  
+</aside>
+<div class="clearfix"></div>
+  <footer id="footer"><div class="copyright">
+  
+  &copy; 2016 <a href="/">Yubo Guo</a>
+  
+</div>
+<div class="theme-copyright">
+  Theme by <a href="https://github.com/orderedlist" target="_blank">orderedlist</a>
+   | 
+  Redesign by <a href="http://heroicyang.com/" target="_blank">Heroic Yang</a>
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+<script src="/js/scale.fix.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = { short_name: 'guoyb' };
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';
+    ds.async = true;
+    ds.src = 'http://static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+  (function($){
+    $('.fancybox').fancybox();
+  })(jQuery);
+</script>
+
+</body>
+</html>

@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://blog.guoyb.com/2016/10/15/grpc/</loc>
+    
+    <lastmod>2016-10-16T08:09:43.688Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://blog.guoyb.com/2016/09/26/docopt/</loc>
     
     <lastmod>2016-09-27T00:04:56.955Z</lastmod>

@@ -63,6 +63,51 @@ var _hmt = _hmt || [];
   <header>
     
       <div class="icon"></div>
+      <a href="/2016/10/15/grpc/">
+  <time datetime="2016-10-15T06:55:51.000Z">
+    2016-10-15
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title"><a href="/2016/10/15/grpc/">grpc：google官方的rpc框架</a></h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>protobuf是在项目中经常会用到的一个库，它提供了方便的工具和接口，可以对结构化数据进行序列化和反序列化，便于网络传输。  </p>
+<p>其实，如果将一个函数调用用结构化数据表示出来，利用protobuf序列化后通过网络传递到远端，在远端进行反序列化解析，就自然地实现了rpc（Remote Procedure Call）的功能。  </p>
+<p>protobuf中保留了关键字rpc，并且提供了一个RpcChannel的类，供开发者自己实现rpc框架。实现这个rpc框架，其实主要是实现RpcChannel::CallMethod这个接口。我们自己的项目中，就使用了一套自己实现的基于ansyncore的RpcChannel，而某度最近也开源了其基于protobuf的<a href="https://github.com/baidu/sofa-pbrpc">rpc框架</a>，网络部分是使用的Boost::Asio，有兴趣的读者可以自行前往其github wiki页面学习。<br>
+    
+  </div>
+  <footer class="end-sep">
+    
+      
+        <div class="alignleft">
+          <a href="/2016/10/15/grpc/#more" class="more-link">阅读全文</a>
+        </div>
+      
+      
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+<!-- JiaThis Button BEGIN -->
+<script type="text/javascript">
+var jiathis_config = {data_track_clickback:'true'};
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?move=0&amp;uid=1706898" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+
+  <article class="post">
+  <header>
+    
+      <div class="icon"></div>
       <a href="/2016/09/26/docopt/">
   <time datetime="2016-09-26T00:15:18.000Z">
     2016-09-26
@@ -88,7 +133,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2016/09/26/docopt/#more" class="more-link">Read More</a>
+          <a href="/2016/09/26/docopt/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -132,7 +177,7 @@ var jiathis_config = {data_track_clickback:'true'};
     
       
         <div class="alignleft">
-          <a href="/2016/09/19/cpp11-all/#more" class="more-link">Read More</a>
+          <a href="/2016/09/19/cpp11-all/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -177,7 +222,7 @@ var jiathis_config = {data_track_clickback:'true'};
     
       
         <div class="alignleft">
-          <a href="/2016/09/18/cpp11-11/#more" class="more-link">Read More</a>
+          <a href="/2016/09/18/cpp11-11/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -224,7 +269,7 @@ var jiathis_config = {data_track_clickback:'true'};
     
       
         <div class="alignleft">
-          <a href="/2016/09/14/mooncake/#more" class="more-link">Read More</a>
+          <a href="/2016/09/14/mooncake/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -269,7 +314,7 @@ var jiathis_config = {data_track_clickback:'true'};
     
       
         <div class="alignleft">
-          <a href="/2016/09/12/cpp11-10/#more" class="more-link">Read More</a>
+          <a href="/2016/09/12/cpp11-10/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -314,7 +359,7 @@ var jiathis_config = {data_track_clickback:'true'};
     
       
         <div class="alignleft">
-          <a href="/2016/09/10/cpp11-9/#more" class="more-link">Read More</a>
+          <a href="/2016/09/10/cpp11-9/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -361,7 +406,7 @@ var jiathis_config = {data_track_clickback:'true'};
     
       
         <div class="alignleft">
-          <a href="/2016/09/09/learn-redis-other/#more" class="more-link">Read More</a>
+          <a href="/2016/09/09/learn-redis-other/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -407,7 +452,7 @@ var jiathis_config = {data_track_clickback:'true'};
     
       
         <div class="alignleft">
-          <a href="/2016/08/31/cpp11-8/#more" class="more-link">Read More</a>
+          <a href="/2016/08/31/cpp11-8/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -455,51 +500,7 @@ var jiathis_config = {data_track_clickback:'true'};
     
       
         <div class="alignleft">
-          <a href="/2016/08/27/nz-visa/#more" class="more-link">Read More</a>
-        </div>
-      
-      
-    
-    <div class="clearfix"></div>
-  </footer>
-</article>
-<!-- JiaThis Button BEGIN -->
-<script type="text/javascript">
-var jiathis_config = {data_track_clickback:'true'};
-</script>
-<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?move=0&amp;uid=1706898" charset="utf-8"></script>
-<!-- JiaThis Button END -->
-
-
-  <article class="post">
-  <header>
-    
-      <div class="icon"></div>
-      <a href="/2016/08/27/correct-errors/">
-  <time datetime="2016-08-26T23:20:25.000Z">
-    2016-08-27
-  </time>
-</a>
-    
-    
-  
-    <h1 class="title"><a href="/2016/08/27/correct-errors/">勘误</a></h1>
-  
-
-  </header>
-  
-  <div class="entry">
-    
-      <hr>
-<p>最近伯乐在线旗下的几个公众号（CPP开发者，数据库开发等）转载了我的几篇文章，带来了很大的阅读量，也引发了激烈的讨论。评论中，有几位经验丰富的老司机，指出了我文章中的错误；当然，也有一些人在没有营养地纯喷啦，这个我也已经习惯了……  </p>
-<p>在<a href="http://blog.guoyb.com/2016/07/09/cpp11-4/">C++11新特性之容器相关特性</a>的评论中，<strong>@少跟网线设置路由</strong>写到：<br>
-    
-  </div>
-  <footer class="end-sep">
-    
-      
-        <div class="alignleft">
-          <a href="/2016/08/27/correct-errors/#more" class="more-link">Read More</a>
+          <a href="/2016/08/27/nz-visa/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -519,7 +520,7 @@ var jiathis_config = {data_track_clickback:'true'};
 <nav id="pagination">
   
   
-    <a href="/page/2/" class="next">Next</a>
+    <a href="/page/2/" class="next">下一页</a>
   
   <div class="clearfix"></div>
 </nav>
@@ -535,7 +536,7 @@ var jiathis_config = {data_track_clickback:'true'};
 <div class="widget tagcloud first">
   <h3 class="title">Tags</h3>
   <div class="entry">
-    <a href="/tags/C/" style="font-size: 10px;">C</a> <a href="/tags/C/" style="font-size: 18.75px;">C++</a> <a href="/tags/C-11/" style="font-size: 18.75px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/docopt/" style="font-size: 10px;">docopt</a> <a href="/tags/echoserver/" style="font-size: 11.25px;">echoserver</a> <a href="/tags/epoll/" style="font-size: 11.25px;">epoll</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 11.25px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/redis/" style="font-size: 12.5px;">redis</a> <a href="/tags/select/" style="font-size: 11.25px;">select</a> <a href="/tags/socket/" style="font-size: 11.25px;">socket</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 15px;">书单</a> <a href="/tags/勘误，MySQL，C-11/" style="font-size: 10px;">勘误，MySQL，C++11</a> <a href="/tags/北京车展/" style="font-size: 10px;">北京车展</a> <a href="/tags/协程/" style="font-size: 10px;">协程</a> <a href="/tags/学习笔记/" style="font-size: 13.75px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/广州/" style="font-size: 10px;">广州</a> <a href="/tags/新西兰/" style="font-size: 10px;">新西兰</a> <a href="/tags/旅行/" style="font-size: 11.25px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 16.25px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 12.5px;">查证记录</a> <a href="/tags/游戏开发/" style="font-size: 10px;">游戏开发</a> <a href="/tags/爱好/" style="font-size: 10px;">爱好</a> <a href="/tags/生活/" style="font-size: 11.25px;">生活</a> <a href="/tags/知乎/" style="font-size: 10px;">知乎</a> <a href="/tags/程序人生/" style="font-size: 10px;">程序人生</a> <a href="/tags/读书笔记/" style="font-size: 17.5px;">读书笔记</a> <a href="/tags/读后感/" style="font-size: 10px;">读后感</a>
+    <a href="/tags/C/" style="font-size: 10px;">C</a> <a href="/tags/C/" style="font-size: 18.75px;">C++</a> <a href="/tags/C-11/" style="font-size: 18.75px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/docopt/" style="font-size: 10px;">docopt</a> <a href="/tags/echoserver/" style="font-size: 11.25px;">echoserver</a> <a href="/tags/epoll/" style="font-size: 11.25px;">epoll</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/grpc/" style="font-size: 10px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 11.25px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/protobuf/" style="font-size: 10px;">protobuf</a> <a href="/tags/redis/" style="font-size: 12.5px;">redis</a> <a href="/tags/select/" style="font-size: 11.25px;">select</a> <a href="/tags/socket/" style="font-size: 11.25px;">socket</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 15px;">书单</a> <a href="/tags/勘误，MySQL，C-11/" style="font-size: 10px;">勘误，MySQL，C++11</a> <a href="/tags/北京车展/" style="font-size: 10px;">北京车展</a> <a href="/tags/协程/" style="font-size: 10px;">协程</a> <a href="/tags/学习笔记/" style="font-size: 13.75px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/广州/" style="font-size: 10px;">广州</a> <a href="/tags/新西兰/" style="font-size: 10px;">新西兰</a> <a href="/tags/旅行/" style="font-size: 11.25px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 16.25px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 12.5px;">查证记录</a> <a href="/tags/游戏开发/" style="font-size: 10px;">游戏开发</a> <a href="/tags/爱好/" style="font-size: 10px;">爱好</a> <a href="/tags/生活/" style="font-size: 11.25px;">生活</a> <a href="/tags/知乎/" style="font-size: 10px;">知乎</a> <a href="/tags/程序人生/" style="font-size: 10px;">程序人生</a> <a href="/tags/读书笔记/" style="font-size: 17.5px;">读书笔记</a> <a href="/tags/读后感/" style="font-size: 10px;">读后感</a>
   </div>
 </div>
 
@@ -546,6 +547,10 @@ var jiathis_config = {data_track_clickback:'true'};
 <div class="widget recent-posts">
   <h3 class="title">最近文章</h3>
   <ul class="entry">
+    
+      <li>
+        <a href="/2016/10/15/grpc/">grpc：google官方的rpc框架</a>
+      </li>
     
       <li>
         <a href="/2016/09/26/docopt/">docopt：构造一个漂亮的命令行工具</a>
@@ -561,10 +566,6 @@ var jiathis_config = {data_track_clickback:'true'};
     
       <li>
         <a href="/2016/09/14/mooncake/">阿里月饼事件中的一个有趣现象</a>
-      </li>
-    
-      <li>
-        <a href="/2016/09/12/cpp11-10/">C++11新特性之随机数库</a>
       </li>
     
   </ul>
