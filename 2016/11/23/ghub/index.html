@@ -1,0 +1,265 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  
+  <title>ghub:一个基于grpc的rpc hub | 一根笨茄子</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  
+    <meta name="author" content="Yubo Guo">
+  
+  
+    <meta name="description" content="之前的一篇文章中介绍了grpc的用法，在这篇文章中，我将使用grpc做一个有些实际意义的小项目，一个可以使用的rpc hub。  
+rpc hub在多服务器架构中，服务器之间经常需要进行通信。使用message queue构建一个pub-sub的消息传送机制，可以获得较低的耦合度、较高的灵活性，同时容易实现容灾备份。  
+但是，对于游戏服务器这种多台同构服务器的情况，直接使用rpc进行远程函数调">
+  
+  <meta name="description" content="之前的一篇文章中介绍了grpc的用法，在这篇文章中，我将使用grpc做一个有些实际意义的小项目，一个可以使用的rpc hub。  
+rpc hub在多服务器架构中，服务器之间经常需要进行通信。使用message queue构建一个pub-sub的消息传送机制，可以获得较低的耦合度、较高的灵活性，同时容易实现容灾备份。  
+但是，对于游戏服务器这种多台同构服务器的情况，直接使用rpc进行远程函数调">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ghub:一个基于grpc的rpc hub">
+<meta property="og:url" content="http://blog.guoyb.com/2016/11/23/ghub/index.html">
+<meta property="og:site_name" content="一根笨茄子">
+<meta property="og:description" content="之前的一篇文章中介绍了grpc的用法，在这篇文章中，我将使用grpc做一个有些实际意义的小项目，一个可以使用的rpc hub。  
+rpc hub在多服务器架构中，服务器之间经常需要进行通信。使用message queue构建一个pub-sub的消息传送机制，可以获得较低的耦合度、较高的灵活性，同时容易实现容灾备份。  
+但是，对于游戏服务器这种多台同构服务器的情况，直接使用rpc进行远程函数调">
+<meta property="og:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.png">
+<meta property="og:updated_time" content="2016-11-26T03:09:09.597Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ghub:一个基于grpc的rpc hub">
+<meta name="twitter:description" content="之前的一篇文章中介绍了grpc的用法，在这篇文章中，我将使用grpc做一个有些实际意义的小项目，一个可以使用的rpc hub。  
+rpc hub在多服务器架构中，服务器之间经常需要进行通信。使用message queue构建一个pub-sub的消息传送机制，可以获得较低的耦合度、较高的灵活性，同时容易实现容灾备份。  
+但是，对于游戏服务器这种多台同构服务器的情况，直接使用rpc进行远程函数调">
+<meta name="twitter:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.png">
+  
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+  
+<script type="text/javascript">
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?996ee0fca2512b4c29f37f60cf6387ca";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+</head>
+
+<body>
+  <div class="wrapper">
+    <header id="header">
+  <div class="title">
+    <h1><a href="/">一根笨茄子</a></h1>
+    <p><a href="/"></a></p>
+  </div>
+  <nav class="nav">
+    <ul>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/about">关于我</a></li>
+      
+      
+    </ul>
+    <div class="clearfix"></div>
+  </nav>
+  <div class="clearfix"></div>
+</header>
+    <div class="content">
+		<article class="post">
+  <header>
+    
+      <div class="icon"></div>
+      <a href="/2016/11/23/ghub/">
+  <time datetime="2016-11-23T00:42:14.000Z">
+    2016-11-23
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title">ghub:一个基于grpc的rpc hub</h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>之前的<a href="http://blog.guoyb.com/2016/10/15/grpc/">一篇文章</a>中介绍了grpc的用法，在这篇文章中，我将使用grpc做一个有些实际意义的小项目，一个可以使用的rpc hub。  </p>
+<h2 id="rpc-hub"><a href="#rpc-hub" class="headerlink" title="rpc hub"></a>rpc hub</h2><p>在多服务器架构中，服务器之间经常需要进行通信。使用message queue构建一个pub-sub的消息传送机制，可以获得较低的耦合度、较高的灵活性，同时容易实现容灾备份。  </p>
+<p>但是，对于游戏服务器这种多台同构服务器的情况，直接使用rpc进行远程函数调用，会更加方便，开发效率更高。<br><a id="more"></a><br>以我最熟悉的游戏服务器集群为例，普通游戏服需要经常和跨服游戏服进行通信（跨服PVP玩法、全服排行榜等），这是一个多对多的架构，如果直接在普通游戏服/跨服游戏服上使用grpc进行通信的话，需要在每个服务器上启动多个grpc通道，并进行维护，这无形中增加了游戏服务器的负担。  </p>
+<p>“在软件开发中，没有什么是增加一个中间层解决不了的”。我们要做的这个rpc hub就是这样的一个中间层。每个服务器均只与此hub进行通信，hub负责收集所有服务器的注册信息，并将消息转发到对应的服务器。这样在每个服务器上，就只用维护一对连接，并且是对于hub这种静态服务的连接，而不用去考虑动态变化的服务器集群中的其他服务器。  </p>
+<h2 id="接口设计"><a href="#接口设计" class="headerlink" title="接口设计"></a>接口设计</h2><p>对于hub来说，只需向外提供两个接口即可。  </p>
+<blockquote>
+<ol>
+<li>Register 供新上线的服务器注册  </li>
+<li>RemoteCall 供服务器远程调用函数  </li>
+</ol>
+</blockquote>
+<p>而每个服务器上也需要通过grpc提供一个接口，供hub进行调用：  </p>
+<blockquote>
+<ol>
+<li>ForwardCall 供hub调用  </li>
+</ol>
+</blockquote>
+<p>所以，整个proto文件所描述的rpc接口如下：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">syntax = <span class="string">"proto3"</span>;</span><br><span class="line"></span><br><span class="line">package ghub;</span><br><span class="line"></span><br><span class="line">service GHubServer</span><br><span class="line">&#123;</span><br><span class="line">	rpc Register (ClientInfo) returns (ReturnState) &#123;&#125;</span><br><span class="line">	rpc RemoteCall (CallInfo) returns (ReturnState) &#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">service GHubClient</span><br><span class="line">&#123;</span><br><span class="line">	rpc ForwardCall (CallInfo) returns (ReturnState) &#123;&#125; </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">message ClientInfo</span><br><span class="line">&#123;</span><br><span class="line">	string ip = <span class="number">1</span>;</span><br><span class="line">	int32 port = <span class="number">2</span>;</span><br><span class="line">	string name = <span class="number">3</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">message CallInfo</span><br><span class="line">&#123;</span><br><span class="line">    string dst = <span class="number">1</span>;</span><br><span class="line">	int32 typ = <span class="number">2</span>;</span><br><span class="line">	string entity = <span class="number">3</span>;</span><br><span class="line">	string method = <span class="number">4</span>;</span><br><span class="line">	bytes args = <span class="number">5</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">message ReturnState</span><br><span class="line">&#123;</span><br><span class="line">	int32 ret = <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>  </p>
+<h2 id="GHubServer"><a href="#GHubServer" class="headerlink" title="GHubServer"></a>GHubServer</h2><p>在GHubServer中将要实现上述proto文件中定义的Register和RemoteCall两个rpc方法。  </p>
+<p>Register:<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">GHubServer</span><span class="params">(ghub_pb2.GHubServerServicer)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></span><br><span class="line">        self.clients = &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">Register</span><span class="params">(self, request, context)</span>:</span></span><br><span class="line">        now = time.time()</span><br><span class="line">        <span class="keyword">if</span> request.name <span class="keyword">not</span> <span class="keyword">in</span> self.clients:</span><br><span class="line">            addr = <span class="string">'&#123;&#125;:&#123;&#125;'</span>.format(request.ip, request.port)</span><br><span class="line">            channel = grpc.insecure_channel(addr)</span><br><span class="line">            stub = ghub_pb2.GHubClientStub(channel)</span><br><span class="line">            self.clients[request.name] = Channel(stub, now)</span><br><span class="line">            logger.info(<span class="string">'client &#123;&#125; from &#123;&#125; registered.'</span>.format(</span><br><span class="line">                request.name, addr))</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            self.clients[request.name].timestamp = now</span><br><span class="line">        <span class="keyword">return</span> ghub_pb2.ReturnState(ret=<span class="number">0</span>)</span><br></pre></td></tr></table></figure>  </p>
+<p>Client通过GHubServer.Register方法向hub注册自己。GHubServer收到Client的ip/port信息后，建立一个rpc channel并保存下来，同时更新时间戳用于判断Client是否在线。  </p>
+<p>这样，GHubServer就像一个hub（集线器）一样，维持了通向各个Client的通道。  </p>
+<p>那么接下来，RemoteCall方法的实现就很直接了，直接按照目的地Client的名字，找到对应的rpc channel，将函数调用信息转发过去。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">GHubServer</span><span class="params">(ghub_pb2.GHubServerServicer)</span>:</span></span><br><span class="line">    <span class="comment"># see above...</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">RemoteCall</span><span class="params">(self, request, context)</span>:</span></span><br><span class="line">        dst_name = request.dst</span><br><span class="line">        <span class="keyword">if</span> dst_name <span class="keyword">not</span> <span class="keyword">in</span> self.clients:</span><br><span class="line">            <span class="keyword">return</span> ghub_pb2.ReturnState(ret=<span class="number">-1</span>)</span><br><span class="line">        channel = self.clients[dst_name]</span><br><span class="line">        stub = channel.stub</span><br><span class="line">        ret = stub.ForwardCall.future(request)</span><br><span class="line">        ret.result()</span><br><span class="line">        <span class="keyword">return</span> ghub_pb2.ReturnState(ret=<span class="number">0</span>)</span><br></pre></td></tr></table></figure>  </p>
+<p>另外，GHubServer还需要定期的根据Client的注册时间戳信息，判断是否有Client掉线。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">GHubServer</span><span class="params">(ghub_pb2.GHubServerServicer)</span>:</span></span><br><span class="line">    <span class="comment"># see above...</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">CheckChannels</span><span class="params">(self)</span>:</span></span><br><span class="line">        now = time.time()</span><br><span class="line">        rm_channels = []</span><br><span class="line">        <span class="keyword">for</span> name, channel <span class="keyword">in</span> self.clients.iteritems():</span><br><span class="line">            <span class="keyword">if</span> now - channel.timestamp &gt;= <span class="number">60</span>:</span><br><span class="line">                rm_channels.append(name)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> name <span class="keyword">in</span> rm_channels:</span><br><span class="line">            self.clients.pop(name, <span class="keyword">None</span>)</span><br><span class="line">            logger.info(<span class="string">'client &#123;&#125; disconnected.'</span>.format(name))</span><br></pre></td></tr></table></figure>  </p>
+<p>接下来，就是正常的启动rpc server的流程了。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">serve</span><span class="params">()</span>:</span></span><br><span class="line">    doc = <span class="string">"""Usage:</span><br><span class="line">        ghub.py -p &lt;port&gt;</span><br><span class="line">        ghub.py (-h | --help)</span><br><span class="line">    Options:</span><br><span class="line">        -h --help       Show this screen</span><br><span class="line">        -p              Specify the listening port</span><br><span class="line">    """</span></span><br><span class="line">    args = docopt(doc, version=<span class="string">"ghub ver1.0"</span>)</span><br><span class="line">    hub_port = int(args[<span class="string">'&lt;port&gt;'</span>])</span><br><span class="line">    server = grpc.server(futures.ThreadPoolExecutor(max_workers=<span class="number">10</span>))</span><br><span class="line">    ghub_server = GHubServer()</span><br><span class="line">    ghub_pb2.add_GHubServerServicer_to_server(ghub_server, server)</span><br><span class="line">    server.add_insecure_port(<span class="string">'[::]:&#123;&#125;'</span>.format(hub_port))</span><br><span class="line">    server.start()</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">while</span> <span class="keyword">True</span>:</span><br><span class="line">            time.sleep(<span class="number">10</span>)</span><br><span class="line">            ghub_server.CheckChannels()</span><br><span class="line">    <span class="keyword">except</span> KeyboardInterrupt:</span><br><span class="line">        server.stop(<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:</span><br><span class="line">    serve()</span><br></pre></td></tr></table></figure>  </p>
+<h2 id="GHubClient"><a href="#GHubClient" class="headerlink" title="GHubClient"></a>GHubClient</h2><p>Client需要完成两个功能。首先它需要作为一个Proxy，将所有的远程调用通过rpc RemoteCall转发给GHubServer，并定期向GHubServer注册自己；另外，它也需要作为一个rpc调用的接受者，接受GHubServer转发来的rpc ForwardCall调用。  </p>
+<p>Proxy:<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">GHubProxy</span><span class="params">(object)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, hub_ip, hub_port, name, port)</span>:</span></span><br><span class="line">        channel = grpc.insecure_channel(<span class="string">'&#123;&#125;:&#123;&#125;'</span>.format(hub_ip, hub_port))</span><br><span class="line">        self.stub = ghub_pb2.GHubServerStub(channel)</span><br><span class="line">        self.port = port</span><br><span class="line">        self.name = name</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">CallMethod</span><span class="params">(self, remote, typ, entity, method, args)</span>:</span></span><br><span class="line">        byte_args = zlib.compress(cPickle.dumps(args, <span class="number">-1</span>))</span><br><span class="line">        call_info = ghub_pb2.CallInfo(</span><br><span class="line">                dst=remote, typ=typ,</span><br><span class="line">                entity=entity, method=method, args=byte_args)</span><br><span class="line">        ret = self.stub.RemoteCall(call_info)</span><br><span class="line">        <span class="keyword">return</span> ret.ret</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">Register</span><span class="params">(self)</span>:</span></span><br><span class="line">        self.stub.Register(ghub_pb2.ClientInfo(</span><br><span class="line">            ip=<span class="string">'localhost'</span>,</span><br><span class="line">            port=self.port,</span><br><span class="line">            name=self.name))</span><br></pre></td></tr></table></figure>  </p>
+<p>在调用远程方法时，我们通过zlib和cPickle将调用参数转成通用的byte形式传输，可以不受函数参数g个数的影响，如需支持关键字参数，还可以加上kwargs。  </p>
+<p>ForwardCall:<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">GHubClient</span><span class="params">(ghub_pb2.GHubClientServicer)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">ForwardCall</span><span class="params">(self, request, context)</span>:</span></span><br><span class="line">        args = cPickle.loads(zlib.decompress(request.args))</span><br><span class="line">        method = request.method</span><br><span class="line">        <span class="keyword">if</span> request.typ == <span class="number">1</span>:</span><br><span class="line">            <span class="comment"># global methods</span></span><br><span class="line">            func = globals().get(method, <span class="keyword">None</span>)</span><br><span class="line">            <span class="keyword">try</span>:</span><br><span class="line">                func(*args)</span><br><span class="line">                <span class="keyword">return</span> ghub_pb2.ReturnState(ret=<span class="number">0</span>)</span><br><span class="line">            <span class="keyword">except</span>:</span><br><span class="line">                <span class="keyword">return</span> ghub_pb2.ReturnState(ret=<span class="number">-1</span>)</span><br><span class="line">        <span class="keyword">elif</span> request.typ == <span class="number">2</span>:</span><br><span class="line">            <span class="comment"># entity methods</span></span><br><span class="line">            entity = entities.get(request.entity, <span class="keyword">None</span>)</span><br><span class="line">            <span class="keyword">try</span>:</span><br><span class="line">                func = getattr(entity, method)</span><br><span class="line">                func(*args)</span><br><span class="line">                <span class="keyword">return</span> ghub_pb2.ReturnState(ret=<span class="number">0</span>)</span><br><span class="line">            <span class="keyword">except</span>:</span><br><span class="line">                <span class="keyword">return</span> ghub_pb2.ReturnState(ret=<span class="number">-1</span>)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> ghub_pb2.ReturnState(ret=<span class="number">-1</span>)</span><br></pre></td></tr></table></figure>  </p>
+<p>在这里我们只示意了两种情况。一种是直接调用模块内的全局方法；另一种是假设我们有一个可以索引所有实例的地方，从而通过实例的名字，调用对应实例的相关方法。  </p>
+<p>下面需要构造一些测试数据：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line">shutdown_event = threading.Event()</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">serve</span><span class="params">(ip, port)</span>:</span></span><br><span class="line">    client = grpc.server(futures.ThreadPoolExecutor(max_workers=<span class="number">10</span>))</span><br><span class="line">    ghub_client = GHubClient()</span><br><span class="line">    ghub_pb2.add_GHubClientServicer_to_server(ghub_client, client)</span><br><span class="line">    client.add_insecure_port(<span class="string">'&#123;&#125;:&#123;&#125;'</span>.format(ip, port))</span><br><span class="line">    logger.info(<span class="string">'client listening on &#123;&#125;:&#123;&#125;'</span>.format(ip, port))</span><br><span class="line">    client.start()</span><br><span class="line">    <span class="keyword">return</span> client</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">HeartBeat</span><span class="params">(proxy)</span>:</span></span><br><span class="line">    <span class="keyword">while</span> <span class="keyword">not</span> shutdown_event.is_set():</span><br><span class="line">        proxy.Register()</span><br><span class="line">        time.sleep(<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">TestMethod</span><span class="params">(a, b)</span>:</span></span><br><span class="line">    logger.info(<span class="string">'TestMethod called with: &#123;&#125;, &#123;&#125;'</span>.format(a, b))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Entity</span><span class="params">(object)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, name)</span>:</span></span><br><span class="line">        self.name = name</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">TestMethod</span><span class="params">(self, a, b)</span>:</span></span><br><span class="line">        logger.info(<span class="string">'&#123;&#125;.TestMethod called with: &#123;&#125; &#123;&#125;'</span>.format(self.name, a, b))</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:</span><br><span class="line">    doc = <span class="string">"""Usage:</span><br><span class="line">        ghub_client.py -p &lt;port&gt; -s &lt;hub_port&gt; -n &lt;name&gt;</span><br><span class="line">        ghub_client.py (-h | --help)</span><br><span class="line">    Options:</span><br><span class="line">        -h --help       Show this screen</span><br><span class="line">        -p              Listening port</span><br><span class="line">        -s              Hub port</span><br><span class="line">        -n              Client name</span><br><span class="line">    """</span></span><br><span class="line">    args = docopt(doc, version=<span class="string">"ghub_client ver1.0"</span>)</span><br><span class="line">    port = int(args[<span class="string">'&lt;port&gt;'</span>])</span><br><span class="line">    hub_port = int(args[<span class="string">'&lt;hub_port&gt;'</span>])</span><br><span class="line">    client_name = args[<span class="string">'&lt;name&gt;'</span>]</span><br><span class="line"></span><br><span class="line">    client_stub = serve(<span class="string">'[::]'</span>, port)</span><br><span class="line">    proxy = GHubProxy(<span class="string">'localhost'</span>, hub_port, client_name, port)</span><br><span class="line">    t2 = threading.Thread(target=HeartBeat, args=(proxy,))</span><br><span class="line">    t2.deamon = <span class="keyword">True</span></span><br><span class="line">    t2.start()</span><br><span class="line"></span><br><span class="line">    user = Entity(<span class="string">'user'</span>)</span><br><span class="line">    entities[user.name] = user</span><br><span class="line">    account = Entity(<span class="string">'account'</span>)</span><br><span class="line">    entities[account.name] = account</span><br><span class="line"></span><br><span class="line">    time.sleep(<span class="number">2</span>)</span><br><span class="line">    <span class="keyword">for</span> a, b <span class="keyword">in</span> zip(range(<span class="number">1</span>, <span class="number">3</span>), range(<span class="number">11</span>, <span class="number">13</span>)):</span><br><span class="line">        proxy.CallMethod(client_name, <span class="number">1</span>, <span class="string">''</span>, <span class="string">'TestMethod'</span>, (a, b))</span><br><span class="line">        proxy.CallMethod(client_name, <span class="number">2</span>, <span class="string">'user'</span>, <span class="string">'TestMethod'</span>, (a, b))</span><br><span class="line">        proxy.CallMethod(client_name, <span class="number">2</span>, <span class="string">'account'</span>, <span class="string">'TestMethod'</span>, (a, b))</span><br><span class="line">        time.sleep(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">while</span> <span class="keyword">True</span>:</span><br><span class="line">            time.sleep(<span class="number">10</span>)</span><br><span class="line">    <span class="keyword">except</span> KeyboardInterrupt:</span><br><span class="line">        logger.error(<span class="string">'KeyboardInterrupt'</span>)</span><br><span class="line">        shutdown_event.set()</span><br><span class="line">        client_stub.stop(<span class="number">0</span>)</span><br></pre></td></tr></table></figure>  </p>
+<p>实际测试一下：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">$./ghub.py -p <span class="number">33333</span></span><br><span class="line">INFO:root:client c1 <span class="keyword">from</span> localhost:<span class="number">33334</span> registered.</span><br><span class="line">INFO:root:client c2 <span class="keyword">from</span> localhost:<span class="number">33335</span> registered.</span><br><span class="line"></span><br><span class="line">$./ghub_client.py -p <span class="number">33334</span> -s <span class="number">33333</span> -n c1 -t c2</span><br><span class="line">INFO:root:client listening on [::]:<span class="number">33334</span></span><br><span class="line">INFO:root:TestMethod called <span class="keyword">with</span>: <span class="number">1</span>, <span class="number">11</span></span><br><span class="line">INFO:root:user.TestMethod called <span class="keyword">with</span>: <span class="number">1</span> <span class="number">11</span></span><br><span class="line">INFO:root:account.TestMethod called <span class="keyword">with</span>: <span class="number">1</span> <span class="number">11</span></span><br><span class="line">INFO:root:TestMethod called <span class="keyword">with</span>: <span class="number">2</span>, <span class="number">12</span></span><br><span class="line">INFO:root:user.TestMethod called <span class="keyword">with</span>: <span class="number">2</span> <span class="number">12</span></span><br><span class="line">INFO:root:account.TestMethod called <span class="keyword">with</span>: <span class="number">2</span> <span class="number">12</span></span><br><span class="line"></span><br><span class="line">$./ghub_client.py -p <span class="number">33335</span> -s <span class="number">33333</span> -n c2 -t c1</span><br><span class="line">INFO:root:client listening on [::]:<span class="number">33335</span></span><br><span class="line">INFO:root:TestMethod called <span class="keyword">with</span>: <span class="number">1</span>, <span class="number">11</span></span><br><span class="line">INFO:root:user.TestMethod called <span class="keyword">with</span>: <span class="number">1</span> <span class="number">11</span></span><br><span class="line">INFO:root:account.TestMethod called <span class="keyword">with</span>: <span class="number">1</span> <span class="number">11</span></span><br><span class="line">INFO:root:TestMethod called <span class="keyword">with</span>: <span class="number">2</span>, <span class="number">12</span></span><br><span class="line">INFO:root:user.TestMethod called <span class="keyword">with</span>: <span class="number">2</span> <span class="number">12</span></span><br><span class="line">INFO:root:account.TestMethod called <span class="keyword">with</span>: <span class="number">2</span> <span class="number">12</span></span><br></pre></td></tr></table></figure>  </p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>这样的一个rpc hub架构简明，实现也比较简单，易于维护和调试。但是同时也给系统引入了单点。另外在效率方面，一般的对于GHubServer可以考虑使用C++实现，因为这一模块功能简单，实现完成之后也基本不会做功能上的变动。而Client端为了兼顾开发效率，一般选择直接使用脚本实现。  </p>
+<p>完整代码详见<a href="https://github.com/yubo1911/ghub" target="_blank" rel="external">ghub</a>  </p>
+<p>转载请注明出处： <a href="http://blog.guoyb.com/2016/11/23/ghub">http://blog.guoyb.com/2016/11/23/ghub/</a>  </p>
+<p>欢迎使用微信扫描下方二维码，关注我的微信公众号TechTalking，技术·生活·思考：<br><img src="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.png" alt="后端技术小黑屋">  </p>
+
+    
+  </div>
+  <footer>
+    
+      
+      
+  <div class="tags">
+    <a class="tags-link" href="/tags/grpc/">grpc</a>, <a class="tags-link" href="/tags/protobuf/">protobuf</a>
+  </div>
+
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+<!-- JiaThis Button BEGIN -->
+<script type="text/javascript">
+var jiathis_config = {data_track_clickback:'true'};
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?move=0&amp;uid=1706898" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+<section id="comment">
+  <h1 class="title">评论</h1>
+  <div class="ds-thread" data-title="ghub:一个基于grpc的rpc hub">
+  </div>
+</section>
+
+	</div>
+  </div>
+	<aside id="sidebar">
+  
+  
+    
+      
+      
+
+<div class="widget tagcloud first">
+  <h3 class="title">Tags</h3>
+  <div class="entry">
+    <a href="/tags/C/" style="font-size: 10px;">C</a> <a href="/tags/C/" style="font-size: 18.75px;">C++</a> <a href="/tags/C-11/" style="font-size: 18.75px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/docopt/" style="font-size: 10px;">docopt</a> <a href="/tags/echoserver/" style="font-size: 11.25px;">echoserver</a> <a href="/tags/epoll/" style="font-size: 11.25px;">epoll</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/grpc/" style="font-size: 11.25px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 11.25px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/protobuf/" style="font-size: 11.25px;">protobuf</a> <a href="/tags/redis/" style="font-size: 13.75px;">redis</a> <a href="/tags/select/" style="font-size: 11.25px;">select</a> <a href="/tags/socket/" style="font-size: 11.25px;">socket</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 16.25px;">书单</a> <a href="/tags/勘误，MySQL，C-11/" style="font-size: 10px;">勘误，MySQL，C++11</a> <a href="/tags/北京车展/" style="font-size: 10px;">北京车展</a> <a href="/tags/协程/" style="font-size: 10px;">协程</a> <a href="/tags/学习笔记/" style="font-size: 15px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/广州/" style="font-size: 10px;">广州</a> <a href="/tags/新西兰/" style="font-size: 10px;">新西兰</a> <a href="/tags/旅行/" style="font-size: 12.5px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 17.5px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 13.75px;">查证记录</a> <a href="/tags/游戏开发/" style="font-size: 10px;">游戏开发</a> <a href="/tags/爱好/" style="font-size: 10px;">爱好</a> <a href="/tags/生活/" style="font-size: 11.25px;">生活</a> <a href="/tags/知乎/" style="font-size: 10px;">知乎</a> <a href="/tags/程序人生/" style="font-size: 10px;">程序人生</a> <a href="/tags/读书笔记/" style="font-size: 17.5px;">读书笔记</a> <a href="/tags/读后感/" style="font-size: 10px;">读后感</a> <a href="/tags/贵州/" style="font-size: 10px;">贵州</a>
+  </div>
+</div>
+
+    
+      
+      
+
+<div class="widget recent-posts">
+  <h3 class="title">最近文章</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2016/11/23/ghub/">ghub:一个基于grpc的rpc hub</a>
+      </li>
+    
+      <li>
+        <a href="/2016/10/24/guizhou/">国庆在贵州的思考</a>
+      </li>
+    
+      <li>
+        <a href="/2016/10/15/grpc/">grpc：google官方的rpc框架</a>
+      </li>
+    
+      <li>
+        <a href="/2016/09/26/docopt/">docopt：构造一个漂亮的命令行工具</a>
+      </li>
+    
+      <li>
+        <a href="/2016/09/19/cpp11-all/">C++11新特性合集</a>
+      </li>
+    
+  </ul>
+</div>
+
+    
+      
+      
+<div class="widget tag">
+  <h3 class="title">友情链接</h3>
+  <ul class="entry">
+  
+    
+    <li><a href="http://www.linkedin.com/in/yubo-guo-739b0071" target="_blank">LinkedIn</a></li>
+  
+    
+    <li><a href="http://www.tuicool.com/sites/2emeIjb" target="_blank">推酷站点</a></li>
+  
+  </ul>
+</div>
+
+    
+  
+</aside>
+<div class="clearfix"></div>
+  <footer id="footer"><div class="copyright">
+  
+  &copy; 2016 <a href="/">Yubo Guo</a>
+  
+</div>
+<div class="theme-copyright">
+  Theme by <a href="https://github.com/orderedlist" target="_blank">orderedlist</a>
+   | 
+  Redesign by <a href="http://heroicyang.com/" target="_blank">Heroic Yang</a>
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+<script src="/js/scale.fix.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = { short_name: 'guoyb' };
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';
+    ds.async = true;
+    ds.src = 'http://static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+  (function($){
+    $('.fancybox').fancybox();
+  })(jQuery);
+</script>
+
+</body>
+</html>
