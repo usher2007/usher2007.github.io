@@ -1,0 +1,272 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  
+  <title>Python最差实践 | 一根笨茄子</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  
+    <meta name="author" content="Yubo Guo">
+  
+  
+    <meta name="description" content="最近在看一些陈年老系统，其中有一些不好的代码习惯遗留下来的坑；加上最近自己也写了一段烂代码导致服务器负载飙升，所以就趁此机会总结下我看到过/写过的自认为不好的Python代码习惯，时刻提醒自己远离这些“最差实践”，避免挖坑。  
+下面所举的例子中，有一部分会造成性能问题，有一部分会导致隐藏bug，或日后维护、重构困难，还有一部分纯粹是我认为不够pythonic。所以大家自行甄别，取精去糟吧。">
+  
+  <meta name="description" content="最近在看一些陈年老系统，其中有一些不好的代码习惯遗留下来的坑；加上最近自己也写了一段烂代码导致服务器负载飙升，所以就趁此机会总结下我看到过/写过的自认为不好的Python代码习惯，时刻提醒自己远离这些“最差实践”，避免挖坑。  
+下面所举的例子中，有一部分会造成性能问题，有一部分会导致隐藏bug，或日后维护、重构困难，还有一部分纯粹是我认为不够pythonic。所以大家自行甄别，取精去糟吧。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python最差实践">
+<meta property="og:url" content="http://blog.guoyb.com/2016/12/03/bad-py-style/index.html">
+<meta property="og:site_name" content="一根笨茄子">
+<meta property="og:description" content="最近在看一些陈年老系统，其中有一些不好的代码习惯遗留下来的坑；加上最近自己也写了一段烂代码导致服务器负载飙升，所以就趁此机会总结下我看到过/写过的自认为不好的Python代码习惯，时刻提醒自己远离这些“最差实践”，避免挖坑。  
+下面所举的例子中，有一部分会造成性能问题，有一部分会导致隐藏bug，或日后维护、重构困难，还有一部分纯粹是我认为不够pythonic。所以大家自行甄别，取精去糟吧。">
+<meta property="og:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.png">
+<meta property="og:updated_time" content="2016-12-03T08:15:08.880Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Python最差实践">
+<meta name="twitter:description" content="最近在看一些陈年老系统，其中有一些不好的代码习惯遗留下来的坑；加上最近自己也写了一段烂代码导致服务器负载飙升，所以就趁此机会总结下我看到过/写过的自认为不好的Python代码习惯，时刻提醒自己远离这些“最差实践”，避免挖坑。  
+下面所举的例子中，有一部分会造成性能问题，有一部分会导致隐藏bug，或日后维护、重构困难，还有一部分纯粹是我认为不够pythonic。所以大家自行甄别，取精去糟吧。">
+<meta name="twitter:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.png">
+  
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+  
+<script type="text/javascript">
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?996ee0fca2512b4c29f37f60cf6387ca";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+</head>
+
+<body>
+  <div class="wrapper">
+    <header id="header">
+  <div class="title">
+    <h1><a href="/">一根笨茄子</a></h1>
+    <p><a href="/"></a></p>
+  </div>
+  <nav class="nav">
+    <ul>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/about">关于我</a></li>
+      
+      
+    </ul>
+    <div class="clearfix"></div>
+  </nav>
+  <div class="clearfix"></div>
+</header>
+    <div class="content">
+		<article class="post">
+  <header>
+    
+      <div class="icon"></div>
+      <a href="/2016/12/03/bad-py-style/">
+  <time datetime="2016-12-03T05:39:46.000Z">
+    2016-12-03
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title">Python最差实践</h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>最近在看一些陈年老系统，其中有一些不好的代码习惯遗留下来的坑；加上最近自己也写了一段烂代码导致服务器负载飙升，所以就趁此机会总结下我看到过/写过的自认为不好的Python代码习惯，时刻提醒自己远离这些“最差实践”，避免挖坑。  </p>
+<p>下面所举的例子中，有一部分会造成性能问题，有一部分会导致隐藏bug，或日后维护、重构困难，还有一部分纯粹是我认为不够pythonic。所以大家自行甄别，取精去糟吧。  </p>
+<h2 id="函数默认参数使用可变对象"><a href="#函数默认参数使用可变对象" class="headerlink" title="函数默认参数使用可变对象"></a>函数默认参数使用可变对象</h2><p>这个例子我想大家应该在各种技术文章中见过许多遍了，也足以证明这是一个大坑。  </p>
+<p>先看错误示范吧：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">use_mutable_default_param</span><span class="params">(idx=<span class="number">0</span>, ids=[])</span>:</span></span><br><span class="line">    ids.append(idx)</span><br><span class="line">    print(idx)</span><br><span class="line">    print(ids)</span><br><span class="line"></span><br><span class="line">use_mutable_default_param(idx=<span class="number">1</span>)</span><br><span class="line">use_mutable_default_param(idx=<span class="number">2</span>)</span><br></pre></td></tr></table></figure><br><a id="more"></a><br>输出：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span></span><br><span class="line">[<span class="number">1</span>]</span><br><span class="line"><span class="number">2</span></span><br><span class="line">[<span class="number">1</span>, <span class="number">2</span>]</span><br></pre></td></tr></table></figure>  </p>
+<p>理解这其中的原因，最重要的是有两点：</p>
+<ol>
+<li>函数本身也是一个对象，默认参数绑定于这个函数对象上</li>
+<li>append这类方法会直接修改对象，所以下次调用此函数时，其绑定的默认参数已经不再是空list了</li>
+</ol>
+<p>正确的做法如下：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">donot_use_mutable_default_param</span><span class="params">(idx=<span class="number">0</span>, ids=None)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> ids <span class="keyword">is</span> <span class="keyword">None</span>:</span><br><span class="line">        ids = []</span><br><span class="line">    ids.append(idx)</span><br><span class="line">    print(idx)</span><br><span class="line">    print(ids)</span><br></pre></td></tr></table></figure>  </p>
+<h2 id="try…except不具体指明异常类型"><a href="#try…except不具体指明异常类型" class="headerlink" title="try…except不具体指明异常类型"></a>try…except不具体指明异常类型</h2><p>虽然在Python中使用try…except不会带来严重的性能问题，但是不加区分，直接捕获所有类型异常的做法，往往会掩盖掉其他的bug，造成难以追查的bug。  </p>
+<p>一般的，我觉得应该尽量少的使用try…except，这样可以在开发期尽早的发现问题。即使要使用try…except，也应该尽可能的指定出要捕获的具体异常，并在except语句中将异常信息记入log，或者处理完之后，再直接raise出来。  </p>
+<h2 id="关于dict的冗余代码"><a href="#关于dict的冗余代码" class="headerlink" title="关于dict的冗余代码"></a>关于dict的冗余代码</h2><p>我经常能够看到这样的代码：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">d = &#123;&#125;</span><br><span class="line">datas = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">1</span>, <span class="number">5</span>]</span><br><span class="line"><span class="keyword">for</span> k <span class="keyword">in</span> datas:</span><br><span class="line">    <span class="keyword">if</span> k <span class="keyword">not</span> <span class="keyword">in</span> d:</span><br><span class="line">        d[k] = <span class="number">0</span> </span><br><span class="line">    d[k] += <span class="number">1</span></span><br></pre></td></tr></table></figure>  </p>
+<p>其实，完全可以使用collections.defaultdict这一数据结构更简单优雅的实现这样的功能：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">default_d = defaultdict(<span class="keyword">lambda</span>: <span class="number">0</span>)</span><br><span class="line">datas = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">1</span>, <span class="number">5</span>]</span><br><span class="line"><span class="keyword">for</span> k <span class="keyword">in</span> datas:</span><br><span class="line">    default_d[k] += <span class="number">1</span> </span><br></pre></td></tr></table></figure>  </p>
+<p>同样的，这样的代码：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># d is a dict</span></span><br><span class="line"><span class="keyword">if</span> <span class="string">'list'</span> <span class="keyword">not</span> <span class="keyword">in</span> d:</span><br><span class="line">	d[<span class="string">'list'</span>] = []</span><br><span class="line">d[<span class="string">'list'</span>].append(x)</span><br></pre></td></tr></table></figure>  </p>
+<p>完全可以用这样一行代码替代：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># d is a dict</span></span><br><span class="line">d.setdefault(<span class="string">'list'</span>, []).append(x)</span><br></pre></td></tr></table></figure>  </p>
+<p>同样的，下面这两种写法一看就是带有浓浓的C味儿：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># d is a dict</span></span><br><span class="line"><span class="keyword">for</span> k <span class="keyword">in</span> d:</span><br><span class="line">	v = d[k]</span><br><span class="line">	<span class="comment"># do something</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># l is a list</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> len(l):</span><br><span class="line">	v = l[i]</span><br><span class="line">	<span class="comment"># do something</span></span><br></pre></td></tr></table></figure>  </p>
+<p>应该用更pythonic的写法：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># d is a dict</span></span><br><span class="line"><span class="keyword">for</span> k, v <span class="keyword">in</span> d.iteritems():</span><br><span class="line">	<span class="comment"># do something</span></span><br><span class="line">	<span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># l is a list</span></span><br><span class="line"><span class="keyword">for</span> i, v <span class="keyword">in</span> enumerate(l):</span><br><span class="line">	<span class="comment"># do something</span></span><br><span class="line">	<span class="keyword">pass</span></span><br></pre></td></tr></table></figure>  </p>
+<p>另外，enumerate其实还有个第二参数，表示序号从几开始。如果想要序号从1开始数起，可以使用enumerate(l, 1)。  </p>
+<h2 id="使用flag变量而不使用for…else语句"><a href="#使用flag变量而不使用for…else语句" class="headerlink" title="使用flag变量而不使用for…else语句"></a>使用flag变量而不使用for…else语句</h2><p>同样，这样的代码也很常见：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">search_list = [<span class="string">'Jone'</span>, <span class="string">'Aric'</span>, <span class="string">'Luise'</span>, <span class="string">'Frank'</span>, <span class="string">'Wey'</span>]</span><br><span class="line">found = <span class="keyword">False</span></span><br><span class="line"><span class="keyword">for</span> s <span class="keyword">in</span> search_list:</span><br><span class="line">    <span class="keyword">if</span> s.startswith(<span class="string">'C'</span>):</span><br><span class="line">        found = <span class="keyword">True</span></span><br><span class="line">        <span class="comment"># do something when found</span></span><br><span class="line">        print(<span class="string">'Found'</span>)</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> <span class="keyword">not</span> found:</span><br><span class="line">    <span class="comment"># do something when not found</span></span><br><span class="line">    print(<span class="string">'Not found'</span>) </span><br></pre></td></tr></table></figure>  </p>
+<p>其实，用for…else更优雅：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">search_list = [<span class="string">'Jone'</span>, <span class="string">'Aric'</span>, <span class="string">'Luise'</span>, <span class="string">'Frank'</span>, <span class="string">'Wey'</span>]</span><br><span class="line"><span class="keyword">for</span> s <span class="keyword">in</span> search_list:</span><br><span class="line">    <span class="keyword">if</span> s.startswith(<span class="string">'C'</span>):</span><br><span class="line">        <span class="comment"># do something when found</span></span><br><span class="line">        print(<span class="string">'Found'</span>)</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    <span class="comment"># do something when not found</span></span><br><span class="line">    print(<span class="string">'Not found'</span>)</span><br></pre></td></tr></table></figure>  </p>
+<h2 id="过度使用tuple-unpacking"><a href="#过度使用tuple-unpacking" class="headerlink" title="过度使用tuple unpacking"></a>过度使用tuple unpacking</h2><p>在Python中，允许对tuple类型进行unpack操作，如下所示：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># human = ('James', 180, 32)</span></span><br><span class="line">name，height，age = human</span><br></pre></td></tr></table></figure>  </p>
+<p>这个特性用起来很爽，比写name=human[0]之类的不知道高到哪里去了。所以，这一特性往往被滥用，一个human在程序的各处通过上面的方式unpack。  </p>
+<p>然而如果后来需要在human中插入一个表示性别的数据sex，那么对于所有的这种unpack都需要进行修改，即使在有些逻辑中并不会使用到性别。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># human = ('James', 180, 32)</span></span><br><span class="line">name，height，age, _ = human</span><br><span class="line"><span class="comment"># or</span></span><br><span class="line"><span class="comment"># name, height, age, sex = human</span></span><br></pre></td></tr></table></figure>  </p>
+<p>有如下几种方式解决这一问题：  </p>
+<ol>
+<li>老老实实写name=human[0]这种代码，在需要使用性别信息处加上sex=human[3]</li>
+<li>使用dict来表示human</li>
+<li>使用namedtuple</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># human = namedtuple('human', ['name', 'height', 'age', 'sex'])</span></span><br><span class="line">h = human(<span class="string">'James'</span>, <span class="number">180</span>, <span class="number">32</span>, <span class="number">0</span>)</span><br><span class="line"><span class="comment"># then you can use h.name, h.sex and so on everywhere.</span></span><br></pre></td></tr></table></figure>  
+<h2 id="到处都是import"><a href="#到处都是import" class="headerlink" title="到处都是import *"></a>到处都是import *</h2><p>import *是一种懒惰的行为，它不仅会污染当前的命名空间，并且还会使得pyflakes等代码检查工具失效。在后续查看代码或者debug的过程中，往往也很难从一堆import *中找到一个第三方函数的来源。  </p>
+<p>可以说这种习惯是百害而无一利的。  </p>
+<h2 id="文件操作"><a href="#文件操作" class="headerlink" title="文件操作"></a>文件操作</h2><p>文件操作不要使用裸奔的f = open(‘filename’)了，使用with open(‘filename’) as f来让context manager帮你处理异常情况下的关闭文件等乱七八糟的事情多好。  </p>
+<h2 id="野蛮使用class-name判断类型"><a href="#野蛮使用class-name判断类型" class="headerlink" title="野蛮使用class.name判断类型"></a>野蛮使用<strong>class</strong>.<strong>name</strong>判断类型</h2><p>我曾经遇见过一个bug：为了实现某特定功能，我新写了一个class B(A)，在B中重写了A的若干函数。整个实现很简单，但是就是有一部分A的功能无法生效。最后追查到的原因，就是在一些逻辑代码中，硬性的判断了entity.__class__.__name__ == ‘A’。  </p>
+<p>除非你就是想限定死继承层级中的当前类型（也就是，屏蔽未来可能会出现的子类），否则，不要使用__class__.__name__，而改用isinstance这个内建函数。毕竟，Python把这两个变量的名字都刻意带上那么多下划线，本来就是不太想让你用嘛。  </p>
+<h2 id="循环内部有多层函数调用"><a href="#循环内部有多层函数调用" class="headerlink" title="循环内部有多层函数调用"></a>循环内部有多层函数调用</h2><p>循环内部有多层函数调用，有如下两方面的隐患：  </p>
+<ol>
+<li>Python没有inline函数，所以函数调用本来就会导致一定的开销，尤其是本身逻辑简单的时候，这个开销所占的比例就会挺可观的。  </li>
+<li>更严重的是，在之后维护这份代码时，会容易让人忽略掉函数是在循环中被调用的，所以容易在函数内部添加了一些开销较大却不必每次循环都调用的函数，比如time.localtime()。如果是直接一个平铺直叙的循环，我想大部分的程序员都应该知道把time.localtime()写到循环的外面，但是引入多层的函数调用之后，就不一定了哦。  </li>
+</ol>
+<p>所以我建议，在循环内部，如非特别复杂的逻辑，都应该直接写在循环里，不要进行函数调用。如果一定要包装一层函数调用，应该在函数的命名或注释中，提示后续的维护者，这个函数会在循环内部使用。  </p>
+<hr>
+<p>Python是一门非常容易入门的语言，严格的缩进要求和丰富的内置数据类型，使得大部分Python代码都能做到比较好的规范。但是，不严格要求自己，也很容易就写出犯二的代码。上面列出的只是很小的一部分，唯有多读、多写、多想，才能培养敏锐的代码嗅觉，第一时间发现坏味道啊。  </p>
+<p>欢迎大家补充~</p>
+<p>转载请注明出处： <a href="http://blog.guoyb.com/2016/12/03/bad-py-style">http://blog.guoyb.com/2016/12/03/bad-py-style/</a>  </p>
+<p>欢迎使用微信扫描下方二维码，关注我的微信公众号TechTalking，技术·生活·思考：<br><img src="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.png" alt="后端技术小黑屋">  </p>
+
+    
+  </div>
+  <footer>
+    
+      
+      
+  <div class="tags">
+    <a class="tags-link" href="/tags/python/">python</a>, <a class="tags-link" href="/tags/杂谈/">杂谈</a>
+  </div>
+
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+<!-- JiaThis Button BEGIN -->
+<script type="text/javascript">
+var jiathis_config = {data_track_clickback:'true'};
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?move=0&amp;uid=1706898" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+<section id="comment">
+  <h1 class="title">Comments</h1>
+  <div class="ds-thread" data-title="Python最差实践">
+  </div>
+</section>
+
+	</div>
+  </div>
+	<aside id="sidebar">
+  
+  
+    
+      
+      
+
+<div class="widget tagcloud first">
+  <h3 class="title">Tags</h3>
+  <div class="entry">
+    <a href="/tags/C/" style="font-size: 10px;">C</a> <a href="/tags/C/" style="font-size: 18.75px;">C++</a> <a href="/tags/C-11/" style="font-size: 18.75px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/docopt/" style="font-size: 10px;">docopt</a> <a href="/tags/echoserver/" style="font-size: 11.25px;">echoserver</a> <a href="/tags/epoll/" style="font-size: 11.25px;">epoll</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/grpc/" style="font-size: 11.25px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 11.25px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/protobuf/" style="font-size: 11.25px;">protobuf</a> <a href="/tags/python/" style="font-size: 10px;">python</a> <a href="/tags/redis/" style="font-size: 13.75px;">redis</a> <a href="/tags/select/" style="font-size: 11.25px;">select</a> <a href="/tags/socket/" style="font-size: 11.25px;">socket</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 16.25px;">书单</a> <a href="/tags/勘误，MySQL，C-11/" style="font-size: 10px;">勘误，MySQL，C++11</a> <a href="/tags/北京车展/" style="font-size: 10px;">北京车展</a> <a href="/tags/协程/" style="font-size: 10px;">协程</a> <a href="/tags/学习笔记/" style="font-size: 15px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/广州/" style="font-size: 10px;">广州</a> <a href="/tags/新西兰/" style="font-size: 10px;">新西兰</a> <a href="/tags/旅行/" style="font-size: 12.5px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 18.75px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 13.75px;">查证记录</a> <a href="/tags/游戏开发/" style="font-size: 10px;">游戏开发</a> <a href="/tags/爱好/" style="font-size: 10px;">爱好</a> <a href="/tags/生活/" style="font-size: 11.25px;">生活</a> <a href="/tags/知乎/" style="font-size: 10px;">知乎</a> <a href="/tags/程序人生/" style="font-size: 10px;">程序人生</a> <a href="/tags/读书笔记/" style="font-size: 17.5px;">读书笔记</a> <a href="/tags/读后感/" style="font-size: 10px;">读后感</a> <a href="/tags/贵州/" style="font-size: 10px;">贵州</a>
+  </div>
+</div>
+
+    
+      
+      
+
+<div class="widget recent-posts">
+  <h3 class="title">最近文章</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2016/12/03/bad-py-style/">Python最差实践</a>
+      </li>
+    
+      <li>
+        <a href="/2016/11/23/ghub/">ghub:一个基于grpc的rpc hub</a>
+      </li>
+    
+      <li>
+        <a href="/2016/10/24/guizhou/">国庆在贵州的思考</a>
+      </li>
+    
+      <li>
+        <a href="/2016/10/15/grpc/">grpc：google官方的rpc框架</a>
+      </li>
+    
+      <li>
+        <a href="/2016/09/26/docopt/">docopt：构造一个漂亮的命令行工具</a>
+      </li>
+    
+  </ul>
+</div>
+
+    
+      
+      
+<div class="widget tag">
+  <h3 class="title">友情链接</h3>
+  <ul class="entry">
+  
+    
+    <li><a href="http://www.linkedin.com/in/yubo-guo-739b0071" target="_blank">LinkedIn</a></li>
+  
+    
+    <li><a href="http://www.tuicool.com/sites/2emeIjb" target="_blank">推酷站点</a></li>
+  
+  </ul>
+</div>
+
+    
+  
+</aside>
+<div class="clearfix"></div>
+  <footer id="footer"><div class="copyright">
+  
+  &copy; 2016 <a href="/">Yubo Guo</a>
+  
+</div>
+<div class="theme-copyright">
+  Theme by <a href="https://github.com/orderedlist" target="_blank">orderedlist</a>
+   | 
+  Redesign by <a href="http://heroicyang.com/" target="_blank">Heroic Yang</a>
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+<script src="/js/scale.fix.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = { short_name: 'guoyb' };
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';
+    ds.async = true;
+    ds.src = 'http://static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+  (function($){
+    $('.fancybox').fancybox();
+  })(jQuery);
+</script>
+
+</body>
+</html>
