@@ -63,6 +63,53 @@ var _hmt = _hmt || [];
   <header>
     
       <div class="icon"></div>
+      <a href="/2014/04/25/python-source-9/">
+  <time datetime="2014-04-25T06:41:28.000Z">
+    2014-04-25
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title"><a href="/2014/04/25/python-source-9/">《Python源码剖析》读书笔记-9 Python虚拟机中的一般表达式</a></h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<h3 id="第9章-Python虚拟机中的一般表达式"><a href="#第9章-Python虚拟机中的一般表达式" class="headerlink" title="第9章 Python虚拟机中的一般表达式"></a>第9章 Python虚拟机中的一般表达式</h3><ul>
+<li><p>某个指令的参数通过如下语句获取：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> HAVE_ARGUMENT	90	<span class="comment">/* Opcodes from here have an argument: */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> HAS_ARG(op) ((op) &gt;= HAVE_ARGUMENT)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> NEXTARG() (next_instr += 2, (next_instr[-1]&lt;&lt;8) + next_instr[-2])</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (HAS_ARG(opcode))</span><br><span class="line">            oparg = NEXTARG();</span><br></pre></td></tr></table></figure>
+<ul>
+<li>这里，opcode大于等于90的指令都会存在一个参数，这个参数占据2个字节（2Byte），并且以小端模式存储，所以会采用这样的计算方式next_instr[-1]&lt;&lt;8) + next_instr[-2]
+    
+  </div>
+  <footer class="end-sep">
+    
+      
+        <div class="alignleft">
+          <a href="/2014/04/25/python-source-9/#more" class="more-link">Read More</a>
+        </div>
+      
+      
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+<!-- JiaThis Button BEGIN -->
+<script type="text/javascript">
+var jiathis_config = {data_track_clickback:'true'};
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?move=0&amp;uid=1706898" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+
+  <article class="post">
+  <header>
+    
+      <div class="icon"></div>
       <a href="/2014/04/17/maugham-reading-notes/">
   <time datetime="2014-04-17T13:54:48.000Z">
     2014-04-17
@@ -485,56 +532,13 @@ var jiathis_config = {data_track_clickback:'true'};
 <!-- JiaThis Button END -->
 
 
-  <article class="post">
-  <header>
-    
-      <div class="icon"></div>
-      <a href="/2013/12/30/2013-booklist-2/">
-  <time datetime="2013-12-30T14:19:13.000Z">
-    2013-12-30
-  </time>
-</a>
-    
-    
-  
-    <h1 class="title"><a href="/2013/12/30/2013-booklist-2/">2013年下半年书单</a></h1>
-  
-
-  </header>
-  
-  <div class="entry">
-    
-      <p>##非技术类：</p>
-<ul>
-<li><a href="http://book.douban.com/subject/5400595/">《中国，少了一味药》</a> 慕容雪村<ul>
-<li>忽略掉这个公知范儿的书名吧。书讲述的是作者潜伏在江西某传销组织中几个月内的见闻与感受。让我知道了，在北上广深这样的现代化的光鲜亮丽的大城市之外，中国还有许许多多的看上去有些灰头土脸的小县城，那里的人们单纯，又有些愚昧，可是又对财富充满了原始的渴望。
-    
-  </div>
-  <footer class="end-sep">
-    
-      
-        <div class="alignleft">
-          <a href="/2013/12/30/2013-booklist-2/#more" class="more-link">Read More</a>
-        </div>
-      
-      
-    
-    <div class="clearfix"></div>
-  </footer>
-</article>
-<!-- JiaThis Button BEGIN -->
-<script type="text/javascript">
-var jiathis_config = {data_track_clickback:'true'};
-</script>
-<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?move=0&amp;uid=1706898" charset="utf-8"></script>
-<!-- JiaThis Button END -->
-
-
 
 <nav id="pagination">
   
     <a href="/page/5/" class="prev">Prev</a>
   
+  
+    <a href="/page/7/" class="next">Next</a>
   
   <div class="clearfix"></div>
 </nav>
@@ -563,6 +567,10 @@ var jiathis_config = {data_track_clickback:'true'};
   <ul class="entry">
     
       <li>
+        <a href="/2016/12/13/py-hotfix/">探究如何给Python程序做hotfix</a>
+      </li>
+    
+      <li>
         <a href="/2016/12/03/bad-py-style/">Python最差实践</a>
       </li>
     
@@ -576,10 +584,6 @@ var jiathis_config = {data_track_clickback:'true'};
     
       <li>
         <a href="/2016/10/15/grpc/">grpc：google官方的rpc框架</a>
-      </li>
-    
-      <li>
-        <a href="/2016/09/26/docopt/">docopt：构造一个漂亮的命令行工具</a>
       </li>
     
   </ul>

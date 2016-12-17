@@ -1,0 +1,264 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  
+  <title>探究如何给Python程序做hotfix | 一根笨茄子</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  
+    <meta name="author" content="Yubo Guo">
+  
+  
+    <meta name="description" content="使用Python来写服务器端程序，很大的一个优势就是可以进行热更新，即在不停机的情况下，使改动后的程序生效。在开发阶段，这个功能可以大大提高开发效率（写代码–启动服务器–看效果–改代码–hotfix–看效果–提交~）；而在生产环境中，可以以最小的代价（不停机）修复线上的bug。  
+我在项目中使用hotfix功能很长世间了，大概了解它是利用了Python的import/reload功能，但是并没">
+  
+  <meta name="description" content="使用Python来写服务器端程序，很大的一个优势就是可以进行热更新，即在不停机的情况下，使改动后的程序生效。在开发阶段，这个功能可以大大提高开发效率（写代码–启动服务器–看效果–改代码–hotfix–看效果–提交~）；而在生产环境中，可以以最小的代价（不停机）修复线上的bug。  
+我在项目中使用hotfix功能很长世间了，大概了解它是利用了Python的import/reload功能，但是并没">
+<meta property="og:type" content="article">
+<meta property="og:title" content="探究如何给Python程序做hotfix">
+<meta property="og:url" content="http://blog.guoyb.com/2016/12/13/py-hotfix/index.html">
+<meta property="og:site_name" content="一根笨茄子">
+<meta property="og:description" content="使用Python来写服务器端程序，很大的一个优势就是可以进行热更新，即在不停机的情况下，使改动后的程序生效。在开发阶段，这个功能可以大大提高开发效率（写代码–启动服务器–看效果–改代码–hotfix–看效果–提交~）；而在生产环境中，可以以最小的代价（不停机）修复线上的bug。  
+我在项目中使用hotfix功能很长世间了，大概了解它是利用了Python的import/reload功能，但是并没">
+<meta property="og:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.jpg">
+<meta property="og:updated_time" content="2016-12-17T01:59:02.727Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="探究如何给Python程序做hotfix">
+<meta name="twitter:description" content="使用Python来写服务器端程序，很大的一个优势就是可以进行热更新，即在不停机的情况下，使改动后的程序生效。在开发阶段，这个功能可以大大提高开发效率（写代码–启动服务器–看效果–改代码–hotfix–看效果–提交~）；而在生产环境中，可以以最小的代价（不停机）修复线上的bug。  
+我在项目中使用hotfix功能很长世间了，大概了解它是利用了Python的import/reload功能，但是并没">
+<meta name="twitter:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.jpg">
+  
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+  
+<script type="text/javascript">
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?996ee0fca2512b4c29f37f60cf6387ca";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+</head>
+
+<body>
+  <div class="wrapper">
+    <header id="header">
+  <div class="title">
+    <h1><a href="/">一根笨茄子</a></h1>
+    <p><a href="/"></a></p>
+  </div>
+  <nav class="nav">
+    <ul>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/about">关于我</a></li>
+      
+      
+    </ul>
+    <div class="clearfix"></div>
+  </nav>
+  <div class="clearfix"></div>
+</header>
+    <div class="content">
+		<article class="post">
+  <header>
+    
+      <div class="icon"></div>
+      <a href="/2016/12/13/py-hotfix/">
+  <time datetime="2016-12-13T00:10:32.000Z">
+    2016-12-13
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title">探究如何给Python程序做hotfix</h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>使用Python来写服务器端程序，很大的一个优势就是可以进行热更新，即在不停机的情况下，使改动后的程序生效。在开发阶段，这个功能可以大大提高开发效率（写代码–启动服务器–看效果–改代码–hotfix–看效果–提交~）；而在生产环境中，可以以最小的代价（不停机）修复线上的bug。  </p>
+<p>我在项目中使用hotfix功能很长世间了，大概了解它是利用了Python的import/reload功能，但是并没有去自己研究过。最近看了云风大大写的一篇文章：<a href="http://blog.codingnow.com/2016/11/lua_update.html" target="_blank" rel="external">如何让 lua 做尽量正确的热更新</a>，收获很多。也觉得应该研究一下Python的hotfix机制，毕竟是跟了自己这么久的小伙伴嘛。  </p>
+<hr>
+<h2 id="import"><a href="#import" class="headerlink" title="import"></a>import</h2><p>说到hotfix就要从import语句说起。<br><a id="more"></a><br>首先建立这样一个简单的文件用作测试。<br><figure class="highlight python"><figcaption><span>test_refresh.py</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> __future__ <span class="keyword">import</span> print_function</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">RefreshClass</span><span class="params">(object)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></span><br><span class="line">        self.value = <span class="number">1</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">print_info</span><span class="params">(self)</span>:</span></span><br><span class="line">        print(<span class="string">'RefreshClass value: &#123;&#125; ver1.0'</span>.format(self.value))</span><br><span class="line"></span><br><span class="line">version = <span class="number">1.0</span></span><br><span class="line">  </span><br><span class="line">print(version)</span><br></pre></td></tr></table></figure>  </p>
+<p>下面启动一个python解释器。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">import</span> test_refresh <span class="keyword">as</span> tr</span><br><span class="line"><span class="number">1.0</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">import</span> test_refresh <span class="keyword">as</span> tr</span><br><span class="line">&gt;&gt;&gt;&gt; <span class="comment"># edit  version=2.0</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">import</span> test_refresh <span class="keyword">as</span> tr</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>tr.version</span><br><span class="line"><span class="number">1.0</span></span><br></pre></td></tr></table></figure>  </p>
+<p>重新import一个已经import过的模块，并不会重新执行文件（第二个import之后没有输出）。后面修改源文件并重新import后，对内存中tr.version的检查也验证了这一点。  </p>
+<p>为了能够重新加载修改后的源文件，我们需要明确的告诉Python解释器这一点。在Python中，sys.modules保存了已经加载过的模块。所以<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">del</span> sys.modules[<span class="string">'test_refresh'</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">import</span> test_refresh <span class="keyword">as</span> tr</span><br><span class="line"><span class="number">2.0</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>tr.version</span><br><span class="line"><span class="number">2.0</span></span><br></pre></td></tr></table></figure>  </p>
+<p>在将test_refresh从sys.modules中删除之后再进行import操作，就会重新加载源文件了。  </p>
+<p>另外，如果我们只能拿到模块的字符串名字，可以使用__import__函数。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># edit version=3.0</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">del</span> sys.modules[<span class="string">'test_refresh'</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>tr = __import__(<span class="string">'test_refresh'</span>)</span><br><span class="line"><span class="number">3.0</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>tr.version</span><br><span class="line"><span class="number">3.0</span></span><br></pre></td></tr></table></figure>  </p>
+<h2 id="reload"><a href="#reload" class="headerlink" title="reload"></a>reload</h2><p>当我们面对的是一个之前已经import过的模块时，可以直接使用reload进行重新加载。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># edit version = 4.0</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>reload(tr)          </span><br><span class="line"><span class="number">4.0</span></span><br><span class="line">&lt;module <span class="string">'test_refresh'</span> <span class="keyword">from</span> <span class="string">'test_refresh.py'</span>&gt;</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>tr.version</span><br><span class="line"><span class="number">4.0</span></span><br></pre></td></tr></table></figure>  </p>
+<h2 id="初步尝试hotfix"><a href="#初步尝试hotfix" class="headerlink" title="初步尝试hotfix"></a>初步尝试hotfix</h2><p>知道了模块重新加载的方法后，我们在Python的交互式命令行中，尝试动态改变一个类的行为逻辑。<br><figure class="highlight python"><figcaption><span>test_refresh.py</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> __future__ <span class="keyword">import</span> print_function</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">RefreshClass</span><span class="params">(object)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></span><br><span class="line">        self.value = <span class="number">1</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">print_info</span><span class="params">(self)</span>:</span></span><br><span class="line">        print(<span class="string">'RefreshClass value: &#123;&#125; ver1.0'</span>.format(self.value))</span><br><span class="line"></span><br></pre></td></tr></table></figure>  </p>
+<p>这是测试类的当前状态。  </p>
+<p>我们创建一个该类的对象，验证下它的行为。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>a = tr.RefreshClass()</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>a.value</span><br><span class="line"><span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>a.print_info()</span><br><span class="line">RefreshClass value: <span class="number">1</span> ver1<span class="number">.0</span></span><br></pre></td></tr></table></figure>  </p>
+<p>符合预期。  </p>
+<p>接下来，修改类的print_info函数为ver2.0，并reload模块。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># edit print_info ver2.0</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>reload(tr)</span><br><span class="line"><span class="number">4.0</span></span><br><span class="line">&lt;module <span class="string">'test_refresh'</span> <span class="keyword">from</span> <span class="string">'test_refresh.py'</span>&gt;</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>a.value</span><br><span class="line"><span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>a.print_info()</span><br><span class="line">RefreshClass value: <span class="number">1</span> ver1<span class="number">.0</span></span><br></pre></td></tr></table></figure>  </p>
+<p>输出并没有如预期一样输出ver2.0……  </p>
+<p>那我们重新创建一个对象试试。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>b = tr.RefreshClass()</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>b.value</span><br><span class="line"><span class="number">2</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>b.print_info()</span><br><span class="line">RefreshClass value: <span class="number">2</span> ver2<span class="number">.0</span></span><br></pre></td></tr></table></figure>  </p>
+<p>新对象b的行为是符合重新加载后的逻辑的。这说明，reload确实更新了RefreshClass类的行为，但是对于已经实例化的RefreshClass类的对象，却没有进行更新。对象a中的行为还是指向了旧的RefreshClass类。  </p>
+<p>在Python中，一切皆是对象。不仅实例a是对象，a的类RefreshClass也是对象。<br>这时，要修改a的行为，就需要用到a的__class__属性，来强制使a的类行为指向重新加载后的RefreshClass对象。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>a.__class__ = tr.RefreshClass</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>a.value</span><br><span class="line"><span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>a.print_info()</span><br><span class="line">RefreshClass value: <span class="number">1</span> ver2<span class="number">.0</span></span><br></pre></td></tr></table></figure>  </p>
+<p>由于value是绑定在实例a上的，所以它的值并不会随RefreshClass的改变而改变。这也符合hotfix的预期逻辑：更新内存中实例的行为逻辑，但是不更新它们的数据。  </p>
+<p>接下来，我们还可以通过print_info函数的im<em>func属性，验证在更改了\</em>_class__属性后，函数确实更新成了新版本。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># edit print_info ver3.0</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>reload(tr)</span><br><span class="line"><span class="number">4.0</span></span><br><span class="line">&lt;module <span class="string">'test_refresh'</span> <span class="keyword">from</span> <span class="string">'test_refresh.py'</span>&gt;</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>a.print_info.im_func</span><br><span class="line">&lt;function print_info at <span class="number">0x7f50beeb2c08</span>&gt;</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>c = tr.RefreshClass()</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>c.print_info()</span><br><span class="line">RefreshClass value: <span class="number">3</span> ver3<span class="number">.0</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>c.print_info.im_func</span><br><span class="line">&lt;function print_info at <span class="number">0x7f50beeb2cf8</span>&gt;</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>a.__class__ = tr.RefreshClass</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>a.print_info.im_func</span><br><span class="line">&lt;function print_info at <span class="number">0x7f50beeb2cf8</span>&gt;</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>a.print_info()</span><br><span class="line">RefreshClass value: <span class="number">1</span> ver3<span class="number">.0</span></span><br></pre></td></tr></table></figure>  </p>
+<h2 id="触发hotfix"><a href="#触发hotfix" class="headerlink" title="触发hotfix"></a>触发hotfix</h2><p>上面的操作都是在Python的交互式解释器中运行的。下面我们将尝试使一个运行中的Python程序进行热更新。  </p>
+<p>这里遇到一个问题：作为Python程序入口的那个文件，不是以module的形式存在的，因此不能用上面的方式进行hotfix。所以我们需要保持入口文件的尽量简洁，而将绝大多数的逻辑功能交给其他的模块执行。  </p>
+<p>要触发一个正在运行中的Python程序进行热更新，我们需要有一种方式和Python程序通信。直接使用OS的标识文件是一个简单易行的方法。<br><figure class="highlight python"><figcaption><span>test_refresh.py</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> __future__ <span class="keyword">import</span> print_function</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> refresh_class</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">rc = refresh_class.RefreshClass()</span><br><span class="line"><span class="keyword">while</span> <span class="keyword">True</span>:</span><br><span class="line">    <span class="keyword">if</span> os.path.exists(<span class="string">'refresh.signal'</span>):</span><br><span class="line">        reload(refresh_class)</span><br><span class="line">        rc.__class__ = refresh_class.RefreshClass</span><br><span class="line">    time.sleep(<span class="number">5</span>)</span><br><span class="line">    rc.print_info()</span><br></pre></td></tr></table></figure>  </p>
+<figure class="highlight python"><figcaption><span>refresh_class.py</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">RefreshClass</span><span class="params">(object)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></span><br><span class="line">        self.value = <span class="number">1</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">print_info</span><span class="params">(self)</span>:</span></span><br><span class="line">        print(<span class="string">'RefreshClass value: &#123;&#125; ver1.0'</span>.format(self.value))</span><br></pre></td></tr></table></figure>  
+<p>每次我们修改完refresh_class.py文件，就创建一个refresh.signal文件。当refresh执行完毕，删除此文件即可。  </p>
+<p>这种做法一般来讲，会导致多次重新加载（因为一般不能及时的删除refresh.signal文件）。  </p>
+<p>所以，我们考虑使用Linux下的信号量，来同Python程序通信。<br><figure class="highlight python"><figcaption><span>test_refresh.py</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> __future__ <span class="keyword">import</span> print_function</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> signal</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> refresh_class</span><br><span class="line"></span><br><span class="line">rc = refresh_class.RefreshClass()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">handl_refresh</span><span class="params">(signum, frame)</span>:</span></span><br><span class="line">    reload(refresh_class)</span><br><span class="line">    rc.__class__ = refresh_class.RefreshClass</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">signal.signal(signal.SIGUSR1, handl_refresh)</span><br><span class="line"><span class="keyword">while</span> <span class="keyword">True</span>:</span><br><span class="line">    time.sleep(<span class="number">5</span>)</span><br><span class="line">    rc.print_info()</span><br></pre></td></tr></table></figure>  </p>
+<p>我们在Python中注册了信号量SIGUSR1的handler，在其中热更新RefreshClass。  </p>
+<p>那么只需在另一个terminal中，输入：  </p>
+<p><strong>kill -SIGUSR1 pid</strong>  </p>
+<p>即可向pid进程发送信号量SIGUSR1。  </p>
+<p>当然，还有其他方法可以触发hotfix，比如使用PIPE，或者直接开一个socket监听，自己设计消息格式来触发hotfix。  </p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><hr>
+<p>以上进行Python热更新的方式，原理简单明了，就是利用了Python提供的import/reload机制。但是这种方式，需要去替换每一个类的实例的__class__成员。这就往往需要在某处保存目前内存中存在的所有对象（或者能够索引到所有活动对象的根对象），并且在类的设计上，需要所有类的基类提供一个通用的refresh方法，在其中进行__class__的替换工作。对于复杂的类组合方式，这种方法比较容易在热更新的时候漏掉某些实例。  </p>
+<p>其实还有一种途径可以代替__class__的替换工作。我们知道，如果不替换__class__的话，即使我们重新加载进来了新的module，但是所有的__class__还将指向旧的module的class。那么，我们不妨将新的module的内容插入到旧的module中。这样我们就可以不用费劲去更新每一个__class__了。一般的，我们会利用import hook(sys.meta_path,详见<a href="https://www.python.org/dev/peps/pep-0302/" target="_blank" rel="external">PEP302</a>)来实现这个替换。当然，这种方法的实现细节较多（因为module中可能存在module，class，function等互相嵌套的情况），不过只要实现完整后，就是一劳永逸的事情了。  </p>
+<p>相关代码可以在GitHub上找到<a href="https://github.com/yubo1911/saber/tree/master/py-refresh" target="_blank" rel="external">py-refresh</a>。  </p>
+<p>转载请注明出处： <a href="http://blog.guoyb.com/2016/12/13/py-hotfix/">http://blog.guoyb.com/2016/12/13/py-hotfix/</a>。  </p>
+<p>欢迎使用微信扫描下方二维码，关注我的微信公众号TechTalking，技术·生活·思考：<br><img src="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.jpg" alt="后端技术小黑屋"></p>
+
+    
+  </div>
+  <footer>
+    
+      
+      
+  <div class="tags">
+    <a class="tags-link" href="/tags/Python/">Python</a>
+  </div>
+
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+<!-- JiaThis Button BEGIN -->
+<script type="text/javascript">
+var jiathis_config = {data_track_clickback:'true'};
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?move=0&amp;uid=1706898" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+<section id="comment">
+  <h1 class="title">Comments</h1>
+  <div class="ds-thread" data-title="探究如何给Python程序做hotfix">
+  </div>
+</section>
+
+	</div>
+  </div>
+	<aside id="sidebar">
+  
+  
+    
+      
+      
+
+<div class="widget tagcloud first">
+  <h3 class="title">Tags</h3>
+  <div class="entry">
+    <a href="/tags/C/" style="font-size: 10px;">C</a> <a href="/tags/C/" style="font-size: 18.75px;">C++</a> <a href="/tags/C-11/" style="font-size: 18.75px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/docopt/" style="font-size: 10px;">docopt</a> <a href="/tags/echoserver/" style="font-size: 11.25px;">echoserver</a> <a href="/tags/epoll/" style="font-size: 11.25px;">epoll</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/grpc/" style="font-size: 11.25px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 11.25px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/protobuf/" style="font-size: 11.25px;">protobuf</a> <a href="/tags/python/" style="font-size: 10px;">python</a> <a href="/tags/redis/" style="font-size: 13.75px;">redis</a> <a href="/tags/select/" style="font-size: 11.25px;">select</a> <a href="/tags/socket/" style="font-size: 11.25px;">socket</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 16.25px;">书单</a> <a href="/tags/勘误，MySQL，C-11/" style="font-size: 10px;">勘误，MySQL，C++11</a> <a href="/tags/北京车展/" style="font-size: 10px;">北京车展</a> <a href="/tags/协程/" style="font-size: 10px;">协程</a> <a href="/tags/学习笔记/" style="font-size: 15px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/广州/" style="font-size: 10px;">广州</a> <a href="/tags/新西兰/" style="font-size: 10px;">新西兰</a> <a href="/tags/旅行/" style="font-size: 12.5px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 18.75px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 13.75px;">查证记录</a> <a href="/tags/游戏开发/" style="font-size: 10px;">游戏开发</a> <a href="/tags/爱好/" style="font-size: 10px;">爱好</a> <a href="/tags/生活/" style="font-size: 11.25px;">生活</a> <a href="/tags/知乎/" style="font-size: 10px;">知乎</a> <a href="/tags/程序人生/" style="font-size: 10px;">程序人生</a> <a href="/tags/读书笔记/" style="font-size: 17.5px;">读书笔记</a> <a href="/tags/读后感/" style="font-size: 10px;">读后感</a> <a href="/tags/贵州/" style="font-size: 10px;">贵州</a>
+  </div>
+</div>
+
+    
+      
+      
+
+<div class="widget recent-posts">
+  <h3 class="title">最近文章</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2016/12/13/py-hotfix/">探究如何给Python程序做hotfix</a>
+      </li>
+    
+      <li>
+        <a href="/2016/12/03/bad-py-style/">Python最差实践</a>
+      </li>
+    
+      <li>
+        <a href="/2016/11/23/ghub/">ghub:一个基于grpc的rpc hub</a>
+      </li>
+    
+      <li>
+        <a href="/2016/10/24/guizhou/">国庆在贵州的思考</a>
+      </li>
+    
+      <li>
+        <a href="/2016/10/15/grpc/">grpc：google官方的rpc框架</a>
+      </li>
+    
+  </ul>
+</div>
+
+    
+      
+      
+<div class="widget tag">
+  <h3 class="title">友情链接</h3>
+  <ul class="entry">
+  
+    
+    <li><a href="http://www.linkedin.com/in/yubo-guo-739b0071" target="_blank">LinkedIn</a></li>
+  
+    
+    <li><a href="http://www.tuicool.com/sites/2emeIjb" target="_blank">推酷站点</a></li>
+  
+  </ul>
+</div>
+
+    
+  
+</aside>
+<div class="clearfix"></div>
+  <footer id="footer"><div class="copyright">
+  
+  &copy; 2016 <a href="/">Yubo Guo</a>
+  
+</div>
+<div class="theme-copyright">
+  Theme by <a href="https://github.com/orderedlist" target="_blank">orderedlist</a>
+   | 
+  Redesign by <a href="http://heroicyang.com/" target="_blank">Heroic Yang</a>
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+<script src="/js/scale.fix.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = { short_name: 'guoyb' };
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';
+    ds.async = true;
+    ds.src = 'http://static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+  (function($){
+    $('.fancybox').fancybox();
+  })(jQuery);
+</script>
+
+</body>
+</html>
