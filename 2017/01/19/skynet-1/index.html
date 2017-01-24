@@ -1,0 +1,297 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  
+  <title>探索skynet（一）：从skynet_sample说起 | 一根笨茄子</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  
+    <meta name="author" content="Yubo Guo">
+  
+  
+    <meta name="description" content="skynet是云风写的一个轻量级的游戏服务器框架。它以服务为主要的逻辑对象，底层框架支持服务之间的同步/异步调用。由于服务并不是占用独立进程，所以服务之间的调用实现的非常高效。同时，为每个服务启动了一个lua虚拟机（lua_State），实现了服务之间的互不干扰。  
+但是，skynet是非常轻量的，它并没有实现其他游戏服务器框架中常有的场景管理、用户AOI管理等功能，这些功能，skynet使用">
+  
+  <meta name="description" content="skynet是云风写的一个轻量级的游戏服务器框架。它以服务为主要的逻辑对象，底层框架支持服务之间的同步/异步调用。由于服务并不是占用独立进程，所以服务之间的调用实现的非常高效。同时，为每个服务启动了一个lua虚拟机（lua_State），实现了服务之间的互不干扰。  
+但是，skynet是非常轻量的，它并没有实现其他游戏服务器框架中常有的场景管理、用户AOI管理等功能，这些功能，skynet使用">
+<meta property="og:type" content="article">
+<meta property="og:title" content="探索skynet（一）：从skynet_sample说起">
+<meta property="og:url" content="http://blog.guoyb.com/2017/01/19/skynet-1/index.html">
+<meta property="og:site_name" content="一根笨茄子">
+<meta property="og:description" content="skynet是云风写的一个轻量级的游戏服务器框架。它以服务为主要的逻辑对象，底层框架支持服务之间的同步/异步调用。由于服务并不是占用独立进程，所以服务之间的调用实现的非常高效。同时，为每个服务启动了一个lua虚拟机（lua_State），实现了服务之间的互不干扰。  
+但是，skynet是非常轻量的，它并没有实现其他游戏服务器框架中常有的场景管理、用户AOI管理等功能，这些功能，skynet使用">
+<meta property="og:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.png">
+<meta property="og:updated_time" content="2017-01-24T12:46:09.646Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="探索skynet（一）：从skynet_sample说起">
+<meta name="twitter:description" content="skynet是云风写的一个轻量级的游戏服务器框架。它以服务为主要的逻辑对象，底层框架支持服务之间的同步/异步调用。由于服务并不是占用独立进程，所以服务之间的调用实现的非常高效。同时，为每个服务启动了一个lua虚拟机（lua_State），实现了服务之间的互不干扰。  
+但是，skynet是非常轻量的，它并没有实现其他游戏服务器框架中常有的场景管理、用户AOI管理等功能，这些功能，skynet使用">
+<meta name="twitter:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.png">
+  
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+  
+<script type="text/javascript">
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?996ee0fca2512b4c29f37f60cf6387ca";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+</head>
+
+<body>
+  <div class="wrapper">
+    <header id="header">
+  <div class="title">
+    <h1><a href="/">一根笨茄子</a></h1>
+    <p><a href="/"></a></p>
+  </div>
+  <nav class="nav">
+    <ul>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/about">关于我</a></li>
+      
+      
+    </ul>
+    <div class="clearfix"></div>
+  </nav>
+  <div class="clearfix"></div>
+</header>
+    <div class="content">
+		<article class="post">
+  <header>
+    
+      <div class="icon"></div>
+      <a href="/2017/01/19/skynet-1/">
+  <time datetime="2017-01-19T00:05:46.000Z">
+    2017-01-19
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title">探索skynet（一）：从skynet_sample说起</h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>skynet是云风写的一个轻量级的游戏服务器框架。它以<strong>服务</strong>为主要的逻辑对象，底层框架支持服务之间的同步/异步调用。由于服务并不是占用独立进程，所以服务之间的调用实现的非常高效。同时，为每个服务启动了一个lua虚拟机（lua_State），实现了服务之间的互不干扰。  </p>
+<p>但是，skynet是非常轻量的，它并没有实现其他游戏服务器框架中常有的场景管理、用户AOI管理等功能，这些功能，skynet使用者可以按照自己的设计思路使用若干个服务实现。  </p>
+<p>skynet是开源的，使用c和lua实现，使用者可以只使用lua而不需要有c基础。在<a href="https://github.com/cloudwu/skynet" target="_blank" rel="external">GitHub</a>的页面上有非常详细的<a href="https://github.com/cloudwu/skynet/wiki" target="_blank" rel="external">wiki页</a>，我在阅读源码的过程中就在不断的参考wiki页，非常有帮助。<br><a id="more"></a></p>
+<h1 id="skynet-sample"><a href="#skynet-sample" class="headerlink" title="skynet_sample"></a>skynet_sample</h1><h2 id="start"><a href="#start" class="headerlink" title="start"></a>start</h2><p>学习一个框架，最好的做法就是从例子开始。云风自己就有写一个完整的例子skynet_sample（<a href="https://github.com/cloudwu/skynet_sample" target="_blank" rel="external">GitHub页面地址</a>）。这个例子的初衷是为了说明sproto（云风自己实现的一个类似google protocol buffer的序列化协议），不过也同时是一个五脏俱全的例程，很适合作为入门例程。 </p>
+<p>首先我们看一下它的目录结构：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">drwxrwxr-x  2 yubo yubo 4096 Jan 15 04:51 client</span><br><span class="line">drwxrwxr-x  2 yubo yubo 4096 Jan 15 04:51 cservice</span><br><span class="line">drwxrwxr-x  4 yubo yubo 4096 Jan 15 05:03 lsocket</span><br><span class="line">drwxrwxr-x  2 yubo yubo 4096 Jan 15 04:51 lualib</span><br><span class="line">drwxrwxr-x  2 yubo yubo 4096 Jan 15 04:51 proto</span><br><span class="line">drwxrwxr-x  2 yubo yubo 4096 Jan 15 04:51 run</span><br><span class="line">drwxrwxr-x  2 yubo yubo 4096 Jan 15 04:51 service</span><br><span class="line">drwxrwxr-x 10 yubo yubo 4096 Jan 15 05:08 skynet</span><br><span class="line">drwxrwxr-x  2 yubo yubo 4096 Jan 15 04:51 src</span><br><span class="line">-rw-rw-r--  1 yubo yubo  238 Jan 15 04:51 Makefile</span><br><span class="line">-rw-rw-r--  1 yubo yubo 3190 Jan 15 04:51 README.md</span><br><span class="line">-rwxrwxr-x  1 yubo yubo  112 Jan 15 04:51 client.sh</span><br><span class="line">-rw-rw-r--  1 yubo yubo  515 Jan 15 04:51 config</span><br><span class="line">-rwxrwxr-x  1 yubo yubo  243 Jan 15 04:51 run.sh</span><br></pre></td></tr></table></figure>  </p>
+<p>run.sh里是skynet_sample的启动脚本，最主要的是这样一行：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$ROOT</span>/skynet/skynet <span class="variable">$ROOT</span>/config</span><br></pre></td></tr></table></figure>  </p>
+<p>这是skynet的启动方式：通过读取一个config文件，来启动skynet的各个服务。  </p>
+<h2 id="config"><a href="#config" class="headerlink" title="config"></a>config</h2><p>我们接着来看一下config文件：<br><figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">root = <span class="string">"$ROOT/"</span></span><br><span class="line">thread = <span class="number">8</span></span><br><span class="line">logpath = root .. <span class="string">"run"</span></span><br><span class="line">harbor = <span class="number">0</span></span><br><span class="line">start = <span class="string">"main"</span>	<span class="comment">-- main script</span></span><br><span class="line">luaservice = root .. <span class="string">"service/?.lua;"</span> .. root ..<span class="string">"skynet/service/?.lua"</span></span><br><span class="line">lualoader = root .. <span class="string">"skynet/lualib/loader.lua"</span></span><br><span class="line">lua_path = root .. <span class="string">"lualib/?.lua;"</span> .. root .. <span class="string">"skynet/lualib/?.lua;"</span> .. root .. <span class="string">"skynet/lualib/?/init.lua"</span></span><br><span class="line">lua_cpath = root .. <span class="string">"skynet/luaclib/?.so"</span></span><br><span class="line">cpath = root .. <span class="string">"/cservice/?.so;"</span>..root..<span class="string">"/skynet/cservice/?.so"</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> $DAEMON <span class="keyword">then</span></span><br><span class="line">	logger = root .. <span class="string">"run/skynet.log"</span></span><br><span class="line">	daemon = root .. <span class="string">"run/skynet.pid"</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>  </p>
+<p>在config文件中，设置了一些目录信息，以及有关skynet网络的相关信息（harbor=0，所以当前skynet工作于单点模式）。  </p>
+<p>通过阅读<a href="https://github.com/cloudwu/skynet/wiki/Config" target="_blank" rel="external">skynet wiki中关于config的章节</a>我们能够知道这些配置项的具体含义。  </p>
+<p>由于这里没有设置bootstrap，所以采用默认配置：snlua bootstrap。对于这个配置，目前只需要理解到，snlua是一个lua的沙盒服务，我们将bootstrap作为参入传入，就会匹配到bootstrap.lua文件来执行。  </p>
+<h2 id="bootstrap-lua"><a href="#bootstrap-lua" class="headerlink" title="bootstrap.lua"></a>bootstrap.lua</h2><p>bootstrap是skynet框架提供的一个service，文件位于skynet/service/bootstrap.lua。阅读bootstrap.lua的内容，其中关键的一行是：<br><figure class="highlight lua"><figcaption><span>bootstrap.lua</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">pcall</span>(skynet.newservice,skynet.getenv <span class="string">"start"</span> <span class="keyword">or</span> <span class="string">"main"</span>)</span><br></pre></td></tr></table></figure>  </p>
+<p>skynet.newservice顾名思义，就是新启动一个skynet服务（我之后也会专门写一篇skynet如何启动一个新服务的文章，敬请期待）。而skynet.getenv，其实可以看作是从config文件中获取参数值。  </p>
+<p>那让我们再回头看config文件，其中start=”main”，所以这里其实是启动了main.lua作为一个新的服务。  </p>
+<h2 id="main-lua"><a href="#main-lua" class="headerlink" title="main.lua"></a>main.lua</h2><p>main.lua（以及其他用lua写的服务）存放于skynet_sample/service目录下。  </p>
+<p>其中，主要做了如下几件事：<br><figure class="highlight lua"><figcaption><span>main.lua</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">local</span> proto = skynet.uniqueservice <span class="string">"protoloader"</span></span><br><span class="line">skynet.call(proto, <span class="string">"lua"</span>, <span class="string">"load"</span>, &#123;</span><br><span class="line">	<span class="string">"proto.c2s"</span>,</span><br><span class="line">	<span class="string">"proto.s2c"</span>,</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure></p>
+<p>启动protoloader服务（skynet_sample/service/protoloader.lua），并且调用此服务lua类型消息的分发函数load。  </p>
+<figure class="highlight lua"><figcaption><span>main.lua</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">local</span> hub = skynet.uniqueservice <span class="string">"hub"</span></span><br><span class="line">skynet.call(hub, <span class="string">"lua"</span>, <span class="string">"open"</span>, <span class="string">"0.0.0.0"</span>, <span class="number">5678</span>)</span><br></pre></td></tr></table></figure>  
+<p>启动hub服务（skynet_sample/service/hub.lua），并且调用此服务lua类型消息的分发函数open。  </p>
+<p>啊，各种启动服务，是不是对于skynet基于服务的架构有一定的认识了~  </p>
+<p>我们这里不去详细关心服务之间的调用是如何实现的（之后也会写一篇文章专门讲这个，又挖了一个坑给自己，慢慢填吧），只需要知道通过skynet.call可以实现服务之间的函数调用即可。  </p>
+<h2 id="protoloader-lua"><a href="#protoloader-lua" class="headerlink" title="protoloader.lua"></a>protoloader.lua</h2><p>花开两朵，各表一枝。先看看protoloader.lua中都干了些什么。<br><figure class="highlight lua"><figcaption><span>protoloader.lua</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">local</span> sprotoparser = <span class="built_in">require</span> <span class="string">"sprotoparser"</span></span><br><span class="line"><span class="keyword">local</span> <span class="function"><span class="keyword">function</span> <span class="title">load</span><span class="params">(name)</span></span></span><br><span class="line">	<span class="keyword">local</span> filename = <span class="built_in">string</span>.format(<span class="string">"proto/%s.sproto"</span>, name)</span><br><span class="line">	<span class="keyword">local</span> f = <span class="built_in">assert</span>(<span class="built_in">io</span>.open(filename), <span class="string">"Can't open "</span> .. name)</span><br><span class="line">	<span class="keyword">local</span> t = f:read <span class="string">"a"</span></span><br><span class="line">	f:close()</span><br><span class="line">	<span class="keyword">return</span> sprotoparser.parse(t)</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>  </p>
+<p>sprotoparser是skynet中提供的对于sproto的解析库，这里可以当作黑盒。那我们来看看sproto文件长什么样：<br><figure class="highlight lua"><figcaption><span>proto.c2s.sproto</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">.<span class="built_in">package</span> &#123;</span><br><span class="line">	<span class="built_in">type</span> <span class="number">0</span> : integer</span><br><span class="line">	session <span class="number">1</span> : integer</span><br><span class="line">	ud <span class="number">2</span> : <span class="built_in">string</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">ping <span class="number">1</span> &#123;&#125;</span><br><span class="line"></span><br><span class="line">signup <span class="number">2</span> &#123;</span><br><span class="line">	request &#123;</span><br><span class="line">		userid <span class="number">0</span> : <span class="built_in">string</span></span><br><span class="line">	&#125;</span><br><span class="line">	response &#123;</span><br><span class="line">		ok <span class="number">0</span> : boolean</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">signin <span class="number">3</span> &#123;</span><br><span class="line">	request &#123;</span><br><span class="line">		userid <span class="number">0</span> : <span class="built_in">string</span></span><br><span class="line">	&#125;</span><br><span class="line">	response &#123;</span><br><span class="line">		ok <span class="number">0</span> : boolean</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">login <span class="number">4</span> &#123;</span><br><span class="line">	response &#123;</span><br><span class="line">		ok <span class="number">0</span> : boolean</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>  </p>
+<p>长的和protocol buffer很像吧。所以这里可以把sproto理解为一个类似protocol buffer的黑盒，知道它的功能就好。以后有兴趣，再去详细查看sproto的实现。  </p>
+<h1 id="hub"><a href="#hub" class="headerlink" title="hub"></a>hub</h1><p>接下来我们看main.lua中启动的第二个服务hub。  </p>
+<p>hub.lua中最后有这么一段代码：<br><figure class="highlight lua"><figcaption><span>hub.lua</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">service.init &#123;</span><br><span class="line">	command = hub,</span><br><span class="line">	info = data,</span><br><span class="line">	<span class="built_in">require</span> = &#123;</span><br><span class="line">		<span class="string">"auth"</span>,</span><br><span class="line">		<span class="string">"manager"</span>,</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>  </p>
+<p>这里的service其实是skynet_sample中提供的一个库（skynet_sample/lualib/service.lua），用于统一服务的启动流程：该服务的lua消息由command处理，并且对于require中的值，要依次启动一个uniqueservice。  </p>
+<p>所以到这里，我们已经启动了四个服务：sprotoloader、hub、auth、manager。  </p>
+<p>接着看hub。在main.lua中，启动hub之后，就向hub服务发了一条lua类型的消息open。那么hub中对于open消息的处理由hub.open完成：<br><figure class="highlight lua"><figcaption><span>hub.lua</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">hub.open</span><span class="params">(ip, port)</span></span></span><br><span class="line">	log(<span class="string">"Listen %s:%d"</span>, ip, port)</span><br><span class="line">	<span class="built_in">assert</span>(data.fd == <span class="keyword">nil</span>, <span class="string">"Already open"</span>)</span><br><span class="line">	data.fd = socket.listen(ip, port)</span><br><span class="line">	data.ip = ip</span><br><span class="line">	data.port = port</span><br><span class="line">	socket.start(data.fd, new_socket)</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>  </p>
+<p>这段代码的意思也很好懂：hub启动了对一个ip:port的监听，并且对于这个地址的新消息，都交由new_socket处理。<br><figure class="highlight lua"><figcaption><span>hub.lua</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">local</span> proxy = <span class="built_in">require</span> <span class="string">"socket_proxy"</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">new_socket</span><span class="params">(fd, addr)</span></span></span><br><span class="line">	data.socket[fd] = <span class="string">"[AUTH]"</span></span><br><span class="line">	proxy.subscribe(fd)</span><br><span class="line">	<span class="keyword">local</span> ok , userid =  <span class="built_in">pcall</span>(auth_socket, fd)</span><br><span class="line">	<span class="keyword">if</span> ok <span class="keyword">then</span></span><br><span class="line">		data.socket[fd] = userid</span><br><span class="line">		<span class="keyword">if</span> <span class="built_in">pcall</span>(assign_agent, fd, userid) <span class="keyword">then</span></span><br><span class="line">			<span class="keyword">return</span>	<span class="comment">-- succ</span></span><br><span class="line">		<span class="keyword">else</span></span><br><span class="line">			log(<span class="string">"Assign failed %s to %s"</span>, addr, userid)</span><br><span class="line">		<span class="keyword">end</span></span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">		log(<span class="string">"Auth faild %s"</span>, addr)</span><br><span class="line">	<span class="keyword">end</span></span><br><span class="line">	proxy.close(fd)</span><br><span class="line">	data.socket[fd] = <span class="keyword">nil</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>  </p>
+<p>这里又出现了一个socket_proxy，这不是一个服务，而是一个skynet_sample提供的库，但是它内部会启动一个socket_proxyd单例服务，socket_proxyd对于每一个socket，都会启动一个用c编写的服务package(skynet_sample/src/service_package.c)，在这个c服务中具体的进行socket数据的读写（响应上层lua服务的读写消息，按照包长+包体的格式切分数据包/发送数据）。  </p>
+<p>这里总结一下，socket_proxy库搭配socket_proxyd服务和service_package服务，完成了socket读写切包的功能。  </p>
+<p>回到hub，接下来，调用了auth_socket。<br><figure class="highlight lua"><figcaption><span>hub.lua</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">local</span> <span class="function"><span class="keyword">function</span> <span class="title">auth_socket</span><span class="params">(fd)</span></span></span><br><span class="line">	<span class="keyword">return</span> (skynet.call(service.auth, <span class="string">"lua"</span>, <span class="string">"shakehand"</span> , fd))</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>  </p>
+<p>auth_socket很简单，直接调用了之前启动的auth单例服务的shakehand。  </p>
+<p>这里我们先不深入auth，就认为它可以实现认证服务好了，后面会单独有章节阅读auth的代码。直接往下看hub，认证成功后，调用了assign_agent。<br><figure class="highlight lua"><figcaption><span>hub.lua</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">local</span> <span class="function"><span class="keyword">function</span> <span class="title">assign_agent</span><span class="params">(fd, userid)</span></span></span><br><span class="line">	skynet.call(service.manager, <span class="string">"lua"</span>, <span class="string">"assign"</span>, fd, userid)</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>  </p>
+<p>这里出现了之前在service_init中启动的manager单例服务。同样这里是简单的调用了他的lua消息assign。  </p>
+<p>到这里，如果assign_agent返回成功，hub对于一个新socket的工作就结束了。  </p>
+<p>总结一下hub对一个新的socket干了什么：  </p>
+<blockquote>
+<p>首先，它利用socket_proxy/socket_proxyd/service_package处理好了socket上的数据读写；<br>第二，它通过auth单例服务，完成了对socket上的用户的认证工作（尚未详细阅读实现）；<br>第三，它将认证后的socket交给了manager单例服务。  </p>
+</blockquote>
+<h2 id="auth"><a href="#auth" class="headerlink" title="auth"></a>auth</h2><p>在auth.py（skynet_sample/service/auth.py）中，又出现了我们熟悉的service.init。<br><figure class="highlight lua"><figcaption><span>auth.lua</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">local</span> client = <span class="built_in">require</span> <span class="string">"client"</span></span><br><span class="line">service.init &#123;</span><br><span class="line">	command = auth,</span><br><span class="line">	info = users,</span><br><span class="line">	init = client.init <span class="string">"proto"</span>,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>  </p>
+<p>这里有一个库client，在hub调用的auth.shakehand中，也用到了这个client。那我们就看一下client.py（skynet_sample/lualib/client.lua）的实现。<br><figure class="highlight lua"><figcaption><span>client.lua</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">client.init</span><span class="params">(name)</span></span></span><br><span class="line">	<span class="keyword">return</span> <span class="function"><span class="keyword">function</span> <span class="params">()</span></span></span><br><span class="line">		<span class="keyword">local</span> protoloader = skynet.uniqueservice <span class="string">"protoloader"</span></span><br><span class="line">		<span class="keyword">local</span> slot = skynet.call(protoloader, <span class="string">"lua"</span>, <span class="string">"index"</span>, name .. <span class="string">".c2s"</span>)</span><br><span class="line">		host = sprotoloader.<span class="built_in">load</span>(slot):host <span class="string">"package"</span></span><br><span class="line">		<span class="keyword">local</span> slot2 = skynet.call(protoloader, <span class="string">"lua"</span>, <span class="string">"index"</span>, name .. <span class="string">".s2c"</span>)</span><br><span class="line">		sender = host:attach(sprotoloader.<span class="built_in">load</span>(slot2))</span><br><span class="line">	<span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>  </p>
+<p>在client.init中，实际返回的是一个函数。这个函数的作用，是加载在main中解析过的序列化协议（一个是client2server，一个是server2client）。host用来解析读取到的数据，sender用来序列化要发送的数据。  </p>
+<p>在auth.shakehand中，用到了client.dispatch：<br><figure class="highlight lua"><figcaption><span>auth.lua</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">auth.shakehand</span><span class="params">(fd)</span></span></span><br><span class="line">	<span class="keyword">local</span> c = client.dispatch &#123; fd = fd &#125;</span><br><span class="line">	<span class="keyword">return</span> c.userid</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>  </p>
+<p>那么，client.dispatch的一个简化版实现如下（去掉了一些错误检查）：<br><figure class="highlight lua"><figcaption><span>client.lua</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">local</span> handler = &#123;&#125;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">client.dispatch</span><span class="params">( c )</span></span></span><br><span class="line">	<span class="keyword">local</span> fd = c.fd</span><br><span class="line">	proxy.subscribe(fd)</span><br><span class="line">	<span class="keyword">while</span> <span class="keyword">true</span> <span class="keyword">do</span></span><br><span class="line">		<span class="keyword">local</span> msg, sz = proxy.read(fd)</span><br><span class="line">		<span class="keyword">local</span> <span class="built_in">type</span>, name, args, response = host:dispatch(msg, sz)</span><br><span class="line">		<span class="keyword">if</span> c.exit <span class="keyword">then</span></span><br><span class="line">			<span class="keyword">return</span> c</span><br><span class="line">		<span class="keyword">end</span></span><br><span class="line">		<span class="keyword">local</span> f = handler[name]</span><br><span class="line">		<span class="keyword">if</span> f <span class="keyword">then</span></span><br><span class="line">			skynet.fork(<span class="function"><span class="keyword">function</span><span class="params">()</span></span></span><br><span class="line">				<span class="keyword">local</span> ok, result = <span class="built_in">pcall</span>(f, c, args)</span><br><span class="line">				<span class="keyword">if</span> ok <span class="keyword">then</span></span><br><span class="line">					proxy.write(fd, response(result))</span><br><span class="line">				<span class="keyword">else</span></span><br><span class="line">					log(<span class="string">"raise error = %s"</span>, result)</span><br><span class="line">					proxy.write(fd, response(ERROR, result))</span><br><span class="line">				<span class="keyword">end</span></span><br><span class="line">			<span class="keyword">end</span>)</span><br><span class="line">		<span class="keyword">end</span></span><br><span class="line">	<span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>  </p>
+<p>有了前面对于proxy和host的铺垫，这段代码也不难理解。proxy.read不断通过c服务package从socket上读取切分好包的数据，然后交给host去解析sproto协议。然后根据解析出的name信息，去handler中查找对应的处理函数。如果在循环中，设置了exit标记，则退出处理数据的循环。  </p>
+<p>但是这里有个问题，这里的handler函数是空的{}。  </p>
+<p>其实，这里的handler是留给具体的服务自行填充的，例如在auth服务中，这样填充的handler：<br><figure class="highlight lua"><figcaption><span>auth.lua</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">local</span> cli = client.handler()</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">cli:signup</span><span class="params">(args)</span></span></span><br><span class="line">	log(<span class="string">"signup userid = %s"</span>, args.userid)</span><br><span class="line">	<span class="keyword">if</span> users[args.userid] <span class="keyword">then</span></span><br><span class="line">		<span class="keyword">return</span> FAIL</span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">		users[args.userid] = <span class="keyword">true</span></span><br><span class="line">		<span class="keyword">return</span> SUCC</span><br><span class="line">	<span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">cli:signin</span><span class="params">(args)</span></span></span><br><span class="line">	log(<span class="string">"signin userid = %s"</span>, args.userid)</span><br><span class="line">	<span class="keyword">if</span> users[args.userid] <span class="keyword">then</span></span><br><span class="line">		self.userid = args.userid</span><br><span class="line">		self.exit = <span class="keyword">true</span></span><br><span class="line">		<span class="keyword">return</span> SUCC</span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">		<span class="keyword">return</span> FAIL</span><br><span class="line">	<span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">cli:ping</span><span class="params">()</span></span></span><br><span class="line">	log(<span class="string">"ping"</span>)</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>  </p>
+<p>这样，auth就给handler增加了signup、signin、ping三个函数，正好对应proto.c2s.sproto中定义的函数接口。  </p>
+<p>在这里的signup中，只是记录了userid，在signin的时候也没有做其他的认证机制。而在signin中，设置了userid，并且设置了exit标记，使得dispatch退出循环。这时，auth.shakehand返回signin中设置的userid。  </p>
+<p>总结一下：  </p>
+<blockquote>
+<p>首先，client库中通过proxy服务读取了socket上的数据包，并根据sproto协议进行了解析；<br>其次，auth服务填充了client库中留出的handler处理函数集合，为client库添加了对于signup、signin、ping消息的处理方式，进行了一个“假的”用户认证，获得了userid，并返回给hub服务交由其处理。  </p>
+</blockquote>
+<h2 id="manager"><a href="#manager" class="headerlink" title="manager"></a>manager</h2><p>回到hub中，在通过auth服务获得userid后，就将调用manager服务的assign函数。  </p>
+<p>manager.assign的功能，是根据userid启动一个独立的agent服务负责这个用户的数据处理。<br><figure class="highlight lua"><figcaption><span>manager.lua</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">  </span><br><span class="line"><span class="keyword">local</span> <span class="function"><span class="keyword">function</span> <span class="title">new_agent</span><span class="params">()</span></span></span><br><span class="line">	<span class="comment">-- todo: use a pool</span></span><br><span class="line">	<span class="keyword">return</span> skynet.newservice <span class="string">"agent"</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">manager.assign</span><span class="params">(fd, userid)</span></span></span><br><span class="line">	<span class="keyword">local</span> agent</span><br><span class="line">	<span class="keyword">repeat</span></span><br><span class="line">		agent = users[userid]</span><br><span class="line">		<span class="keyword">if</span> <span class="keyword">not</span> agent <span class="keyword">then</span></span><br><span class="line">			agent = new_agent()</span><br><span class="line">			<span class="keyword">if</span> <span class="keyword">not</span> users[userid] <span class="keyword">then</span></span><br><span class="line">				<span class="comment">-- double check</span></span><br><span class="line">				users[userid] = agent</span><br><span class="line">			<span class="keyword">else</span></span><br><span class="line">				free_agent(agent)</span><br><span class="line">				agent = users[userid]</span><br><span class="line">			<span class="keyword">end</span></span><br><span class="line">		<span class="keyword">end</span></span><br><span class="line">	<span class="keyword">until</span> skynet.call(agent, <span class="string">"lua"</span>, <span class="string">"assign"</span>, fd, userid)</span><br><span class="line">	log(<span class="string">"Assign %d to %s [%s]"</span>, fd, userid, agent)</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>  </p>
+<p>在最后，manager又通过调用agent的assign将这个用户的userid和fd交给了agent服务处理。<br><figure class="highlight lua"><figcaption><span>agent.lua</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">  </span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">agent.assign</span><span class="params">(fd, userid)</span></span></span><br><span class="line">	<span class="keyword">if</span> data.exit <span class="keyword">then</span></span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">false</span></span><br><span class="line">	<span class="keyword">end</span></span><br><span class="line">	<span class="keyword">if</span> data.userid == <span class="keyword">nil</span> <span class="keyword">then</span></span><br><span class="line">		data.userid = userid</span><br><span class="line">	<span class="keyword">end</span></span><br><span class="line">	<span class="built_in">assert</span>(data.userid == userid)</span><br><span class="line">	skynet.fork(new_user, fd)</span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">true</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>  </p>
+<p>这里实际上对fd的处理，交给了new_user函数。<br><figure class="highlight lua"><figcaption><span>agent.lua</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">  </span><br><span class="line"><span class="keyword">local</span> <span class="function"><span class="keyword">function</span> <span class="title">new_user</span><span class="params">(fd)</span></span></span><br><span class="line">	<span class="keyword">local</span> ok, <span class="built_in">error</span> = <span class="built_in">pcall</span>(client.dispatch , &#123; fd = fd &#125;)</span><br><span class="line">	log(<span class="string">"fd=%d is gone. error = %s"</span>, fd, <span class="built_in">error</span>)</span><br><span class="line">	client.close(fd)</span><br><span class="line">	<span class="keyword">if</span> data.fd == fd <span class="keyword">then</span></span><br><span class="line">		data.fd = <span class="keyword">nil</span></span><br><span class="line">		skynet.sleep(<span class="number">1000</span>)	<span class="comment">-- exit after 10s</span></span><br><span class="line">		<span class="keyword">if</span> data.fd == <span class="keyword">nil</span> <span class="keyword">then</span></span><br><span class="line">			<span class="comment">-- double check</span></span><br><span class="line">			<span class="keyword">if</span> <span class="keyword">not</span> data.exit <span class="keyword">then</span></span><br><span class="line">				data.exit = <span class="keyword">true</span>	<span class="comment">-- mark exit</span></span><br><span class="line">				skynet.call(service.manager, <span class="string">"lua"</span>, <span class="string">"exit"</span>, data.userid)	<span class="comment">-- report exit</span></span><br><span class="line">				log(<span class="string">"user %s afk"</span>, data.userid)</span><br><span class="line">				skynet.exit()</span><br><span class="line">			<span class="keyword">end</span></span><br><span class="line">		<span class="keyword">end</span></span><br><span class="line">	<span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>  </p>
+<p>有了之前对auth服务的研究，这里的代码就很容易理解了。同样的，这里用到了client库，通过socket_proxyd服务读取socket上的数据，并按照sproto协议解析，然后交由client.handler进行对应的处理。  </p>
+<p>在agent中，只针对login和ping消息进行了处理：<br><figure class="highlight lua"><figcaption><span>agent.lua</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">  </span><br><span class="line"><span class="keyword">local</span> cli = client.handler()</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">cli:ping</span><span class="params">()</span></span></span><br><span class="line">	<span class="built_in">assert</span>(self.login)</span><br><span class="line">	log <span class="string">"ping"</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">cli:login</span><span class="params">()</span></span></span><br><span class="line">	<span class="built_in">assert</span>(<span class="keyword">not</span> self.login)</span><br><span class="line">	<span class="keyword">if</span> data.fd <span class="keyword">then</span></span><br><span class="line">		log(<span class="string">"login fail %s fd=%d"</span>, data.userid, self.fd)</span><br><span class="line">		<span class="keyword">return</span> &#123; ok = <span class="keyword">false</span> &#125;</span><br><span class="line">	<span class="keyword">end</span></span><br><span class="line">	data.fd = self.fd</span><br><span class="line">	self.login = <span class="keyword">true</span></span><br><span class="line">	log(<span class="string">"login succ %s fd=%d"</span>, data.userid, self.fd)</span><br><span class="line">	client.push(self, <span class="string">"push"</span>, &#123; text = <span class="string">"welcome"</span> &#125;)	<span class="comment">-- push message to client</span></span><br><span class="line">	<span class="keyword">return</span> &#123; ok = <span class="keyword">true</span> &#125;</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>  </p>
+<p>注意到，这里agent服务没有主动设置exit标识，所以agent服务是不会主动退出dispatch的。  </p>
+<p>总结一下：  </p>
+<blockquote>
+<p>首先，manager服务为每一个userid新启动一个agent服务，负责处理用户的数据；<br>其次，在agent服务中，类似auth服务，配合使用client库读取、解析用户发来的数据，交由对应的handler处理。  </p>
+</blockquote>
+<h2 id="simpleclient"><a href="#simpleclient" class="headerlink" title="simpleclient"></a>simpleclient</h2><p>skynet_sample中还提供了一个默认的client程序，在skynet_sample/client目录下，由3个文件组成。其实它实现了一个简单的client的状态机，在signin、signup、login、ping四个状态之间转化。  </p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>扯了这么多，终于把skynet_sample里的lua代码撸了一遍。通过这个过程，可以看到skynet是如何通过服务这一概念来构架服务端系统的，同时也了解了如何在服务之间进行通信。  </p>
+<p>后面，我会另开文章深入skynet的源码，说说skynet具体是如何启动一个服务的，以及skynet.call/skynet.rawcall/skynet.send这一系列的服务调用接口是怎么实现的~  </p>
+<p>P.S. skynet_sample的实现中，有一个小bug，会导致服务端无谓的吞掉一个数据包。大家有兴趣可以自己找找看^^(提示，和异步有关）</p>
+<p>转载请注明出处： <a href="http://blog.guoyb.com/2017/01/19/skynet-1/">http://blog.guoyb.com/2017/01/19/skynet-1/</a>  </p>
+<p>欢迎使用微信扫描下方二维码，关注我的微信公众号TechTalking，技术·生活·思考：<br><img src="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.png" alt="后端技术小黑屋">  </p>
+
+    
+  </div>
+  <footer>
+    
+      
+      
+  <div class="tags">
+    <a class="tags-link" href="/tags/skynet/">skynet</a>
+  </div>
+
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+<!-- JiaThis Button BEGIN -->
+<script type="text/javascript">
+var jiathis_config = {data_track_clickback:'true'};
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?move=0&amp;uid=1706898" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+<section id="comment">
+  <h1 class="title">评论</h1>
+  <div class="ds-thread" data-title="探索skynet（一）：从skynet_sample说起">
+  </div>
+</section>
+
+	</div>
+  </div>
+	<aside id="sidebar">
+  
+  
+    
+      
+      
+
+<div class="widget tagcloud first">
+  <h3 class="title">Tags</h3>
+  <div class="entry">
+    <a href="/tags/C/" style="font-size: 10px;">C</a> <a href="/tags/C/" style="font-size: 17.78px;">C++</a> <a href="/tags/C-11/" style="font-size: 17.78px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/docopt/" style="font-size: 10px;">docopt</a> <a href="/tags/echoserver/" style="font-size: 11.11px;">echoserver</a> <a href="/tags/epoll/" style="font-size: 11.11px;">epoll</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/grpc/" style="font-size: 11.11px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 11.11px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/protobuf/" style="font-size: 11.11px;">protobuf</a> <a href="/tags/python/" style="font-size: 10px;">python</a> <a href="/tags/redis/" style="font-size: 13.33px;">redis</a> <a href="/tags/select/" style="font-size: 11.11px;">select</a> <a href="/tags/skynet/" style="font-size: 10px;">skynet</a> <a href="/tags/socket/" style="font-size: 11.11px;">socket</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 15.56px;">书单</a> <a href="/tags/勘误，MySQL，C-11/" style="font-size: 10px;">勘误，MySQL，C++11</a> <a href="/tags/北京车展/" style="font-size: 10px;">北京车展</a> <a href="/tags/协程/" style="font-size: 10px;">协程</a> <a href="/tags/学习笔记/" style="font-size: 14.44px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/广州/" style="font-size: 10px;">广州</a> <a href="/tags/总结/" style="font-size: 10px;">总结</a> <a href="/tags/新西兰/" style="font-size: 10px;">新西兰</a> <a href="/tags/旅行/" style="font-size: 12.22px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 18.89px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 13.33px;">查证记录</a> <a href="/tags/游戏开发/" style="font-size: 10px;">游戏开发</a> <a href="/tags/爱好/" style="font-size: 10px;">爱好</a> <a href="/tags/生活/" style="font-size: 11.11px;">生活</a> <a href="/tags/知乎/" style="font-size: 10px;">知乎</a> <a href="/tags/程序人生/" style="font-size: 10px;">程序人生</a> <a href="/tags/读书笔记/" style="font-size: 16.67px;">读书笔记</a> <a href="/tags/读后感/" style="font-size: 10px;">读后感</a> <a href="/tags/贵州/" style="font-size: 10px;">贵州</a>
+  </div>
+</div>
+
+    
+      
+      
+
+<div class="widget recent-posts">
+  <h3 class="title">最近文章</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2017/01/19/skynet-1/">探索skynet（一）：从skynet_sample说起</a>
+      </li>
+    
+      <li>
+        <a href="/2017/01/14/2016-booklist-2/">2016年下半年书单</a>
+      </li>
+    
+      <li>
+        <a href="/2017/01/09/stat-codes/">这些年，你写了多少行代码</a>
+      </li>
+    
+      <li>
+        <a href="/2016/12/13/py-hotfix/">探究如何给Python程序做hotfix</a>
+      </li>
+    
+      <li>
+        <a href="/2016/12/03/bad-py-style/">Python最差实践</a>
+      </li>
+    
+  </ul>
+</div>
+
+    
+      
+      
+<div class="widget tag">
+  <h3 class="title">友情链接</h3>
+  <ul class="entry">
+  
+    
+    <li><a href="http://www.linkedin.com/in/yubo-guo-739b0071" target="_blank">LinkedIn</a></li>
+  
+    
+    <li><a href="http://www.tuicool.com/sites/2emeIjb" target="_blank">推酷站点</a></li>
+  
+  </ul>
+</div>
+
+    
+  
+</aside>
+<div class="clearfix"></div>
+  <footer id="footer"><div class="copyright">
+  
+  &copy; 2017 <a href="/">Yubo Guo</a>
+  
+</div>
+<div class="theme-copyright">
+  Theme by <a href="https://github.com/orderedlist" target="_blank">orderedlist</a>
+   | 
+  Redesign by <a href="http://heroicyang.com/" target="_blank">Heroic Yang</a>
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+<script src="/js/scale.fix.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = { short_name: 'guoyb' };
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';
+    ds.async = true;
+    ds.src = 'http://static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+  (function($){
+    $('.fancybox').fancybox();
+  })(jQuery);
+</script>
+
+</body>
+</html>
