@@ -1,0 +1,274 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  
+  <title>探索skynet（二）：skynet如何启动一个服务 | 一根笨茄子</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  
+    <meta name="author" content="Yubo Guo">
+  
+  
+    <meta name="description" content="skynet框架是由C语言写成的，而skynet的服务可以完全用lua语言来编写，灵活性很高。那skynet是如何启动一个lua语言编写的服务的的呢？skynet服务，在skynet框架中，具体是以什么形式存在的呢？  
+带着这些问题，我们来一起看看skynet的源码。">
+  
+  <meta name="description" content="skynet框架是由C语言写成的，而skynet的服务可以完全用lua语言来编写，灵活性很高。那skynet是如何启动一个lua语言编写的服务的的呢？skynet服务，在skynet框架中，具体是以什么形式存在的呢？  
+带着这些问题，我们来一起看看skynet的源码。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="探索skynet（二）：skynet如何启动一个服务">
+<meta property="og:url" content="http://blog.guoyb.com/2017/02/12/skynet-2/index.html">
+<meta property="og:site_name" content="一根笨茄子">
+<meta property="og:description" content="skynet框架是由C语言写成的，而skynet的服务可以完全用lua语言来编写，灵活性很高。那skynet是如何启动一个lua语言编写的服务的的呢？skynet服务，在skynet框架中，具体是以什么形式存在的呢？  
+带着这些问题，我们来一起看看skynet的源码。">
+<meta property="og:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.png">
+<meta property="og:updated_time" content="2017-02-12T08:22:36.236Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="探索skynet（二）：skynet如何启动一个服务">
+<meta name="twitter:description" content="skynet框架是由C语言写成的，而skynet的服务可以完全用lua语言来编写，灵活性很高。那skynet是如何启动一个lua语言编写的服务的的呢？skynet服务，在skynet框架中，具体是以什么形式存在的呢？  
+带着这些问题，我们来一起看看skynet的源码。">
+<meta name="twitter:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.png">
+  
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+  
+<script type="text/javascript">
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?996ee0fca2512b4c29f37f60cf6387ca";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+</head>
+
+<body>
+  <div class="wrapper">
+    <header id="header">
+  <div class="title">
+    <h1><a href="/">一根笨茄子</a></h1>
+    <p><a href="/"></a></p>
+  </div>
+  <nav class="nav">
+    <ul>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/about">关于我</a></li>
+      
+      
+    </ul>
+    <div class="clearfix"></div>
+  </nav>
+  <div class="clearfix"></div>
+</header>
+    <div class="content">
+		<article class="post">
+  <header>
+    
+      <div class="icon"></div>
+      <a href="/2017/02/12/skynet-2/">
+  <time datetime="2017-02-12T03:14:29.000Z">
+    2017-02-12
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title">探索skynet（二）：skynet如何启动一个服务</h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>skynet框架是由C语言写成的，而skynet的服务可以完全用lua语言来编写，灵活性很高。那skynet是如何启动一个lua语言编写的服务的的呢？skynet服务，在skynet框架中，具体是以什么形式存在的呢？  </p>
+<p>带着这些问题，我们来一起看看skynet的源码。<br><a id="more"></a></p>
+<h2 id="lua部分"><a href="#lua部分" class="headerlink" title="lua部分"></a>lua部分</h2><p>我们先看一个skynet_sample中启动agent服务的例子：<br><figure class="highlight lua"><figcaption><span>manager.lua</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">local</span> <span class="function"><span class="keyword">function</span> <span class="title">new_agent</span><span class="params">()</span></span></span><br><span class="line">	<span class="keyword">return</span> skynet.newservice <span class="string">"agent"</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>  </p>
+<p>skynet.newservice的实现也很简单：<br><figure class="highlight lua"><figcaption><span>skynet.lua</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">skynet.newservice</span><span class="params">(name, ...)</span></span></span><br><span class="line">	<span class="keyword">return</span> skynet.call(<span class="string">".launcher"</span>, <span class="string">"lua"</span> , <span class="string">"LAUNCH"</span>, <span class="string">"snlua"</span>, name, ...)</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>  </p>
+<p>这里，.launcher是一个服务的名字，后面都是通过skynet.call传给.launcher的参数。  </p>
+<p>我们先来看看这个.launcher是个什么鬼。<br><figure class="highlight lua"><figcaption><span>bootstrap.lua</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">local</span> launcher = <span class="built_in">assert</span>(skynet.launch(<span class="string">"snlua"</span>,<span class="string">"launcher"</span>))</span><br><span class="line">skynet.name(<span class="string">".launcher"</span>, launcher)</span><br></pre></td></tr></table></figure>  </p>
+<p>通过wiki我们知道，bootstrap.lua是skynet服务的启动入口，在这里，调用了skynet.launch，启动了一个launcher服务，并将其命名为.launcher。  </p>
+<p>skynet.launch的实现如下：<br><figure class="highlight lua"><figcaption><span>manager.lua</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">local</span> c = <span class="built_in">require</span> <span class="string">"skynet.core"</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">skynet.launch</span><span class="params">(...)</span></span></span><br><span class="line">	<span class="keyword">local</span> addr = c.command(<span class="string">"LAUNCH"</span>, <span class="built_in">table</span>.concat(&#123;...&#125;,<span class="string">" "</span>))</span><br><span class="line">	<span class="keyword">if</span> addr <span class="keyword">then</span></span><br><span class="line">		<span class="keyword">return</span> <span class="built_in">tonumber</span>(<span class="string">"0x"</span> .. <span class="built_in">string</span>.sub(addr , <span class="number">2</span>))</span><br><span class="line">	<span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>  </p>
+<p>这里的skynet.core是一个C语言模块，至此，我们将进入C语言实现部分，调用skynet.core.command(“LAUNCH”, “snlua launcher”)。不要晕，我们先总结一下lua部分的内容：  </p>
+<p>newservice–&gt;skynet.call .launcher–&gt;.launcher=skynet.launch(“snlua”, “launcher”)–&gt;skynet.core.command(“LAUNCH”, “snlua launcher”)  </p>
+<p>接下来我们看看skynet.core中是如何实现的。  </p>
+<h2 id="C部分"><a href="#C部分" class="headerlink" title="C部分"></a>C部分</h2><p>skynet.core其实是在lua_skynet.c中定义的，其command对应于lcommand函数。 这时的参数其实都压进了lua_State中。<br><figure class="highlight c"><figcaption><span>lua-skynet.c</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span></span><br><span class="line"><span class="title">lcommand</span><span class="params">(lua_State *L)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">struct</span> skynet_context * context = lua_touserdata(L, lua_upvalueindex(<span class="number">1</span>));</span><br><span class="line">	<span class="keyword">const</span> <span class="keyword">char</span> * cmd = luaL_checkstring(L,<span class="number">1</span>);</span><br><span class="line">	<span class="keyword">const</span> <span class="keyword">char</span> * result;</span><br><span class="line">	<span class="keyword">const</span> <span class="keyword">char</span> * parm = <span class="literal">NULL</span>;</span><br><span class="line">	<span class="keyword">if</span> (lua_gettop(L) == <span class="number">2</span>) &#123;</span><br><span class="line">		parm = luaL_checkstring(L,<span class="number">2</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	result = skynet_command(context, cmd, parm);</span><br><span class="line">	<span class="keyword">if</span> (result) &#123;</span><br><span class="line">		lua_pushstring(L, result);</span><br><span class="line">		return <span class="number">1</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	return <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>  </p>
+<p>在lcommand中，cmd应该是LAUNCH,parm应该是 snlua launcher。context暂时按下不表，来看看skynet_command的实现。<br><figure class="highlight c"><figcaption><span>skynet_server.c</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">struct</span> command_func cmd_funcs[] = &#123;</span><br><span class="line">	&#123; <span class="string">"TIMEOUT"</span>, cmd_timeout &#125;,</span><br><span class="line">	...</span><br><span class="line">	&#123; <span class="string">"LAUNCH"</span>, cmd_launch &#125;,</span><br><span class="line">	...</span><br><span class="line">	&#123; <span class="literal">NULL</span>, <span class="literal">NULL</span> &#125;,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">const</span> <span class="keyword">char</span> * </span><br><span class="line"><span class="title">skynet_command</span><span class="params">(<span class="keyword">struct</span> skynet_context * context, <span class="keyword">const</span> <span class="keyword">char</span> * cmd , <span class="keyword">const</span> <span class="keyword">char</span> * param)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">struct</span> command_func * method = &amp;cmd_funcs[<span class="number">0</span>];</span><br><span class="line">	<span class="keyword">while</span>(method-&gt;name) &#123;</span><br><span class="line">		<span class="keyword">if</span> (<span class="built_in">strcmp</span>(cmd, method-&gt;name) == <span class="number">0</span>) &#123;</span><br><span class="line">			return method-&gt;func(context, param);</span><br><span class="line">		&#125;</span><br><span class="line">		++method;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	return <span class="literal">NULL</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>    </p>
+<p>所以，这里会转发到cmd_launch函数。<br><figure class="highlight c"><figcaption><span>skynet_server.c</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">const</span> <span class="keyword">char</span> *</span><br><span class="line"><span class="title">cmd_launch</span><span class="params">(<span class="keyword">struct</span> skynet_context * context, <span class="keyword">const</span> <span class="keyword">char</span> * param)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">size_t</span> sz = <span class="built_in">strlen</span>(param);</span><br><span class="line">	<span class="keyword">char</span> tmp[sz+<span class="number">1</span>];</span><br><span class="line">	<span class="built_in">strcpy</span>(tmp,param);</span><br><span class="line">	<span class="keyword">char</span> * args = tmp;</span><br><span class="line">	<span class="keyword">char</span> * mod = strsep(&amp;args, <span class="string">" \t\r\n"</span>);</span><br><span class="line">	args = strsep(&amp;args, <span class="string">"\r\n"</span>);</span><br><span class="line">	<span class="keyword">struct</span> skynet_context * inst = skynet_context_new(mod,args);</span><br><span class="line">	<span class="keyword">if</span> (inst == <span class="literal">NULL</span>) &#123;</span><br><span class="line">		return <span class="literal">NULL</span>;</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		id_to_hex(context-&gt;result, inst-&gt;handle);</span><br><span class="line">		return context-&gt;result;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>  </p>
+<p>在cmd_launch中，mod是snlua，args是“snlua launcher”，会根据这两个参数，重新构造一个skynet_context出来。  </p>
+<p>skynet_context_new的函数体比较长，其中重要的步骤包括：  </p>
+<blockquote>
+<ol>
+<li>根据参数实例化一个模块（这里是snlua)  </li>
+<li>创建此服务的消息队列  </li>
+<li>根据参数，初始化前面创建的模块（snlua)  </li>
+</ol>
+</blockquote>
+<p>在第1步中，加载模块（snlua)并调用了模块的create函数。<br><figure class="highlight c"><figcaption><span>service_snlua.c</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">struct</span> snlua *</span><br><span class="line"><span class="title">snlua_create</span><span class="params">(<span class="keyword">void</span>)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">struct</span> snlua * l = skynet_malloc(sizeof(*l));</span><br><span class="line">	<span class="built_in">memset</span>(l,<span class="number">0</span>,<span class="keyword">sizeof</span>(*l));</span><br><span class="line">	l-&gt;mem_report = MEMORY_WARNING_REPORT;</span><br><span class="line">	l-&gt;mem_limit = <span class="number">0</span>;</span><br><span class="line">	l-&gt;L = lua_newstate(lalloc, l);</span><br><span class="line">	return l;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>  </p>
+<p>这里，新创建了一个lua_State。因此，正如wiki中所说，snlua是lua的一个沙盒服务，保证了各个lua服务之间是隔离的。  </p>
+<p>而第3步，其实是调用了snlua模块的init函数。<br><figure class="highlight c"><figcaption><span>service_snlua.c</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span></span><br><span class="line"><span class="title">snlua_init</span><span class="params">(<span class="keyword">struct</span> snlua *l, <span class="keyword">struct</span> skynet_context *ctx, <span class="keyword">const</span> <span class="keyword">char</span> * args)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">int</span> sz = <span class="built_in">strlen</span>(args);</span><br><span class="line">	<span class="keyword">char</span> * tmp = skynet_malloc(sz);</span><br><span class="line">	<span class="built_in">memcpy</span>(tmp, args, sz);</span><br><span class="line">	skynet_callback(ctx, l , launch_cb);</span><br><span class="line">	<span class="keyword">const</span> <span class="keyword">char</span> * self = skynet_command(ctx, <span class="string">"REG"</span>, NULL);</span><br><span class="line">	<span class="keyword">uint32_t</span> handle_id = strtoul(self+<span class="number">1</span>, NULL, <span class="number">16</span>);</span><br><span class="line">	<span class="comment">// it must be first message</span></span><br><span class="line">	skynet_send(ctx, <span class="number">0</span>, handle_id, PTYPE_TAG_DONTCOPY,<span class="number">0</span>, tmp, sz);</span><br><span class="line">	return <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>  </p>
+<p>这里，设置了当前模块的callback为launch_cb，因此之后skynet_send消息，将由launch_cb处理。<br><figure class="highlight c"><figcaption><span>service_snlua.c</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span></span><br><span class="line"><span class="title">launch_cb</span><span class="params">(<span class="keyword">struct</span> skynet_context * context, <span class="keyword">void</span> *ud, <span class="keyword">int</span> type, <span class="keyword">int</span> session, uint32_t source , <span class="keyword">const</span> <span class="keyword">void</span> * msg, size_t sz)</span> </span>&#123;</span><br><span class="line">	assert(type == <span class="number">0</span> &amp;&amp; session == <span class="number">0</span>);</span><br><span class="line">	<span class="keyword">struct</span> snlua *l = ud;</span><br><span class="line">	skynet_callback(context, <span class="literal">NULL</span>, <span class="literal">NULL</span>);</span><br><span class="line">	<span class="keyword">int</span> err = init_cb(l, context, msg, sz);</span><br><span class="line">	<span class="keyword">if</span> (err) &#123;</span><br><span class="line">		skynet_command(context, <span class="string">"EXIT"</span>, <span class="literal">NULL</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	return <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>    </p>
+<p>这里，launch_cb重置了服务的callback（因为snlua只用负责在沙盒中启动lua服务，其他消息应由lua程序处理），之后，调用了init_cb。  </p>
+<p>init_cb中除了设置各种路径、栈数据之外，和我们关心的lua程序有关的，是这样的一行：<br><figure class="highlight c"><figcaption><span>service_snlua.c</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="keyword">char</span> * loader = optstring(ctx, <span class="string">"lualoader"</span>, <span class="string">"./lualib/loader.lua"</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> r = luaL_loadfile(L,loader);</span><br><span class="line"><span class="keyword">if</span> (r != LUA_OK) &#123;</span><br><span class="line">	skynet_error(ctx, <span class="string">"Can't load %s : %s"</span>, loader, lua_tostring(L, <span class="number">-1</span>));</span><br><span class="line">	report_launcher_error(ctx);</span><br><span class="line">	return <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line">lua_pushlstring(L, args, sz);</span><br><span class="line">r = lua_pcall(L,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>);</span><br></pre></td></tr></table></figure>   </p>
+<p>这里，就又通过C语言的lua接口，调用回了lua层面。  </p>
+<p>总结一下，C语言层面的处理流程是这样的：  </p>
+<p>skynet.core.command–&gt;lcommand–&gt;skynet_command–&gt;cmd_launch–&gt;skynet_context_new–&gt;snlua_create–&gt;snlua_init–&gt;loader.lua</p>
+<h2 id="回到lua"><a href="#回到lua" class="headerlink" title="回到lua"></a>回到lua</h2><p>loader.lua的功能也很简单，就是在沙盒snlua中，加载并执行lua程序，这里也就是launcher.lua。  </p>
+<p>在launcher.lua中，通过skynet.register_protocol和skynet.dispatch，设置了launcher服务对各种消息的处理函数。而在skynet.start的调用中：<br><figure class="highlight lua"><figcaption><span>skynet.lua</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">skynet.start</span><span class="params">(start_func)</span></span></span><br><span class="line">	c.callback(skynet.dispatch_message)</span><br><span class="line">	skynet.timeout(<span class="number">0</span>, <span class="function"><span class="keyword">function</span><span class="params">()</span></span></span><br><span class="line">		skynet.init_service(start_func)</span><br><span class="line">	<span class="keyword">end</span>)</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>   </p>
+<p>这里又重新设置了服务的callback。所以，所谓启动一个服务，其实就是将用lua编写的若干回调函数，挂载到对消息队列的处理中去。具体到这里的launcher服务，其实就是在lua层面，将command.LAUNCH等lua函数，挂接到消息队列中的LAUNCH等消息的回调函数。  </p>
+<h2 id="还没完"><a href="#还没完" class="headerlink" title="还没完"></a>还没完</h2><p>到这里，我们看到了launcher.lua这个服务，也就是.launcher这个服务是如何建立的了。但是最开始，我们要考察的是agent.lua服务啊。回过头来，我们再看看agent服务是如何创建的：  </p>
+<figure class="highlight lua"><figcaption><span>manager.lua</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">local</span> <span class="function"><span class="keyword">function</span> <span class="title">new_agent</span><span class="params">()</span></span></span><br><span class="line">	<span class="keyword">return</span> skynet.newservice <span class="string">"agent"</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>  
+<figure class="highlight lua"><figcaption><span>skynet.lua</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">skynet.newservice</span><span class="params">(name, ...)</span></span></span><br><span class="line">	<span class="keyword">return</span> skynet.call(<span class="string">".launcher"</span>, <span class="string">"lua"</span> , <span class="string">"LAUNCH"</span>, <span class="string">"snlua"</span>, name, ...)</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>  
+<p>现在，我们知道.launcher从何而来，那就直接看看LAUNCH消息是如何处理的吧：<br><figure class="highlight lua"><figcaption><span>launcher.lua</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">command.LAUNCH</span><span class="params">(_, service, ...)</span></span></span><br><span class="line">	launch_service(service, ...)</span><br><span class="line">	<span class="keyword">return</span> NORET</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>  </p>
+<p>在launch_service中，调用到了skynet.launch。在最开始就看到了，.launcher的创建，也是通过调用skynet.launch实现的。这样，通过.launcher创建一个服务，和创建.launcher的服务的流程，就统一起来了。  </p>
+<p>.launcher是一个用于创建其他lua服务的服务。  </p>
+<h2 id="最初的最初"><a href="#最初的最初" class="headerlink" title="最初的最初"></a>最初的最初</h2><p>作为创建服务的服务.launcher，它自己又是被谁创建的呢？前面我们看到，它是在bootstrap.lua中创建出来的。那么bootstrap.lua又是什么时候启动的呢？  </p>
+<p>这里，我们需要看一下skynet启动时的第一个函数入口，main函数。  </p>
+<p>main函数隐藏在skynet_main.c中，当其解析完传入的config文件之后，就转到了skynet_start。  </p>
+<p>在skynet_start函数中，调用了bootstrap(ctx, config-&gt;bootstrap),其中，就像前面讲到的流程一样，直接走到了skynet_context_new这一步。  </p>
+<p>一般默认，config-&gt;bootstrap项就是snlua bootstrap。那这里其实就是启动调用bootstrap.lua，，其中会启动launcher服务。有了launcher服务，之后的服务启动，就都可以交由launcher服务来进行了。  </p>
+<p>推荐阅读： <a href="http://blog.guoyb.com/2017/01/19/skynet-1/">探索skynet（一）：从skynet_sample说起</a>  </p>
+<p>转载请注明出处： <a href="http://blog.guoyb.com/2017/02/12/skynet-2/">http://blog.guoyb.com/2017/02/12/skynet-2/</a>  </p>
+<p>欢迎使用微信扫描下方二维码，关注我的微信公众号TechTalking，技术·生活·思考：<br><img src="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.png" alt="后端技术小黑屋">  </p>
+
+    
+  </div>
+  <footer>
+    
+      
+      
+  <div class="tags">
+    <a class="tags-link" href="/tags/skynet/">skynet</a>
+  </div>
+
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+<!-- JiaThis Button BEGIN -->
+<script type="text/javascript">
+var jiathis_config = {data_track_clickback:'true'};
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?move=0&amp;uid=1706898" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+<section id="comment">
+  <h1 class="title">Comments</h1>
+  <div class="ds-thread" data-title="探索skynet（二）：skynet如何启动一个服务">
+  </div>
+</section>
+
+	</div>
+  </div>
+	<aside id="sidebar">
+  
+  
+    
+      
+      
+
+<div class="widget tagcloud first">
+  <h3 class="title">Tags</h3>
+  <div class="entry">
+    <a href="/tags/C/" style="font-size: 10px;">C</a> <a href="/tags/C/" style="font-size: 17.78px;">C++</a> <a href="/tags/C-11/" style="font-size: 17.78px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/docopt/" style="font-size: 10px;">docopt</a> <a href="/tags/echoserver/" style="font-size: 11.11px;">echoserver</a> <a href="/tags/epoll/" style="font-size: 11.11px;">epoll</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/grpc/" style="font-size: 11.11px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 11.11px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/protobuf/" style="font-size: 11.11px;">protobuf</a> <a href="/tags/python/" style="font-size: 10px;">python</a> <a href="/tags/redis/" style="font-size: 13.33px;">redis</a> <a href="/tags/select/" style="font-size: 11.11px;">select</a> <a href="/tags/skynet/" style="font-size: 11.11px;">skynet</a> <a href="/tags/socket/" style="font-size: 11.11px;">socket</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 15.56px;">书单</a> <a href="/tags/勘误，MySQL，C-11/" style="font-size: 10px;">勘误，MySQL，C++11</a> <a href="/tags/北京车展/" style="font-size: 10px;">北京车展</a> <a href="/tags/协程/" style="font-size: 10px;">协程</a> <a href="/tags/学习笔记/" style="font-size: 14.44px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/广州/" style="font-size: 10px;">广州</a> <a href="/tags/总结/" style="font-size: 10px;">总结</a> <a href="/tags/新西兰/" style="font-size: 10px;">新西兰</a> <a href="/tags/旅行/" style="font-size: 12.22px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 18.89px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 13.33px;">查证记录</a> <a href="/tags/游戏开发/" style="font-size: 10px;">游戏开发</a> <a href="/tags/爱好/" style="font-size: 10px;">爱好</a> <a href="/tags/生活/" style="font-size: 11.11px;">生活</a> <a href="/tags/知乎/" style="font-size: 10px;">知乎</a> <a href="/tags/程序人生/" style="font-size: 10px;">程序人生</a> <a href="/tags/读书笔记/" style="font-size: 16.67px;">读书笔记</a> <a href="/tags/读后感/" style="font-size: 10px;">读后感</a> <a href="/tags/贵州/" style="font-size: 10px;">贵州</a>
+  </div>
+</div>
+
+    
+      
+      
+
+<div class="widget recent-posts">
+  <h3 class="title">最近文章</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2017/02/12/skynet-2/">探索skynet（二）：skynet如何启动一个服务</a>
+      </li>
+    
+      <li>
+        <a href="/2017/01/19/skynet-1/">探索skynet（一）：从skynet_sample说起</a>
+      </li>
+    
+      <li>
+        <a href="/2017/01/14/2016-booklist-2/">2016年下半年书单</a>
+      </li>
+    
+      <li>
+        <a href="/2017/01/09/stat-codes/">这些年，你写了多少行代码</a>
+      </li>
+    
+      <li>
+        <a href="/2016/12/13/py-hotfix/">探究如何给Python程序做hotfix</a>
+      </li>
+    
+  </ul>
+</div>
+
+    
+      
+      
+<div class="widget tag">
+  <h3 class="title">友情链接</h3>
+  <ul class="entry">
+  
+    
+    <li><a href="http://www.linkedin.com/in/yubo-guo-739b0071" target="_blank">LinkedIn</a></li>
+  
+    
+    <li><a href="http://www.tuicool.com/sites/2emeIjb" target="_blank">推酷站点</a></li>
+  
+  </ul>
+</div>
+
+    
+  
+</aside>
+<div class="clearfix"></div>
+  <footer id="footer"><div class="copyright">
+  
+  &copy; 2017 <a href="/">Yubo Guo</a>
+  
+</div>
+<div class="theme-copyright">
+  Theme by <a href="https://github.com/orderedlist" target="_blank">orderedlist</a>
+   | 
+  Redesign by <a href="http://heroicyang.com/" target="_blank">Heroic Yang</a>
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+<script src="/js/scale.fix.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = { short_name: 'guoyb' };
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';
+    ds.async = true;
+    ds.src = 'http://static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+  (function($){
+    $('.fancybox').fancybox();
+  })(jQuery);
+</script>
+
+</body>
+</html>
