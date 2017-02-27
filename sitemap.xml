@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://blog.guoyb.com/2017/02/27/python-regex/</loc>
+    
+    <lastmod>2017-02-27T13:40:27.554Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://blog.guoyb.com/2017/02/19/mysql-remote-connect/</loc>
     
     <lastmod>2017-02-20T00:40:42.330Z</lastmod>

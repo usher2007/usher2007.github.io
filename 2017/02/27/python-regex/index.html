@@ -1,0 +1,245 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  
+  <title>Python正则表达式之一：基础 | 一根笨茄子</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  
+    <meta name="author" content="Yubo Guo">
+  
+  
+    <meta name="description" content="前一阵，QA提了一个需求，我一看此需求用正则表达式最合适不过。考虑到之前每次使用正则表达式，都是临时抱佛脚，于是这次我就一遍完成任务一遍系统的学习了一遍正则表达式。主要参考PyCon2016上的一个视频Regular Expressions。我将分几篇文章对正则表达式进行总结。以下是第一部分，基础：  
+基础部分
+这里总结了正则表达式最基础的用法，其中大部分内容对我（以及大部分程序员）来说都是平">
+  
+  <meta name="description" content="前一阵，QA提了一个需求，我一看此需求用正则表达式最合适不过。考虑到之前每次使用正则表达式，都是临时抱佛脚，于是这次我就一遍完成任务一遍系统的学习了一遍正则表达式。主要参考PyCon2016上的一个视频Regular Expressions。我将分几篇文章对正则表达式进行总结。以下是第一部分，基础：  
+基础部分
+这里总结了正则表达式最基础的用法，其中大部分内容对我（以及大部分程序员）来说都是平">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python正则表达式之一：基础">
+<meta property="og:url" content="http://blog.guoyb.com/2017/02/27/python-regex/index.html">
+<meta property="og:site_name" content="一根笨茄子">
+<meta property="og:description" content="前一阵，QA提了一个需求，我一看此需求用正则表达式最合适不过。考虑到之前每次使用正则表达式，都是临时抱佛脚，于是这次我就一遍完成任务一遍系统的学习了一遍正则表达式。主要参考PyCon2016上的一个视频Regular Expressions。我将分几篇文章对正则表达式进行总结。以下是第一部分，基础：  
+基础部分
+这里总结了正则表达式最基础的用法，其中大部分内容对我（以及大部分程序员）来说都是平">
+<meta property="og:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.jpg">
+<meta property="og:updated_time" content="2017-02-27T13:40:27.554Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Python正则表达式之一：基础">
+<meta name="twitter:description" content="前一阵，QA提了一个需求，我一看此需求用正则表达式最合适不过。考虑到之前每次使用正则表达式，都是临时抱佛脚，于是这次我就一遍完成任务一遍系统的学习了一遍正则表达式。主要参考PyCon2016上的一个视频Regular Expressions。我将分几篇文章对正则表达式进行总结。以下是第一部分，基础：  
+基础部分
+这里总结了正则表达式最基础的用法，其中大部分内容对我（以及大部分程序员）来说都是平">
+<meta name="twitter:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.jpg">
+  
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+  
+<script type="text/javascript">
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?996ee0fca2512b4c29f37f60cf6387ca";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+</head>
+
+<body>
+  <div class="wrapper">
+    <header id="header">
+  <div class="title">
+    <h1><a href="/">一根笨茄子</a></h1>
+    <p><a href="/"></a></p>
+  </div>
+  <nav class="nav">
+    <ul>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/about">关于我</a></li>
+      
+      
+    </ul>
+    <div class="clearfix"></div>
+  </nav>
+  <div class="clearfix"></div>
+</header>
+    <div class="content">
+		<article class="post">
+  <header>
+    
+      <div class="icon"></div>
+      <a href="/2017/02/27/python-regex/">
+  <time datetime="2017-02-26T23:56:42.000Z">
+    2017-02-27
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title">Python正则表达式之一：基础</h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>前一阵，QA提了一个需求，我一看此需求用正则表达式最合适不过。考虑到之前每次使用正则表达式，都是临时抱佛脚，于是这次我就一遍完成任务一遍系统的学习了一遍正则表达式。主要参考PyCon2016上的一个视频<a href="https://www.youtube.com/watch?v=W4ReH9IPH-Q&amp;list=WL&amp;index=1&amp;t=215s" target="_blank" rel="external">Regular Expressions</a>。我将分几篇文章对正则表达式进行总结。以下是第一部分，基础：  </p>
+<h2 id="基础部分"><a href="#基础部分" class="headerlink" title="基础部分"></a>基础部分</h2><hr>
+<p>这里总结了正则表达式最基础的用法，其中大部分内容对我（以及大部分程序员）来说都是平时经常用到的，所以我就一笔带过了，只对其中的几处用例子说明。<br><a id="more"></a>  </p>
+<blockquote>
+<p>.           <em>除了换行之外的其他所有字符</em><br>^           <em>行首</em><br>$           <em>行尾</em><br>[abcd]      <em>abcd其中的一个字符</em><br>[^abcd]     <em>除了abcd之外的任意字符</em><br>[a-d]       <em>相当于[abcd]</em><br>[a-dz]      <em>相当于[abcdz]</em><br>\b          <em>单词边界</em><br>\w          <em>字母数字或下划线 相当于[a-zA-Z0-9_]</em><br>\W          <em>与\w相反</em><br>\d          <em>数字，相当于[0-9]</em><br>\D          <em>与\d相反</em><br>\s          <em>空白字符，相当于[ \t\n\r\f\v]</em><br>\S          <em>与\s相反</em><br>{5}         <em>在此之前的正则表达式部分（下同）准确的出现5次</em><br>{2,5}       <em>~出现2到5次</em><br>{2,}        <em>~出现2次或多次</em><br>{,5}        <em>~出现0到5次</em><br>*          <em>~出现0次或多次</em><br>？          <em>~出现0次或1次</em><br>+           <em>~出现1次或多次</em><br>ABC|DEF     <em>匹配ABC或者DEF</em><br>\          <em>转义字符，如\</em>表示匹配*，\$表示匹配$*  </p>
+</blockquote>
+<p>\b、 \用以下几个例子简单说明一下：  </p>
+<h3 id="b："><a href="#b：" class="headerlink" title="\b："></a>\b：</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>re.search(<span class="string">r'\bhello\b'</span>, <span class="string">'hello'</span>)</span><br><span class="line">&lt;_sre.SRE_Match object; span=(<span class="number">0</span>, <span class="number">5</span>), match=<span class="string">'hello'</span>&gt;</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>re.search(<span class="string">r'\bhello\b'</span>, <span class="string">'hello world'</span>)</span><br><span class="line">&lt;_sre.SRE_Match object; span=(<span class="number">0</span>, <span class="number">5</span>), match=<span class="string">'hello'</span>&gt;</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>re.search(<span class="string">r'\bhello\b'</span>, <span class="string">'hello,world'</span>)</span><br><span class="line">&lt;_sre.SRE_Match object; span=(<span class="number">0</span>, <span class="number">5</span>), match=<span class="string">'hello'</span>&gt;</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>re.search(<span class="string">r'\bhello\b'</span>, <span class="string">'hello_world'</span>)  </span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span></span><br></pre></td></tr></table></figure>  
+<p>其实这里，\b大体上和\W一支，但是\b可以匹配行首行尾等非显示类的字符，而\W不可以。  </p>
+<h3 id=""><a href="#" class="headerlink" title="\:"></a>\:</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>re.search(<span class="string">r'\$100'</span>, <span class="string">'$100'</span>)</span><br><span class="line">&lt;_sre.SRE_Match object; span=(<span class="number">0</span>, <span class="number">4</span>), match=<span class="string">'$100'</span>&gt;</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>re.search(<span class="string">r'$100'</span>, <span class="string">'$100'</span>) </span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span></span><br></pre></td></tr></table></figure>  
+<p>想要匹配那些在正则表达式中有特殊含义的字符，如$、^、*等，就需要用\进行转义。  </p>
+<h3 id="raw-string"><a href="#raw-string" class="headerlink" title="raw string:"></a>raw string:</h3><p>另外，前面例子中，模式字符串（pattern）前面都加了一个r，这个r的意思是raw string，后面所接的字符串，Pyhton解释器无需对其进行转义。因为，\在Python字符串中和正则表达式中都有特殊含义，所以如果不是raw string，那么要表达一个\字符，就需要四个\了（在Python解释器中先转义一次，2个\表示1个\，剩下2个\，在正则表达式中又转义一次，最终剩下一个\）。例如：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>re.search(<span class="string">r'\bhello\b'</span>, <span class="string">'hello'</span>)</span><br><span class="line">&lt;_sre.SRE_Match object; span=(<span class="number">0</span>, <span class="number">5</span>), match=<span class="string">'hello'</span>&gt;</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>re.search(<span class="string">'\bhello\b'</span>, <span class="string">'hello'</span>) </span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>re.search(<span class="string">'\\bhello\\b'</span>, <span class="string">'hello'</span>)</span><br><span class="line">&lt;_sre.SRE_Match object; span=(<span class="number">0</span>, <span class="number">5</span>), match=<span class="string">'hello'</span>&gt;</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>re.search(<span class="string">'\\\\hello\\\\'</span>, <span class="string">'\\hello\\'</span>)  </span><br><span class="line">&lt;_sre.SRE_Match object; span=(<span class="number">0</span>, <span class="number">7</span>), match=<span class="string">'\\hello\\'</span>&gt;</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>re.search(<span class="string">r'\\hello\\'</span>, <span class="string">'\\hello\\'</span>)    </span><br><span class="line">&lt;_sre.SRE_Match object; span=(<span class="number">0</span>, <span class="number">7</span>), match=<span class="string">'\\hello\\'</span>&gt;</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>print(<span class="string">'\\hello\\'</span>)</span><br><span class="line">\hello\</span><br></pre></td></tr></table></figure>  </p>
+<hr>
+<p>有了这些知识，正则表达式的基本运用就没什么问题了。对于一些特殊情况，还需要掌握另外一些高级用法，敬请期待后续文章。    </p>
+<p>转载请注明出处： <a href="http://blog.guoyb.com/2017/02/27/python-regex/">http://blog.guoyb.com/2017/02/27/python-regex/</a>。  </p>
+<p>欢迎使用微信扫描下方二维码，关注我的微信公众号TechTalking，技术·生活·思考：<br><img src="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.jpg" alt="后端技术小黑屋"></p>
+
+    
+  </div>
+  <footer>
+    
+      
+      
+  <div class="tags">
+    <a class="tags-link" href="/tags/Python/">Python</a>, <a class="tags-link" href="/tags/regex/">regex</a>
+  </div>
+
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+<!-- JiaThis Button BEGIN -->
+<script type="text/javascript">
+var jiathis_config = {data_track_clickback:'true'};
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?move=0&amp;uid=1706898" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+<section id="comment">
+  <h1 class="title">评论</h1>
+  <div class="ds-thread" data-title="Python正则表达式之一：基础">
+  </div>
+</section>
+
+	</div>
+  </div>
+	<aside id="sidebar">
+  
+  
+    
+      
+      
+
+<div class="widget tagcloud first">
+  <h3 class="title">Tags</h3>
+  <div class="entry">
+    <a href="/tags/C/" style="font-size: 10px;">C</a> <a href="/tags/C/" style="font-size: 17.78px;">C++</a> <a href="/tags/C-11/" style="font-size: 17.78px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 11.11px;">MySQL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/docopt/" style="font-size: 10px;">docopt</a> <a href="/tags/echoserver/" style="font-size: 11.11px;">echoserver</a> <a href="/tags/epoll/" style="font-size: 11.11px;">epoll</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/grpc/" style="font-size: 11.11px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 11.11px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/protobuf/" style="font-size: 11.11px;">protobuf</a> <a href="/tags/python/" style="font-size: 10px;">python</a> <a href="/tags/redis/" style="font-size: 13.33px;">redis</a> <a href="/tags/regex/" style="font-size: 10px;">regex</a> <a href="/tags/select/" style="font-size: 11.11px;">select</a> <a href="/tags/skynet/" style="font-size: 11.11px;">skynet</a> <a href="/tags/socket/" style="font-size: 11.11px;">socket</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 15.56px;">书单</a> <a href="/tags/勘误，MySQL，C-11/" style="font-size: 10px;">勘误，MySQL，C++11</a> <a href="/tags/北京车展/" style="font-size: 10px;">北京车展</a> <a href="/tags/协程/" style="font-size: 10px;">协程</a> <a href="/tags/学习笔记/" style="font-size: 14.44px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/广州/" style="font-size: 10px;">广州</a> <a href="/tags/总结/" style="font-size: 10px;">总结</a> <a href="/tags/新西兰/" style="font-size: 10px;">新西兰</a> <a href="/tags/旅行/" style="font-size: 12.22px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 18.89px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 14.44px;">查证记录</a> <a href="/tags/游戏开发/" style="font-size: 10px;">游戏开发</a> <a href="/tags/爱好/" style="font-size: 10px;">爱好</a> <a href="/tags/生活/" style="font-size: 11.11px;">生活</a> <a href="/tags/知乎/" style="font-size: 10px;">知乎</a> <a href="/tags/程序人生/" style="font-size: 10px;">程序人生</a> <a href="/tags/读书笔记/" style="font-size: 16.67px;">读书笔记</a> <a href="/tags/读后感/" style="font-size: 10px;">读后感</a> <a href="/tags/贵州/" style="font-size: 10px;">贵州</a>
+  </div>
+</div>
+
+    
+      
+      
+
+<div class="widget recent-posts">
+  <h3 class="title">最近文章</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2017/02/27/python-regex/">Python正则表达式之一：基础</a>
+      </li>
+    
+      <li>
+        <a href="/2017/02/19/mysql-remote-connect/">MySQL设置远程访问权限</a>
+      </li>
+    
+      <li>
+        <a href="/2017/02/12/skynet-2/">探索skynet（二）：skynet如何启动一个服务</a>
+      </li>
+    
+      <li>
+        <a href="/2017/01/19/skynet-1/">探索skynet（一）：从skynet_sample说起</a>
+      </li>
+    
+      <li>
+        <a href="/2017/01/14/2016-booklist-2/">2016年下半年书单</a>
+      </li>
+    
+  </ul>
+</div>
+
+    
+      
+      
+<div class="widget tag">
+  <h3 class="title">友情链接</h3>
+  <ul class="entry">
+  
+    
+    <li><a href="http://www.linkedin.com/in/yubo-guo-739b0071" target="_blank">LinkedIn</a></li>
+  
+    
+    <li><a href="http://www.tuicool.com/sites/2emeIjb" target="_blank">推酷站点</a></li>
+  
+  </ul>
+</div>
+
+    
+  
+</aside>
+<div class="clearfix"></div>
+  <footer id="footer"><div class="copyright">
+  
+  &copy; 2017 <a href="/">Yubo Guo</a>
+  
+</div>
+<div class="theme-copyright">
+  Theme by <a href="https://github.com/orderedlist" target="_blank">orderedlist</a>
+   | 
+  Redesign by <a href="http://heroicyang.com/" target="_blank">Heroic Yang</a>
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+<script src="/js/scale.fix.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = { short_name: 'guoyb' };
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';
+    ds.async = true;
+    ds.src = 'http://static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+  (function($){
+    $('.fancybox').fancybox();
+  })(jQuery);
+</script>
+
+</body>
+</html>
