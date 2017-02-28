@@ -1,0 +1,250 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  
+  <title>Python正则表达式之二：捕获 | 一根笨茄子</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  
+    <meta name="author" content="Yubo Guo">
+  
+  
+    <meta name="description" content="在这一篇文章里，我将总结一下正则表达式关于捕获的用法。    
+捕获捕获和分组在正则表达式中有着密切的联系，一般情况下，分组即捕获，都用小括号完成（因此，小括号在正则表达式中也属于特殊字符，表达原含义时需要转义）：  
+
+(…)     正常分组，并捕获(?:…)   分组，但是不捕获">
+  
+  <meta name="description" content="在这一篇文章里，我将总结一下正则表达式关于捕获的用法。    
+捕获捕获和分组在正则表达式中有着密切的联系，一般情况下，分组即捕获，都用小括号完成（因此，小括号在正则表达式中也属于特殊字符，表达原含义时需要转义）：  
+
+(…)     正常分组，并捕获(?:…)   分组，但是不捕获">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python正则表达式之二：捕获">
+<meta property="og:url" content="http://blog.guoyb.com/2017/02/27/python-regex-2/index.html">
+<meta property="og:site_name" content="一根笨茄子">
+<meta property="og:description" content="在这一篇文章里，我将总结一下正则表达式关于捕获的用法。    
+捕获捕获和分组在正则表达式中有着密切的联系，一般情况下，分组即捕获，都用小括号完成（因此，小括号在正则表达式中也属于特殊字符，表达原含义时需要转义）：  
+
+(…)     正常分组，并捕获(?:…)   分组，但是不捕获">
+<meta property="og:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.jpg">
+<meta property="og:updated_time" content="2017-02-28T11:56:49.698Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Python正则表达式之二：捕获">
+<meta name="twitter:description" content="在这一篇文章里，我将总结一下正则表达式关于捕获的用法。    
+捕获捕获和分组在正则表达式中有着密切的联系，一般情况下，分组即捕获，都用小括号完成（因此，小括号在正则表达式中也属于特殊字符，表达原含义时需要转义）：  
+
+(…)     正常分组，并捕获(?:…)   分组，但是不捕获">
+<meta name="twitter:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.jpg">
+  
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+  
+<script type="text/javascript">
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?996ee0fca2512b4c29f37f60cf6387ca";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+</head>
+
+<body>
+  <div class="wrapper">
+    <header id="header">
+  <div class="title">
+    <h1><a href="/">一根笨茄子</a></h1>
+    <p><a href="/"></a></p>
+  </div>
+  <nav class="nav">
+    <ul>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/about">关于我</a></li>
+      
+      
+    </ul>
+    <div class="clearfix"></div>
+  </nav>
+  <div class="clearfix"></div>
+</header>
+    <div class="content">
+		<article class="post">
+  <header>
+    
+      <div class="icon"></div>
+      <a href="/2017/02/27/python-regex-2/">
+  <time datetime="2017-02-27T13:52:53.000Z">
+    2017-02-27
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title">Python正则表达式之二：捕获</h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <p>在这一篇文章里，我将总结一下正则表达式关于捕获的用法。    </p>
+<h2 id="捕获"><a href="#捕获" class="headerlink" title="捕获"></a>捕获</h2><p>捕获和分组在正则表达式中有着密切的联系，一般情况下，分组即捕获，都用小括号完成（因此，小括号在正则表达式中也属于特殊字符，表达原含义时需要转义）：  </p>
+<blockquote>
+<p>(…)     <em>正常分组，并捕获</em><br>(?:…)   <em>分组，但是不捕获</em>  </p>
+</blockquote>
+<a id="more"></a>
+<p>举个例子，假设我们需要匹配一个座机号码：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>m = re.search(<span class="string">r'^(\d&#123;3,4&#125;-)?(\d&#123;7,8&#125;)$'</span>,<span class="string">'020-82228888'</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>m.group(<span class="number">0</span>)</span><br><span class="line"><span class="string">'020-82228888'</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>m.group(<span class="number">1</span>)</span><br><span class="line"><span class="string">'020-'</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>m.group(<span class="number">2</span>)</span><br><span class="line"><span class="string">'82228888'</span></span><br></pre></td></tr></table></figure>  </p>
+<p>这里，默认分组(0)是完整的匹配，之后的分组则按出现顺序排列。  </p>
+<p>接下来，我们想在一整段文本中，找出所有的座机号码，这里需要用到re.findall:<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>re.findall(<span class="string">r'(\d&#123;3,4&#125;-)?(\d&#123;7,8&#125;)'</span>,<span class="string">'020-82228888\n0357-4227865'</span>) </span><br><span class="line">[(<span class="string">'020-'</span>, <span class="string">'82228888'</span>), (<span class="string">'0357-'</span>, <span class="string">'4227865'</span>)]</span><br></pre></td></tr></table></figure>  </p>
+<p>findall有一个特性，就是如果结果中有捕获的分组，则将捕获的分组组成tuple返回。利用这个特点，和上面提到的<em>分组，但是不捕获</em>的语法，可以得到我们想要的结果：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>re.findall(<span class="string">r'(?:\d&#123;3,4&#125;-)?\d&#123;7,8&#125;'</span>,<span class="string">'020-82228888\n0357-4227865'</span>)  </span><br><span class="line">[<span class="string">'020-82228888'</span>, <span class="string">'0357-4227865'</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>re.findall(<span class="string">r'(?:\d&#123;3,4&#125;-)?\d&#123;7,8&#125;'</span>,<span class="string">'020-82228888\n4227865'</span>)     </span><br><span class="line">[<span class="string">'020-82228888'</span>, <span class="string">'4227865'</span>]</span><br></pre></td></tr></table></figure>  </p>
+<p>在正则表达式中，也可以通过\1,\2等来指代之前捕获的字符串组合。这个经常用于单双引号的正确匹配：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>sentence = <span class="string">"""You said "why?" and I say "I don't know"."""</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>re.findall(<span class="string">r'["\'](.*?)["\']'</span>, sentence)</span><br><span class="line">[<span class="string">'why?'</span>, <span class="string">'I don'</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>re.findall(<span class="string">r'(["\'])(.*?)\1'</span>, sentence)</span><br><span class="line">[(<span class="string">'"'</span>, <span class="string">'why?'</span>), (<span class="string">'"'</span>, <span class="string">"I don't know"</span>)]</span><br></pre></td></tr></table></figure>  </p>
+<p>此外，如果觉得\1,\2这种表示可读性不好的话，还可以给捕获起一个英文名字。如下例子中，实现了两种不同的日期格式之间的转换：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>sentence = <span class="string">"from 12/22/1629 to 11/14/1643"</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>re.sub(<span class="string">r'(?P&lt;month&gt;\d&#123;2&#125;)/(?P&lt;day&gt;\d&#123;2&#125;)/(?P&lt;year&gt;\d&#123;4&#125;)'</span>, <span class="string">r'\g&lt;year&gt;-\g&lt;month&gt;-\g&lt;day&gt;'</span>, sentence)    </span><br><span class="line"><span class="string">'from 1629-12-22 to 1643-11-14'</span></span><br></pre></td></tr></table></figure>  </p>
+<p>但是，这种命名引用捕获的方式，在findall、search中却是无效的：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>sentence = <span class="string">"""You said "why?" and I say "I don't know"."""</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>re.findall(<span class="string">r'(?P&lt;quote&gt;["\'])(.*?)\g&lt;quote&gt;'</span>, sentence)     </span><br><span class="line">[]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>re.search(<span class="string">r'(?P&lt;quote&gt;["\'])(.*?)\g&lt;quote&gt;'</span>, sentence)         </span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>re.search(<span class="string">r'(?P&lt;quote&gt;["\'])(.*?)\1'</span>, sentence)        </span><br><span class="line">&lt;_sre.SRE_Match object; span=(<span class="number">9</span>, <span class="number">15</span>), match=<span class="string">'"why?"'</span>&gt;</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>re.search(<span class="string">r'(?P&lt;quote&gt;["\'])(.*?)\1'</span>, sentence).groupdict()</span><br><span class="line">&#123;<span class="string">'quote'</span>: <span class="string">'"'</span>&#125;</span><br></pre></td></tr></table></figure>  </p>
+<hr>
+<p>Python正则表达式中关于分组捕获的内容至此就总结完毕了。下一篇文章，我会继续总结一下正则表达式匹配时的贪婪/非贪婪特性。      </p>
+<p>推荐阅读：<br><a href="http://blog.guoyb.com/2017/02/27/python-regex/">Python正则表达式之一：基础</a></p>
+<p>转载请注明出处： <a href="http://blog.guoyb.com/2017/02/27/python-regex-2/">http://blog.guoyb.com/2017/02/27/python-regex-2/</a>。  </p>
+<p>欢迎使用微信扫描下方二维码，关注我的微信公众号TechTalking，技术·生活·思考：<br><img src="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.jpg" alt="后端技术小黑屋"></p>
+
+    
+  </div>
+  <footer>
+    
+      
+      
+  <div class="tags">
+    <a class="tags-link" href="/tags/Python/">Python</a>, <a class="tags-link" href="/tags/regex/">regex</a>
+  </div>
+
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+<!-- JiaThis Button BEGIN -->
+<script type="text/javascript">
+var jiathis_config = {data_track_clickback:'true'};
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?move=0&amp;uid=1706898" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+<section id="comment">
+  <h1 class="title">评论</h1>
+  <div class="ds-thread" data-title="Python正则表达式之二：捕获">
+  </div>
+</section>
+
+	</div>
+  </div>
+	<aside id="sidebar">
+  
+  
+    
+      
+      
+
+<div class="widget tagcloud first">
+  <h3 class="title">Tags</h3>
+  <div class="entry">
+    <a href="/tags/C/" style="font-size: 10px;">C</a> <a href="/tags/C/" style="font-size: 17.78px;">C++</a> <a href="/tags/C-11/" style="font-size: 17.78px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 11.11px;">MySQL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/docopt/" style="font-size: 10px;">docopt</a> <a href="/tags/echoserver/" style="font-size: 11.11px;">echoserver</a> <a href="/tags/epoll/" style="font-size: 11.11px;">epoll</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/grpc/" style="font-size: 11.11px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 11.11px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/protobuf/" style="font-size: 11.11px;">protobuf</a> <a href="/tags/python/" style="font-size: 10px;">python</a> <a href="/tags/redis/" style="font-size: 13.33px;">redis</a> <a href="/tags/regex/" style="font-size: 11.11px;">regex</a> <a href="/tags/select/" style="font-size: 11.11px;">select</a> <a href="/tags/skynet/" style="font-size: 11.11px;">skynet</a> <a href="/tags/socket/" style="font-size: 11.11px;">socket</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 15.56px;">书单</a> <a href="/tags/勘误，MySQL，C-11/" style="font-size: 10px;">勘误，MySQL，C++11</a> <a href="/tags/北京车展/" style="font-size: 10px;">北京车展</a> <a href="/tags/协程/" style="font-size: 10px;">协程</a> <a href="/tags/学习笔记/" style="font-size: 14.44px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/广州/" style="font-size: 10px;">广州</a> <a href="/tags/总结/" style="font-size: 10px;">总结</a> <a href="/tags/新西兰/" style="font-size: 10px;">新西兰</a> <a href="/tags/旅行/" style="font-size: 12.22px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 18.89px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 14.44px;">查证记录</a> <a href="/tags/游戏开发/" style="font-size: 10px;">游戏开发</a> <a href="/tags/爱好/" style="font-size: 10px;">爱好</a> <a href="/tags/生活/" style="font-size: 11.11px;">生活</a> <a href="/tags/知乎/" style="font-size: 10px;">知乎</a> <a href="/tags/程序人生/" style="font-size: 10px;">程序人生</a> <a href="/tags/读书笔记/" style="font-size: 16.67px;">读书笔记</a> <a href="/tags/读后感/" style="font-size: 10px;">读后感</a> <a href="/tags/贵州/" style="font-size: 10px;">贵州</a>
+  </div>
+</div>
+
+    
+      
+      
+
+<div class="widget recent-posts">
+  <h3 class="title">最近文章</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2017/02/27/python-regex-2/">Python正则表达式之二：捕获</a>
+      </li>
+    
+      <li>
+        <a href="/2017/02/27/python-regex/">Python正则表达式之一：基础</a>
+      </li>
+    
+      <li>
+        <a href="/2017/02/19/mysql-remote-connect/">MySQL设置远程访问权限</a>
+      </li>
+    
+      <li>
+        <a href="/2017/02/12/skynet-2/">探索skynet（二）：skynet如何启动一个服务</a>
+      </li>
+    
+      <li>
+        <a href="/2017/01/19/skynet-1/">探索skynet（一）：从skynet_sample说起</a>
+      </li>
+    
+  </ul>
+</div>
+
+    
+      
+      
+<div class="widget tag">
+  <h3 class="title">友情链接</h3>
+  <ul class="entry">
+  
+    
+    <li><a href="http://www.linkedin.com/in/yubo-guo-739b0071" target="_blank">LinkedIn</a></li>
+  
+    
+    <li><a href="http://www.tuicool.com/sites/2emeIjb" target="_blank">推酷站点</a></li>
+  
+  </ul>
+</div>
+
+    
+  
+</aside>
+<div class="clearfix"></div>
+  <footer id="footer"><div class="copyright">
+  
+  &copy; 2017 <a href="/">Yubo Guo</a>
+  
+</div>
+<div class="theme-copyright">
+  Theme by <a href="https://github.com/orderedlist" target="_blank">orderedlist</a>
+   | 
+  Redesign by <a href="http://heroicyang.com/" target="_blank">Heroic Yang</a>
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+<script src="/js/scale.fix.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = { short_name: 'guoyb' };
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';
+    ds.async = true;
+    ds.src = 'http://static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+  (function($){
+    $('.fancybox').fancybox();
+  })(jQuery);
+</script>
+
+</body>
+</html>

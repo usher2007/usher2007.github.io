@@ -10,25 +10,25 @@
     <meta name="author" content="Yubo Guo">
   
   
-    <meta name="description" content="前一阵，QA提了一个需求，我一看此需求用正则表达式最合适不过。考虑到之前每次使用正则表达式，都是临时抱佛脚，于是这次我就一遍完成任务一遍系统的学习了一遍正则表达式。主要参考PyCon2016上的一个视频Regular Expressions。我将分几篇文章对正则表达式进行总结。以下是第一部分，基础：  
+    <meta name="description" content="前一阵，QA提了一个需求，我一看此需求用正则表达式最合适不过。考虑到之前每次使用正则表达式，都是临时抱佛脚，于是这次我就一边完成任务一边系统的学习了一遍正则表达式。主要参考PyCon2016上的一个视频Regular Expressions。我将分几篇文章对正则表达式进行总结。以下是第一部分，基础：  
 基础部分
 这里总结了正则表达式最基础的用法，其中大部分内容对我（以及大部分程序员）来说都是平">
   
-  <meta name="description" content="前一阵，QA提了一个需求，我一看此需求用正则表达式最合适不过。考虑到之前每次使用正则表达式，都是临时抱佛脚，于是这次我就一遍完成任务一遍系统的学习了一遍正则表达式。主要参考PyCon2016上的一个视频Regular Expressions。我将分几篇文章对正则表达式进行总结。以下是第一部分，基础：  
+  <meta name="description" content="前一阵，QA提了一个需求，我一看此需求用正则表达式最合适不过。考虑到之前每次使用正则表达式，都是临时抱佛脚，于是这次我就一边完成任务一边系统的学习了一遍正则表达式。主要参考PyCon2016上的一个视频Regular Expressions。我将分几篇文章对正则表达式进行总结。以下是第一部分，基础：  
 基础部分
 这里总结了正则表达式最基础的用法，其中大部分内容对我（以及大部分程序员）来说都是平">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Python正则表达式之一：基础">
 <meta property="og:url" content="http://blog.guoyb.com/2017/02/27/python-regex/index.html">
 <meta property="og:site_name" content="一根笨茄子">
-<meta property="og:description" content="前一阵，QA提了一个需求，我一看此需求用正则表达式最合适不过。考虑到之前每次使用正则表达式，都是临时抱佛脚，于是这次我就一遍完成任务一遍系统的学习了一遍正则表达式。主要参考PyCon2016上的一个视频Regular Expressions。我将分几篇文章对正则表达式进行总结。以下是第一部分，基础：  
+<meta property="og:description" content="前一阵，QA提了一个需求，我一看此需求用正则表达式最合适不过。考虑到之前每次使用正则表达式，都是临时抱佛脚，于是这次我就一边完成任务一边系统的学习了一遍正则表达式。主要参考PyCon2016上的一个视频Regular Expressions。我将分几篇文章对正则表达式进行总结。以下是第一部分，基础：  
 基础部分
 这里总结了正则表达式最基础的用法，其中大部分内容对我（以及大部分程序员）来说都是平">
 <meta property="og:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.jpg">
-<meta property="og:updated_time" content="2017-02-27T13:40:27.554Z">
+<meta property="og:updated_time" content="2017-02-28T11:58:28.210Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Python正则表达式之一：基础">
-<meta name="twitter:description" content="前一阵，QA提了一个需求，我一看此需求用正则表达式最合适不过。考虑到之前每次使用正则表达式，都是临时抱佛脚，于是这次我就一遍完成任务一遍系统的学习了一遍正则表达式。主要参考PyCon2016上的一个视频Regular Expressions。我将分几篇文章对正则表达式进行总结。以下是第一部分，基础：  
+<meta name="twitter:description" content="前一阵，QA提了一个需求，我一看此需求用正则表达式最合适不过。考虑到之前每次使用正则表达式，都是临时抱佛脚，于是这次我就一边完成任务一边系统的学习了一遍正则表达式。主要参考PyCon2016上的一个视频Regular Expressions。我将分几篇文章对正则表达式进行总结。以下是第一部分，基础：  
 基础部分
 这里总结了正则表达式最基础的用法，其中大部分内容对我（以及大部分程序员）来说都是平">
 <meta name="twitter:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.jpg">
@@ -91,7 +91,7 @@ var _hmt = _hmt || [];
   <div class="entry">
     
       <hr>
-<p>前一阵，QA提了一个需求，我一看此需求用正则表达式最合适不过。考虑到之前每次使用正则表达式，都是临时抱佛脚，于是这次我就一遍完成任务一遍系统的学习了一遍正则表达式。主要参考PyCon2016上的一个视频<a href="https://www.youtube.com/watch?v=W4ReH9IPH-Q&amp;list=WL&amp;index=1&amp;t=215s" target="_blank" rel="external">Regular Expressions</a>。我将分几篇文章对正则表达式进行总结。以下是第一部分，基础：  </p>
+<p>前一阵，QA提了一个需求，我一看此需求用正则表达式最合适不过。考虑到之前每次使用正则表达式，都是临时抱佛脚，于是这次我就一边完成任务一边系统的学习了一遍正则表达式。主要参考PyCon2016上的一个视频<a href="https://www.youtube.com/watch?v=W4ReH9IPH-Q&amp;list=WL&amp;index=1&amp;t=215s" target="_blank" rel="external">Regular Expressions</a>。我将分几篇文章对正则表达式进行总结。以下是第一部分，基础：  </p>
 <h2 id="基础部分"><a href="#基础部分" class="headerlink" title="基础部分"></a>基础部分</h2><hr>
 <p>这里总结了正则表达式最基础的用法，其中大部分内容对我（以及大部分程序员）来说都是平时经常用到的，所以我就一笔带过了，只对其中的几处用例子说明。<br><a id="more"></a>  </p>
 <blockquote>
@@ -147,7 +147,7 @@ var jiathis_config = {data_track_clickback:'true'};
 <div class="widget tagcloud first">
   <h3 class="title">Tags</h3>
   <div class="entry">
-    <a href="/tags/C/" style="font-size: 10px;">C</a> <a href="/tags/C/" style="font-size: 17.78px;">C++</a> <a href="/tags/C-11/" style="font-size: 17.78px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 11.11px;">MySQL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/docopt/" style="font-size: 10px;">docopt</a> <a href="/tags/echoserver/" style="font-size: 11.11px;">echoserver</a> <a href="/tags/epoll/" style="font-size: 11.11px;">epoll</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/grpc/" style="font-size: 11.11px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 11.11px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/protobuf/" style="font-size: 11.11px;">protobuf</a> <a href="/tags/python/" style="font-size: 10px;">python</a> <a href="/tags/redis/" style="font-size: 13.33px;">redis</a> <a href="/tags/regex/" style="font-size: 10px;">regex</a> <a href="/tags/select/" style="font-size: 11.11px;">select</a> <a href="/tags/skynet/" style="font-size: 11.11px;">skynet</a> <a href="/tags/socket/" style="font-size: 11.11px;">socket</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 15.56px;">书单</a> <a href="/tags/勘误，MySQL，C-11/" style="font-size: 10px;">勘误，MySQL，C++11</a> <a href="/tags/北京车展/" style="font-size: 10px;">北京车展</a> <a href="/tags/协程/" style="font-size: 10px;">协程</a> <a href="/tags/学习笔记/" style="font-size: 14.44px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/广州/" style="font-size: 10px;">广州</a> <a href="/tags/总结/" style="font-size: 10px;">总结</a> <a href="/tags/新西兰/" style="font-size: 10px;">新西兰</a> <a href="/tags/旅行/" style="font-size: 12.22px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 18.89px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 14.44px;">查证记录</a> <a href="/tags/游戏开发/" style="font-size: 10px;">游戏开发</a> <a href="/tags/爱好/" style="font-size: 10px;">爱好</a> <a href="/tags/生活/" style="font-size: 11.11px;">生活</a> <a href="/tags/知乎/" style="font-size: 10px;">知乎</a> <a href="/tags/程序人生/" style="font-size: 10px;">程序人生</a> <a href="/tags/读书笔记/" style="font-size: 16.67px;">读书笔记</a> <a href="/tags/读后感/" style="font-size: 10px;">读后感</a> <a href="/tags/贵州/" style="font-size: 10px;">贵州</a>
+    <a href="/tags/C/" style="font-size: 10px;">C</a> <a href="/tags/C/" style="font-size: 17.78px;">C++</a> <a href="/tags/C-11/" style="font-size: 17.78px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 11.11px;">MySQL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/docopt/" style="font-size: 10px;">docopt</a> <a href="/tags/echoserver/" style="font-size: 11.11px;">echoserver</a> <a href="/tags/epoll/" style="font-size: 11.11px;">epoll</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/grpc/" style="font-size: 11.11px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 11.11px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/protobuf/" style="font-size: 11.11px;">protobuf</a> <a href="/tags/python/" style="font-size: 10px;">python</a> <a href="/tags/redis/" style="font-size: 13.33px;">redis</a> <a href="/tags/regex/" style="font-size: 11.11px;">regex</a> <a href="/tags/select/" style="font-size: 11.11px;">select</a> <a href="/tags/skynet/" style="font-size: 11.11px;">skynet</a> <a href="/tags/socket/" style="font-size: 11.11px;">socket</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 15.56px;">书单</a> <a href="/tags/勘误，MySQL，C-11/" style="font-size: 10px;">勘误，MySQL，C++11</a> <a href="/tags/北京车展/" style="font-size: 10px;">北京车展</a> <a href="/tags/协程/" style="font-size: 10px;">协程</a> <a href="/tags/学习笔记/" style="font-size: 14.44px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/广州/" style="font-size: 10px;">广州</a> <a href="/tags/总结/" style="font-size: 10px;">总结</a> <a href="/tags/新西兰/" style="font-size: 10px;">新西兰</a> <a href="/tags/旅行/" style="font-size: 12.22px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 18.89px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 14.44px;">查证记录</a> <a href="/tags/游戏开发/" style="font-size: 10px;">游戏开发</a> <a href="/tags/爱好/" style="font-size: 10px;">爱好</a> <a href="/tags/生活/" style="font-size: 11.11px;">生活</a> <a href="/tags/知乎/" style="font-size: 10px;">知乎</a> <a href="/tags/程序人生/" style="font-size: 10px;">程序人生</a> <a href="/tags/读书笔记/" style="font-size: 16.67px;">读书笔记</a> <a href="/tags/读后感/" style="font-size: 10px;">读后感</a> <a href="/tags/贵州/" style="font-size: 10px;">贵州</a>
   </div>
 </div>
 
@@ -158,6 +158,10 @@ var jiathis_config = {data_track_clickback:'true'};
 <div class="widget recent-posts">
   <h3 class="title">最近文章</h3>
   <ul class="entry">
+    
+      <li>
+        <a href="/2017/02/27/python-regex-2/">Python正则表达式之二：捕获</a>
+      </li>
     
       <li>
         <a href="/2017/02/27/python-regex/">Python正则表达式之一：基础</a>
@@ -173,10 +177,6 @@ var jiathis_config = {data_track_clickback:'true'};
     
       <li>
         <a href="/2017/01/19/skynet-1/">探索skynet（一）：从skynet_sample说起</a>
-      </li>
-    
-      <li>
-        <a href="/2017/01/14/2016-booklist-2/">2016年下半年书单</a>
       </li>
     
   </ul>
