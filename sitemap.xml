@@ -2,16 +2,23 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>http://blog.guoyb.com/2017/03/02/paojiao/</loc>
+    <loc>http://blog.guoyb.com/2017/03/06/python-regex-4/</loc>
     
-    <lastmod>2017-03-04T02:35:00.728Z</lastmod>
+    <lastmod>2017-03-06T12:36:19.542Z</lastmod>
     
   </url>
   
   <url>
     <loc>http://blog.guoyb.com/2017/03/01/python-regex-3/</loc>
     
-    <lastmod>2017-03-01T12:32:58.842Z</lastmod>
+    <lastmod>2017-03-06T12:19:32.492Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://blog.guoyb.com/2017/03/02/paojiao/</loc>
+    
+    <lastmod>2017-03-04T02:35:00.728Z</lastmod>
     
   </url>
   

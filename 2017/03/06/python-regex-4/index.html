@@ -1,0 +1,251 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  
+  <title>Python正则表达式之三：re模块 | 一根笨茄子</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  
+    <meta name="author" content="Yubo Guo">
+  
+  
+    <meta name="description" content="在这一篇文章里，我将总结一下Python中re模块的基本用法。 
+rere.search最最基本的用法就是re.search了，在前面的三篇文章中，我们也已经见过多次，这里就不再赘述了。  
+re.sub使用正则表达式进行查找替换，正是re.sub的功能。  
+例如，下面这个例子，将格式化列与之间逗号的用法：123&amp;gt;&amp;gt;&amp;gt; row = &quot;column 1,column 2, co">
+  
+  <meta name="description" content="在这一篇文章里，我将总结一下Python中re模块的基本用法。 
+rere.search最最基本的用法就是re.search了，在前面的三篇文章中，我们也已经见过多次，这里就不再赘述了。  
+re.sub使用正则表达式进行查找替换，正是re.sub的功能。  
+例如，下面这个例子，将格式化列与之间逗号的用法：123&amp;gt;&amp;gt;&amp;gt; row = &quot;column 1,column 2, co">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python正则表达式之三：re模块">
+<meta property="og:url" content="http://blog.guoyb.com/2017/03/06/python-regex-4/index.html">
+<meta property="og:site_name" content="一根笨茄子">
+<meta property="og:description" content="在这一篇文章里，我将总结一下Python中re模块的基本用法。 
+rere.search最最基本的用法就是re.search了，在前面的三篇文章中，我们也已经见过多次，这里就不再赘述了。  
+re.sub使用正则表达式进行查找替换，正是re.sub的功能。  
+例如，下面这个例子，将格式化列与之间逗号的用法：123&amp;gt;&amp;gt;&amp;gt; row = &quot;column 1,column 2, co">
+<meta property="og:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.jpg">
+<meta property="og:updated_time" content="2017-03-06T12:36:19.542Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Python正则表达式之三：re模块">
+<meta name="twitter:description" content="在这一篇文章里，我将总结一下Python中re模块的基本用法。 
+rere.search最最基本的用法就是re.search了，在前面的三篇文章中，我们也已经见过多次，这里就不再赘述了。  
+re.sub使用正则表达式进行查找替换，正是re.sub的功能。  
+例如，下面这个例子，将格式化列与之间逗号的用法：123&amp;gt;&amp;gt;&amp;gt; row = &quot;column 1,column 2, co">
+<meta name="twitter:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.jpg">
+  
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+  
+<script type="text/javascript">
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?996ee0fca2512b4c29f37f60cf6387ca";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+</head>
+
+<body>
+  <div class="wrapper">
+    <header id="header">
+  <div class="title">
+    <h1><a href="/">一根笨茄子</a></h1>
+    <p><a href="/"></a></p>
+  </div>
+  <nav class="nav">
+    <ul>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/about">关于我</a></li>
+      
+      
+    </ul>
+    <div class="clearfix"></div>
+  </nav>
+  <div class="clearfix"></div>
+</header>
+    <div class="content">
+		<article class="post">
+  <header>
+    
+      <div class="icon"></div>
+      <a href="/2017/03/06/python-regex-4/">
+  <time datetime="2017-03-06T10:58:53.000Z">
+    2017-03-06
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title">Python正则表达式之三：re模块</h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>在这一篇文章里，我将总结一下Python中re模块的基本用法。 </p>
+<h2 id="re"><a href="#re" class="headerlink" title="re"></a>re</h2><h3 id="re-search"><a href="#re-search" class="headerlink" title="re.search"></a>re.search</h3><p>最最基本的用法就是re.search了，在前面的三篇文章中，我们也已经见过多次，这里就不再赘述了。  </p>
+<h3 id="re-sub"><a href="#re-sub" class="headerlink" title="re.sub"></a>re.sub</h3><p>使用正则表达式进行查找替换，正是re.sub的功能。  </p>
+<p>例如，下面这个例子，将格式化列与之间逗号的用法：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>row = <span class="string">"column 1,column 2, column 3"</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>re.sub(<span class="string">r',\s*'</span>, <span class="string">','</span>, row)</span><br><span class="line"><span class="string">'column 1,column 2,column 3'</span></span><br></pre></td></tr></table></figure></p>
+<p>下面这个例子更复杂一些，配合正则表达式中的捕获和引用特性，可以方便的转换日期格式：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>sentence = <span class="string">"from 12/22/1629 to 11/14/1643"</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>re.sub(<span class="string">r'(\d&#123;2&#125;)/(\d&#123;2&#125;)/(\d&#123;4&#125;)'</span>, <span class="string">r'\3-\1-\2'</span>, sentence)</span><br><span class="line"><span class="string">'from 1629-12-22 to 1643-11-14'</span></span><br></pre></td></tr></table></figure> </p>
+<h3 id="re-split"><a href="#re-split" class="headerlink" title="re.split"></a>re.split</h3><a id="more"></a>
+<p>re.split，算是string.split的正则表达式增强版。  </p>
+<p>例如，对于如下的格式不太规范的逗号分隔的列，就可以用re.split分割出正确的列内容，比用re.findall简洁得多：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>re.findall(<span class="string">r'([^,]*)(?:,\s*|$)'</span>, <span class="string">'column1, column2,column3'</span>)</span><br><span class="line">[<span class="string">'column1'</span>, <span class="string">'column2'</span>, <span class="string">'column3'</span>, <span class="string">''</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>re.split(<span class="string">r',\s*'</span>, <span class="string">'column1, column2,column3'</span>)</span><br><span class="line">[<span class="string">'column1'</span>, <span class="string">'column2'</span>, <span class="string">'column3'</span>]</span><br></pre></td></tr></table></figure>  </p>
+<h3 id="re-compile"><a href="#re-compile" class="headerlink" title="re.compile"></a>re.compile</h3><p>如果一个正则表达式会被多次用到，那么最好使用re.compile预先创建好一个正则对象，这样执行效率更高。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>COMMA_RE = re.compile(<span class="string">r',\s*'</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>COMMA_RE.split(<span class="string">'column1, column2,column3'</span>)</span><br><span class="line">[<span class="string">'column1'</span>, <span class="string">'column2'</span>, <span class="string">'column3'</span>]</span><br></pre></td></tr></table></figure>  </p>
+<h3 id="re-IGNORECASE和re-VERBOSE"><a href="#re-IGNORECASE和re-VERBOSE" class="headerlink" title="re.IGNORECASE和re.VERBOSE"></a>re.IGNORECASE和re.VERBOSE</h3><p>re.IGNORECASE很简单，就是在匹配的过程中忽略大小写，就不单独举例了。<br>re.VERBOSE主要解决的是复杂的正则表达式可读性差的问题。使用re.VERBOSE之后，正则表达式字符串中可以使用空格、换行等空白字符隔开各个子部分，增强可读性。例如，如下的正则表达式，匹配了一个uuid字符串：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">is_valid_uuid</span><span class="params">(uuid)</span>:</span></span><br><span class="line">    hex_re = <span class="string">r'[ a-f \d ]'</span></span><br><span class="line">    uuid_re = <span class="string">r'''</span><br><span class="line">        ^               # beginning of string</span><br><span class="line">        &#123;hex&#125; 8     # 8 hexadecimal digits</span><br><span class="line">        -               # dash character</span><br><span class="line">        &#123;hex&#125; 4     # 4 hexadecimal digits</span><br><span class="line">        -               # dash character</span><br><span class="line">        &#123;hex&#125; 4     # 4 hexadecimal digits</span><br><span class="line">        -               # dash character</span><br><span class="line">        &#123;hex&#125; 4     # 4 hexadecimal digits</span><br><span class="line">        -               # dash character</span><br><span class="line">        &#123;hex&#125; 12    # 12 hexadecimal digits</span><br><span class="line">        $               # end of string</span><br><span class="line">    '''</span>.format(hex=hex_re)</span><br><span class="line">    uuid_regex = (uuid_re)</span><br><span class="line">    <span class="keyword">return</span> bool(re.search(uuid_regex, uuid, re.IGNORECASE | re.VERBOSE))</span><br></pre></td></tr></table></figure> </p>
+<p>这里用{ {8} }是因为format函数中对于{}有特殊含义（占位符），所以这需要转义一次。  </p>
+<hr>
+<p>至此，对Python正则表达式的介绍就告一段落了。更多的细节，当然首推Python的官方文档。  </p>
+<p>在使用正则表达式的过程中，经常会出现当时写的爽，过后再看就犯迷糊的情况，这罪魁祸首就是可读性差。虽然借助re.VERBOSE和注释，可以部分缓解这一问题，但是依然不够理想。  </p>
+<p>前一段时间阅读skynet源码，发现云风在解析skynet config文件时，用到了一个叫lpeg的lua库来进行字符串的模式匹配。lpeg相比于裸正则表达式的优点在于，它可以将一个复杂的模式切分成若干个子部分，并且分别对其命名，然后像拼接字符串一样对各个子模块进行组合，可读性很好。当然，已经有前辈帮我们将其移植到了Python中，有兴趣的读者可以点击<a href="https://pypi.python.org/pypi/PPeg/0.9.3" target="_blank" rel="external">这里</a>玩玩。    </p>
+<p>推荐阅读：<br><a href="http://blog.guoyb.com/2017/02/27/python-regex/">Python正则表达式之一：基础</a><br><a href="http://blog.guoyb.com/2017/02/27/python-regex-2/">Python正则表达式之二：捕获</a><br><a href="http://blog.guoyb.com/2017/03/01/python-regex-3/">Python正则表达式之三：贪婪</a>  </p>
+<p>转载请注明出处： <a href="http://blog.guoyb.com/2017/03/06/python-regex-4/">http://blog.guoyb.com/2017/03/06/python-regex-4/</a>。  </p>
+<p>欢迎使用微信扫描下方二维码，关注我的微信公众号TechTalking，技术·生活·思考：<br><img src="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.jpg" alt="后端技术小黑屋"></p>
+
+    
+  </div>
+  <footer>
+    
+      
+      
+  <div class="tags">
+    <a class="tags-link" href="/tags/Python/">Python</a>, <a class="tags-link" href="/tags/regex/">regex</a>
+  </div>
+
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+<!-- JiaThis Button BEGIN -->
+<script type="text/javascript">
+var jiathis_config = {data_track_clickback:'true'};
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?move=0&amp;uid=1706898" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+<section id="comment">
+  <h1 class="title">评论</h1>
+  <div class="ds-thread" data-title="Python正则表达式之三：re模块">
+  </div>
+</section>
+
+	</div>
+  </div>
+	<aside id="sidebar">
+  
+  
+    
+      
+      
+
+<div class="widget tagcloud first">
+  <h3 class="title">Tags</h3>
+  <div class="entry">
+    <a href="/tags/C/" style="font-size: 10px;">C</a> <a href="/tags/C/" style="font-size: 17.78px;">C++</a> <a href="/tags/C-11/" style="font-size: 17.78px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 11.11px;">MySQL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/docopt/" style="font-size: 10px;">docopt</a> <a href="/tags/echoserver/" style="font-size: 11.11px;">echoserver</a> <a href="/tags/epoll/" style="font-size: 11.11px;">epoll</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/grpc/" style="font-size: 11.11px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 11.11px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/protobuf/" style="font-size: 11.11px;">protobuf</a> <a href="/tags/python/" style="font-size: 10px;">python</a> <a href="/tags/redis/" style="font-size: 13.33px;">redis</a> <a href="/tags/regex/" style="font-size: 13.33px;">regex</a> <a href="/tags/select/" style="font-size: 11.11px;">select</a> <a href="/tags/skynet/" style="font-size: 11.11px;">skynet</a> <a href="/tags/socket/" style="font-size: 11.11px;">socket</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 15.56px;">书单</a> <a href="/tags/勘误，MySQL，C-11/" style="font-size: 10px;">勘误，MySQL，C++11</a> <a href="/tags/北京车展/" style="font-size: 10px;">北京车展</a> <a href="/tags/协程/" style="font-size: 10px;">协程</a> <a href="/tags/学习笔记/" style="font-size: 14.44px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/广州/" style="font-size: 10px;">广州</a> <a href="/tags/总结/" style="font-size: 10px;">总结</a> <a href="/tags/新西兰/" style="font-size: 10px;">新西兰</a> <a href="/tags/旅行/" style="font-size: 12.22px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 18.89px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 14.44px;">查证记录</a> <a href="/tags/游戏开发/" style="font-size: 10px;">游戏开发</a> <a href="/tags/爱好/" style="font-size: 10px;">爱好</a> <a href="/tags/生活/" style="font-size: 12.22px;">生活</a> <a href="/tags/知乎/" style="font-size: 10px;">知乎</a> <a href="/tags/程序人生/" style="font-size: 10px;">程序人生</a> <a href="/tags/读书笔记/" style="font-size: 16.67px;">读书笔记</a> <a href="/tags/读后感/" style="font-size: 10px;">读后感</a> <a href="/tags/贵州/" style="font-size: 10px;">贵州</a>
+  </div>
+</div>
+
+    
+      
+      
+
+<div class="widget recent-posts">
+  <h3 class="title">最近文章</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2017/03/06/python-regex-4/">Python正则表达式之三：re模块</a>
+      </li>
+    
+      <li>
+        <a href="/2017/03/02/paojiao/">一次泡脚引发的“命案”</a>
+      </li>
+    
+      <li>
+        <a href="/2017/03/01/python-regex-3/">Python正则表达式之三：贪婪</a>
+      </li>
+    
+      <li>
+        <a href="/2017/02/27/python-regex-2/">Python正则表达式之二：捕获</a>
+      </li>
+    
+      <li>
+        <a href="/2017/02/27/python-regex/">Python正则表达式之一：基础</a>
+      </li>
+    
+  </ul>
+</div>
+
+    
+      
+      
+<div class="widget tag">
+  <h3 class="title">友情链接</h3>
+  <ul class="entry">
+  
+    
+    <li><a href="http://www.linkedin.com/in/yubo-guo-739b0071" target="_blank">LinkedIn</a></li>
+  
+    
+    <li><a href="http://www.tuicool.com/sites/2emeIjb" target="_blank">推酷站点</a></li>
+  
+  </ul>
+</div>
+
+    
+  
+</aside>
+<div class="clearfix"></div>
+  <footer id="footer"><div class="copyright">
+  
+  &copy; 2017 <a href="/">Yubo Guo</a>
+  
+</div>
+<div class="theme-copyright">
+  Theme by <a href="https://github.com/orderedlist" target="_blank">orderedlist</a>
+   | 
+  Redesign by <a href="http://heroicyang.com/" target="_blank">Heroic Yang</a>
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+<script src="/js/scale.fix.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = { short_name: 'guoyb' };
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';
+    ds.async = true;
+    ds.src = 'http://static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+  (function($){
+    $('.fancybox').fancybox();
+  })(jQuery);
+</script>
+
+</body>
+</html>
