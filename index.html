@@ -63,6 +63,50 @@ var _hmt = _hmt || [];
   <header>
     
       <div class="icon"></div>
+      <a href="/2017/03/08/skynet-3/">
+  <time datetime="2017-03-08T11:03:32.000Z">
+    2017-03-08
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title"><a href="/2017/03/08/skynet-3/">探索skynet（三）：消息队列</a></h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>skynet框架底层使用消息队列作为各个服务之间通信的工具，之前在<a href="http://blog.guoyb.com/2017/02/12/skynet-2/">探索skynet如何启动一个服务</a>时也提到了创建skynet_context时会初始化一个队列，并且也笼统的提到了如何为一个服务设置callback。那么接下来就详细的看看，skynet里有关消息队列的部分是如何设计和实现的。  </p>
+<h2 id="基础结构"><a href="#基础结构" class="headerlink" title="基础结构"></a>基础结构</h2><p>skynet中有关消息队列的实现主要放在skynet_mq.c中。<br><figure class="highlight c"><figcaption><span>skynet_mq.c</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> message_queue &#123;</span><br><span class="line">	<span class="keyword">struct</span> spinlock lock;</span><br><span class="line">	<span class="keyword">uint32_t</span> handle;</span><br><span class="line">	<span class="keyword">int</span> cap;</span><br><span class="line">	<span class="keyword">int</span> head;</span><br><span class="line">	<span class="keyword">int</span> tail;</span><br><span class="line">	<span class="keyword">int</span> release;</span><br><span class="line">	<span class="keyword">int</span> in_global;</span><br><span class="line">	<span class="keyword">int</span> overload;</span><br><span class="line">	<span class="keyword">int</span> overload_threshold;</span><br><span class="line">	<span class="keyword">struct</span> skynet_message *<span class="built_in">queue</span>;</span><br><span class="line">	<span class="keyword">struct</span> message_queue *next;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> global_queue &#123;</span><br><span class="line">	<span class="keyword">struct</span> message_queue *head;</span><br><span class="line">	<span class="keyword">struct</span> message_queue *tail;</span><br><span class="line">	<span class="keyword">struct</span> spinlock lock;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure><br>
+    
+  </div>
+  <footer class="end-sep">
+    
+      
+        <div class="alignleft">
+          <a href="/2017/03/08/skynet-3/#more" class="more-link">阅读全文</a>
+        </div>
+      
+      
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+<!-- JiaThis Button BEGIN -->
+<script type="text/javascript">
+var jiathis_config = {data_track_clickback:'true'};
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?move=0&amp;uid=1706898" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+
+  <article class="post">
+  <header>
+    
+      <div class="icon"></div>
       <a href="/2017/03/06/python-regex-4/">
   <time datetime="2017-03-06T10:58:53.000Z">
     2017-03-06
@@ -91,7 +135,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2017/03/06/python-regex-4/#more" class="more-link">Read More</a>
+          <a href="/2017/03/06/python-regex-4/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -136,7 +180,7 @@ var jiathis_config = {data_track_clickback:'true'};
     
       
         <div class="alignleft">
-          <a href="/2017/03/02/paojiao/#more" class="more-link">Read More</a>
+          <a href="/2017/03/02/paojiao/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -180,7 +224,7 @@ var jiathis_config = {data_track_clickback:'true'};
     
       
         <div class="alignleft">
-          <a href="/2017/03/01/python-regex-3/#more" class="more-link">Read More</a>
+          <a href="/2017/03/01/python-regex-3/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -227,7 +271,7 @@ var jiathis_config = {data_track_clickback:'true'};
     
       
         <div class="alignleft">
-          <a href="/2017/02/27/python-regex-2/#more" class="more-link">Read More</a>
+          <a href="/2017/02/27/python-regex-2/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -272,7 +316,7 @@ var jiathis_config = {data_track_clickback:'true'};
     
       
         <div class="alignleft">
-          <a href="/2017/02/27/python-regex/#more" class="more-link">Read More</a>
+          <a href="/2017/02/27/python-regex/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -315,7 +359,7 @@ var jiathis_config = {data_track_clickback:'true'};
     
       
         <div class="alignleft">
-          <a href="/2017/02/19/mysql-remote-connect/#more" class="more-link">Read More</a>
+          <a href="/2017/02/19/mysql-remote-connect/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -359,7 +403,7 @@ var jiathis_config = {data_track_clickback:'true'};
     
       
         <div class="alignleft">
-          <a href="/2017/02/12/skynet-2/#more" class="more-link">Read More</a>
+          <a href="/2017/02/12/skynet-2/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -404,7 +448,7 @@ var jiathis_config = {data_track_clickback:'true'};
     
       
         <div class="alignleft">
-          <a href="/2017/01/19/skynet-1/#more" class="more-link">Read More</a>
+          <a href="/2017/01/19/skynet-1/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -450,52 +494,7 @@ var jiathis_config = {data_track_clickback:'true'};
     
       
         <div class="alignleft">
-          <a href="/2017/01/14/2016-booklist-2/#more" class="more-link">Read More</a>
-        </div>
-      
-      
-    
-    <div class="clearfix"></div>
-  </footer>
-</article>
-<!-- JiaThis Button BEGIN -->
-<script type="text/javascript">
-var jiathis_config = {data_track_clickback:'true'};
-</script>
-<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?move=0&amp;uid=1706898" charset="utf-8"></script>
-<!-- JiaThis Button END -->
-
-
-  <article class="post">
-  <header>
-    
-      <div class="icon"></div>
-      <a href="/2017/01/09/stat-codes/">
-  <time datetime="2017-01-09T00:13:44.000Z">
-    2017-01-09
-  </time>
-</a>
-    
-    
-  
-    <h1 class="title"><a href="/2017/01/09/stat-codes/">这些年，你写了多少行代码</a></h1>
-  
-
-  </header>
-  
-  <div class="entry">
-    
-      <hr>
-<p>又到了辞旧迎新的时候。最近已经被各路大拿的总结砸的晕头转向了，心想人家的2016为何能做那么多事那么精彩呢？不过还好，我有“幸存者偏差”这一法宝安慰自己……  </p>
-<p>言归正传，前一阵突然想到，自己进入项目组已经差不多两年了，不如用最朴素的方式——统计代码行数——来总结下吧。  </p>
-<p>虽然目前已经有各种各样的工具可以做这件事情，不过自己写一个应该也很快，说不定还有其他发现呢。<br>
-    
-  </div>
-  <footer class="end-sep">
-    
-      
-        <div class="alignleft">
-          <a href="/2017/01/09/stat-codes/#more" class="more-link">Read More</a>
+          <a href="/2017/01/14/2016-booklist-2/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -515,7 +514,7 @@ var jiathis_config = {data_track_clickback:'true'};
 <nav id="pagination">
   
   
-    <a href="/page/2/" class="next">Next</a>
+    <a href="/page/2/" class="next">下一页</a>
   
   <div class="clearfix"></div>
 </nav>
@@ -531,7 +530,7 @@ var jiathis_config = {data_track_clickback:'true'};
 <div class="widget tagcloud first">
   <h3 class="title">Tags</h3>
   <div class="entry">
-    <a href="/tags/C/" style="font-size: 10px;">C</a> <a href="/tags/C/" style="font-size: 17.78px;">C++</a> <a href="/tags/C-11/" style="font-size: 17.78px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 11.11px;">MySQL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/docopt/" style="font-size: 10px;">docopt</a> <a href="/tags/echoserver/" style="font-size: 11.11px;">echoserver</a> <a href="/tags/epoll/" style="font-size: 11.11px;">epoll</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/grpc/" style="font-size: 11.11px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 11.11px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/protobuf/" style="font-size: 11.11px;">protobuf</a> <a href="/tags/python/" style="font-size: 10px;">python</a> <a href="/tags/redis/" style="font-size: 13.33px;">redis</a> <a href="/tags/regex/" style="font-size: 13.33px;">regex</a> <a href="/tags/select/" style="font-size: 11.11px;">select</a> <a href="/tags/skynet/" style="font-size: 11.11px;">skynet</a> <a href="/tags/socket/" style="font-size: 11.11px;">socket</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 15.56px;">书单</a> <a href="/tags/勘误，MySQL，C-11/" style="font-size: 10px;">勘误，MySQL，C++11</a> <a href="/tags/北京车展/" style="font-size: 10px;">北京车展</a> <a href="/tags/协程/" style="font-size: 10px;">协程</a> <a href="/tags/学习笔记/" style="font-size: 14.44px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/广州/" style="font-size: 10px;">广州</a> <a href="/tags/总结/" style="font-size: 10px;">总结</a> <a href="/tags/新西兰/" style="font-size: 10px;">新西兰</a> <a href="/tags/旅行/" style="font-size: 12.22px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 18.89px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 14.44px;">查证记录</a> <a href="/tags/游戏开发/" style="font-size: 10px;">游戏开发</a> <a href="/tags/爱好/" style="font-size: 10px;">爱好</a> <a href="/tags/生活/" style="font-size: 12.22px;">生活</a> <a href="/tags/知乎/" style="font-size: 10px;">知乎</a> <a href="/tags/程序人生/" style="font-size: 10px;">程序人生</a> <a href="/tags/读书笔记/" style="font-size: 16.67px;">读书笔记</a> <a href="/tags/读后感/" style="font-size: 10px;">读后感</a> <a href="/tags/贵州/" style="font-size: 10px;">贵州</a>
+    <a href="/tags/C/" style="font-size: 10px;">C</a> <a href="/tags/C/" style="font-size: 17.78px;">C++</a> <a href="/tags/C-11/" style="font-size: 17.78px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 11.11px;">MySQL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/docopt/" style="font-size: 10px;">docopt</a> <a href="/tags/echoserver/" style="font-size: 11.11px;">echoserver</a> <a href="/tags/epoll/" style="font-size: 11.11px;">epoll</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/grpc/" style="font-size: 11.11px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 11.11px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/protobuf/" style="font-size: 11.11px;">protobuf</a> <a href="/tags/python/" style="font-size: 10px;">python</a> <a href="/tags/redis/" style="font-size: 13.33px;">redis</a> <a href="/tags/regex/" style="font-size: 13.33px;">regex</a> <a href="/tags/select/" style="font-size: 11.11px;">select</a> <a href="/tags/skynet/" style="font-size: 12.22px;">skynet</a> <a href="/tags/socket/" style="font-size: 11.11px;">socket</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 15.56px;">书单</a> <a href="/tags/勘误，MySQL，C-11/" style="font-size: 10px;">勘误，MySQL，C++11</a> <a href="/tags/北京车展/" style="font-size: 10px;">北京车展</a> <a href="/tags/协程/" style="font-size: 10px;">协程</a> <a href="/tags/学习笔记/" style="font-size: 14.44px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/广州/" style="font-size: 10px;">广州</a> <a href="/tags/总结/" style="font-size: 10px;">总结</a> <a href="/tags/新西兰/" style="font-size: 10px;">新西兰</a> <a href="/tags/旅行/" style="font-size: 12.22px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 18.89px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 14.44px;">查证记录</a> <a href="/tags/游戏开发/" style="font-size: 10px;">游戏开发</a> <a href="/tags/爱好/" style="font-size: 10px;">爱好</a> <a href="/tags/生活/" style="font-size: 12.22px;">生活</a> <a href="/tags/知乎/" style="font-size: 10px;">知乎</a> <a href="/tags/程序人生/" style="font-size: 10px;">程序人生</a> <a href="/tags/读书笔记/" style="font-size: 16.67px;">读书笔记</a> <a href="/tags/读后感/" style="font-size: 10px;">读后感</a> <a href="/tags/贵州/" style="font-size: 10px;">贵州</a>
   </div>
 </div>
 
@@ -542,6 +541,10 @@ var jiathis_config = {data_track_clickback:'true'};
 <div class="widget recent-posts">
   <h3 class="title">最近文章</h3>
   <ul class="entry">
+    
+      <li>
+        <a href="/2017/03/08/skynet-3/">探索skynet（三）：消息队列</a>
+      </li>
     
       <li>
         <a href="/2017/03/06/python-regex-4/">Python正则表达式之四：re模块</a>
@@ -557,10 +560,6 @@ var jiathis_config = {data_track_clickback:'true'};
     
       <li>
         <a href="/2017/02/27/python-regex-2/">Python正则表达式之二：捕获</a>
-      </li>
-    
-      <li>
-        <a href="/2017/02/27/python-regex/">Python正则表达式之一：基础</a>
       </li>
     
   </ul>

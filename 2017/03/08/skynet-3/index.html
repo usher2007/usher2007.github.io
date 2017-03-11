@@ -1,0 +1,248 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  
+  <title>探索skynet（三）：消息队列 | 一根笨茄子</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  
+    <meta name="author" content="Yubo Guo">
+  
+  
+    <meta name="description" content="skynet框架底层使用消息队列作为各个服务之间通信的工具，之前在探索skynet如何启动一个服务时也提到了创建skynet_context时会初始化一个队列，并且也笼统的提到了如何为一个服务设置callback。那么接下来就详细的看看，skynet里有关消息队列的部分是如何设计和实现的。  
+基础结构skynet中有关消息队列的实现主要放在skynet_mq.c中。skynet_mq.c123">
+  
+  <meta name="description" content="skynet框架底层使用消息队列作为各个服务之间通信的工具，之前在探索skynet如何启动一个服务时也提到了创建skynet_context时会初始化一个队列，并且也笼统的提到了如何为一个服务设置callback。那么接下来就详细的看看，skynet里有关消息队列的部分是如何设计和实现的。  
+基础结构skynet中有关消息队列的实现主要放在skynet_mq.c中。skynet_mq.c123">
+<meta property="og:type" content="article">
+<meta property="og:title" content="探索skynet（三）：消息队列">
+<meta property="og:url" content="http://blog.guoyb.com/2017/03/08/skynet-3/index.html">
+<meta property="og:site_name" content="一根笨茄子">
+<meta property="og:description" content="skynet框架底层使用消息队列作为各个服务之间通信的工具，之前在探索skynet如何启动一个服务时也提到了创建skynet_context时会初始化一个队列，并且也笼统的提到了如何为一个服务设置callback。那么接下来就详细的看看，skynet里有关消息队列的部分是如何设计和实现的。  
+基础结构skynet中有关消息队列的实现主要放在skynet_mq.c中。skynet_mq.c123">
+<meta property="og:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.png">
+<meta property="og:updated_time" content="2017-03-11T01:01:46.602Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="探索skynet（三）：消息队列">
+<meta name="twitter:description" content="skynet框架底层使用消息队列作为各个服务之间通信的工具，之前在探索skynet如何启动一个服务时也提到了创建skynet_context时会初始化一个队列，并且也笼统的提到了如何为一个服务设置callback。那么接下来就详细的看看，skynet里有关消息队列的部分是如何设计和实现的。  
+基础结构skynet中有关消息队列的实现主要放在skynet_mq.c中。skynet_mq.c123">
+<meta name="twitter:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.png">
+  
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+  
+<script type="text/javascript">
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?996ee0fca2512b4c29f37f60cf6387ca";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+</head>
+
+<body>
+  <div class="wrapper">
+    <header id="header">
+  <div class="title">
+    <h1><a href="/">一根笨茄子</a></h1>
+    <p><a href="/"></a></p>
+  </div>
+  <nav class="nav">
+    <ul>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/about">关于我</a></li>
+      
+      
+    </ul>
+    <div class="clearfix"></div>
+  </nav>
+  <div class="clearfix"></div>
+</header>
+    <div class="content">
+		<article class="post">
+  <header>
+    
+      <div class="icon"></div>
+      <a href="/2017/03/08/skynet-3/">
+  <time datetime="2017-03-08T11:03:32.000Z">
+    2017-03-08
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title">探索skynet（三）：消息队列</h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>skynet框架底层使用消息队列作为各个服务之间通信的工具，之前在<a href="http://blog.guoyb.com/2017/02/12/skynet-2/">探索skynet如何启动一个服务</a>时也提到了创建skynet_context时会初始化一个队列，并且也笼统的提到了如何为一个服务设置callback。那么接下来就详细的看看，skynet里有关消息队列的部分是如何设计和实现的。  </p>
+<h2 id="基础结构"><a href="#基础结构" class="headerlink" title="基础结构"></a>基础结构</h2><p>skynet中有关消息队列的实现主要放在skynet_mq.c中。<br><figure class="highlight c"><figcaption><span>skynet_mq.c</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> message_queue &#123;</span><br><span class="line">	<span class="keyword">struct</span> spinlock lock;</span><br><span class="line">	<span class="keyword">uint32_t</span> handle;</span><br><span class="line">	<span class="keyword">int</span> cap;</span><br><span class="line">	<span class="keyword">int</span> head;</span><br><span class="line">	<span class="keyword">int</span> tail;</span><br><span class="line">	<span class="keyword">int</span> release;</span><br><span class="line">	<span class="keyword">int</span> in_global;</span><br><span class="line">	<span class="keyword">int</span> overload;</span><br><span class="line">	<span class="keyword">int</span> overload_threshold;</span><br><span class="line">	<span class="keyword">struct</span> skynet_message *<span class="built_in">queue</span>;</span><br><span class="line">	<span class="keyword">struct</span> message_queue *next;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> global_queue &#123;</span><br><span class="line">	<span class="keyword">struct</span> message_queue *head;</span><br><span class="line">	<span class="keyword">struct</span> message_queue *tail;</span><br><span class="line">	<span class="keyword">struct</span> spinlock lock;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure><br><a id="more"></a><br>在skynet的设计中，有一个全局队列global_queue，其中保存了<strong>非空</strong>的各个服务的消息队列message_queue。  </p>
+<p>message_queue中的handle，就是对应服务的handle，可以通过它找到对应服务的skynet_context。  </p>
+<p>在两个队列的实现部分，全局队列使用链表，而服务队列则是使用了动态数组模拟一个循环队列，并且在动态数组被填满时（head==tail)，自动进行了扩充。所有这些内容，都不会超过大学数据结构课程的范畴，而云风大大的实现，简洁而完整，堪称典范。  </p>
+<h2 id="自旋锁"><a href="#自旋锁" class="headerlink" title="自旋锁"></a>自旋锁</h2><p>这其中，由于skynet底层是一个多线程的架构，所以在对队列进行操作时，使用了自旋锁（SPINLOCK）。</p>
+<p>SPINLOCK的实现在spinlock.h中，提供了两种实现。一种利用gcc的__sync_lock_test_and_set原子操作，实现循环检测的自旋锁（spinlock）。而另一种，则直接利用了互斥锁pthread_mutex_t，但是也提供了统一的接口，通过编译条件选择，便于测试性能。说到自旋锁，它和互斥锁的区别主要在于，自旋锁在加锁等待时并不会切换当前线程的上下文，而是忙等待（busy-waiting）：<br><figure class="highlight c"><figcaption><span>spinlock.h</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">inline</span> <span class="keyword">void</span></span><br><span class="line"><span class="title">spinlock_lock</span><span class="params">(<span class="keyword">struct</span> spinlock *lock)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">while</span> (__sync_lock_test_and_set(&amp;lock-&gt;lock,<span class="number">1</span>)) &#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>  </p>
+<p>从实现上也可以看出，自旋锁在等待时，实际上一直在进行循环。  </p>
+<p>由于自旋锁不会切换线程上下文（睡眠），所以自旋锁的加锁效率要更高，但是也会导致CPU使用率增高。一般多核服务器、每次加锁等待时间不长时，适合使用自旋锁来提高执行效率。  </p>
+<h2 id="callback与消息队列"><a href="#callback与消息队列" class="headerlink" title="callback与消息队列"></a>callback与消息队列</h2><p>skynet的服务之间的调用，都会封装成一个message，通过skynet_mq_push塞到对应服务的消息队列中，等待处理。  </p>
+<p>服务在处理其消息队列时，会提前注册callback。之前在<a href="">skynet如何启动一个服务</a>中说到，从lua层面skynet.core.callback设置skynet.dispatch_message这一callback的过程，是在lua-skynet.c中的lcallback函数执行的。  </p>
+<p>其中，有一些用到了Lua虚拟机的代码：<br><figure class="highlight c"><figcaption><span>lua-skynet.c</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> forward = lua_toboolean(L, <span class="number">2</span>); </span><br><span class="line">luaL_checktype(L,<span class="number">1</span>,LUA_TFUNCTION);</span><br><span class="line">lua_settop(L,<span class="number">1</span>);</span><br><span class="line">lua_rawsetp(L, LUA_REGISTRYINDEX, _cb);</span><br></pre></td></tr></table></figure>  </p>
+<p>这一段代码，取出了skynet.core.callback的第二个参数，作为forward（区别是回调函数的返回值。返回值不同，所以后续在skynet_server.c中对处理过的msg-&gt;data的处理也不一样）。然后把指针放到第一个参数上（lua_settop(L,1))。最后，将第一个参数设置到全局注册表（LUA_REGISTRYINDEX)中，并且以函数_cb为key。  </p>
+<p>之后，<br><figure class="highlight c"><figcaption><span>lua-skynet.c</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">lua_rawgeti(L, LUA_REGISTRYINDEX, LUA_RIDX_MAINTHREAD);</span><br><span class="line">lua_State *gL = lua_tothread(L,<span class="number">-1</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (forward) &#123;</span><br><span class="line">   skynet_callback(context, gL, forward_cb);</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">   skynet_callback(context, gL, _cb);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>  </p>
+<p>取出了当前主线程的lua_State，以此为cb_ud，设置callback。（取主线程的主要意义是和云风使用的skynet热更新机制有关，防止在实际执行时，原来的lua_State已经被释放了）  </p>
+<p>而上面的skynet_callback函数，其实就是简单的设置了context-&gt;cb和context-&gt;cb_ud。  </p>
+<p>实际执行callback的逻辑在skynet_server.c中的dispatch_message中，其实是从服务的消息队列中，取出消息，调用了_cb，并传入了cb_ud，也就是主线程的lua_State。<br><figure class="highlight c"><figcaption><span>skynet-server.c</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">reserve_msg = ctx-&gt;cb(ctx, ctx-&gt;cb_ud, type, msg-&gt;session, msg-&gt;source, msg-&gt;data, sz);</span><br></pre></td></tr></table></figure>    </p>
+<p>而在_cb函数中<br><figure class="highlight c"><figcaption><span>lua-skynet.c</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">int</span></span><br><span class="line">_cb(<span class="keyword">struct</span> skynet_context * context, <span class="keyword">void</span> * ud, <span class="keyword">int</span> type, <span class="keyword">int</span> session, <span class="keyword">uint32_t</span> source, <span class="keyword">const</span> <span class="keyword">void</span> * msg, <span class="keyword">size_t</span> sz) &#123;</span><br><span class="line">	lua_State *L = ud;</span><br><span class="line">	<span class="keyword">int</span> trace = <span class="number">1</span>;</span><br><span class="line">	<span class="keyword">int</span> r;</span><br><span class="line">	<span class="keyword">int</span> top = lua_gettop(L);</span><br><span class="line">	<span class="keyword">if</span> (top == <span class="number">0</span>) &#123;</span><br><span class="line">		lua_pushcfunction(L, traceback);</span><br><span class="line">		lua_rawgetp(L, LUA_REGISTRYINDEX, _cb);</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		assert(top == <span class="number">2</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	lua_pushvalue(L,<span class="number">2</span>);</span><br><span class="line"></span><br><span class="line">	lua_pushinteger(L, type);</span><br><span class="line">	lua_pushlightuserdata(L, (void *)msg);</span><br><span class="line">	lua_pushinteger(L,sz);</span><br><span class="line">	lua_pushinteger(L, session);</span><br><span class="line">	lua_pushinteger(L, source);</span><br><span class="line"></span><br><span class="line">	r = lua_pcall(L, <span class="number">5</span>, <span class="number">0</span> , trace);</span><br><span class="line">	</span><br><span class="line">	<span class="comment">// other code ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>  </p>
+<p>先设置了一个错误处理函数traceback（lua_pushcfunction(L, traceback), index 1），然后以_cb为key,将实际的回调函数从全局注册表LUA_REGISTRYINDEX中取出， 然后依次压入参数，最后调用lua_pcall具体执行真正的回调函数。  </p>
+<p>这里有个lua_pushvalue(L, 2)好像有点多余，因为目前来看，真正的回调函数就是一定在栈顶位置的。有哪位大侠知道原因，还望不吝赐教。  </p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>skynet以消息队列为基础，实现了服务与服务之间的消息转发。在具体实现中，将消息队列mq、服务handle、服务上下文context、回调函数cb、回调的lua_State结合在一起，实现了lua层面的各个服务回调函数的设置。  </p>
+<p>推荐阅读：<br><a href="http://blog.guoyb.com/2017/01/19/skynet-1/">探索skynet（一）：从skynet_sample说起</a><br><a href="http://blog.guoyb.com/2017/02/12/skynet-2/">探索skynet（二）：skynet如何启动一个服务</a>  </p>
+<p>转载请注明出处： <a href="http://blog.guoyb.com/2017/03/08/skynet-3/">http://blog.guoyb.com/2017/03/08/skynet-3/</a>  </p>
+<p>欢迎使用微信扫描下方二维码，关注我的微信公众号TechTalking，技术·生活·思考：<br><img src="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.png" alt="后端技术小黑屋">  </p>
+
+    
+  </div>
+  <footer>
+    
+      
+      
+  <div class="tags">
+    <a class="tags-link" href="/tags/skynet/">skynet</a>
+  </div>
+
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+<!-- JiaThis Button BEGIN -->
+<script type="text/javascript">
+var jiathis_config = {data_track_clickback:'true'};
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?move=0&amp;uid=1706898" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+<section id="comment">
+  <h1 class="title">评论</h1>
+  <div class="ds-thread" data-title="探索skynet（三）：消息队列">
+  </div>
+</section>
+
+	</div>
+  </div>
+	<aside id="sidebar">
+  
+  
+    
+      
+      
+
+<div class="widget tagcloud first">
+  <h3 class="title">Tags</h3>
+  <div class="entry">
+    <a href="/tags/C/" style="font-size: 10px;">C</a> <a href="/tags/C/" style="font-size: 17.78px;">C++</a> <a href="/tags/C-11/" style="font-size: 17.78px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 11.11px;">MySQL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/docopt/" style="font-size: 10px;">docopt</a> <a href="/tags/echoserver/" style="font-size: 11.11px;">echoserver</a> <a href="/tags/epoll/" style="font-size: 11.11px;">epoll</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/grpc/" style="font-size: 11.11px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 11.11px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/protobuf/" style="font-size: 11.11px;">protobuf</a> <a href="/tags/python/" style="font-size: 10px;">python</a> <a href="/tags/redis/" style="font-size: 13.33px;">redis</a> <a href="/tags/regex/" style="font-size: 13.33px;">regex</a> <a href="/tags/select/" style="font-size: 11.11px;">select</a> <a href="/tags/skynet/" style="font-size: 12.22px;">skynet</a> <a href="/tags/socket/" style="font-size: 11.11px;">socket</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 15.56px;">书单</a> <a href="/tags/勘误，MySQL，C-11/" style="font-size: 10px;">勘误，MySQL，C++11</a> <a href="/tags/北京车展/" style="font-size: 10px;">北京车展</a> <a href="/tags/协程/" style="font-size: 10px;">协程</a> <a href="/tags/学习笔记/" style="font-size: 14.44px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/广州/" style="font-size: 10px;">广州</a> <a href="/tags/总结/" style="font-size: 10px;">总结</a> <a href="/tags/新西兰/" style="font-size: 10px;">新西兰</a> <a href="/tags/旅行/" style="font-size: 12.22px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 18.89px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 14.44px;">查证记录</a> <a href="/tags/游戏开发/" style="font-size: 10px;">游戏开发</a> <a href="/tags/爱好/" style="font-size: 10px;">爱好</a> <a href="/tags/生活/" style="font-size: 12.22px;">生活</a> <a href="/tags/知乎/" style="font-size: 10px;">知乎</a> <a href="/tags/程序人生/" style="font-size: 10px;">程序人生</a> <a href="/tags/读书笔记/" style="font-size: 16.67px;">读书笔记</a> <a href="/tags/读后感/" style="font-size: 10px;">读后感</a> <a href="/tags/贵州/" style="font-size: 10px;">贵州</a>
+  </div>
+</div>
+
+    
+      
+      
+
+<div class="widget recent-posts">
+  <h3 class="title">最近文章</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2017/03/08/skynet-3/">探索skynet（三）：消息队列</a>
+      </li>
+    
+      <li>
+        <a href="/2017/03/06/python-regex-4/">Python正则表达式之四：re模块</a>
+      </li>
+    
+      <li>
+        <a href="/2017/03/02/paojiao/">一次泡脚引发的“命案”</a>
+      </li>
+    
+      <li>
+        <a href="/2017/03/01/python-regex-3/">Python正则表达式之三：贪婪</a>
+      </li>
+    
+      <li>
+        <a href="/2017/02/27/python-regex-2/">Python正则表达式之二：捕获</a>
+      </li>
+    
+  </ul>
+</div>
+
+    
+      
+      
+<div class="widget tag">
+  <h3 class="title">友情链接</h3>
+  <ul class="entry">
+  
+    
+    <li><a href="http://www.linkedin.com/in/yubo-guo-739b0071" target="_blank">LinkedIn</a></li>
+  
+    
+    <li><a href="http://www.tuicool.com/sites/2emeIjb" target="_blank">推酷站点</a></li>
+  
+  </ul>
+</div>
+
+    
+  
+</aside>
+<div class="clearfix"></div>
+  <footer id="footer"><div class="copyright">
+  
+  &copy; 2017 <a href="/">Yubo Guo</a>
+  
+</div>
+<div class="theme-copyright">
+  Theme by <a href="https://github.com/orderedlist" target="_blank">orderedlist</a>
+   | 
+  Redesign by <a href="http://heroicyang.com/" target="_blank">Heroic Yang</a>
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+<script src="/js/scale.fix.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = { short_name: 'guoyb' };
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';
+    ds.async = true;
+    ds.src = 'http://static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+  (function($){
+    $('.fancybox').fancybox();
+  })(jQuery);
+</script>
+
+</body>
+</html>
