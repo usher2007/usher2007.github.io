@@ -1,0 +1,256 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  
+  <title>Python内存管理模块的一个奇技淫巧 | 一根笨茄子</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  
+    <meta name="author" content="Yubo Guo">
+  
+  
+    <meta name="description" content="最近在读Python源码中有关内存管理的部分。Python在分配小块内存（小于256字节）时，采用了内存池，以降低对内核内存分配程序的调用频次。在内存池的设计上，采用了一个分层的设计，由上到下依次是arena、pool、block。这次我看到的这个比较费解的结构，就来自于分配内存时，对于pool的处理。">
+  
+  <meta name="description" content="最近在读Python源码中有关内存管理的部分。Python在分配小块内存（小于256字节）时，采用了内存池，以降低对内核内存分配程序的调用频次。在内存池的设计上，采用了一个分层的设计，由上到下依次是arena、pool、block。这次我看到的这个比较费解的结构，就来自于分配内存时，对于pool的处理。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python内存管理模块的一个奇技淫巧">
+<meta property="og:url" content="http://blog.guoyb.com/2017/03/15/python-obmalloc-trick/index.html">
+<meta property="og:site_name" content="一根笨茄子">
+<meta property="og:description" content="最近在读Python源码中有关内存管理的部分。Python在分配小块内存（小于256字节）时，采用了内存池，以降低对内核内存分配程序的调用频次。在内存池的设计上，采用了一个分层的设计，由上到下依次是arena、pool、block。这次我看到的这个比较费解的结构，就来自于分配内存时，对于pool的处理。">
+<meta property="og:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.jpg">
+<meta property="og:updated_time" content="2017-03-16T00:22:27.128Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Python内存管理模块的一个奇技淫巧">
+<meta name="twitter:description" content="最近在读Python源码中有关内存管理的部分。Python在分配小块内存（小于256字节）时，采用了内存池，以降低对内核内存分配程序的调用频次。在内存池的设计上，采用了一个分层的设计，由上到下依次是arena、pool、block。这次我看到的这个比较费解的结构，就来自于分配内存时，对于pool的处理。">
+<meta name="twitter:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.jpg">
+  
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+  
+<script type="text/javascript">
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?996ee0fca2512b4c29f37f60cf6387ca";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+</head>
+
+<body>
+  <div class="wrapper">
+    <header id="header">
+  <div class="title">
+    <h1><a href="/">一根笨茄子</a></h1>
+    <p><a href="/"></a></p>
+  </div>
+  <nav class="nav">
+    <ul>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/about">关于我</a></li>
+      
+      
+    </ul>
+    <div class="clearfix"></div>
+  </nav>
+  <div class="clearfix"></div>
+</header>
+    <div class="content">
+		<article class="post">
+  <header>
+    
+      <div class="icon"></div>
+      <a href="/2017/03/15/python-obmalloc-trick/">
+  <time datetime="2017-03-15T00:01:53.000Z">
+    2017-03-15
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title">Python内存管理模块的一个奇技淫巧</h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>最近在读Python源码中有关内存管理的部分。Python在分配小块内存（小于256字节）时，采用了内存池，以降低对内核内存分配程序的调用频次。在内存池的设计上，采用了一个分层的设计，由上到下依次是arena、pool、block。这次我看到的这个比较费解的结构，就来自于分配内存时，对于pool的处理。<br><a id="more"></a></p>
+<h2 id="谜团"><a href="#谜团" class="headerlink" title="谜团"></a>谜团</h2><p>在最主要的分配内存的函数_PyObject_Alloc中，我看到了这么一段代码：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">pool = usable_arenas-&gt;freepools;</span><br><span class="line"><span class="comment">// some other code ...</span></span><br><span class="line">init_pool:</span><br><span class="line">	<span class="comment">/* Frontlink to used pools. */</span></span><br><span class="line">	next = usedpools[size + size]; <span class="comment">/* == prev */</span></span><br><span class="line">	pool-&gt;nextpool = next;</span><br><span class="line">	pool-&gt;prevpool = next;</span><br><span class="line">	next-&gt;nextpool = pool;</span><br><span class="line">	next-&gt;prevpool = pool;</span><br></pre></td></tr></table></figure>  </p>
+<p>从注释和函数命名中也能看出来，这段代码的意思，大概是从arena的freepools中拿出一个pool，插入到usedpools的开头。但是，这里有一个奇怪的地方：  </p>
+<blockquote>
+<p>如果说usedpools中存储的不同size的pool链表，那么为什么index要用size+size来表示呢？</p>
+</blockquote>
+<h2 id="初探"><a href="#初探" class="headerlink" title="初探"></a>初探</h2><p>首先，我在代码中搜索了一下usedpools，找到了这么一段注释：  </p>
+<blockquote>
+<p>This is involved.  For an index i, usedpools[i+i] is the header for a list of<br>all partially used pools holding small blocks with “size class idx” i. So<br>usedpools[0] corresponds to blocks of size 8, usedpools[2] to blocks of size<br>16, and so on:  index 2*i &lt;-&gt; blocks of size (i+1)&lt;&lt;ALIGNMENT_SHIFT.  </p>
+</blockquote>
+<p>哦，就是说，我要找到保存8字节block的pool，就去usedpools[0+0];找16字节的pool，就去usedpools[1+1]。再看一下上面代码中的size的由来：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">size = (uint)(nbytes - <span class="number">1</span>) &gt;&gt; ALIGNMENT_SHIFT;</span><br></pre></td></tr></table></figure></p>
+<p>果然可以和注释里写的对应起来（注意，注释里的2*i是usedpools的index，而这里的nbytes是实际需要分配的block的字节大小，所以一个需要左移位，一个需要右移位，互相转换）。  </p>
+<p>但是目前为止，好像处在一个“知其然，而不知其所以然”的状态：这里没有解释为什么是这样一个奇葩的size+size的index。  </p>
+<h2 id="深入"><a href="#深入" class="headerlink" title="深入"></a>深入</h2><p>往下，又有一段注释（Python源码的注释真详细）：  </p>
+<blockquote>
+<p>Major obscurity:  While the usedpools vector is declared to have poolp<br>entries, it doesn’t really.  It really contains two pointers per (conceptual)<br>poolp entry, the nextpool and prevpool members of a pool_header.  The<br>excruciating initialization code below fools C so that<br>    <strong>usedpool[i+i]</strong><br>“acts like” a genuine poolp, but only so long as you only reference its<br>nextpool and prevpool members.  The “- 2<em>sizeof(block </em>)” gibberish is<br>compensating for that a pool_header’s nextpool and prevpool members<br>immediately follow a pool_header’s first two members:<br>    <strong>union { block *_padding;</strong><br>            <strong>uint count; } ref;</strong><br>    <strong>block *freeblock;</strong><br>each of which consume sizeof(block <em>) bytes.  So what usedpools[i+i] really<br>contains is a fudged-up pointer p such that </em>if* C believes it’s a poolp<br>pointer, then p-&gt;nextpool and p-&gt;prevpool are both p (meaning that the headed circular list is empty).  </p>
+</blockquote>
+<p>这一大段注释说了什么呢？大意就是，你以为usedpools里放的是poolp类型？其实里面是两两一对的poolp，一个是nextpool指针，一个是prevpool指针。这里还使用了一些trick，让C语言认为usedpools里放的是pool_header变量，只要使用者能保证只使用它的nextpool、prevpool成员。  </p>
+<p>直接看usedpools的定义吧：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> PTA(x)  ((poolp )((uint8_t *)&amp;(usedpools[2*(x)]) - 2*sizeof(block *)))</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> PT(x)   PTA(x), PTA(x)</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> poolp usedpools[<span class="number">2</span> * ((NB_SMALL_SIZE_CLASSES + <span class="number">7</span>) / <span class="number">8</span>) * <span class="number">8</span>] = &#123;</span><br><span class="line">    PT(<span class="number">0</span>), PT(<span class="number">1</span>), PT(<span class="number">2</span>), PT(<span class="number">3</span>), PT(<span class="number">4</span>), PT(<span class="number">5</span>), PT(<span class="number">6</span>), PT(<span class="number">7</span>)</span><br><span class="line">#<span class="keyword">if</span> NB_SMALL_SIZE_CLASSES &gt; <span class="number">8</span></span><br><span class="line">    , PT(<span class="number">8</span>), PT(<span class="number">9</span>), PT(<span class="number">10</span>), PT(<span class="number">11</span>), PT(<span class="number">12</span>), PT(<span class="number">13</span>), PT(<span class="number">14</span>), PT(<span class="number">15</span>)</span><br><span class="line">……</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<p>展开宏定义：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> poolp usedpools[<span class="number">2</span> * ((NB_SMALL_SIZE_CLASSES + <span class="number">7</span>) / <span class="number">8</span>) * <span class="number">8</span>] = &#123;</span><br><span class="line">    PTA(<span class="number">0</span>), PTA(<span class="number">0</span>),PTA(<span class="number">1</span>),PTA(<span class="number">1</span>), PTA(<span class="number">2</span>),PTA(<span class="number">2</span>), PTA(<span class="number">3</span>),PTA(<span class="number">3</span>),...</span><br><span class="line">……</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>  </p>
+<p>而PTA(x)定义为，usedpools[2x]的地址减去2个block*长度的地址。结合pool_header的定义：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> pool_header &#123;</span><br><span class="line">    <span class="keyword">union</span> &#123; block *_padding;</span><br><span class="line">            uint count; &#125; ref;          <span class="comment">/* number of allocated blocks    */</span></span><br><span class="line">    block *freeblock;                   <span class="comment">/* pool's free list head         */</span></span><br><span class="line">    <span class="keyword">struct</span> pool_header *nextpool;       <span class="comment">/* next pool of this size class  */</span></span><br><span class="line">    <span class="keyword">struct</span> pool_header *prevpool;       <span class="comment">/* previous pool       ""        */</span></span><br><span class="line">    uint arenaindex;                    <span class="comment">/* index into arenas of base adr */</span></span><br><span class="line">    uint szidx;                         <span class="comment">/* block size class index        */</span></span><br><span class="line">    uint nextoffset;                    <span class="comment">/* bytes to virgin block         */</span></span><br><span class="line">    uint maxnextoffset;                 <span class="comment">/* largest valid nextoffset      */</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>  </p>
+<p>nextpool和pool_header的地址之间，正好差了2个block*的偏移量。所以，在初始化usedpools之后，当把usedpools[size+size]当作pool_header时，那么usedpools[size+size]-&gt;nextpool将正好取到usedpools[size+size]的地址，也就是指向usedpools[size+size]；而usedpools[size+size]-&gt;prevpool将也正好取到usedpools[size+size]的地址。因此：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">next = usedpools[size + size]; <span class="comment">/* == prev */</span></span><br></pre></td></tr></table></figure>  </p>
+<p>这段代码+注释就说得通了。  </p>
+<p>然后，经过：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">pool-&gt;nextpool = next;</span><br><span class="line">pool-&gt;prevpool = next;</span><br><span class="line">next-&gt;nextpool = pool;</span><br><span class="line">next-&gt;prevpool = pool;</span><br></pre></td></tr></table></figure>  </p>
+<p>这么一折腾，usedpools中存储的一对地址（nextpool, prevpool）就指向了真正的pool_header变量pool。  </p>
+<h2 id="知其所以然"><a href="#知其所以然" class="headerlink" title="知其所以然  　　"></a>知其所以然  　　</h2><p>但是，为什么要这么绕的设计这样的usedpools结构呢，直接存储一个完整的pool_header不简单明了吗？下面这段注释给出了答案：  </p>
+<blockquote>
+<p>It’s unclear why the usedpools setup is so convoluted.  It could be to<br>minimize the amount of cache required to hold this heavily-referenced table<br>(which only <em>needs</em> the two interpool pointer members of a pool_header).</p>
+</blockquote>
+<p>就是说，这样的一个usedpools表，会经常的被使用，使用这种结构，就可以减少放入缓存中的数据量（毕竟，我们只需要放入两个指针，而不是整个pool_header)，从而也就提高了缓存的效率。为了提高效率，还真是无所不用其极啊。  </p>
+<p>到这里，obmalloc.c中我认为最费解的一个数据结构，就弄清楚啦。  </p>
+<hr>
+<p>推荐阅读：<br><a href="http://blog.guoyb.com/2016/12/13/py-hotfix/">探究如何给Python程序做hotfix</a><br><a href="http://blog.guoyb.com/2017/03/06/python-regex-4/">Python正则表达式之四：re模块</a>  </p>
+<p>转载请注明出处： <a href="http://blog.guoyb.com/2017/03/15/python-obmalloc-trick/">http://blog.guoyb.com/2017/03/15/python-obmalloc-trick/</a>  </p>
+<p>欢迎关注我的微信公众号TechTalking，技术·生活·思考：<br><img src="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.jpg" alt="后端技术小黑屋"></p>
+
+    
+  </div>
+  <footer>
+    
+      
+      
+  <div class="tags">
+    <a class="tags-link" href="/tags/C/">C</a>, <a class="tags-link" href="/tags/Python/">Python</a>
+  </div>
+
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+<!-- JiaThis Button BEGIN -->
+<script type="text/javascript">
+var jiathis_config = {data_track_clickback:'true'};
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?move=0&amp;uid=1706898" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+<section id="comment">
+  <h1 class="title">Comments</h1>
+  <div class="ds-thread" data-title="Python内存管理模块的一个奇技淫巧">
+  </div>
+</section>
+
+	</div>
+  </div>
+	<aside id="sidebar">
+  
+  
+    
+      
+      
+
+<div class="widget tagcloud first">
+  <h3 class="title">Tags</h3>
+  <div class="entry">
+    <a href="/tags/C/" style="font-size: 11.11px;">C</a> <a href="/tags/C/" style="font-size: 17.78px;">C++</a> <a href="/tags/C-11/" style="font-size: 17.78px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 11.11px;">MySQL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/docopt/" style="font-size: 10px;">docopt</a> <a href="/tags/echoserver/" style="font-size: 11.11px;">echoserver</a> <a href="/tags/epoll/" style="font-size: 11.11px;">epoll</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/grpc/" style="font-size: 11.11px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 11.11px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/protobuf/" style="font-size: 11.11px;">protobuf</a> <a href="/tags/python/" style="font-size: 10px;">python</a> <a href="/tags/redis/" style="font-size: 13.33px;">redis</a> <a href="/tags/regex/" style="font-size: 13.33px;">regex</a> <a href="/tags/select/" style="font-size: 11.11px;">select</a> <a href="/tags/skynet/" style="font-size: 12.22px;">skynet</a> <a href="/tags/socket/" style="font-size: 11.11px;">socket</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 15.56px;">书单</a> <a href="/tags/勘误，MySQL，C-11/" style="font-size: 10px;">勘误，MySQL，C++11</a> <a href="/tags/北京车展/" style="font-size: 10px;">北京车展</a> <a href="/tags/协程/" style="font-size: 10px;">协程</a> <a href="/tags/学习笔记/" style="font-size: 14.44px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/广州/" style="font-size: 10px;">广州</a> <a href="/tags/总结/" style="font-size: 10px;">总结</a> <a href="/tags/新西兰/" style="font-size: 10px;">新西兰</a> <a href="/tags/旅行/" style="font-size: 12.22px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 18.89px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 14.44px;">查证记录</a> <a href="/tags/游戏开发/" style="font-size: 10px;">游戏开发</a> <a href="/tags/爱好/" style="font-size: 10px;">爱好</a> <a href="/tags/生活/" style="font-size: 12.22px;">生活</a> <a href="/tags/知乎/" style="font-size: 10px;">知乎</a> <a href="/tags/程序人生/" style="font-size: 10px;">程序人生</a> <a href="/tags/读书笔记/" style="font-size: 16.67px;">读书笔记</a> <a href="/tags/读后感/" style="font-size: 10px;">读后感</a> <a href="/tags/贵州/" style="font-size: 10px;">贵州</a>
+  </div>
+</div>
+
+    
+      
+      
+
+<div class="widget recent-posts">
+  <h3 class="title">最近文章</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2017/03/15/python-obmalloc-trick/">Python内存管理模块的一个奇技淫巧</a>
+      </li>
+    
+      <li>
+        <a href="/2017/03/12/about-house/">高房价在扼杀什么</a>
+      </li>
+    
+      <li>
+        <a href="/2017/03/08/skynet-3/">探索skynet（三）：消息队列</a>
+      </li>
+    
+      <li>
+        <a href="/2017/03/06/python-regex-4/">Python正则表达式之四：re模块</a>
+      </li>
+    
+      <li>
+        <a href="/2017/03/02/paojiao/">一次泡脚引发的“命案”</a>
+      </li>
+    
+  </ul>
+</div>
+
+    
+      
+      
+<div class="widget tag">
+  <h3 class="title">友情链接</h3>
+  <ul class="entry">
+  
+    
+    <li><a href="http://www.linkedin.com/in/yubo-guo-739b0071" target="_blank">LinkedIn</a></li>
+  
+    
+    <li><a href="http://www.tuicool.com/sites/2emeIjb" target="_blank">推酷站点</a></li>
+  
+  </ul>
+</div>
+
+    
+  
+</aside>
+<div class="clearfix"></div>
+  <footer id="footer"><div class="copyright">
+  
+  &copy; 2017 <a href="/">Yubo Guo</a>
+  
+</div>
+<div class="theme-copyright">
+  Theme by <a href="https://github.com/orderedlist" target="_blank">orderedlist</a>
+   | 
+  Redesign by <a href="http://heroicyang.com/" target="_blank">Heroic Yang</a>
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+<script src="/js/scale.fix.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = { short_name: 'guoyb' };
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';
+    ds.async = true;
+    ds.src = 'http://static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+  (function($){
+    $('.fancybox').fancybox();
+  })(jQuery);
+</script>
+
+</body>
+</html>
