@@ -1,0 +1,252 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  
+  <title>探索skynet（四）：服务之间的通信 | 一根笨茄子</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  
+    <meta name="author" content="Yubo Guo">
+  
+  
+    <meta name="description" content="在《探索skynet（三）：消息队列》中已经提到，skynet中每个服务都有自己的地址和消息队列。有了这个基础，理解服务之间的消息通信，就比较简单了。  
+skynet.call以最常用到的skynet.call为例，它通过调用skynet.core.send（也即，lua-skynet.c中的lsend函数）–&amp;gt; skynet_send函数 –&amp;gt; skynet_context_pu">
+  
+  <meta name="description" content="在《探索skynet（三）：消息队列》中已经提到，skynet中每个服务都有自己的地址和消息队列。有了这个基础，理解服务之间的消息通信，就比较简单了。  
+skynet.call以最常用到的skynet.call为例，它通过调用skynet.core.send（也即，lua-skynet.c中的lsend函数）–&amp;gt; skynet_send函数 –&amp;gt; skynet_context_pu">
+<meta property="og:type" content="article">
+<meta property="og:title" content="探索skynet（四）：服务之间的通信">
+<meta property="og:url" content="http://blog.guoyb.com/2017/03/26/skynet-4/index.html">
+<meta property="og:site_name" content="一根笨茄子">
+<meta property="og:description" content="在《探索skynet（三）：消息队列》中已经提到，skynet中每个服务都有自己的地址和消息队列。有了这个基础，理解服务之间的消息通信，就比较简单了。  
+skynet.call以最常用到的skynet.call为例，它通过调用skynet.core.send（也即，lua-skynet.c中的lsend函数）–&amp;gt; skynet_send函数 –&amp;gt; skynet_context_pu">
+<meta property="og:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.png">
+<meta property="og:updated_time" content="2017-03-26T08:52:20.812Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="探索skynet（四）：服务之间的通信">
+<meta name="twitter:description" content="在《探索skynet（三）：消息队列》中已经提到，skynet中每个服务都有自己的地址和消息队列。有了这个基础，理解服务之间的消息通信，就比较简单了。  
+skynet.call以最常用到的skynet.call为例，它通过调用skynet.core.send（也即，lua-skynet.c中的lsend函数）–&amp;gt; skynet_send函数 –&amp;gt; skynet_context_pu">
+<meta name="twitter:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.png">
+  
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+  
+<script type="text/javascript">
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?996ee0fca2512b4c29f37f60cf6387ca";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+</head>
+
+<body>
+  <div class="wrapper">
+    <header id="header">
+  <div class="title">
+    <h1><a href="/">一根笨茄子</a></h1>
+    <p><a href="/"></a></p>
+  </div>
+  <nav class="nav">
+    <ul>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/about">关于我</a></li>
+      
+      
+    </ul>
+    <div class="clearfix"></div>
+  </nav>
+  <div class="clearfix"></div>
+</header>
+    <div class="content">
+		<article class="post">
+  <header>
+    
+      <div class="icon"></div>
+      <a href="/2017/03/26/skynet-4/">
+  <time datetime="2017-03-26T01:32:57.000Z">
+    2017-03-26
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title">探索skynet（四）：服务之间的通信</h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>在<a href="http://blog.guoyb.com/2017/03/08/skynet-3/">《探索skynet（三）：消息队列》</a>中已经提到，skynet中每个服务都有自己的地址和消息队列。有了这个基础，理解服务之间的消息通信，就比较简单了。  </p>
+<h2 id="skynet-call"><a href="#skynet-call" class="headerlink" title="skynet.call"></a>skynet.call</h2><p>以最常用到的skynet.call为例，它通过调用skynet.core.send（也即，lua-skynet.c中的lsend函数）–&gt; skynet_send函数 –&gt; skynet_context_push函数，向目标服务的消息队列中插入了一条消息。<br><a id="more"></a><br>插入消息之后，会返回给lua层一个session id，而在lua函数skynet.call中，则会调用coroutine_yield（”CALL”,  session) 来依据session缓存。  </p>
+<p>对于服务的消息队列的回调函数注册和实际的回调处理，在<a href="http://blog.guoyb.com/2017/03/08/skynet-3/">《探索skynet（三）：消息队列》</a>里已经提到过了。这里，我们需要留意的是，在lua层实现的回调函数中，一般是通过skynet.ret调用来传送返回值的。例如在skynet_sample/lualib/service.lua中<br><figure class="highlight lua"><figcaption><span>service.lua</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- some other code</span></span><br><span class="line">		skynet.dispatch(<span class="string">"lua"</span>, <span class="function"><span class="keyword">function</span> <span class="params">(_,_, cmd, ...)</span></span></span><br><span class="line">			<span class="keyword">local</span> f = funcs[cmd]</span><br><span class="line">			<span class="keyword">if</span> f <span class="keyword">then</span></span><br><span class="line">				skynet.ret(skynet.pack(f(...)))</span><br><span class="line">			<span class="keyword">else</span></span><br><span class="line">				log(<span class="string">"Unknown command : [%s]"</span>, cmd)</span><br><span class="line">				skynet.response()(<span class="keyword">false</span>)</span><br><span class="line">			<span class="keyword">end</span></span><br><span class="line">		<span class="keyword">end</span></span><br><span class="line"><span class="comment">-- some other code</span></span><br></pre></td></tr></table></figure>  </p>
+<p>skynet.ret会调用coroutine_yield(“RETURN”, msg, sz)。  </p>
+<h2 id="协程"><a href="#协程" class="headerlink" title="协程"></a>协程</h2><p>CALL和RETURN看上去就是一对儿，事实上也确实是这样的。搜索CALL和RETURN两个字符串，发现他们是在suspend这个lua函数中被处理的。那么suspend又是从何而来呢?    </p>
+<p>在<a href="http://blog.guoyb.com/2017/02/12/skynet-2/">《探索skynet（二）：skynet如何启动一个服务》</a>中我们提到过，当一个服务启动好之后，会设置其消息队列的回调函数为skynet.dispatch_message。在dispatch_message和其调用的raw_dispatch_message函数中，可以看到suspend和coroutine_resume函数的调用。  </p>
+<p>如果是对协程比较熟悉的程序员，应该能看出一点眉目了。  </p>
+<p>先看看suspend中对CALL和RETURN的处理吧：<br><figure class="highlight lua"><figcaption><span>skynet.lua</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">suspend</span><span class="params">(co, result, command, param, size)</span></span></span><br><span class="line"><span class="comment">-- some other code</span></span><br><span class="line">	<span class="keyword">if</span> command == <span class="string">"CALL"</span> <span class="keyword">then</span></span><br><span class="line">		session_id_coroutine[param] = co</span><br><span class="line">	<span class="keyword">elseif</span> command == <span class="string">"RETURN"</span> <span class="keyword">then</span></span><br><span class="line">		<span class="keyword">local</span> co_session = session_coroutine_id[co]</span><br><span class="line">		<span class="keyword">local</span> co_address = session_coroutine_address[co]</span><br><span class="line">		<span class="keyword">if</span> param == <span class="keyword">nil</span> <span class="keyword">or</span> session_response[co] <span class="keyword">then</span></span><br><span class="line">			<span class="built_in">error</span>(<span class="built_in">debug</span>.traceback(co))</span><br><span class="line">		<span class="keyword">end</span></span><br><span class="line">		session_response[co] = <span class="keyword">true</span></span><br><span class="line">		<span class="keyword">local</span> ret</span><br><span class="line">		<span class="keyword">if</span> <span class="keyword">not</span> dead_service[co_address] <span class="keyword">then</span></span><br><span class="line">			ret = c.send(co_address, skynet.PTYPE_RESPONSE, co_session, param, size) ~= <span class="keyword">nil</span></span><br><span class="line">			<span class="keyword">if</span> <span class="keyword">not</span> ret <span class="keyword">then</span></span><br><span class="line">				<span class="comment">-- If the package is too large, returns nil. so we should report error back</span></span><br><span class="line">				c.send(co_address, skynet.PTYPE_ERROR, co_session, <span class="string">""</span>)</span><br><span class="line">			<span class="keyword">end</span></span><br><span class="line">		<span class="keyword">elseif</span> size ~= <span class="keyword">nil</span> <span class="keyword">then</span></span><br><span class="line">			c.trash(param, size)</span><br><span class="line">			ret = <span class="keyword">false</span></span><br><span class="line">		<span class="keyword">end</span></span><br><span class="line">		<span class="keyword">return</span> suspend(co, coroutine_resume(co, ret))</span><br><span class="line"><span class="comment">-- some other code</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>  </p>
+<p>可以看到对于CALL，就是简单的将param和co进行map存储，这里的param其实就是session id，co则是生成的coroutine。  </p>
+<p>而对于RETURN，则是取出coroutine对应的服务session id和地址，将对消息处理的结果返回给对应的源服务，然后接着suspend。  </p>
+<p>这里涉及到两个重要的函数coroutine_yield和coroutine_resume。<br>skynet的服务对于每一条msg，都会启动一个coroutine来处理。coroutine_yield交回控制权给另一个coroutine；coroutine_resume则是唤醒coroutine继续执行（从上次yield的地方）。  </p>
+<p>由于，suspend函数调用时，都会将coroutine_resume的结果传递进去，也就是说，一旦有coroutine_yield，那么就会从coroutine_resume的地方唤醒，从而进入suspend的流程。  </p>
+<p>那么，对于lua服务实现的一个消息处理函数来说，有两种可能：  </p>
+<blockquote>
+<p>第一种，比较简单，本地处理完消息，直接通过skynet.ret返回；<br>第二种，在本地处理消息的过程中，又有skynet.call这种远程调用，之后，才通过skynet.ret返回。  </p>
+</blockquote>
+<p>那接下来就看看这两种情况下，协程之间是如何合作的：  </p>
+<h3 id="直接skynet-ret返回"><a href="#直接skynet-ret返回" class="headerlink" title="直接skynet.ret返回"></a>直接skynet.ret返回</h3><p>假设服务A调用服务B的一个函数，那么服务B在处理这个消息时，通过skynet.dispatch_message和raw_dispatch_message，通过如下代码：<br><figure class="highlight lua"><figcaption><span>skynet.lua</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- some other code</span></span><br><span class="line">		<span class="keyword">local</span> f = p.dispatch</span><br><span class="line">		<span class="keyword">if</span> f <span class="keyword">then</span></span><br><span class="line">			<span class="keyword">local</span> ref = watching_service[source]</span><br><span class="line">			<span class="keyword">if</span> ref <span class="keyword">then</span></span><br><span class="line">				watching_service[source] = ref + <span class="number">1</span></span><br><span class="line">			<span class="keyword">else</span></span><br><span class="line">				watching_service[source] = <span class="number">1</span></span><br><span class="line">			<span class="keyword">end</span></span><br><span class="line">			<span class="keyword">local</span> co = co_create(f)</span><br><span class="line">			session_coroutine_id[co] = session</span><br><span class="line">			session_coroutine_address[co] = source</span><br><span class="line">			suspend(co, coroutine_resume(co, session,source, p.<span class="built_in">unpack</span>(msg,sz)))</span><br><span class="line"><span class="comment">-- some other code</span></span><br></pre></td></tr></table></figure>    </p>
+<p>这样将lua的回掉函数包装成了一个coroutine对象co，并通过coroutine_resume将控制权交给co去执行。由于这里的回调函数简单，所以没多久，就直接遇到了skynet.ret语句。前面已经知道，skynet.ret语句实际上是coroutine_yield了一个RETURN消息。那么控制权回到服务B这里的suspend，对RETURN消息进行处理。处理结果我们前面也已经看到了，就是向服务A发送了一份RESPONSE消息，然后就又suspend了，并且恢复了co的执行。这次执行，co将yield EXIT（在co_create函数中），这时进行一些清理工作，这次消息处理就结束了。  </p>
+<h3 id="skynet-call-skynet-ret"><a href="#skynet-call-skynet-ret" class="headerlink" title="skynet.call + skynet.ret"></a>skynet.call + skynet.ret</h3><p>假设服务A调用服务B的一个函数，而服务B在处理这个消息时，先是向服务C发起了一次skynet.call，然后才进行skynet.ret。  </p>
+<p>这种情况下，仍然会先生成一个coroutine对象co，遇到skynet.call(yield CALL)，那么co会交出执行权，有服务B的suspend处理CALL消息。这里对CALL的处理仅仅是记录了这个co，然后就结束了整个raw_dispatch_message，那么这个co将一直阻塞在yield CALL处（因为没有coroutine_resume来唤醒它）。  </p>
+<p>当服务C处理完服务B对其的调用时，会返回skynet.ret。根据之前的叙述，其实是服务C向服务B发了一条RESPONSE类型的消息。对于这种类型的消息，服务B有特殊处理：<br><figure class="highlight lua"><figcaption><span>skynet.lua</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- some other code</span></span><br><span class="line">	<span class="keyword">if</span> prototype == <span class="number">1</span> <span class="keyword">then</span></span><br><span class="line">		<span class="keyword">local</span> co = session_id_coroutine[session]</span><br><span class="line">		<span class="keyword">if</span> co == <span class="string">"BREAK"</span> <span class="keyword">then</span></span><br><span class="line">			session_id_coroutine[session] = <span class="keyword">nil</span></span><br><span class="line">		<span class="keyword">elseif</span> co == <span class="keyword">nil</span> <span class="keyword">then</span></span><br><span class="line">			unknown_response(session, source, msg, sz)</span><br><span class="line">		<span class="keyword">else</span></span><br><span class="line">			session_id_coroutine[session] = <span class="keyword">nil</span></span><br><span class="line">			suspend(co, coroutine_resume(co, <span class="keyword">true</span>, msg, sz))</span><br><span class="line">		<span class="keyword">end</span></span><br><span class="line"><span class="comment">-- some other code</span></span><br></pre></td></tr></table></figure>  </p>
+<p>简单来说，这里就是根据session id，从之前存储的co对象中，取出了对应co，并且唤醒它。那么co将从skynet.call之后继续执行。之后，如果继续遇到skynet.call，则重复这一过程；如果遇到了skynet.ret，那么就走上一部分说的逻辑。总之，消息处理的整个流程就完全清楚了。  </p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>经过探索，以及之前对消息队列机制的认识，这次彻底明白了skynet服务之间是如何进行通信的，尤其是skynet.call这种同步的、有返回值的通信过程。其实skynet也支持异步的服务间调用，道理也大同小异，有兴趣的读者可以自行阅读源代码~  </p>
+<p>推荐阅读：<br><a href="http://blog.guoyb.com/2017/01/19/skynet-1/">探索skynet（一）：从skynet_sample说起</a><br><a href="http://blog.guoyb.com/2017/02/12/skynet-2/">探索skynet（二）：skynet如何启动一个服务</a><br><a href="http://blog.guoyb.com/2017/03/08/skynet-3/">探索skynet（三）：消息队列</a></p>
+<p>转载请注明出处： <a href="http://blog.guoyb.com/2017/03/26/skynet-4/">http://blog.guoyb.com/2017/03/26/skynet-4/</a>  </p>
+<p>欢迎使用微信扫描下方二维码，关注我的微信公众号TechTalking，技术·生活·思考：<br><img src="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.png" alt="后端技术小黑屋">  </p>
+
+    
+  </div>
+  <footer>
+    
+      
+      
+  <div class="tags">
+    <a class="tags-link" href="/tags/skynet/">skynet</a>
+  </div>
+
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+<!-- JiaThis Button BEGIN -->
+<script type="text/javascript">
+var jiathis_config = {data_track_clickback:'true'};
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?move=0&amp;uid=1706898" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+<section id="comment">
+  <h1 class="title">评论</h1>
+  <div class="ds-thread" data-title="探索skynet（四）：服务之间的通信">
+  </div>
+</section>
+
+	</div>
+  </div>
+	<aside id="sidebar">
+  
+  
+    
+      
+      
+
+<div class="widget tagcloud first">
+  <h3 class="title">Tags</h3>
+  <div class="entry">
+    <a href="/tags/C/" style="font-size: 11.11px;">C</a> <a href="/tags/C/" style="font-size: 17.78px;">C++</a> <a href="/tags/C-11/" style="font-size: 17.78px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 11.11px;">MySQL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/docopt/" style="font-size: 10px;">docopt</a> <a href="/tags/echoserver/" style="font-size: 11.11px;">echoserver</a> <a href="/tags/epoll/" style="font-size: 11.11px;">epoll</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/grpc/" style="font-size: 11.11px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 11.11px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/protobuf/" style="font-size: 11.11px;">protobuf</a> <a href="/tags/python/" style="font-size: 10px;">python</a> <a href="/tags/redis/" style="font-size: 13.33px;">redis</a> <a href="/tags/regex/" style="font-size: 13.33px;">regex</a> <a href="/tags/select/" style="font-size: 11.11px;">select</a> <a href="/tags/skynet/" style="font-size: 13.33px;">skynet</a> <a href="/tags/socket/" style="font-size: 11.11px;">socket</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 15.56px;">书单</a> <a href="/tags/勘误，MySQL，C-11/" style="font-size: 10px;">勘误，MySQL，C++11</a> <a href="/tags/北京车展/" style="font-size: 10px;">北京车展</a> <a href="/tags/协程/" style="font-size: 10px;">协程</a> <a href="/tags/学习笔记/" style="font-size: 14.44px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/广州/" style="font-size: 10px;">广州</a> <a href="/tags/总结/" style="font-size: 10px;">总结</a> <a href="/tags/新西兰/" style="font-size: 10px;">新西兰</a> <a href="/tags/旅行/" style="font-size: 12.22px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 18.89px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 14.44px;">查证记录</a> <a href="/tags/游戏开发/" style="font-size: 10px;">游戏开发</a> <a href="/tags/爱好/" style="font-size: 10px;">爱好</a> <a href="/tags/生活/" style="font-size: 12.22px;">生活</a> <a href="/tags/知乎/" style="font-size: 10px;">知乎</a> <a href="/tags/程序人生/" style="font-size: 10px;">程序人生</a> <a href="/tags/读书笔记/" style="font-size: 16.67px;">读书笔记</a> <a href="/tags/读后感/" style="font-size: 10px;">读后感</a> <a href="/tags/贵州/" style="font-size: 10px;">贵州</a>
+  </div>
+</div>
+
+    
+      
+      
+
+<div class="widget recent-posts">
+  <h3 class="title">最近文章</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2017/03/26/skynet-4/">探索skynet（四）：服务之间的通信</a>
+      </li>
+    
+      <li>
+        <a href="/2017/03/15/python-obmalloc-trick/">Python内存管理模块的一个奇技淫巧</a>
+      </li>
+    
+      <li>
+        <a href="/2017/03/12/about-house/">高房价在扼杀什么</a>
+      </li>
+    
+      <li>
+        <a href="/2017/03/08/skynet-3/">探索skynet（三）：消息队列</a>
+      </li>
+    
+      <li>
+        <a href="/2017/03/06/python-regex-4/">Python正则表达式之四：re模块</a>
+      </li>
+    
+  </ul>
+</div>
+
+    
+      
+      
+<div class="widget tag">
+  <h3 class="title">友情链接</h3>
+  <ul class="entry">
+  
+    
+    <li><a href="http://www.linkedin.com/in/yubo-guo-739b0071" target="_blank">LinkedIn</a></li>
+  
+    
+    <li><a href="http://www.tuicool.com/sites/2emeIjb" target="_blank">推酷站点</a></li>
+  
+  </ul>
+</div>
+
+    
+  
+</aside>
+<div class="clearfix"></div>
+  <footer id="footer"><div class="copyright">
+  
+  &copy; 2017 <a href="/">Yubo Guo</a>
+  
+</div>
+<div class="theme-copyright">
+  Theme by <a href="https://github.com/orderedlist" target="_blank">orderedlist</a>
+   | 
+  Redesign by <a href="http://heroicyang.com/" target="_blank">Heroic Yang</a>
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+<script src="/js/scale.fix.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = { short_name: 'guoyb' };
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';
+    ds.async = true;
+    ds.src = 'http://static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+  (function($){
+    $('.fancybox').fancybox();
+  })(jQuery);
+</script>
+
+</body>
+</html>
