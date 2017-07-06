@@ -63,6 +63,51 @@ var _hmt = _hmt || [];
   <header>
     
       <div class="icon"></div>
+      <a href="/2016/10/15/grpc/">
+  <time datetime="2016-10-15T06:55:51.000Z">
+    2016-10-15
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title"><a href="/2016/10/15/grpc/">grpc：google官方的rpc框架</a></h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>protobuf是在项目中经常会用到的一个库，它提供了方便的工具和接口，可以对结构化数据进行序列化和反序列化，便于网络传输。  </p>
+<p>其实，如果将一个函数调用用结构化数据表示出来，利用protobuf序列化后通过网络传递到远端，在远端进行反序列化解析，就自然地实现了rpc（Remote Procedure Call）的功能。  </p>
+<p>protobuf中保留了关键字rpc，并且提供了一个RpcChannel的类，供开发者自己实现rpc框架。实现这个rpc框架，其实主要是实现RpcChannel::CallMethod这个接口。我们自己的项目中，就使用了一套自己实现的基于ansyncore的RpcChannel，而某度最近也开源了其基于protobuf的<a href="https://github.com/baidu/sofa-pbrpc">rpc框架</a>，网络部分是使用的Boost::Asio，有兴趣的读者可以自行前往其github wiki页面学习。<br>
+    
+  </div>
+  <footer class="end-sep">
+    
+      
+        <div class="alignleft">
+          <a href="/2016/10/15/grpc/#more" class="more-link">Read More</a>
+        </div>
+      
+      
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+<!-- JiaThis Button BEGIN -->
+<script type="text/javascript">
+var jiathis_config = {data_track_clickback:'true'};
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?move=0&amp;uid=1706898" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+
+  <article class="post">
+  <header>
+    
+      <div class="icon"></div>
       <a href="/2016/09/26/docopt/">
   <time datetime="2016-09-26T00:15:18.000Z">
     2016-09-26
@@ -471,50 +516,6 @@ var jiathis_config = {data_track_clickback:'true'};
 <!-- JiaThis Button END -->
 
 
-  <article class="post">
-  <header>
-    
-      <div class="icon"></div>
-      <a href="/2016/08/27/correct-errors/">
-  <time datetime="2016-08-26T23:20:25.000Z">
-    2016-08-27
-  </time>
-</a>
-    
-    
-  
-    <h1 class="title"><a href="/2016/08/27/correct-errors/">勘误</a></h1>
-  
-
-  </header>
-  
-  <div class="entry">
-    
-      <hr>
-<p>最近伯乐在线旗下的几个公众号（CPP开发者，数据库开发等）转载了我的几篇文章，带来了很大的阅读量，也引发了激烈的讨论。评论中，有几位经验丰富的老司机，指出了我文章中的错误；当然，也有一些人在没有营养地纯喷啦，这个我也已经习惯了……  </p>
-<p>在<a href="http://blog.guoyb.com/2016/07/09/cpp11-4/">C++11新特性之容器相关特性</a>的评论中，<strong>@少跟网线设置路由</strong>写到：<br>
-    
-  </div>
-  <footer class="end-sep">
-    
-      
-        <div class="alignleft">
-          <a href="/2016/08/27/correct-errors/#more" class="more-link">Read More</a>
-        </div>
-      
-      
-    
-    <div class="clearfix"></div>
-  </footer>
-</article>
-<!-- JiaThis Button BEGIN -->
-<script type="text/javascript">
-var jiathis_config = {data_track_clickback:'true'};
-</script>
-<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?move=0&amp;uid=1706898" charset="utf-8"></script>
-<!-- JiaThis Button END -->
-
-
 
 <nav id="pagination">
   
@@ -550,6 +551,10 @@ var jiathis_config = {data_track_clickback:'true'};
   <ul class="entry">
     
       <li>
+        <a href="/2017/06/30/2017-booklist-1/">2017年上半年书单</a>
+      </li>
+    
+      <li>
         <a href="/2017/04/26/japan/">日本之行感悟</a>
       </li>
     
@@ -563,10 +568,6 @@ var jiathis_config = {data_track_clickback:'true'};
     
       <li>
         <a href="/2017/03/12/about-house/">高房价在扼杀什么</a>
-      </li>
-    
-      <li>
-        <a href="/2017/03/08/skynet-3/">探索skynet（三）：消息队列</a>
       </li>
     
   </ul>
