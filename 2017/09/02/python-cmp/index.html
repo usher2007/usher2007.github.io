@@ -1,0 +1,258 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  
+  <title>踩坑记——重载Python中的__cmp__ | 一根笨茄子</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  
+    <meta name="author" content="Yubo Guo">
+  
+  
+    <meta name="description" content="最近做一个简单的排行榜功能时，不小心踩到一个Python语言上的坑，花费掉我不少时间才找出具体原因，值得记录一下。  
+
+具体功能需求是这样的，制作一个500人的积分排行榜（TOP 500)，每个人的积分只增不减，分数相同时比较上榜的时间戳，先达到积分的用户排名靠前。  
+这种排行榜之前已经做过无数个，一般的，会先抽象出一个TopItem对象，保存用户的积分，以及姓名、UUID等相关信息。然后用">
+  
+  <meta name="description" content="最近做一个简单的排行榜功能时，不小心踩到一个Python语言上的坑，花费掉我不少时间才找出具体原因，值得记录一下。  
+
+具体功能需求是这样的，制作一个500人的积分排行榜（TOP 500)，每个人的积分只增不减，分数相同时比较上榜的时间戳，先达到积分的用户排名靠前。  
+这种排行榜之前已经做过无数个，一般的，会先抽象出一个TopItem对象，保存用户的积分，以及姓名、UUID等相关信息。然后用">
+<meta property="og:type" content="article">
+<meta property="og:title" content="踩坑记——重载Python中的__cmp__">
+<meta property="og:url" content="http://blog.guoyb.com/2017/09/02/python-cmp/index.html">
+<meta property="og:site_name" content="一根笨茄子">
+<meta property="og:description" content="最近做一个简单的排行榜功能时，不小心踩到一个Python语言上的坑，花费掉我不少时间才找出具体原因，值得记录一下。  
+
+具体功能需求是这样的，制作一个500人的积分排行榜（TOP 500)，每个人的积分只增不减，分数相同时比较上榜的时间戳，先达到积分的用户排名靠前。  
+这种排行榜之前已经做过无数个，一般的，会先抽象出一个TopItem对象，保存用户的积分，以及姓名、UUID等相关信息。然后用">
+<meta property="og:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.jpg">
+<meta property="og:updated_time" content="2017-09-02T10:23:35.874Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="踩坑记——重载Python中的__cmp__">
+<meta name="twitter:description" content="最近做一个简单的排行榜功能时，不小心踩到一个Python语言上的坑，花费掉我不少时间才找出具体原因，值得记录一下。  
+
+具体功能需求是这样的，制作一个500人的积分排行榜（TOP 500)，每个人的积分只增不减，分数相同时比较上榜的时间戳，先达到积分的用户排名靠前。  
+这种排行榜之前已经做过无数个，一般的，会先抽象出一个TopItem对象，保存用户的积分，以及姓名、UUID等相关信息。然后用">
+<meta name="twitter:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.jpg">
+  
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+  
+<script type="text/javascript">
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?996ee0fca2512b4c29f37f60cf6387ca";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+</head>
+
+<body>
+  <div class="wrapper">
+    <header id="header">
+  <div class="title">
+    <h1><a href="/">一根笨茄子</a></h1>
+    <p><a href="/"></a></p>
+  </div>
+  <nav class="nav">
+    <ul>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/about">关于我</a></li>
+      
+      
+    </ul>
+    <div class="clearfix"></div>
+  </nav>
+  <div class="clearfix"></div>
+</header>
+    <div class="content">
+		<article class="post">
+  <header>
+    
+      <div class="icon"></div>
+      <a href="/2017/09/02/python-cmp/">
+  <time datetime="2017-09-02T05:09:07.000Z">
+    2017-09-02
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title">踩坑记——重载Python中的__cmp__</h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>最近做一个简单的排行榜功能时，不小心踩到一个Python语言上的坑，花费掉我不少时间才找出具体原因，值得记录一下。  </p>
+<hr>
+<p>具体功能需求是这样的，制作一个500人的积分排行榜（TOP 500)，每个人的积分只增不减，分数相同时比较上榜的时间戳，先达到积分的用户排名靠前。  </p>
+<p>这种排行榜之前已经做过无数个，一般的，会先抽象出一个TopItem对象，保存用户的积分，以及姓名、UUID等相关信息。然后用一个list对象tops保存有序的500元素，并用一个dict对象cache保存一个uuid到TopItem的映射。由于Python对象的引用特性，多增加一个dict对象，并没有增加TopItem对象的副本，而是均指向同一个TopItem对象，所以内存方面也不会有什么太大的问题。<br><a id="more"></a><br>所以，整个的数据结构大概如下伪代码所示：  </p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TopItem</span><span class="params">(object)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, uuid, name, score, t)</span>:</span></span><br><span class="line">        self.uuid = uuid</span><br><span class="line">        self.name = name</span><br><span class="line">        self.score = score</span><br><span class="line">        self.t = t </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TopStub</span><span class="params">(object)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, tops)</span>:</span></span><br><span class="line">        self.tops = copy.deepcopy(tops)</span><br><span class="line">        self.cache = &#123;&#125;</span><br><span class="line">        <span class="keyword">for</span> item <span class="keyword">in</span> self.tops:</span><br><span class="line">            <span class="keyword">if</span> item.uuid <span class="keyword">not</span> <span class="keyword">in</span> self.cache:</span><br><span class="line">                self.cache[item.uuid] = item</span><br></pre></td></tr></table></figure>  
+<p>当玩家每次打榜时，先从cache中按照uuid寻找TopItem对象，找不到对象，则直接根据分数，用二分查找的方式进行插入；如果找到对象TopItem，则更新其分数、姓名等信息，然后将其从tops列表中删除，之后再进行二分查找插入（由于分数只增不减，所以这里还有优化的空间）。  </p>
+<p>这次的排行榜，策划大大要求能够处理同分情况（比较时间戳），于是我很自然的想到重载TopItem的__cmp__函数，这样就可以直接用&lt;&gt;比较TopItem，后面写代码岂不是美滋滋。于是写出如下的__cmp__函数：  </p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TopItem</span><span class="params">(object)</span>:</span></span><br><span class="line"><span class="comment"># see above</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__cmp__</span><span class="params">(self, other)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> self.score != other.score:</span><br><span class="line">            <span class="keyword">return</span> cmp(self.score, other.score)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">return</span> cmp(other.t, self.t)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TopStub</span><span class="params">(object)</span>:</span></span><br><span class="line"><span class="comment"># see above</span></span><br></pre></td></tr></table></figure>  
+<p>测试时我制作了一个测试函数，一次性随机的插入N条随机分数的用户数据，QA也测试通过，没什么问题。  </p>
+<p>直到上线。  </p>
+<p>大概2个小时之后，我发现排行榜彻底乱掉，出现一种“分段降序”现象，并且有用户的信息在排行榜中连着出现多次。    </p>
+<p>可劲一通查，发现问题出在__cmp__和list.remove上面。  </p>
+<p>从__cmp__的定义中可以看出，如果两个TopItem的score和t均相等，那么我们将判断两个TopItem相等。而list.remove(item)则是删除<strong>第一个</strong>和item相等的元素。这里对__cmp__进行重载，显然，影响到对于<strong>相等</strong>的判断。也就是说，如果两个TopItem的积分和时间戳相等，那么，将有可能在list.remove(item)这一步错误的TopItem，所以才会出现排行榜中同时出现多个同样用户信息的情况。  </p>
+<p>写个一段代码验证一下：  </p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">test</span><span class="params">()</span>:</span></span><br><span class="line">    t1 = TopItem(<span class="string">'uuid1'</span>, <span class="string">'aaa'</span>, <span class="number">80</span>, <span class="number">10</span>) </span><br><span class="line">    t2 = TopItem(<span class="string">'uuid2'</span>, <span class="string">'bbb'</span>, <span class="number">90</span>, <span class="number">11</span>) </span><br><span class="line">    t3 = TopItem(<span class="string">'uuid3'</span>, <span class="string">'ccc'</span>, <span class="number">90</span>, <span class="number">11</span>) </span><br><span class="line">    t4 = TopItem(<span class="string">'uuid4'</span>, <span class="string">'ddd'</span>, <span class="number">100</span>, <span class="number">11</span>) </span><br><span class="line">    tops = [t4, t3, t2, t1] </span><br><span class="line">    <span class="keyword">print</span> <span class="string">'tops:'</span>, tops</span><br><span class="line">    tops.remove(t2)</span><br><span class="line">    <span class="keyword">print</span> <span class="string">'after remove t2:bbb'</span></span><br><span class="line">    <span class="keyword">print</span> <span class="string">'tops:'</span>, tops</span><br><span class="line"></span><br><span class="line">output：</span><br><span class="line">tops: [(ddd,<span class="number">100</span>,<span class="number">11</span>), (ccc,<span class="number">90</span>,<span class="number">11</span>), (bbb,<span class="number">90</span>,<span class="number">11</span>), (aaa,<span class="number">80</span>,<span class="number">10</span>)]</span><br><span class="line">after remove t2:bbb</span><br><span class="line">tops: [(ddd,<span class="number">100</span>,<span class="number">11</span>), (bbb,<span class="number">90</span>,<span class="number">11</span>), (aaa,<span class="number">80</span>,<span class="number">10</span>)]</span><br></pre></td></tr></table></figure>   
+<p>果然没错，我们想删除t2(bbb)，但是却把和t2“相等”的t3(ccc)删除了。    </p>
+<p>那么接下来的修正也很简单：  </p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__cmp__</span><span class="params">(self, other)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> self.score != other.score:</span><br><span class="line">            <span class="keyword">return</span> cmp(self.score, other.score)</span><br><span class="line">        <span class="keyword">elif</span> self.t != other.t:</span><br><span class="line">            <span class="keyword">return</span> cmp(other.t, self.t)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">return</span> cmp(id(self), id(other))</span><br><span class="line"></span><br><span class="line">run test again <span class="keyword">and</span> output：</span><br><span class="line">tops: [(ddd,<span class="number">100</span>,<span class="number">11</span>), (ccc,<span class="number">90</span>,<span class="number">11</span>), (bbb,<span class="number">90</span>,<span class="number">11</span>), (aaa,<span class="number">80</span>,<span class="number">10</span>)]</span><br><span class="line">after remove t2:bbb</span><br><span class="line">tops: [(ddd,<span class="number">100</span>,<span class="number">11</span>), (ccc,<span class="number">90</span>,<span class="number">11</span>), (aaa,<span class="number">80</span>,<span class="number">10</span>)]</span><br></pre></td></tr></table></figure>   
+<hr>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>记得之前看一些Python的文章时，有人说过，对于双下划线开头的这些函数，除非你确切知道自己在干什么，否则不要重载这些函数。当时我还不以为然：既然Python提供了这么多有意思的钩子，干嘛不用呢？现在我才明白。  </p>
+<p>另外，重载__cmp__函数时，在最后一个else分支中，比较id是比较稳妥的做法。  </p>
+<p>最后，Python3已经废弃掉__cmp__函数，改为提供__eq__, __lt__等多个函数，进一步降低使用者犯错的几率。  </p>
+<p>推荐阅读：<br><a href="http://blog.guoyb.com/2016/07/03/python-coroutine/">Python协程：从yield/send到async/await/</a><br><a href="http://blog.guoyb.com/2016/12/13/py-hotfix/">探究如何给Python程序做hotfix</a><br><a href="http://blog.guoyb.com/2016/08/06/something-about-strip/">从string.strip()引起的一个bug说起</a>  </p>
+<p>转载请注明出处： <a href="http://blog.guoyb.com/2017/09/02/python-cmp/">http://blog.guoyb.com/2017/09/02/python-cmp/</a>。  </p>
+<p>欢迎使用微信扫描下方二维码，关注我的微信公众号TechTalking，技术·生活·思考：<br><img src="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.jpg" alt="后端技术小黑屋"></p>
+
+    
+  </div>
+  <footer>
+    
+      
+      
+  <div class="tags">
+    <a class="tags-link" href="/tags/Python/">Python</a>, <a class="tags-link" href="/tags/cmp/">__cmp__</a>
+  </div>
+
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+<!-- JiaThis Button BEGIN -->
+<script type="text/javascript">
+var jiathis_config = {data_track_clickback:'true'};
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?move=0&amp;uid=1706898" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+<section id="comment">
+  <h1 class="title">评论</h1>
+  <div class="ds-thread" data-title="踩坑记——重载Python中的__cmp__">
+  </div>
+</section>
+
+	</div>
+  </div>
+	<aside id="sidebar">
+  
+  
+    
+      
+      
+
+<div class="widget tagcloud first">
+  <h3 class="title">Tags</h3>
+  <div class="entry">
+    <a href="/tags/C/" style="font-size: 11.11px;">C</a> <a href="/tags/C/" style="font-size: 17.78px;">C++</a> <a href="/tags/C-11/" style="font-size: 17.78px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 11.11px;">MySQL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/tags/cmp/" style="font-size: 10px;">__cmp__</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/docopt/" style="font-size: 10px;">docopt</a> <a href="/tags/echoserver/" style="font-size: 11.11px;">echoserver</a> <a href="/tags/epoll/" style="font-size: 11.11px;">epoll</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/grpc/" style="font-size: 11.11px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 11.11px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/protobuf/" style="font-size: 11.11px;">protobuf</a> <a href="/tags/python/" style="font-size: 10px;">python</a> <a href="/tags/redis/" style="font-size: 13.33px;">redis</a> <a href="/tags/regex/" style="font-size: 13.33px;">regex</a> <a href="/tags/select/" style="font-size: 11.11px;">select</a> <a href="/tags/skynet/" style="font-size: 13.33px;">skynet</a> <a href="/tags/socket/" style="font-size: 11.11px;">socket</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 15.56px;">书单</a> <a href="/tags/勘误，MySQL，C-11/" style="font-size: 10px;">勘误，MySQL，C++11</a> <a href="/tags/北京车展/" style="font-size: 10px;">北京车展</a> <a href="/tags/协程/" style="font-size: 10px;">协程</a> <a href="/tags/学习笔记/" style="font-size: 14.44px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/广州/" style="font-size: 10px;">广州</a> <a href="/tags/总结/" style="font-size: 10px;">总结</a> <a href="/tags/新西兰/" style="font-size: 10px;">新西兰</a> <a href="/tags/旅行/" style="font-size: 13.33px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 18.89px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 14.44px;">查证记录</a> <a href="/tags/游戏开发/" style="font-size: 10px;">游戏开发</a> <a href="/tags/爱好/" style="font-size: 10px;">爱好</a> <a href="/tags/生活/" style="font-size: 12.22px;">生活</a> <a href="/tags/知乎/" style="font-size: 10px;">知乎</a> <a href="/tags/程序人生/" style="font-size: 10px;">程序人生</a> <a href="/tags/读书笔记/" style="font-size: 16.67px;">读书笔记</a> <a href="/tags/读后感/" style="font-size: 10px;">读后感</a> <a href="/tags/贵州/" style="font-size: 10px;">贵州</a>
+  </div>
+</div>
+
+    
+      
+      
+
+<div class="widget recent-posts">
+  <h3 class="title">最近文章</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2017/09/02/python-cmp/">踩坑记——重载Python中的__cmp__</a>
+      </li>
+    
+      <li>
+        <a href="/2017/06/30/2017-booklist-1/">2017年上半年书单</a>
+      </li>
+    
+      <li>
+        <a href="/2017/04/26/japan/">日本之行感悟</a>
+      </li>
+    
+      <li>
+        <a href="/2017/03/26/skynet-4/">探索skynet（四）：服务之间的通信</a>
+      </li>
+    
+      <li>
+        <a href="/2017/03/15/python-obmalloc-trick/">Python内存管理模块的一个奇技淫巧</a>
+      </li>
+    
+  </ul>
+</div>
+
+    
+      
+      
+<div class="widget tag">
+  <h3 class="title">友情链接</h3>
+  <ul class="entry">
+  
+    
+    <li><a href="http://www.linkedin.com/in/yubo-guo-739b0071" target="_blank">LinkedIn</a></li>
+  
+    
+    <li><a href="http://www.tuicool.com/sites/2emeIjb" target="_blank">推酷站点</a></li>
+  
+  </ul>
+</div>
+
+    
+  
+</aside>
+<div class="clearfix"></div>
+  <footer id="footer"><div class="copyright">
+  
+  &copy; 2017 <a href="/">Yubo Guo</a>
+  
+</div>
+<div class="theme-copyright">
+  Theme by <a href="https://github.com/orderedlist" target="_blank">orderedlist</a>
+   | 
+  Redesign by <a href="http://heroicyang.com/" target="_blank">Heroic Yang</a>
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+<script src="/js/scale.fix.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = { short_name: 'guoyb' };
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';
+    ds.async = true;
+    ds.src = 'http://static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+  (function($){
+    $('.fancybox').fancybox();
+  })(jQuery);
+</script>
+
+</body>
+</html>
