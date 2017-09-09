@@ -1,0 +1,248 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  
+  <title>如何估算一个Python对象的内存占用 | 一根笨茄子</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  
+    <meta name="author" content="Yubo Guo">
+  
+  
+    <meta name="description" content="需求最近接到一个需求：制作一个工具，可以即时查看线上服务器的内存使用状况，不要求精确，但是如果存在爆内存的情况，要能查到有嫌疑的Entity是哪个。  
+pytracemalloc神器无用武之地在网上一番搜索，对Guppy、PySizer、pytracemalloc进行比较之后，貌似大家对pytracemalloc的评价较好。按照官方文档，需要对Python2.7.8源码打个patch，虽然我们">
+  
+  <meta name="description" content="需求最近接到一个需求：制作一个工具，可以即时查看线上服务器的内存使用状况，不要求精确，但是如果存在爆内存的情况，要能查到有嫌疑的Entity是哪个。  
+pytracemalloc神器无用武之地在网上一番搜索，对Guppy、PySizer、pytracemalloc进行比较之后，貌似大家对pytracemalloc的评价较好。按照官方文档，需要对Python2.7.8源码打个patch，虽然我们">
+<meta property="og:type" content="article">
+<meta property="og:title" content="如何估算一个Python对象的内存占用">
+<meta property="og:url" content="http://blog.guoyb.com/2017/09/09/python-mem/index.html">
+<meta property="og:site_name" content="一根笨茄子">
+<meta property="og:description" content="需求最近接到一个需求：制作一个工具，可以即时查看线上服务器的内存使用状况，不要求精确，但是如果存在爆内存的情况，要能查到有嫌疑的Entity是哪个。  
+pytracemalloc神器无用武之地在网上一番搜索，对Guppy、PySizer、pytracemalloc进行比较之后，貌似大家对pytracemalloc的评价较好。按照官方文档，需要对Python2.7.8源码打个patch，虽然我们">
+<meta property="og:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.jpg">
+<meta property="og:updated_time" content="2017-09-09T08:36:21.108Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="如何估算一个Python对象的内存占用">
+<meta name="twitter:description" content="需求最近接到一个需求：制作一个工具，可以即时查看线上服务器的内存使用状况，不要求精确，但是如果存在爆内存的情况，要能查到有嫌疑的Entity是哪个。  
+pytracemalloc神器无用武之地在网上一番搜索，对Guppy、PySizer、pytracemalloc进行比较之后，貌似大家对pytracemalloc的评价较好。按照官方文档，需要对Python2.7.8源码打个patch，虽然我们">
+<meta name="twitter:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.jpg">
+  
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+  
+<script type="text/javascript">
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?996ee0fca2512b4c29f37f60cf6387ca";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+</head>
+
+<body>
+  <div class="wrapper">
+    <header id="header">
+  <div class="title">
+    <h1><a href="/">一根笨茄子</a></h1>
+    <p><a href="/"></a></p>
+  </div>
+  <nav class="nav">
+    <ul>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/about">关于我</a></li>
+      
+      
+    </ul>
+    <div class="clearfix"></div>
+  </nav>
+  <div class="clearfix"></div>
+</header>
+    <div class="content">
+		<article class="post">
+  <header>
+    
+      <div class="icon"></div>
+      <a href="/2017/09/09/python-mem/">
+  <time datetime="2017-09-09T05:40:04.000Z">
+    2017-09-09
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title">如何估算一个Python对象的内存占用</h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<h2 id="需求"><a href="#需求" class="headerlink" title="需求"></a>需求</h2><p>最近接到一个需求：制作一个工具，可以即时查看线上服务器的内存使用状况，不要求精确，但是如果存在爆内存的情况，要能查到有嫌疑的Entity是哪个。  </p>
+<h2 id="pytracemalloc神器无用武之地"><a href="#pytracemalloc神器无用武之地" class="headerlink" title="pytracemalloc神器无用武之地"></a>pytracemalloc神器无用武之地</h2><p>在网上一番搜索，对<a href="http://guppy-pe.sourceforge.net/" target="_blank" rel="external">Guppy</a>、<a href="http://pysizer.8325.org/" target="_blank" rel="external">PySizer</a>、<a href="http://pytracemalloc.readthedocs.io/" target="_blank" rel="external">pytracemalloc</a>进行比较之后，貌似大家对pytracemalloc的评价较好。按照官方文档，需要对Python2.7.8源码打个patch，虽然我们项目使用的是2.7.11，不过也问题不大，打Patch时obmalloc.c里面有2个reject，手动将其merge到源码中即可。编译通过，写个小程序进行实现，可行，而且可以定位到源代码的行号，确实神器。于是将情况报告给领导，正以为将大功告成之时，领导说，tracemalloc这个库我们已经集成到引擎中，但是对服务器性能有影响，所以一般就在测试环境用用，不满足<strong>即时查看线上服务器内存使用状况</strong>的要求。根据我了解的情况，确实有这样的问题，pytracemalloc其实是修改了Python虚拟机分配内存时的代码，所以：<br><a id="more"></a>  </p>
+<ol>
+<li>如果线上服务器内存已经暴涨，这时再去服务器打开tracemalloc，由于暴涨的内存已经分配过，所以什么都看不出来；  </li>
+<li>那么如果服务器一启动就打开tracemalloc，那么每次分配内存都要去tracemalloc那里进行记录，性能影响不能忽略。  </li>
+</ol>
+<p>看来这条路是走不通。  </p>
+<h2 id="sys-getsizeof的局限与解决方案"><a href="#sys-getsizeof的局限与解决方案" class="headerlink" title="sys.getsizeof的局限与解决方案"></a>sys.getsizeof的局限与解决方案</h2><p>之前查看data数据占用内存情况时，用过sys.getsizeof函数，但是这个函数有如下几个问题：  </p>
+<ol>
+<li>对内置类型对象可以统计出准确数据，但是无法处理用户自定义的类型；  </li>
+<li>对于嵌套的容器类型对象，不统计内层嵌套对象的内存占用，比如[1, 2, range(1000)]一般只占用不到100个字节，显然是错误的。  </li>
+</ol>
+<p>对于自定义的类型对象，我们可以通过dir(object)遍历其属性，对每一个属性再按照其类型（简单内置类型？容器类型？自定义类型？）进行进一步的递归调用。  </p>
+<p>对于容器类型，也可以对其每一个元素按照类型进行递归，类似上面对对象属性的递归。  </p>
+<h2 id="Python脚本层统计内存的困境"><a href="#Python脚本层统计内存的困境" class="headerlink" title="Python脚本层统计内存的困境"></a>Python脚本层统计内存的困境</h2><p>由于Python对象是引用语义的，也就意味着[objectA, objectA, objectA]这样的对象所占用的内存，其实只用统计一遍objectA。但是如果两个Entity中都同时引用同一个object，我觉得这个时候，还是应该在每个entity中都统计一遍object的内存占用，原因是如果不这样做的话，整个统计结果将会和遍历Entity的次序有关。这个工具的作用是找出有可能导致爆内存的Entity，并不需要精确的统计出每个Entity所占用的内存（<strong>相对大小</strong>比绝对大小更重要），而精确的每个进程占用多少内存可以通过操作系统层面的相关工具获得。所以，对每一个Entity，设置一个集合parsed用于保存已经统计过的对象id，对于已经存在于parsed集合中的对象，再次遇见时，直接返回0。    </p>
+<p>关于遍历次序，还需要特殊处理一下__dict__变量。当我们想统计某个可疑Entity的一级属性分别占用多少内存时，一定要将__dict__挪到遍历列表的最后进行统计。不然由于__dict__中包含大量庞杂的信息，先统计__dict__将会导致后续遍历普通一级属性时，得到的内存数据偏小。  </p>
+<p>最后，对于那些继承自容器类型（比如list）的类型对象，它们既是容器，又是自定义对象，所以自然需要统计两次，但是两次要共用一个parsed集合。  </p>
+<h2 id="测试结果"><a href="#测试结果" class="headerlink" title="测试结果"></a>测试结果</h2><p>由于涉及到具体的项目代码，所以这里就不放代码啦。放一个自己开发机的统计结果吧：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">import</span> memgo</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>memgo.get_top_mem_entities(<span class="number">20</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>start mem go...</span><br><span class="line">Top <span class="number">20</span>(KB &gt; <span class="number">1</span>KB):</span><br><span class="line">(<span class="string">'CreditTrader'</span>, <span class="number">231854</span>, <span class="number">157.5830078125</span>)</span><br><span class="line">(<span class="string">'CreditTrader'</span>, <span class="number">231858</span>, <span class="number">140.0361328125</span>)</span><br><span class="line">(<span class="string">'CreditTrader'</span>, <span class="number">231860</span>, <span class="number">139.953125</span>)</span><br><span class="line">(<span class="string">'CreditTrader'</span>, <span class="number">10860</span>, <span class="number">135.1005859375</span>)</span><br><span class="line">(<span class="string">'Space'</span>, <span class="number">10010</span>, <span class="number">30.1552734375</span>)</span><br><span class="line">(<span class="string">'Space'</span>, <span class="number">10004</span>, <span class="number">14.9208984375</span>)</span><br><span class="line">(<span class="string">'Space'</span>, <span class="number">10005</span>, <span class="number">12.6435546875</span>)</span><br><span class="line">(<span class="string">'Space'</span>, <span class="number">10064</span>, <span class="number">11.2939453125</span>)</span><br><span class="line">(<span class="string">'Monster'</span>, <span class="number">32717</span>, <span class="number">6.6826171875</span>)</span><br><span class="line">(<span class="string">'Monster'</span>, <span class="number">22194</span>, <span class="number">6.2109375</span>)</span><br><span class="line">(<span class="string">'Monster'</span>, <span class="number">22264</span>, <span class="number">6.2109375</span>)</span><br><span class="line">(<span class="string">'Monster'</span>, <span class="number">22265</span>, <span class="number">6.2109375</span>)</span><br><span class="line">(<span class="string">'Monster'</span>, <span class="number">22310</span>, <span class="number">6.2109375</span>)</span><br><span class="line">(<span class="string">'Monster'</span>, <span class="number">22311</span>, <span class="number">6.2109375</span>)</span><br><span class="line">(<span class="string">'Monster'</span>, <span class="number">22327</span>, <span class="number">6.2109375</span>)</span><br><span class="line">(<span class="string">'Monster'</span>, <span class="number">22328</span>, <span class="number">6.2109375</span>)</span><br><span class="line">(<span class="string">'Monster'</span>, <span class="number">22329</span>, <span class="number">6.2109375</span>)</span><br><span class="line">(<span class="string">'Monster'</span>, <span class="number">22407</span>, <span class="number">6.2109375</span>)</span><br><span class="line">(<span class="string">'Monster'</span>, <span class="number">22408</span>, <span class="number">6.2109375</span>)</span><br><span class="line">(<span class="string">'Monster'</span>, <span class="number">22409</span>, <span class="number">6.2109375</span>)</span><br><span class="line">done!</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>memgo.size_of_ent(<span class="number">231854</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>start mem go...</span><br><span class="line">size <span class="keyword">is</span> <span class="number">157.583007812</span>KB</span><br><span class="line">Top10 <span class="keyword">is</span>(Byte):</span><br><span class="line">(<span class="string">'store'</span>, <span class="number">158584</span>)</span><br><span class="line">(<span class="string">'globalBox'</span>, <span class="number">1911</span>)</span><br><span class="line">(<span class="string">'__dict__'</span>, <span class="number">333</span>)</span><br><span class="line">(<span class="string">'volatileInfo'</span>, <span class="number">104</span>)</span><br><span class="line">(<span class="string">'userList'</span>, <span class="number">72</span>)</span><br><span class="line">(<span class="string">'__module__'</span>, <span class="number">49</span>)</span><br><span class="line">(<span class="string">'IsAvatar'</span>, <span class="number">24</span>)</span><br><span class="line">(<span class="string">'S_COMBAT'</span>, <span class="number">24</span>)</span><br><span class="line">(<span class="string">'S_IDLE'</span>, <span class="number">24</span>)</span><br><span class="line">(<span class="string">'S_MOVE'</span>, <span class="number">24</span>)</span><br><span class="line">done!</span><br><span class="line"></span><br></pre></td></tr></table></figure>  </p>
+<p>程序耗时比较长，为防止影响线上服务器的逻辑运算，可以使用os.fork()在子进程中进行统计，反正这个工具对内存中的entity是只读的，正好利用fork的Copy on Write特性，基本不会影响到服务器的正常运行。  </p>
+<hr>
+<p>推荐阅读：<br><a href="http://blog.guoyb.com/2016/07/03/python-coroutine/">Python协程：从yield/send到async/await/</a><br><a href="http://blog.guoyb.com/2016/12/13/py-hotfix/">探究如何给Python程序做hotfix</a><br><a href="http://blog.guoyb.com/2017/09/02/python-cmp/">踩坑记——覆写Python中的__cmp__</a>  </p>
+<p>转载请注明出处： <a href="http://blog.guoyb.com/2017/09/09/python-mem/">http://blog.guoyb.com/2017/09/09/python-mem/</a>。  </p>
+<p>欢迎使用微信扫描下方二维码，关注我的微信公众号TechTalking，技术·生活·思考：<br><img src="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.jpg" alt="后端技术小黑屋"></p>
+
+    
+  </div>
+  <footer>
+    
+      
+      
+  <div class="tags">
+    <a class="tags-link" href="/tags/Python/">Python</a>, <a class="tags-link" href="/tags/内存优化/">内存优化</a>
+  </div>
+
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+<!-- JiaThis Button BEGIN -->
+<script type="text/javascript">
+var jiathis_config = {data_track_clickback:'true'};
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?move=0&amp;uid=1706898" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+<section id="comment">
+  <h1 class="title">评论</h1>
+  <div class="ds-thread" data-title="如何估算一个Python对象的内存占用">
+  </div>
+</section>
+
+	</div>
+  </div>
+	<aside id="sidebar">
+  
+  
+    
+      
+      
+
+<div class="widget tagcloud first">
+  <h3 class="title">Tags</h3>
+  <div class="entry">
+    <a href="/tags/C/" style="font-size: 11.11px;">C</a> <a href="/tags/C/" style="font-size: 17.78px;">C++</a> <a href="/tags/C-11/" style="font-size: 17.78px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 11.11px;">MySQL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/tags/cmp/" style="font-size: 10px;">__cmp__</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/docopt/" style="font-size: 10px;">docopt</a> <a href="/tags/echoserver/" style="font-size: 11.11px;">echoserver</a> <a href="/tags/epoll/" style="font-size: 11.11px;">epoll</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/grpc/" style="font-size: 11.11px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 11.11px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/protobuf/" style="font-size: 11.11px;">protobuf</a> <a href="/tags/python/" style="font-size: 10px;">python</a> <a href="/tags/redis/" style="font-size: 13.33px;">redis</a> <a href="/tags/regex/" style="font-size: 13.33px;">regex</a> <a href="/tags/select/" style="font-size: 11.11px;">select</a> <a href="/tags/skynet/" style="font-size: 13.33px;">skynet</a> <a href="/tags/socket/" style="font-size: 11.11px;">socket</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 15.56px;">书单</a> <a href="/tags/内存优化/" style="font-size: 10px;">内存优化</a> <a href="/tags/勘误，MySQL，C-11/" style="font-size: 10px;">勘误，MySQL，C++11</a> <a href="/tags/北京车展/" style="font-size: 10px;">北京车展</a> <a href="/tags/协程/" style="font-size: 10px;">协程</a> <a href="/tags/学习笔记/" style="font-size: 14.44px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/广州/" style="font-size: 10px;">广州</a> <a href="/tags/总结/" style="font-size: 10px;">总结</a> <a href="/tags/新西兰/" style="font-size: 10px;">新西兰</a> <a href="/tags/旅行/" style="font-size: 13.33px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 18.89px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 14.44px;">查证记录</a> <a href="/tags/游戏开发/" style="font-size: 10px;">游戏开发</a> <a href="/tags/爱好/" style="font-size: 10px;">爱好</a> <a href="/tags/生活/" style="font-size: 12.22px;">生活</a> <a href="/tags/知乎/" style="font-size: 10px;">知乎</a> <a href="/tags/程序人生/" style="font-size: 10px;">程序人生</a> <a href="/tags/读书笔记/" style="font-size: 16.67px;">读书笔记</a> <a href="/tags/读后感/" style="font-size: 10px;">读后感</a> <a href="/tags/贵州/" style="font-size: 10px;">贵州</a>
+  </div>
+</div>
+
+    
+      
+      
+
+<div class="widget recent-posts">
+  <h3 class="title">最近文章</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2017/09/09/python-mem/">如何估算一个Python对象的内存占用</a>
+      </li>
+    
+      <li>
+        <a href="/2017/09/02/python-cmp/">踩坑记——覆写Python中的__cmp__</a>
+      </li>
+    
+      <li>
+        <a href="/2017/06/30/2017-booklist-1/">2017年上半年书单</a>
+      </li>
+    
+      <li>
+        <a href="/2017/04/26/japan/">日本之行感悟</a>
+      </li>
+    
+      <li>
+        <a href="/2017/03/26/skynet-4/">探索skynet（四）：服务之间的通信</a>
+      </li>
+    
+  </ul>
+</div>
+
+    
+      
+      
+<div class="widget tag">
+  <h3 class="title">友情链接</h3>
+  <ul class="entry">
+  
+    
+    <li><a href="http://www.linkedin.com/in/yubo-guo-739b0071" target="_blank">LinkedIn</a></li>
+  
+    
+    <li><a href="http://www.tuicool.com/sites/2emeIjb" target="_blank">推酷站点</a></li>
+  
+  </ul>
+</div>
+
+    
+  
+</aside>
+<div class="clearfix"></div>
+  <footer id="footer"><div class="copyright">
+  
+  &copy; 2017 <a href="/">Yubo Guo</a>
+  
+</div>
+<div class="theme-copyright">
+  Theme by <a href="https://github.com/orderedlist" target="_blank">orderedlist</a>
+   | 
+  Redesign by <a href="http://heroicyang.com/" target="_blank">Heroic Yang</a>
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+<script src="/js/scale.fix.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = { short_name: 'guoyb' };
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';
+    ds.async = true;
+    ds.src = 'http://static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+  (function($){
+    $('.fancybox').fancybox();
+  })(jQuery);
+</script>
+
+</body>
+</html>
