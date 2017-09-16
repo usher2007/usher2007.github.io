@@ -1,0 +1,238 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  
+  <title>给shell脚本加锁 | 一根笨茄子</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  
+    <meta name="author" content="Yubo Guo">
+  
+  
+    <meta name="description" content="在内部测试服务器上，有一个shell脚本用于将csv数据表格转换成Python数据文件。在执行过程中的某一步，由于需要对一些文件进行写操作，所以如果同时有两个人运行了导表程序，则第二个人运行到此步骤时，就会失败并退出，这既拖慢了第一个人的导表速度，而且对第二人的体验也不好（运行了五分钟然后告诉我失败了？黑人问号……）。所以我就想给这个shell脚本加个锁，保证同一时刻只能有一个实例在运行，并及早">
+  
+  <meta name="description" content="在内部测试服务器上，有一个shell脚本用于将csv数据表格转换成Python数据文件。在执行过程中的某一步，由于需要对一些文件进行写操作，所以如果同时有两个人运行了导表程序，则第二个人运行到此步骤时，就会失败并退出，这既拖慢了第一个人的导表速度，而且对第二人的体验也不好（运行了五分钟然后告诉我失败了？黑人问号……）。所以我就想给这个shell脚本加个锁，保证同一时刻只能有一个实例在运行，并及早">
+<meta property="og:type" content="article">
+<meta property="og:title" content="给shell脚本加锁">
+<meta property="og:url" content="http://blog.guoyb.com/2017/09/16/flock/index.html">
+<meta property="og:site_name" content="一根笨茄子">
+<meta property="og:description" content="在内部测试服务器上，有一个shell脚本用于将csv数据表格转换成Python数据文件。在执行过程中的某一步，由于需要对一些文件进行写操作，所以如果同时有两个人运行了导表程序，则第二个人运行到此步骤时，就会失败并退出，这既拖慢了第一个人的导表速度，而且对第二人的体验也不好（运行了五分钟然后告诉我失败了？黑人问号……）。所以我就想给这个shell脚本加个锁，保证同一时刻只能有一个实例在运行，并及早">
+<meta property="og:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.jpg">
+<meta property="og:updated_time" content="2017-09-16T02:51:27.346Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="给shell脚本加锁">
+<meta name="twitter:description" content="在内部测试服务器上，有一个shell脚本用于将csv数据表格转换成Python数据文件。在执行过程中的某一步，由于需要对一些文件进行写操作，所以如果同时有两个人运行了导表程序，则第二个人运行到此步骤时，就会失败并退出，这既拖慢了第一个人的导表速度，而且对第二人的体验也不好（运行了五分钟然后告诉我失败了？黑人问号……）。所以我就想给这个shell脚本加个锁，保证同一时刻只能有一个实例在运行，并及早">
+<meta name="twitter:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.jpg">
+  
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+  
+<script type="text/javascript">
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?996ee0fca2512b4c29f37f60cf6387ca";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+</head>
+
+<body>
+  <div class="wrapper">
+    <header id="header">
+  <div class="title">
+    <h1><a href="/">一根笨茄子</a></h1>
+    <p><a href="/"></a></p>
+  </div>
+  <nav class="nav">
+    <ul>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/about">关于我</a></li>
+      
+      
+    </ul>
+    <div class="clearfix"></div>
+  </nav>
+  <div class="clearfix"></div>
+</header>
+    <div class="content">
+		<article class="post">
+  <header>
+    
+      <div class="icon"></div>
+      <a href="/2017/09/16/flock/">
+  <time datetime="2017-09-16T01:38:47.000Z">
+    2017-09-16
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title">给shell脚本加锁</h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>在内部测试服务器上，有一个shell脚本用于将csv数据表格转换成Python数据文件。在执行过程中的某一步，由于需要对一些文件进行写操作，所以如果同时有两个人运行了导表程序，则第二个人运行到此步骤时，就会失败并退出，这既拖慢了第一个人的导表速度，而且对第二人的体验也不好（运行了五分钟然后告诉我失败了？黑人问号……）。所以我就想给这个shell脚本加个锁，保证同一时刻只能有一个实例在运行，并及早给出其他用户提示信息。<br><a id="more"></a></p>
+<h2 id="土办法"><a href="#土办法" class="headerlink" title="土办法"></a>土办法</h2><p>最开始想到的是一个土办法：每次shell开始运行，就检测某个特定的“锁文件”是否存在，如果不存在就touch一个；如果存在，则输出错误信息，提示用户稍后重试。  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">LOCKFILE=/home/xxq/lock_update_check_commit_sh.tmp</span><br><span class="line"></span><br><span class="line">if [ -e $LOCKFILE ]</span><br><span class="line">then</span><br><span class="line">   echo &quot;Another user is doing the same thing, please wait!&quot;</span><br><span class="line">   exit 1</span><br><span class="line">else</span><br><span class="line">   touch $LOCKFILE</span><br><span class="line">   chmod 600 $LOCKFILE</span><br><span class="line">fi</span><br><span class="line"></span><br></pre></td></tr></table></figure>  
+<p>另外，在程序运行结束时，需要删除这个临时文件：  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">rm_lock( )</span><br><span class="line">&#123;</span><br><span class="line">   if [ -e $LOCKFILE ]</span><br><span class="line">   then</span><br><span class="line">       rm -f $LOCKFILE</span><br><span class="line">   fi</span><br><span class="line"> &#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>  
+<p>但是，程序可能正常结束，也可能在外部被kill掉，或者运行中出了异常而中止，所以除了正常结束之外，对于各种异常情况，何时调用这个rm_lock函数呢？  </p>
+<p>这里，我用到了一个trap命令，它可以为信号量设置回调命令。  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">trap &apos;rm_lock&apos; 1 2 3 9 15</span><br></pre></td></tr></table></figure>  
+<p>这样一个土“文件锁”就成型了。  </p>
+<h2 id="flock"><a href="#flock" class="headerlink" title="flock"></a>flock</h2><p>但是其实，flock提供了一种更清爽的办法来实现这一功能：  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">LOCKFILE=&quot;/home/xxq/lock_update_check_commit_sh.tmp&quot;</span><br><span class="line"></span><br><span class="line">exec 200&gt;$LOCKFILE</span><br><span class="line">flock -n 200 || &#123;</span><br><span class="line">    echo &quot;Another user is doing the same thing，please wait..&quot;</span><br><span class="line">    flock 200 </span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>  
+<p>exec那一行将LOCKFILE和文件描述符200以“写”的方式连接起来（不需要LOCKFILE存在），之后flock尝试获得文件描述符200的锁，-n参数表示如果失败则直接fail而不等待。所以这里如果没有获得锁的话，会输出一条提示信息，然后以阻塞的方式等待获得文件描述符200的锁。  </p>
+<p>最给力的是，在整个shell脚本执行结束时，文件描述符200会关闭，则其上的锁也就会自动释放。这样，就不用上面那种使用trap的方式去处理各种异常！  </p>
+<hr>
+<p>推荐阅读：<br><a href="http://blog.guoyb.com/2016/07/03/python-coroutine/">如何估算一个Python对象的内存占用</a><br><a href="http://blog.guoyb.com/2016/12/13/py-hotfix/">探究如何给Python程序做hotfix</a><br><a href="http://blog.guoyb.com/2017/02/19/mysql-remote-connect/">MySQL设置远程访问权限</a>  </p>
+<p>转载请注明出处： <a href="http://blog.guoyb.com/2017/09/16/flock/">http://blog.guoyb.com/2017/09/16/flock/</a>。  </p>
+<p>欢迎使用微信扫描下方二维码，关注我的微信公众号TechTalking，技术·生活·思考：<br><img src="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.jpg" alt="后端技术小黑屋"></p>
+
+    
+  </div>
+  <footer>
+    
+      
+      
+  <div class="tags">
+    <a class="tags-link" href="/tags/flock/">flock</a>, <a class="tags-link" href="/tags/shell/">shell</a>
+  </div>
+
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+<!-- JiaThis Button BEGIN -->
+<script type="text/javascript">
+var jiathis_config = {data_track_clickback:'true'};
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?move=0&amp;uid=1706898" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+<section id="comment">
+  <h1 class="title">Comments</h1>
+  <div class="ds-thread" data-title="给shell脚本加锁">
+  </div>
+</section>
+
+	</div>
+  </div>
+	<aside id="sidebar">
+  
+  
+    
+      
+      
+
+<div class="widget tagcloud first">
+  <h3 class="title">Tags</h3>
+  <div class="entry">
+    <a href="/tags/C/" style="font-size: 11.11px;">C</a> <a href="/tags/C/" style="font-size: 17.78px;">C++</a> <a href="/tags/C-11/" style="font-size: 17.78px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 11.11px;">MySQL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/tags/cmp/" style="font-size: 10px;">__cmp__</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/docopt/" style="font-size: 10px;">docopt</a> <a href="/tags/echoserver/" style="font-size: 11.11px;">echoserver</a> <a href="/tags/epoll/" style="font-size: 11.11px;">epoll</a> <a href="/tags/flock/" style="font-size: 10px;">flock</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/grpc/" style="font-size: 11.11px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 11.11px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/protobuf/" style="font-size: 11.11px;">protobuf</a> <a href="/tags/python/" style="font-size: 10px;">python</a> <a href="/tags/redis/" style="font-size: 13.33px;">redis</a> <a href="/tags/regex/" style="font-size: 13.33px;">regex</a> <a href="/tags/select/" style="font-size: 11.11px;">select</a> <a href="/tags/shell/" style="font-size: 10px;">shell</a> <a href="/tags/skynet/" style="font-size: 13.33px;">skynet</a> <a href="/tags/socket/" style="font-size: 11.11px;">socket</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 15.56px;">书单</a> <a href="/tags/内存优化/" style="font-size: 10px;">内存优化</a> <a href="/tags/勘误，MySQL，C-11/" style="font-size: 10px;">勘误，MySQL，C++11</a> <a href="/tags/北京车展/" style="font-size: 10px;">北京车展</a> <a href="/tags/协程/" style="font-size: 10px;">协程</a> <a href="/tags/学习笔记/" style="font-size: 14.44px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/广州/" style="font-size: 10px;">广州</a> <a href="/tags/总结/" style="font-size: 10px;">总结</a> <a href="/tags/新西兰/" style="font-size: 10px;">新西兰</a> <a href="/tags/旅行/" style="font-size: 13.33px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 18.89px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 14.44px;">查证记录</a> <a href="/tags/游戏开发/" style="font-size: 10px;">游戏开发</a> <a href="/tags/爱好/" style="font-size: 10px;">爱好</a> <a href="/tags/生活/" style="font-size: 12.22px;">生活</a> <a href="/tags/知乎/" style="font-size: 10px;">知乎</a> <a href="/tags/程序人生/" style="font-size: 10px;">程序人生</a> <a href="/tags/读书笔记/" style="font-size: 16.67px;">读书笔记</a> <a href="/tags/读后感/" style="font-size: 10px;">读后感</a> <a href="/tags/贵州/" style="font-size: 10px;">贵州</a>
+  </div>
+</div>
+
+    
+      
+      
+
+<div class="widget recent-posts">
+  <h3 class="title">最近文章</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2017/09/16/flock/">给shell脚本加锁</a>
+      </li>
+    
+      <li>
+        <a href="/2017/09/09/python-mem/">如何估算一个Python对象的内存占用</a>
+      </li>
+    
+      <li>
+        <a href="/2017/09/02/python-cmp/">踩坑记——覆写Python中的__cmp__</a>
+      </li>
+    
+      <li>
+        <a href="/2017/06/30/2017-booklist-1/">2017年上半年书单</a>
+      </li>
+    
+      <li>
+        <a href="/2017/04/26/japan/">日本之行感悟</a>
+      </li>
+    
+  </ul>
+</div>
+
+    
+      
+      
+<div class="widget tag">
+  <h3 class="title">友情链接</h3>
+  <ul class="entry">
+  
+    
+    <li><a href="http://www.linkedin.com/in/yubo-guo-739b0071" target="_blank">LinkedIn</a></li>
+  
+    
+    <li><a href="http://www.tuicool.com/sites/2emeIjb" target="_blank">推酷站点</a></li>
+  
+  </ul>
+</div>
+
+    
+  
+</aside>
+<div class="clearfix"></div>
+  <footer id="footer"><div class="copyright">
+  
+  &copy; 2017 <a href="/">Yubo Guo</a>
+  
+</div>
+<div class="theme-copyright">
+  Theme by <a href="https://github.com/orderedlist" target="_blank">orderedlist</a>
+   | 
+  Redesign by <a href="http://heroicyang.com/" target="_blank">Heroic Yang</a>
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+<script src="/js/scale.fix.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = { short_name: 'guoyb' };
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';
+    ds.async = true;
+    ds.src = 'http://static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+  (function($){
+    $('.fancybox').fancybox();
+  })(jQuery);
+</script>
+
+</body>
+</html>
