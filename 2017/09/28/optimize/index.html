@@ -1,0 +1,244 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  
+  <title>如何做好一次优化与重构 | 一根笨茄子</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  
+    <meta name="author" content="Yubo Guo">
+  
+  
+    <meta name="description" content="上周周版本更新后的三天，我基本上都在不断的做hotfix，原因是之前我对一个跨服战场老系统里的部分代码逻辑进行重构和优化，本意是可以大幅降低服务器的单点负载，均衡服务器压力；但是不成想却引出几个比较难追查的问题。到昨天新的周版本上线，目前这一波阵痛期才算已经过去。  
+首先是自我检讨的部分对运行了好几年的代码进行重构，很大的风险在于不能彻底理解这段代码的主人当时的想法：他为什么要这么做？这段看似">
+  
+  <meta name="description" content="上周周版本更新后的三天，我基本上都在不断的做hotfix，原因是之前我对一个跨服战场老系统里的部分代码逻辑进行重构和优化，本意是可以大幅降低服务器的单点负载，均衡服务器压力；但是不成想却引出几个比较难追查的问题。到昨天新的周版本上线，目前这一波阵痛期才算已经过去。  
+首先是自我检讨的部分对运行了好几年的代码进行重构，很大的风险在于不能彻底理解这段代码的主人当时的想法：他为什么要这么做？这段看似">
+<meta property="og:type" content="article">
+<meta property="og:title" content="如何做好一次优化与重构">
+<meta property="og:url" content="http://blog.guoyb.com/2017/09/28/optimize/index.html">
+<meta property="og:site_name" content="一根笨茄子">
+<meta property="og:description" content="上周周版本更新后的三天，我基本上都在不断的做hotfix，原因是之前我对一个跨服战场老系统里的部分代码逻辑进行重构和优化，本意是可以大幅降低服务器的单点负载，均衡服务器压力；但是不成想却引出几个比较难追查的问题。到昨天新的周版本上线，目前这一波阵痛期才算已经过去。  
+首先是自我检讨的部分对运行了好几年的代码进行重构，很大的风险在于不能彻底理解这段代码的主人当时的想法：他为什么要这么做？这段看似">
+<meta property="og:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.jpg">
+<meta property="og:updated_time" content="2017-09-28T14:08:03.759Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="如何做好一次优化与重构">
+<meta name="twitter:description" content="上周周版本更新后的三天，我基本上都在不断的做hotfix，原因是之前我对一个跨服战场老系统里的部分代码逻辑进行重构和优化，本意是可以大幅降低服务器的单点负载，均衡服务器压力；但是不成想却引出几个比较难追查的问题。到昨天新的周版本上线，目前这一波阵痛期才算已经过去。  
+首先是自我检讨的部分对运行了好几年的代码进行重构，很大的风险在于不能彻底理解这段代码的主人当时的想法：他为什么要这么做？这段看似">
+<meta name="twitter:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.jpg">
+  
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+  
+<script type="text/javascript">
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?996ee0fca2512b4c29f37f60cf6387ca";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+</head>
+
+<body>
+  <div class="wrapper">
+    <header id="header">
+  <div class="title">
+    <h1><a href="/">一根笨茄子</a></h1>
+    <p><a href="/"></a></p>
+  </div>
+  <nav class="nav">
+    <ul>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/about">关于我</a></li>
+      
+      
+    </ul>
+    <div class="clearfix"></div>
+  </nav>
+  <div class="clearfix"></div>
+</header>
+    <div class="content">
+		<article class="post">
+  <header>
+    
+      <div class="icon"></div>
+      <a href="/2017/09/28/optimize/">
+  <time datetime="2017-09-27T23:42:26.000Z">
+    2017-09-28
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title">如何做好一次优化与重构</h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>上周周版本更新后的三天，我基本上都在不断的做hotfix，原因是之前我对一个跨服战场老系统里的部分代码逻辑进行重构和优化，本意是可以大幅降低服务器的单点负载，均衡服务器压力；但是不成想却引出几个比较难追查的问题。到昨天新的周版本上线，目前这一波阵痛期才算已经过去。  </p>
+<h2 id="首先是自我检讨的部分"><a href="#首先是自我检讨的部分" class="headerlink" title="首先是自我检讨的部分"></a>首先是自我检讨的部分</h2><p>对运行了好几年的代码进行重构，很大的风险在于不能彻底理解这段代码的主人当时的想法：他为什么要这么做？这段看似“愚蠢”的代码，是不是在避开什么陷阱？尤其是在这个程序员已经离开项目组的时候。对于这次优化，我想当然的以为，当时是因为底层没有提供相关的支持（确实没有），所以才遗留下这样一段低效的逻辑。所以当我给底层架构添加上相关支持以后，就大刀阔斧的直接进行改动了。其实，这段代码还隐含的避免了其他问题，这个问题在这次的风波中也是爆发的最集中的一个。<br><a id="more"></a><br>另外的一个问题是，这套系统中，有一小段代码，只在生产服务器（外服）运行，而在测试服务器（内服），是跳过的。这样做的本意是为了方便内服测试人员的工作，但是实际上导致了这段代码在内服永远测试不到。这里我想有两种解决方案：  </p>
+<ol>
+<li>架设一个完全类似于外服环境的测试服务器，用于最后上线前的测试。这种服务器我们其实是有一台的，基本环境都和外服一致，但是在这个内服/外服开关上，它还是属于内服的，这是由于项目架构中的一些其他因素决定的，无法改变。因此，需要第二种方法进行配合；  </li>
+<li>在内服/外服开关方面，进行多种粒度、层次的划分。有一部分的开关（应该很少），是必须严格对应正确的内服/外服，不能更改；但是，还有一部分的开关，可以直接开放权限让测试人员进行配置，以模拟外服环境。而上面出问题的这个开关，显然应该属于第二种情况：因为这个开关本来就是为了方便测试人员内服测试而存在的，当然应该给予测试人员修改的权限。  </li>
+</ol>
+<h2 id="第二个部分我想探讨下这种优化要不要做"><a href="#第二个部分我想探讨下这种优化要不要做" class="headerlink" title="第二个部分我想探讨下这种优化要不要做"></a>第二个部分我想探讨下这种优化要不要做</h2><p>从程序员的角度来说，这种容易引发单点负载过高的代码逻辑始终都是一颗定时炸弹，而且影响用户体验（黑屏、掉线、卡场景），在知道原因以及能够进行修正的情况下，一定是想要去进行代码重构与优化的。但是从策划的角度来说，之前的代码逻辑一直能够跑通，目前也没有形成严重的问题，玩家也已经接受了这种体验上的损失，这个优化似乎就没有那么紧迫，只是在增加风险。  </p>
+<p>那么，怎么样能够尽量降低风险，缩短重构后“补锅”的阵痛期呢？  </p>
+<ol>
+<li>每一次代码重构，必然带来风险。这时如果有之前完整的测试用例的积累，以及一套自动化测试系统，就是很强有力的保障。在面向用户的体验方面，自动化测试似乎是种奢望（一种表现是否正常，没有直接自动化判定的可靠方式）。所以，测试用例的积累就很关键了。但是随着测试人员的流动，我们项目中成熟系统的测试用例散佚不少，这里需要整个测试部门构建一套标准制度，进行测试用例方面的文档积累与沉淀。  </li>
+<li>重构代码上线前想好PlanB。这也是我们这次做的不好的一点，可能是由于轻视了这次重构的复杂度，所以并没有做好一个完善的备选方案。不过好在大部分错误都处理的还算及时，没有影响到游戏的主要流程。</li>
+<li>在查找bug源头的时候，我发现，一条信息完备、便于检索的log，对于快速定位问题实在是太重要太重要。这里有一个技巧：凡是需要写正则表达式才能grep出来的log，一般都不是一条“好”log。将这个规则推广到代码中，就是说变量与函数名的命名要有辨识度与区分度，如果<strong>on</strong>、<strong>at</strong>这种名字出现在代码中，请自行面壁思过五分钟。  </li>
+</ol>
+<h2 id="最后的话"><a href="#最后的话" class="headerlink" title="最后的话"></a>最后的话</h2><p>如果没有代码重构与优化，再优秀的团队，也难以避免代码“腐烂”。但是重构与优化，一定是会带来一定的风险的。我们能做的是在上线前，通过一套可靠的机制，尽量减少犯错误的几率；一旦出现问题，也通过一套可靠的机制与方案，尽量缩短阵痛期。  </p>
+<p>不多说了，后面还有一个陈年系统要重构，社会主义核心价值观保佑我吧~  </p>
+<hr>
+<p>推荐阅读：<br><a href="http://blog.guoyb.com/2016/12/03/bad-py-style/">Python最差实践</a><br><a href="http://blog.guoyb.com/2016/08/06/something-about-strip/">从string.strip()引起的一个bug说起</a><br><a href="http://blog.guoyb.com/2017/01/09/stat-codes//">这些年，你写了多少行代码</a>  </p>
+<p>转载请注明出处： <a href="http://blog.guoyb.com/2017/09/28/optimize/">http://blog.guoyb.com/2017/09/28/optimize/</a>。  </p>
+<p>欢迎使用微信扫描下方二维码，关注我的微信公众号TechTalking，技术·生活·思考：<br><img src="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.jpg" alt="后端技术小黑屋"></p>
+
+    
+  </div>
+  <footer>
+    
+      
+      
+  <div class="tags">
+    <a class="tags-link" href="/tags/杂谈/">杂谈</a>
+  </div>
+
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+<!-- JiaThis Button BEGIN -->
+<script type="text/javascript">
+var jiathis_config = {data_track_clickback:'true'};
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?move=0&amp;uid=1706898" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+<section id="comment">
+  <h1 class="title">Comments</h1>
+  <div class="ds-thread" data-title="如何做好一次优化与重构">
+  </div>
+</section>
+
+	</div>
+  </div>
+	<aside id="sidebar">
+  
+  
+    
+      
+      
+
+<div class="widget tagcloud first">
+  <h3 class="title">Tags</h3>
+  <div class="entry">
+    <a href="/tags/C/" style="font-size: 11.11px;">C</a> <a href="/tags/C/" style="font-size: 17.78px;">C++</a> <a href="/tags/C-11/" style="font-size: 17.78px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 11.11px;">MySQL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/tags/cmp/" style="font-size: 10px;">__cmp__</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/docopt/" style="font-size: 10px;">docopt</a> <a href="/tags/echoserver/" style="font-size: 11.11px;">echoserver</a> <a href="/tags/epoll/" style="font-size: 11.11px;">epoll</a> <a href="/tags/flock/" style="font-size: 10px;">flock</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/grpc/" style="font-size: 11.11px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 11.11px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/protobuf/" style="font-size: 11.11px;">protobuf</a> <a href="/tags/python/" style="font-size: 10px;">python</a> <a href="/tags/redis/" style="font-size: 13.33px;">redis</a> <a href="/tags/regex/" style="font-size: 13.33px;">regex</a> <a href="/tags/select/" style="font-size: 11.11px;">select</a> <a href="/tags/shell/" style="font-size: 10px;">shell</a> <a href="/tags/skynet/" style="font-size: 13.33px;">skynet</a> <a href="/tags/socket/" style="font-size: 11.11px;">socket</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 15.56px;">书单</a> <a href="/tags/书单，杂谈/" style="font-size: 10px;">书单，杂谈</a> <a href="/tags/内存优化/" style="font-size: 10px;">内存优化</a> <a href="/tags/勘误，MySQL，C-11/" style="font-size: 10px;">勘误，MySQL，C++11</a> <a href="/tags/北京车展/" style="font-size: 10px;">北京车展</a> <a href="/tags/协程/" style="font-size: 10px;">协程</a> <a href="/tags/学习笔记/" style="font-size: 14.44px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/广州/" style="font-size: 10px;">广州</a> <a href="/tags/总结/" style="font-size: 10px;">总结</a> <a href="/tags/新西兰/" style="font-size: 10px;">新西兰</a> <a href="/tags/旅行/" style="font-size: 13.33px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 18.89px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 14.44px;">查证记录</a> <a href="/tags/游戏开发/" style="font-size: 10px;">游戏开发</a> <a href="/tags/爱好/" style="font-size: 10px;">爱好</a> <a href="/tags/生活/" style="font-size: 12.22px;">生活</a> <a href="/tags/知乎/" style="font-size: 10px;">知乎</a> <a href="/tags/程序人生/" style="font-size: 10px;">程序人生</a> <a href="/tags/读书笔记/" style="font-size: 16.67px;">读书笔记</a> <a href="/tags/读后感/" style="font-size: 10px;">读后感</a> <a href="/tags/贵州/" style="font-size: 10px;">贵州</a>
+  </div>
+</div>
+
+    
+      
+      
+
+<div class="widget recent-posts">
+  <h3 class="title">最近文章</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2017/09/28/optimize/">如何做好一次优化与重构</a>
+      </li>
+    
+      <li>
+        <a href="/2017/09/21/depressed/">解忧杂货店</a>
+      </li>
+    
+      <li>
+        <a href="/2017/09/16/flock/">给shell脚本加锁</a>
+      </li>
+    
+      <li>
+        <a href="/2017/09/09/python-mem/">如何估算一个Python对象的内存占用</a>
+      </li>
+    
+      <li>
+        <a href="/2017/09/02/python-cmp/">踩坑记——覆写Python中的__cmp__</a>
+      </li>
+    
+  </ul>
+</div>
+
+    
+      
+      
+<div class="widget tag">
+  <h3 class="title">友情链接</h3>
+  <ul class="entry">
+  
+    
+    <li><a href="http://www.linkedin.com/in/yubo-guo-739b0071" target="_blank">LinkedIn</a></li>
+  
+    
+    <li><a href="http://www.tuicool.com/sites/2emeIjb" target="_blank">推酷站点</a></li>
+  
+  </ul>
+</div>
+
+    
+  
+</aside>
+<div class="clearfix"></div>
+  <footer id="footer"><div class="copyright">
+  
+  &copy; 2017 <a href="/">Yubo Guo</a>
+  
+</div>
+<div class="theme-copyright">
+  Theme by <a href="https://github.com/orderedlist" target="_blank">orderedlist</a>
+   | 
+  Redesign by <a href="http://heroicyang.com/" target="_blank">Heroic Yang</a>
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+<script src="/js/scale.fix.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = { short_name: 'guoyb' };
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';
+    ds.async = true;
+    ds.src = 'http://static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+  (function($){
+    $('.fancybox').fancybox();
+  })(jQuery);
+</script>
+
+</body>
+</html>

@@ -63,6 +63,51 @@ var _hmt = _hmt || [];
   <header>
     
       <div class="icon"></div>
+      <a href="/2016/09/12/cpp11-10/">
+  <time datetime="2016-09-12T13:51:23.000Z">
+    2016-09-12
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title"><a href="/2016/09/12/cpp11-10/">C++11新特性之随机数库</a></h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>前九篇在这里：<br>C++11新特性之新类型与初始化: <a href="http://blog.guoyb.com/2016/06/18/cpp11-1/">http://blog.guoyb.com/2016/06/18/cpp11-1</a><br>C++11新特性之类型推断与类型获取: <a href="http://blog.guoyb.com/2016/06/25/cpp11-2/">http://blog.guoyb.com/2016/06/25/cpp11-2</a><br>C++11新特性之lambda： <a href="http://blog.guoyb.com/2016/06/30/cpp11-3/">http://blog.guoyb.com/2016/06/30/cpp11-3</a><br>C++11新特性之容器相关特性： <a href="http://blog.guoyb.com/2016/07/09/cpp11-4">http://blog.guoyb.com/2016/07/09/cpp11-4</a><br>C++11新特性之智能指针： <a href="http://blog.guoyb.com/2016/08/02/cpp11-5">http://blog.guoyb.com/2016/08/02/cpp11-5</a><br>C++11新特性之Class: <a href="http://blog.guoyb.com/2016/08/14/cpp11-6">http://blog.guoyb.com/2016/08/14/cpp11-6</a><br>C++11新特性之右值引用与移动： <a href="http://blog.guoyb.com/2016/08/20/cpp11-7">http://blog.guoyb.com/2016/08/20/cpp11-7</a><br>C++11新特性之template： <a href="http://blog.guoyb.com/2016/08/31/cpp11-8">http://blog.guoyb.com/2016/08/31/cpp11-8</a><br>C++11新特性之正则表达式： <a href="http://blog.guoyb.com/2016/09/10/cpp11-9">http://blog.guoyb.com/2016/09/10/cpp11-9</a>  </p>
+<hr>
+<p>这是C++11新特性介绍的第十部分，涉及到随机数库相关的新特性。<br>不想看toy code的读者可以直接拉到文章最后看这部分的总结。<br>
+    
+  </div>
+  <footer class="end-sep">
+    
+      
+        <div class="alignleft">
+          <a href="/2016/09/12/cpp11-10/#more" class="more-link">Read More</a>
+        </div>
+      
+      
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+<!-- JiaThis Button BEGIN -->
+<script type="text/javascript">
+var jiathis_config = {data_track_clickback:'true'};
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?move=0&amp;uid=1706898" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+
+  <article class="post">
+  <header>
+    
+      <div class="icon"></div>
       <a href="/2016/09/10/cpp11-9/">
   <time datetime="2016-09-10T00:15:46.000Z">
     2016-09-10
@@ -475,52 +520,6 @@ var jiathis_config = {data_track_clickback:'true'};
 <!-- JiaThis Button END -->
 
 
-  <article class="post">
-  <header>
-    
-      <div class="icon"></div>
-      <a href="/2016/08/14/cpp11-6/">
-  <time datetime="2016-08-14T00:14:04.000Z">
-    2016-08-14
-  </time>
-</a>
-    
-    
-  
-    <h1 class="title"><a href="/2016/08/14/cpp11-6/">C++11新特性之Class</a></h1>
-  
-
-  </header>
-  
-  <div class="entry">
-    
-      <hr>
-<p>前五篇在这里：<br>C++11新特性之新类型与初始化: <a href="http://blog.guoyb.com/2016/06/18/cpp11-1/">http://blog.guoyb.com/2016/06/18/cpp11-1/</a><br>C++11新特性之类型推断与类型获取: <a href="http://blog.guoyb.com/2016/06/25/cpp11-2/">http://blog.guoyb.com/2016/06/25/cpp11-2/</a><br>C++11新特性之lambda： <a href="http://blog.guoyb.com/2016/06/30/cpp11-3/">http://blog.guoyb.com/2016/06/30/cpp11-3/</a><br>C++11新特性之容器相关特性： <a href="http://blog.guoyb.com/2016/07/09/cpp11-4">http://blog.guoyb.com/2016/07/09/cpp11-4/</a><br>C++11新特性之智能指针： <a href="http://blog.guoyb.com/2016/08/02/cpp11-5">http://blog.guoyb.com/2016/08/02/cpp11-5</a>  </p>
-<hr>
-<p>这是C++11新特性介绍的第六部分，涉及到Class的相关内容。<br>不想看toy code的读者可以直接拉到文章最后看这部分的总结。  </p>
-<h2 id="sizeof"><a href="#sizeof" class="headerlink" title="sizeof"></a>sizeof</h2><p>新标准中，sizeof可以直接用于获取Class::member的大小，而不用通过Class的实例。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> TestClass</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="keyword">int</span> member_i;</span><br><span class="line">	<span class="keyword">char</span> member_c;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="string">"test sizeof class member:\n"</span>;</span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="keyword">sizeof</span>(TestClass::member_i)&lt;&lt;<span class="string">"\t"</span>&lt;&lt;<span class="keyword">sizeof</span>(TestClass::member_c)&lt;&lt;<span class="built_in">endl</span>;</span><br></pre></td></tr></table></figure><br>
-    
-  </div>
-  <footer class="end-sep">
-    
-      
-        <div class="alignleft">
-          <a href="/2016/08/14/cpp11-6/#more" class="more-link">Read More</a>
-        </div>
-      
-      
-    
-    <div class="clearfix"></div>
-  </footer>
-</article>
-<!-- JiaThis Button BEGIN -->
-<script type="text/javascript">
-var jiathis_config = {data_track_clickback:'true'};
-</script>
-<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?move=0&amp;uid=1706898" charset="utf-8"></script>
-<!-- JiaThis Button END -->
-
-
 
 <nav id="pagination">
   
@@ -556,6 +555,10 @@ var jiathis_config = {data_track_clickback:'true'};
   <ul class="entry">
     
       <li>
+        <a href="/2017/09/28/optimize/">如何做好一次优化与重构</a>
+      </li>
+    
+      <li>
         <a href="/2017/09/21/depressed/">解忧杂货店</a>
       </li>
     
@@ -569,10 +572,6 @@ var jiathis_config = {data_track_clickback:'true'};
     
       <li>
         <a href="/2017/09/02/python-cmp/">踩坑记——覆写Python中的__cmp__</a>
-      </li>
-    
-      <li>
-        <a href="/2017/06/30/2017-booklist-1/">2017年上半年书单</a>
       </li>
     
   </ul>
