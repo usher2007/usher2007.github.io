@@ -1,0 +1,243 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  
+  <title>探索skynet（五）：随笔 | 一根笨茄子</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  
+    <meta name="author" content="Yubo Guo">
+  
+  
+    <meta name="description" content="最近准备在组内做一个有关skynet的分享，所以对skynet产生了一些“形而上”的思考。这篇文章将不涉及具体的代码细节，就是就着skynet这个框架“扯扯淡”，随便写写。  
+skynet的核心是什么skynet从Erlang借鉴而来，主要借鉴它的Actor模型，用以充分利用多核实现并行计算。所以skynet可以说是一个C语言+lua语言实现的Actor模型框架。  
+skynet中的每一个A">
+  
+  <meta name="description" content="最近准备在组内做一个有关skynet的分享，所以对skynet产生了一些“形而上”的思考。这篇文章将不涉及具体的代码细节，就是就着skynet这个框架“扯扯淡”，随便写写。  
+skynet的核心是什么skynet从Erlang借鉴而来，主要借鉴它的Actor模型，用以充分利用多核实现并行计算。所以skynet可以说是一个C语言+lua语言实现的Actor模型框架。  
+skynet中的每一个A">
+<meta property="og:type" content="article">
+<meta property="og:title" content="探索skynet（五）：随笔">
+<meta property="og:url" content="http://blog.guoyb.com/2017/10/12/skynet-5/index.html">
+<meta property="og:site_name" content="一根笨茄子">
+<meta property="og:description" content="最近准备在组内做一个有关skynet的分享，所以对skynet产生了一些“形而上”的思考。这篇文章将不涉及具体的代码细节，就是就着skynet这个框架“扯扯淡”，随便写写。  
+skynet的核心是什么skynet从Erlang借鉴而来，主要借鉴它的Actor模型，用以充分利用多核实现并行计算。所以skynet可以说是一个C语言+lua语言实现的Actor模型框架。  
+skynet中的每一个A">
+<meta property="og:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.png">
+<meta property="og:updated_time" content="2017-10-12T13:56:11.304Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="探索skynet（五）：随笔">
+<meta name="twitter:description" content="最近准备在组内做一个有关skynet的分享，所以对skynet产生了一些“形而上”的思考。这篇文章将不涉及具体的代码细节，就是就着skynet这个框架“扯扯淡”，随便写写。  
+skynet的核心是什么skynet从Erlang借鉴而来，主要借鉴它的Actor模型，用以充分利用多核实现并行计算。所以skynet可以说是一个C语言+lua语言实现的Actor模型框架。  
+skynet中的每一个A">
+<meta name="twitter:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.png">
+  
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+  
+<script type="text/javascript">
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?996ee0fca2512b4c29f37f60cf6387ca";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+</head>
+
+<body>
+  <div class="wrapper">
+    <header id="header">
+  <div class="title">
+    <h1><a href="/">一根笨茄子</a></h1>
+    <p><a href="/"></a></p>
+  </div>
+  <nav class="nav">
+    <ul>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/about">关于我</a></li>
+      
+      
+    </ul>
+    <div class="clearfix"></div>
+  </nav>
+  <div class="clearfix"></div>
+</header>
+    <div class="content">
+		<article class="post">
+  <header>
+    
+      <div class="icon"></div>
+      <a href="/2017/10/12/skynet-5/">
+  <time datetime="2017-10-12T13:18:17.000Z">
+    2017-10-12
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title">探索skynet（五）：随笔</h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>最近准备在组内做一个有关skynet的分享，所以对skynet产生了一些“形而上”的思考。这篇文章将不涉及具体的代码细节，就是就着skynet这个框架“扯扯淡”，随便写写。  </p>
+<h2 id="skynet的核心是什么"><a href="#skynet的核心是什么" class="headerlink" title="skynet的核心是什么"></a>skynet的核心是什么</h2><p>skynet从Erlang借鉴而来，主要借鉴它的Actor模型，用以充分利用多核实现并行计算。所以skynet可以说是一个C语言+lua语言实现的Actor模型框架。  </p>
+<p>skynet中的每一个Actor，原则上，都是一个so库。每个Actor，对应于一个自己的消息队列。所有消息队列又串成了一个<strong>消息队列的大队列</strong>。多个工作线程，不断的从<strong>大队列</strong>中拿出消息队列，取出消息，找到对应的Actor（也就是so库），将消息扔给so库去处理。从这个角度来说，Actor（so库），不过是一个<strong>消息处理器</strong>。<br><a id="more"></a><br>当然，所有的Actor都可以用C语言来写，做成so库的形式。但是这样开发效率偏低，所以skynet提供了一个特殊的so库，即snlua.so库。它封装了一个lua虚拟机，当框架把消息扔给snlua.so处理的时候，snlua.so一甩手，就扔给了对应的lua代码。于是，我们可以用lua代码来编写Actor，然后用snlua.so把这段lua代码加载起来就可以了。  </p>
+<p>所以，skynet的核心，一个是基于消息队列的任务调度；另一个是snlua.so所提供的可以用lua编写Actor的能力。  </p>
+<h2 id="对比Erlang"><a href="#对比Erlang" class="headerlink" title="对比Erlang"></a>对比Erlang</h2><p>绕了这么一圈，几千行C代码，skynet对比Erlang优势在哪里？  </p>
+<p>我觉得，第一个优势就是lua和C的数据抽象能力，比Erlang要强很多。这对于编写业务逻辑复杂多变的游戏服务端程序，是大有裨益的；而Erlang，可能更适合与编写业务逻辑单一，但是并发性能要求很高的基础组件。  </p>
+<p>第二个（对云风来说的）优势在于，云风对于C和lua太熟悉了，完成这样一套类似Erlang，又实际使用lua+C的框架之后，他之后招人、培训都会方便很多……对于创业公司来说，技术选型上肯定还是倾向于公司内的大牛所熟悉的技术。  </p>
+<h2 id="对比BigWorld"><a href="#对比BigWorld" class="headerlink" title="对比BigWorld"></a>对比BigWorld</h2><p>BigWorld是我们项目目前使用的游戏引擎，skynet与之相比，最大的一点不同就是，skynet只相当于BiogWorld的一个子系统。对于场景管理、与客户端的网络通信协议、数据库ORM模块等等，统统没有支持。所以说，skynet是很“轻量”的，或者说，skynet的核心是很小的。这在另一方面，也带来了更高的自由度。  </p>
+<p>当然，skynet相比于BigWorld也有一个很大的优点，就是计算任务之间的隔离性。设想，如果出现某一个计算过程非常耗时，对于skynet这种架构来说，它最多占满一个核心，而其他任务则可以调度到其他核心进行计算，影响不会扩散；但是对于BigWorld这种多进程、每个进程单线程的架构来说，如果一个进程内出现了耗时的计算任务，那么同一个进程内的其他计算逻辑都会受到影响。究其根本在于，skynet对于计算任务的调度是实时均衡的，而BigWorld则会根据当前服务器上玩家的分布，做一个预先的分配。这也将导致这样一种奇特的效果：如果由于人数过多导致的负载过高，隔离性较好的skynet会出现所有玩家要卡一起均匀的变卡的状况；而隔离性不好的BigWorld，则是人员密集的地方卡的比较严重，而人员较少的地方则比较流畅。感觉隔离性特性和其导致的结果正好反过来了。  </p>
+<hr>
+<p>“形而上”的东西大概就说这么多吧，等组内的分享结束之后，我会把PPT也放上来，里面会有一些图示，可能更加有助于对skynet整个框架的理解。  </p>
+<p>推荐阅读：<br><a href="http://blog.guoyb.com/2017/02/12/skynet-2/">探索skynet（二）：skynet如何启动一个服务</a><br><a href="http://blog.guoyb.com/2017/03/08/skynet-3/">探索skynet（三）：消息队列</a>  </p>
+<p>转载请注明出处： <a href="http://blog.guoyb.com/2017/10/12/skynet-5/">http://blog.guoyb.com/2017/10/12/skynet-5/</a>  </p>
+<p>欢迎使用微信扫描下方二维码，关注我的微信公众号TechTalking，技术·生活·思考：<br><img src="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.png" alt="后端技术小黑屋">  </p>
+
+    
+  </div>
+  <footer>
+    
+      
+      
+  <div class="tags">
+    <a class="tags-link" href="/tags/skynet/">skynet</a>
+  </div>
+
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+<!-- JiaThis Button BEGIN -->
+<script type="text/javascript">
+var jiathis_config = {data_track_clickback:'true'};
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?move=0&amp;uid=1706898" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+<section id="comment">
+  <h1 class="title">评论</h1>
+  <div class="ds-thread" data-title="探索skynet（五）：随笔">
+  </div>
+</section>
+
+	</div>
+  </div>
+	<aside id="sidebar">
+  
+  
+    
+      
+      
+
+<div class="widget tagcloud first">
+  <h3 class="title">Tags</h3>
+  <div class="entry">
+    <a href="/tags/C/" style="font-size: 11.11px;">C</a> <a href="/tags/C/" style="font-size: 17.78px;">C++</a> <a href="/tags/C-11/" style="font-size: 17.78px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 11.11px;">MySQL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/tags/cmp/" style="font-size: 10px;">__cmp__</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/docopt/" style="font-size: 10px;">docopt</a> <a href="/tags/echoserver/" style="font-size: 11.11px;">echoserver</a> <a href="/tags/epoll/" style="font-size: 11.11px;">epoll</a> <a href="/tags/flock/" style="font-size: 10px;">flock</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/grpc/" style="font-size: 11.11px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 11.11px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/protobuf/" style="font-size: 11.11px;">protobuf</a> <a href="/tags/python/" style="font-size: 10px;">python</a> <a href="/tags/redis/" style="font-size: 13.33px;">redis</a> <a href="/tags/regex/" style="font-size: 13.33px;">regex</a> <a href="/tags/select/" style="font-size: 11.11px;">select</a> <a href="/tags/shell/" style="font-size: 10px;">shell</a> <a href="/tags/skynet/" style="font-size: 14.44px;">skynet</a> <a href="/tags/socket/" style="font-size: 11.11px;">socket</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 15.56px;">书单</a> <a href="/tags/书单，杂谈/" style="font-size: 10px;">书单，杂谈</a> <a href="/tags/内存优化/" style="font-size: 10px;">内存优化</a> <a href="/tags/勘误，MySQL，C-11/" style="font-size: 10px;">勘误，MySQL，C++11</a> <a href="/tags/北京车展/" style="font-size: 10px;">北京车展</a> <a href="/tags/协程/" style="font-size: 10px;">协程</a> <a href="/tags/学习笔记/" style="font-size: 14.44px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/广州/" style="font-size: 10px;">广州</a> <a href="/tags/总结/" style="font-size: 10px;">总结</a> <a href="/tags/新西兰/" style="font-size: 10px;">新西兰</a> <a href="/tags/旅行/" style="font-size: 13.33px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 18.89px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 14.44px;">查证记录</a> <a href="/tags/游戏开发/" style="font-size: 10px;">游戏开发</a> <a href="/tags/爱好/" style="font-size: 10px;">爱好</a> <a href="/tags/生活/" style="font-size: 12.22px;">生活</a> <a href="/tags/知乎/" style="font-size: 10px;">知乎</a> <a href="/tags/程序人生/" style="font-size: 10px;">程序人生</a> <a href="/tags/读书笔记/" style="font-size: 16.67px;">读书笔记</a> <a href="/tags/读后感/" style="font-size: 10px;">读后感</a> <a href="/tags/贵州/" style="font-size: 10px;">贵州</a>
+  </div>
+</div>
+
+    
+      
+      
+
+<div class="widget recent-posts">
+  <h3 class="title">最近文章</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2017/10/12/skynet-5/">探索skynet（五）：随笔</a>
+      </li>
+    
+      <li>
+        <a href="/2017/09/28/optimize/">如何做好一次优化与重构</a>
+      </li>
+    
+      <li>
+        <a href="/2017/09/21/depressed/">解忧杂货店</a>
+      </li>
+    
+      <li>
+        <a href="/2017/09/16/flock/">给shell脚本加锁</a>
+      </li>
+    
+      <li>
+        <a href="/2017/09/09/python-mem/">如何估算一个Python对象的内存占用</a>
+      </li>
+    
+  </ul>
+</div>
+
+    
+      
+      
+<div class="widget tag">
+  <h3 class="title">友情链接</h3>
+  <ul class="entry">
+  
+    
+    <li><a href="http://www.linkedin.com/in/yubo-guo-739b0071" target="_blank">LinkedIn</a></li>
+  
+    
+    <li><a href="http://www.tuicool.com/sites/2emeIjb" target="_blank">推酷站点</a></li>
+  
+  </ul>
+</div>
+
+    
+  
+</aside>
+<div class="clearfix"></div>
+  <footer id="footer"><div class="copyright">
+  
+  &copy; 2017 <a href="/">Yubo Guo</a>
+  
+</div>
+<div class="theme-copyright">
+  Theme by <a href="https://github.com/orderedlist" target="_blank">orderedlist</a>
+   | 
+  Redesign by <a href="http://heroicyang.com/" target="_blank">Heroic Yang</a>
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+<script src="/js/scale.fix.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = { short_name: 'guoyb' };
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';
+    ds.async = true;
+    ds.src = 'http://static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+  (function($){
+    $('.fancybox').fancybox();
+  })(jQuery);
+</script>
+
+</body>
+</html>
