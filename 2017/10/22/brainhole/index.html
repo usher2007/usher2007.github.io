@@ -4,33 +4,29 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="chrome=1">
   
-  <title>探索skynet（五）：随笔 | 一根笨茄子</title>
+  <title>开个脑洞 | 一根笨茄子</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   
     <meta name="author" content="Yubo Guo">
   
   
-    <meta name="description" content="最近准备在组内做一个有关skynet的分享，所以对skynet产生了一些“形而上”的思考。这篇文章将不涉及具体的代码细节，就是就着skynet这个框架“扯扯淡”，随便写写。  
-skynet的核心是什么skynet从Erlang借鉴而来，主要借鉴它的Actor模型，用以充分利用多核实现并行计算。所以skynet可以说是一个C语言+lua语言实现的Actor模型框架。  
-skynet中的每一个A">
+    <meta name="description" content="最近在跟一个朋友吃饭时，朋友发牢骚说装修好烦啊，小工出的活各种不达预期。虽然我心里觉得，这也就是“土豪的烦恼”，但是还是舍身处理的站在他的角度对这个问题进行思考，觉得装修这事儿其实特别适合“人工智能”来搞定。  
+最近，余凯的地平线公司获得了英特尔近亿美金的投资，一时在一票做自动驾驶的人工智能公司中风头无两，朋友圈热度甚至堪比融了40亿刀的美团。但是我一直觉得，用现有的技术思路解决自动驾驶这事儿">
   
-  <meta name="description" content="最近准备在组内做一个有关skynet的分享，所以对skynet产生了一些“形而上”的思考。这篇文章将不涉及具体的代码细节，就是就着skynet这个框架“扯扯淡”，随便写写。  
-skynet的核心是什么skynet从Erlang借鉴而来，主要借鉴它的Actor模型，用以充分利用多核实现并行计算。所以skynet可以说是一个C语言+lua语言实现的Actor模型框架。  
-skynet中的每一个A">
+  <meta name="description" content="最近在跟一个朋友吃饭时，朋友发牢骚说装修好烦啊，小工出的活各种不达预期。虽然我心里觉得，这也就是“土豪的烦恼”，但是还是舍身处理的站在他的角度对这个问题进行思考，觉得装修这事儿其实特别适合“人工智能”来搞定。  
+最近，余凯的地平线公司获得了英特尔近亿美金的投资，一时在一票做自动驾驶的人工智能公司中风头无两，朋友圈热度甚至堪比融了40亿刀的美团。但是我一直觉得，用现有的技术思路解决自动驾驶这事儿">
 <meta property="og:type" content="article">
-<meta property="og:title" content="探索skynet（五）：随笔">
-<meta property="og:url" content="http://blog.guoyb.com/2017/10/12/skynet-5/index.html">
+<meta property="og:title" content="开个脑洞">
+<meta property="og:url" content="http://blog.guoyb.com/2017/10/22/brainhole/index.html">
 <meta property="og:site_name" content="一根笨茄子">
-<meta property="og:description" content="最近准备在组内做一个有关skynet的分享，所以对skynet产生了一些“形而上”的思考。这篇文章将不涉及具体的代码细节，就是就着skynet这个框架“扯扯淡”，随便写写。  
-skynet的核心是什么skynet从Erlang借鉴而来，主要借鉴它的Actor模型，用以充分利用多核实现并行计算。所以skynet可以说是一个C语言+lua语言实现的Actor模型框架。  
-skynet中的每一个A">
+<meta property="og:description" content="最近在跟一个朋友吃饭时，朋友发牢骚说装修好烦啊，小工出的活各种不达预期。虽然我心里觉得，这也就是“土豪的烦恼”，但是还是舍身处理的站在他的角度对这个问题进行思考，觉得装修这事儿其实特别适合“人工智能”来搞定。  
+最近，余凯的地平线公司获得了英特尔近亿美金的投资，一时在一票做自动驾驶的人工智能公司中风头无两，朋友圈热度甚至堪比融了40亿刀的美团。但是我一直觉得，用现有的技术思路解决自动驾驶这事儿">
 <meta property="og:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.png">
-<meta property="og:updated_time" content="2017-10-12T13:56:11.304Z">
+<meta property="og:updated_time" content="2017-10-23T00:14:35.361Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="探索skynet（五）：随笔">
-<meta name="twitter:description" content="最近准备在组内做一个有关skynet的分享，所以对skynet产生了一些“形而上”的思考。这篇文章将不涉及具体的代码细节，就是就着skynet这个框架“扯扯淡”，随便写写。  
-skynet的核心是什么skynet从Erlang借鉴而来，主要借鉴它的Actor模型，用以充分利用多核实现并行计算。所以skynet可以说是一个C语言+lua语言实现的Actor模型框架。  
-skynet中的每一个A">
+<meta name="twitter:title" content="开个脑洞">
+<meta name="twitter:description" content="最近在跟一个朋友吃饭时，朋友发牢骚说装修好烦啊，小工出的活各种不达预期。虽然我心里觉得，这也就是“土豪的烦恼”，但是还是舍身处理的站在他的角度对这个问题进行思考，觉得装修这事儿其实特别适合“人工智能”来搞定。  
+最近，余凯的地平线公司获得了英特尔近亿美金的投资，一时在一票做自动驾驶的人工智能公司中风头无两，朋友圈热度甚至堪比融了40亿刀的美团。但是我一直觉得，用现有的技术思路解决自动驾驶这事儿">
 <meta name="twitter:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.png">
   
   
@@ -75,15 +71,15 @@ var _hmt = _hmt || [];
   <header>
     
       <div class="icon"></div>
-      <a href="/2017/10/12/skynet-5/">
-  <time datetime="2017-10-12T13:18:17.000Z">
-    2017-10-12
+      <a href="/2017/10/22/brainhole/">
+  <time datetime="2017-10-22T10:57:38.000Z">
+    2017-10-22
   </time>
 </a>
     
     
   
-    <h1 class="title">探索skynet（五）：随笔</h1>
+    <h1 class="title">开个脑洞</h1>
   
 
   </header>
@@ -91,19 +87,22 @@ var _hmt = _hmt || [];
   <div class="entry">
     
       <hr>
-<p>最近准备在组内做一个有关skynet的分享，所以对skynet产生了一些“形而上”的思考。这篇文章将不涉及具体的代码细节，就是就着skynet这个框架“扯扯淡”，随便写写。  </p>
-<h2 id="skynet的核心是什么"><a href="#skynet的核心是什么" class="headerlink" title="skynet的核心是什么"></a>skynet的核心是什么</h2><p>skynet从Erlang借鉴而来，主要借鉴它的Actor模型，用以充分利用多核实现并行计算。所以skynet可以说是一个C语言+lua语言实现的Actor模型框架。  </p>
-<p>skynet中的每一个Actor，原则上，都是一个so库。每个Actor，对应于一个自己的消息队列。所有消息队列又串成了一个<strong>消息队列的大队列</strong>。多个工作线程，不断的从<strong>大队列</strong>中拿出消息队列，取出消息，找到对应的Actor（也就是so库），将消息扔给so库去处理。从这个角度来说，Actor（so库），不过是一个<strong>消息处理器</strong>。<br><a id="more"></a><br>当然，所有的Actor都可以用C语言来写，做成so库的形式。但是这样开发效率偏低，所以skynet提供了一个特殊的so库，即snlua.so库。它封装了一个lua虚拟机，当框架把消息扔给snlua.so处理的时候，snlua.so一甩手，就扔给了对应的lua代码。于是，我们可以用lua代码来编写Actor，然后用snlua.so把这段lua代码加载起来就可以了。  </p>
-<p>所以，skynet的核心，一个是基于消息队列的任务调度；另一个是snlua.so所提供的可以用lua编写Actor的能力。  </p>
-<h2 id="对比Erlang"><a href="#对比Erlang" class="headerlink" title="对比Erlang"></a>对比Erlang</h2><p>绕了这么一圈，几千行C代码，skynet对比Erlang优势在哪里？  </p>
-<p>我觉得，第一个优势就是lua和C的数据抽象能力，比Erlang要强很多。这对于编写业务逻辑复杂多变的游戏服务端程序，是大有裨益的；而Erlang，可能更适合与编写业务逻辑单一，但是并发性能要求很高的基础组件。  </p>
-<p>第二个（对云风来说的）优势在于，云风对于C和lua太熟悉了，完成这样一套类似Erlang，又实际使用lua+C的框架之后，他之后招人、培训都会方便很多……对于创业公司来说，技术选型上肯定还是倾向于公司内的大牛所熟悉的技术。  </p>
-<h2 id="对比BigWorld"><a href="#对比BigWorld" class="headerlink" title="对比BigWorld"></a>对比BigWorld</h2><p>BigWorld是我们项目目前使用的游戏引擎，skynet与之相比，最大的一点不同就是，skynet只相当于BiogWorld的一个子系统。对于场景管理、与客户端的网络通信协议、数据库ORM模块等等，统统没有支持。所以说，skynet是很“轻量”的，或者说，skynet的核心是很小的。这在另一方面，也带来了更高的自由度。  </p>
-<p>当然，skynet相比于BigWorld也有一个很大的优点，就是计算任务之间的隔离性。设想，如果出现某一个计算过程非常耗时，对于skynet这种架构来说，它最多占满一个核心，而其他任务则可以调度到其他核心进行计算，影响不会扩散；但是对于BigWorld这种多进程、每个进程单线程的架构来说，如果一个进程内出现了耗时的计算任务，那么同一个进程内的其他计算逻辑都会受到影响。究其根本在于，skynet对于计算任务的调度是实时均衡的，而BigWorld则会根据当前服务器上玩家的分布，做一个预先的分配。这也将导致这样一种奇特的效果：如果由于人数过多导致的负载过高，隔离性较好的skynet会出现所有玩家要卡一起均匀的变卡的状况；而隔离性不好的BigWorld，则是人员密集的地方卡的比较严重，而人员较少的地方则比较流畅。感觉隔离性特性和其导致的结果正好反过来了。  </p>
+<p>最近在跟一个朋友吃饭时，朋友发牢骚说装修好烦啊，小工出的活各种不达预期。虽然我心里觉得，这也就是“土豪的烦恼”，但是还是舍身处理的站在他的角度对这个问题进行思考，觉得装修这事儿其实特别适合“人工智能”来搞定。  </p>
+<p>最近，余凯的地平线公司获得了英特尔近亿美金的投资，一时在一票做自动驾驶的人工智能公司中风头无两，朋友圈热度甚至堪比融了40亿刀的美团。但是我一直觉得，用现有的技术思路解决自动驾驶这事儿，走偏了。<br><a id="more"></a><br>我们对比一下自动驾驶和自动装修（权且这么称呼吧）这两件事，它们大概有以下不同点：  </p>
+<ol>
+<li>自动驾驶处在一个开放性的环境中，而自动装修则处于一个基本密闭的环境中；  </li>
+<li>自动驾驶要规避的代价和自动装修不同（生命VS建材）；</li>
+<li>自动驾驶的环境不断变化，而自动装修的环境则是静态的。  </li>
+</ol>
+<p>可以看到，自动装修所面临的问题更简单，面对的伦理问题也会更少。机械代替人类，一般都是从体力劳动开始：装修显然是一个体力活，而市区内的复杂路况驾驶，明显更费脑子（高速路况驾驶会更接近于体力劳动）。  </p>
+<p>这事儿为啥到现在也没起什么波浪呢？可能我的想法太天真了，也可能这个市场并不大，没什么商业价值……</p>
+<p>先不管这事儿靠不靠谱，反正开脑洞嘛。那么，未来的一个自动装修的流程大概就是：自动装修公司（天际线公司^_^）上门量房，设计师根据测量结果出一个3D的效果图，与客户确定好装修方案之后，各种装修机器人、机械臂进场，整个房间变为一个自动化的生产车间，而生产出来的产品就是装修好的房子。这种方案相比于普通人工装修带来的好处有许多，比如实际效果能更贴近效果图，工期大大缩短，防止偷工减料等等。  </p>
+<p>而对于现在大量出现的精装房，就更适用了。新闻报道里精装房的装修质量问题可谓层出不穷。一套房屋的装修给人印象的好坏，不取决于最好的那点，而取决于最差的那一点（木桶效应）。对于一套房屋的装修来说，无论其他地方做的多么优秀，只要有一处出现了明显的问题，那一处就会如鲠在喉，时时抢夺你的注意力。人工装修很大的问题就在于工程质量的方差太大——装修师傅今天心情不好，或者稍微走了个神，可能就留下了一处墙面空鼓开裂问题。机器人机械臂当然不存在这样的问题咯，虽然熟练工人高光时刻可能有95分，但是一处60分以下的失误就足以毁掉所有美好印象；这样说来，机器人稳定的80分发挥可能带来更好的口碑。  </p>
+<p>装修这个事之所以更适合“人工智能”来做，我觉得吧，有个重要的原因是它更容易用离散的数字的方式表达。而自动驾驶，显然要处理更多的模拟信号。其实，现在的“人工智能”，无论是炒的火热的自动驾驶，还是Alpha Go，由于都是在计算机这一载体之上，所以都是在解决一个离散的、数字的问题，或者将一个模拟信号问题采样成一个数字信号问题进行解决。而对于模拟信号的直接处理，才是“智能”的关键，这方面一直以来就是计算机的短板，反而是人类的特长。可能，我们目前的“人工智能”的方向，并不是最终的方向，就像把一把刀磨得再锋利，它也劈不开山，但是炸药就可以。当然，它并不是一无是处，目前的“人工智能”已经解决了很多问题，也带来了极大的商业价值。只是我觉得，要想达到《西部世界》里那种程度的人工智能，真的需要彻底的换一个前进方向，比如从生物学的方向向计算机反推。当然，我也不知道那个方向在哪里啦，不然我还会坐在电脑前写文章吗……  </p>
+<p>当然，这只是开个脑洞玩玩，具体的技术细节、商业模式都没有进行很深入的思考。我就随口这么一说，您就随耳这么一听。如果您觉得这个点子还行，拿走不谢，我下次装修就找您了~如果您觉得这太不靠谱了，欢迎喷我~  </p>
 <hr>
-<p>“形而上”的东西大概就说这么多吧，等组内的分享结束之后，我会把PPT也放上来，里面会有一些图示，可能更加有助于对skynet整个框架的理解。  </p>
-<p>推荐阅读：<br><a href="http://blog.guoyb.com/2017/02/12/skynet-2/">探索skynet（二）：skynet如何启动一个服务</a><br><a href="http://blog.guoyb.com/2017/03/08/skynet-3/">探索skynet（三）：消息队列</a>  </p>
-<p>转载请注明出处： <a href="http://blog.guoyb.com/2017/10/12/skynet-5/">http://blog.guoyb.com/2017/10/12/skynet-5/</a>  </p>
+<p>推荐阅读：<br><a href="http://blog.guoyb.com/2016/10/24/guizhou/">国庆在贵州的思考</a><br><a href="http://blog.guoyb.com/2017/03/12/about-house/">高房价在扼杀什么</a>  </p>
+<p>转载请注明出处： <a href="http://blog.guoyb.com/2017/10/22/brainhole/">http://blog.guoyb.com/2017/10/22/brainhole/</a>  </p>
 <p>欢迎使用微信扫描下方二维码，关注我的微信公众号TechTalking，技术·生活·思考：<br><img src="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.png" alt="后端技术小黑屋">  </p>
 
     
@@ -113,7 +112,7 @@ var _hmt = _hmt || [];
       
       
   <div class="tags">
-    <a class="tags-link" href="/tags/skynet/">skynet</a>
+    <a class="tags-link" href="/tags/杂谈/">杂谈</a>
   </div>
 
     
@@ -129,7 +128,7 @@ var jiathis_config = {data_track_clickback:'true'};
 
 <section id="comment">
   <h1 class="title">Comments</h1>
-  <div class="ds-thread" data-title="探索skynet（五）：随笔">
+  <div class="ds-thread" data-title="开个脑洞">
   </div>
 </section>
 
