@@ -63,6 +63,52 @@ var _hmt = _hmt || [];
   <header>
     
       <div class="icon"></div>
+      <a href="/2014/06/05/python-source-11/">
+  <time datetime="2014-06-05T14:05:16.000Z">
+    2014-06-05
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title"><a href="/2014/06/05/python-source-11/">《Python源码剖析》读书笔记-11 Python虚拟机中的函数机制</a></h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<h3 id="第11章-Python虚拟机中的函数机制"><a href="#第11章-Python虚拟机中的函数机制" class="headerlink" title="第11章 Python虚拟机中的函数机制"></a>第11章 Python虚拟机中的函数机制</h3><ul>
+<li>函数也是一个对象<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> &#123;</span><br><span class="line">    PyObject_HEAD</span><br><span class="line">    PyObject *func_code;	<span class="comment">/* A code object */</span></span><br><span class="line">    PyObject *func_globals;	<span class="comment">/* A dictionary (other mappings won't do) */</span></span><br><span class="line">    PyObject *func_defaults;	<span class="comment">/* NULL or a tuple */</span></span><br><span class="line">    PyObject *func_closure;	<span class="comment">/* NULL or a tuple of cell objects */</span></span><br><span class="line">    PyObject *func_doc;	 <span class="comment">/* The __doc__ attribute, can be anything */</span></span><br><span class="line">    PyObject *func_name;	<span class="comment">/* The __name__ attribute, a string object */</span></span><br><span class="line">    PyObject *func_dict;	<span class="comment">/* The __dict__ attribute, a dict or NULL */</span></span><br><span class="line">    PyObject *func_weakreflist;	<span class="comment">/* List of weak references */</span></span><br><span class="line">    PyObject *func_module;	<span class="comment">/* The __module__ attribute, can be anything */</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Invariant:</span><br><span class="line">     * func_closure contains the bindings for func_code-&gt;co_freevars, so</span><br><span class="line">     * PyTuple_Size(func_closure) == PyCode_GetNumFree(func_code)</span><br><span class="line">     * (func_closure may be NULL if PyCode_GetNumFree(func_code) == 0).</span><br><span class="line">     */</span></span><br><span class="line">&#125; PyFunctionObject;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+    
+  </div>
+  <footer class="end-sep">
+    
+      
+        <div class="alignleft">
+          <a href="/2014/06/05/python-source-11/#more" class="more-link">Read More</a>
+        </div>
+      
+      
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+<!-- JiaThis Button BEGIN -->
+<script type="text/javascript">
+var jiathis_config = {data_track_clickback:'true'};
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?move=0&amp;uid=1706898" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+
+  <article class="post">
+  <header>
+    
+      <div class="icon"></div>
       <a href="/2014/05/23/unity2d-flappybird/">
   <time datetime="2014-05-23T10:59:53.000Z">
     2014-05-23
@@ -98,7 +144,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2014/05/23/unity2d-flappybird/#more" class="more-link">阅读全文</a>
+          <a href="/2014/05/23/unity2d-flappybird/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -142,7 +188,7 @@ var jiathis_config = {data_track_clickback:'true'};
     
       
         <div class="alignleft">
-          <a href="/2014/05/11/auto-show-2014/#more" class="more-link">阅读全文</a>
+          <a href="/2014/05/11/auto-show-2014/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -197,7 +243,7 @@ var jiathis_config = {data_track_clickback:'true'};
     
       
         <div class="alignleft">
-          <a href="/2014/05/07/python-source-10/#more" class="more-link">阅读全文</a>
+          <a href="/2014/05/07/python-source-10/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -240,7 +286,7 @@ var jiathis_config = {data_track_clickback:'true'};
     
       
         <div class="alignleft">
-          <a href="/2014/04/28/inset-learning/#more" class="more-link">阅读全文</a>
+          <a href="/2014/04/28/inset-learning/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -287,7 +333,7 @@ var jiathis_config = {data_track_clickback:'true'};
     
       
         <div class="alignleft">
-          <a href="/2014/04/25/python-source-9/#more" class="more-link">阅读全文</a>
+          <a href="/2014/04/25/python-source-9/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -333,7 +379,7 @@ var jiathis_config = {data_track_clickback:'true'};
     
       
         <div class="alignleft">
-          <a href="/2014/04/17/maugham-reading-notes/#more" class="more-link">阅读全文</a>
+          <a href="/2014/04/17/maugham-reading-notes/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -382,7 +428,7 @@ var jiathis_config = {data_track_clickback:'true'};
     
       
         <div class="alignleft">
-          <a href="/2014/04/10/python-source-8/#more" class="more-link">阅读全文</a>
+          <a href="/2014/04/10/python-source-8/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -431,7 +477,7 @@ var jiathis_config = {data_track_clickback:'true'};
     
       
         <div class="alignleft">
-          <a href="/2014/04/07/python-source-7/#more" class="more-link">阅读全文</a>
+          <a href="/2014/04/07/python-source-7/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -478,53 +524,7 @@ var jiathis_config = {data_track_clickback:'true'};
     
       
         <div class="alignleft">
-          <a href="/2014/04/01/python-source-6/#more" class="more-link">阅读全文</a>
-        </div>
-      
-      
-    
-    <div class="clearfix"></div>
-  </footer>
-</article>
-<!-- JiaThis Button BEGIN -->
-<script type="text/javascript">
-var jiathis_config = {data_track_clickback:'true'};
-</script>
-<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?move=0&amp;uid=1706898" charset="utf-8"></script>
-<!-- JiaThis Button END -->
-
-
-  <article class="post">
-  <header>
-    
-      <div class="icon"></div>
-      <a href="/2014/03/29/python-source-5/">
-  <time datetime="2014-03-28T23:28:47.000Z">
-    2014-03-29
-  </time>
-</a>
-    
-    
-  
-    <h1 class="title"><a href="/2014/03/29/python-source-5/">《Python源码剖析》读书笔记-5 Dict对象</a></h1>
-  
-
-  </header>
-  
-  <div class="entry">
-    
-      <hr>
-<h2 id="第5章-Python中的Dict对象"><a href="#第5章-Python中的Dict对象" class="headerlink" title="第5章 Python中的Dict对象"></a>第5章 Python中的Dict对象</h2><ul>
-<li>Dict对象定义为：<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> &#123;</span><br><span class="line">    <span class="comment">/* Cached hash code of me_key. Note that hash codes are C longs.</span><br><span class="line">     * We have to use Py_ssize_t instead because dict_popitem() abuses</span><br><span class="line">     * me_hash to hold a search finger.</span><br><span class="line">     */</span></span><br><span class="line">    Py_ssize_t me_hash;</span><br><span class="line">    PyObject *me_key;</span><br><span class="line">    PyObject *me_value;</span><br><span class="line">&#125; PyDictEntry;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> _dictobject PyDictObject;</span><br><span class="line"><span class="keyword">struct</span> _dictobject &#123;</span><br><span class="line">    PyObject_HEAD</span><br><span class="line">    Py_ssize_t ma_fill; <span class="comment">/* # Active + # Dummy */</span></span><br><span class="line">    Py_ssize_t ma_used; <span class="comment">/* # Active */</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/* The table contains ma_mask + 1 slots, and that's a power of 2.</span><br><span class="line">     * We store the mask instead of the size because the mask is more</span><br><span class="line">     * frequently needed.</span><br><span class="line">     */</span></span><br><span class="line">    Py_ssize_t ma_mask;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* ma_table points to ma_smalltable for small tables, else to</span><br><span class="line">     * additional malloc'ed memory. ma_table is never NULL! This rule</span><br><span class="line">     * saves repeated runtime null-tests in the workhorse getitem and</span><br><span class="line">     * setitem calls.</span><br><span class="line">     */</span></span><br><span class="line">    PyDictEntry *ma_table;</span><br><span class="line">    PyDictEntry *(*ma_lookup)(PyDictObject *mp, PyObject *key, <span class="keyword">long</span> hash);</span><br><span class="line">    PyDictEntry ma_smalltable[PyDict_MINSIZE];</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-    
-  </div>
-  <footer class="end-sep">
-    
-      
-        <div class="alignleft">
-          <a href="/2014/03/29/python-source-5/#more" class="more-link">阅读全文</a>
+          <a href="/2014/04/01/python-source-6/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -543,10 +543,10 @@ var jiathis_config = {data_track_clickback:'true'};
 
 <nav id="pagination">
   
-    <a href="/page/7/" class="prev">上一页</a>
+    <a href="/page/7/" class="prev">Prev</a>
   
   
-    <a href="/page/9/" class="next">下一页</a>
+    <a href="/page/9/" class="next">Next</a>
   
   <div class="clearfix"></div>
 </nav>
@@ -575,6 +575,10 @@ var jiathis_config = {data_track_clickback:'true'};
   <ul class="entry">
     
       <li>
+        <a href="/2017/11/01/waiting/">待业青年</a>
+      </li>
+    
+      <li>
         <a href="/2017/10/25/skynet-ppt/">探索skynet（六）：PPT</a>
       </li>
     
@@ -588,10 +592,6 @@ var jiathis_config = {data_track_clickback:'true'};
     
       <li>
         <a href="/2017/09/28/optimize/">如何做好一次优化与重构</a>
-      </li>
-    
-      <li>
-        <a href="/2017/09/21/depressed/">解忧杂货店</a>
       </li>
     
   </ul>
