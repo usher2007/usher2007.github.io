@@ -25,7 +25,7 @@ rpc hub在多服务器架构中，服务器之间经常需要进行通信。使�
 rpc hub在多服务器架构中，服务器之间经常需要进行通信。使用message queue构建一个pub-sub的消息传送机制，可以获得较低的耦合度、较高的灵活性，同时容易实现容灾备份。  
 但是，对于游戏服务器这种多台同构服务器的情况，直接使用rpc进行远程函数调">
 <meta property="og:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.png">
-<meta property="og:updated_time" content="2016-11-26T03:09:09.597Z">
+<meta property="og:updated_time" content="2017-11-03T03:38:27.782Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="ghub:一个基于grpc的rpc hub">
 <meta name="twitter:description" content="之前的一篇文章中介绍了grpc的用法，在这篇文章中，我将使用grpc做一个有些实际意义的小项目，一个可以使用的rpc hub。  
@@ -140,6 +140,10 @@ var _hmt = _hmt || [];
   <footer>
     
       
+  <div class="categories">
+    <a class="categories-link" href="/categories/技术/">技术</a>
+  </div>
+
       
   <div class="tags">
     <a class="tags-link" href="/tags/grpc/">grpc</a>, <a class="tags-link" href="/tags/protobuf/">protobuf</a>
@@ -153,13 +157,28 @@ var _hmt = _hmt || [];
 
 
 <section id="comment">
-  <h1 class="title">Comments</h1>
+  <h1 class="title">评论</h1>
   <div class="ds-thread" data-thread-key="2016/11/23/ghub/" data-title="ghub:一个基于grpc的rpc hub" data-url="http://blog.guoyb.com/2016/11/23/ghub/"></div>
 </section>
 </div>
   </div>
   
   <div id="sidebar" class="widgets-right">
+  
+<div class="widget category">
+  <h3 class="title">categories</h3>
+  <ul class="entry">
+  
+    <li><a href="/categories/书单/">书单</a><small>7</small></li>
+  
+    <li><a href="/categories/技术/">技术</a><small>63</small></li>
+  
+    <li><a href="/categories/杂谈/">杂谈</a><small>17</small></li>
+  
+  </ul>
+</div>
+
+
   
 <div class="widget tag">
   <h3 class="title">recent_posts</h3>
@@ -190,12 +209,10 @@ var _hmt = _hmt || [];
 
 
   
-
-  
 <div class="widget tagcloud">
   <h3 class="title">tagcloud</h3>
   <div class="entry">
-    <a href="/tags/C/" style="font-size: 11px;">C</a> <a href="/tags/C/" style="font-size: 18px;">C++</a> <a href="/tags/C-11/" style="font-size: 18px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 11px;">MySQL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/tags/cmp/" style="font-size: 10px;">__cmp__</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/docopt/" style="font-size: 10px;">docopt</a> <a href="/tags/echoserver/" style="font-size: 11px;">echoserver</a> <a href="/tags/epoll/" style="font-size: 11px;">epoll</a> <a href="/tags/flock/" style="font-size: 10px;">flock</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/grpc/" style="font-size: 11px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 11px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/protobuf/" style="font-size: 11px;">protobuf</a> <a href="/tags/python/" style="font-size: 10px;">python</a> <a href="/tags/redis/" style="font-size: 13px;">redis</a> <a href="/tags/regex/" style="font-size: 13px;">regex</a> <a href="/tags/select/" style="font-size: 11px;">select</a> <a href="/tags/shell/" style="font-size: 10px;">shell</a> <a href="/tags/skynet/" style="font-size: 15px;">skynet</a> <a href="/tags/socket/" style="font-size: 11px;">socket</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 16px;">书单</a> <a href="/tags/书单，杂谈/" style="font-size: 10px;">书单，杂谈</a> <a href="/tags/内存优化/" style="font-size: 10px;">内存优化</a> <a href="/tags/勘误，MySQL，C-11/" style="font-size: 10px;">勘误，MySQL，C++11</a> <a href="/tags/北京车展/" style="font-size: 10px;">北京车展</a> <a href="/tags/协程/" style="font-size: 10px;">协程</a> <a href="/tags/学习笔记/" style="font-size: 14px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/广州/" style="font-size: 10px;">广州</a> <a href="/tags/总结/" style="font-size: 10px;">总结</a> <a href="/tags/新西兰/" style="font-size: 10px;">新西兰</a> <a href="/tags/旅行/" style="font-size: 13px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 19px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 14px;">查证记录</a> <a href="/tags/游戏开发/" style="font-size: 10px;">游戏开发</a> <a href="/tags/爱好/" style="font-size: 10px;">爱好</a> <a href="/tags/生活/" style="font-size: 12px;">生活</a> <a href="/tags/知乎/" style="font-size: 10px;">知乎</a> <a href="/tags/程序人生/" style="font-size: 10px;">程序人生</a> <a href="/tags/读书笔记/" style="font-size: 17px;">读书笔记</a> <a href="/tags/读后感/" style="font-size: 10px;">读后感</a> <a href="/tags/贵州/" style="font-size: 10px;">贵州</a>
+    <a href="/tags/C/" style="font-size: 10.91px;">C</a> <a href="/tags/C/" style="font-size: 17.27px;">C++</a> <a href="/tags/C-11/" style="font-size: 18.18px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 10.91px;">MySQL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/grpc/" style="font-size: 10.91px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 10.91px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/protobuf/" style="font-size: 10.91px;">protobuf</a> <a href="/tags/redis/" style="font-size: 12.73px;">redis</a> <a href="/tags/regex/" style="font-size: 12.73px;">regex</a> <a href="/tags/shell/" style="font-size: 10px;">shell</a> <a href="/tags/skynet/" style="font-size: 14.55px;">skynet</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 15.45px;">书单</a> <a href="/tags/内存优化/" style="font-size: 10px;">内存优化</a> <a href="/tags/学习笔记/" style="font-size: 13.64px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/旅行/" style="font-size: 12.73px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 19.09px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 12.73px;">查证记录</a> <a href="/tags/生活/" style="font-size: 11.82px;">生活</a> <a href="/tags/读书笔记/" style="font-size: 16.36px;">读书笔记</a>
   </div>
 </div>
 
