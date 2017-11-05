@@ -1,0 +1,304 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  
+  <title>打通Python和C++ | 一根笨茄子</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  
+    <meta name="author" content="Yubo Guo">
+  
+  
+    <meta name="description" content="Python作为世界上最好的胶水语言（哼，世界上最好的语言当然是PHP==），利用Python的简洁和C++的高效，基本可以解决99%的问题了吧~  
+一般的，Python和C++的交互分为这两种情况：  
+
+用C++扩展Python：当一个Python项目中出现了性能瓶颈时，将瓶颈部分抽离出来，用C++封装成一个Python可以调用的模块（so库）；  
+将Python内嵌入C++：当一个C+">
+  
+  <meta name="description" content="Python作为世界上最好的胶水语言（哼，世界上最好的语言当然是PHP==），利用Python的简洁和C++的高效，基本可以解决99%的问题了吧~  
+一般的，Python和C++的交互分为这两种情况：  
+
+用C++扩展Python：当一个Python项目中出现了性能瓶颈时，将瓶颈部分抽离出来，用C++封装成一个Python可以调用的模块（so库）；  
+将Python内嵌入C++：当一个C+">
+<meta property="og:type" content="article">
+<meta property="og:title" content="打通Python和C++">
+<meta property="og:url" content="http://blog.guoyb.com/2017/11/05/boost-python/index.html">
+<meta property="og:site_name" content="一根笨茄子">
+<meta property="og:description" content="Python作为世界上最好的胶水语言（哼，世界上最好的语言当然是PHP==），利用Python的简洁和C++的高效，基本可以解决99%的问题了吧~  
+一般的，Python和C++的交互分为这两种情况：  
+
+用C++扩展Python：当一个Python项目中出现了性能瓶颈时，将瓶颈部分抽离出来，用C++封装成一个Python可以调用的模块（so库）；  
+将Python内嵌入C++：当一个C+">
+<meta property="og:image" content="http://guoybblog.qiniudn.com/newqrv2.jpg">
+<meta property="og:updated_time" content="2017-11-05T12:42:04.212Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="打通Python和C++">
+<meta name="twitter:description" content="Python作为世界上最好的胶水语言（哼，世界上最好的语言当然是PHP==），利用Python的简洁和C++的高效，基本可以解决99%的问题了吧~  
+一般的，Python和C++的交互分为这两种情况：  
+
+用C++扩展Python：当一个Python项目中出现了性能瓶颈时，将瓶颈部分抽离出来，用C++封装成一个Python可以调用的模块（so库）；  
+将Python内嵌入C++：当一个C+">
+<meta name="twitter:image" content="http://guoybblog.qiniudn.com/newqrv2.jpg">
+  
+  
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <!--[if lt IE 9]><script src="//cdn.bootcss.com/html5shiv/3.7.0/html5shiv.min.js"></script><![endif]-->
+  
+  
+<script type="text/javascript">
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?996ee0fca2512b4c29f37f60cf6387ca";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-6897127630340076",
+    enable_page_level_ads: true
+  });
+</script>
+
+</head>
+<body>
+  <div class="wrapper">
+    <header id="header">
+  <div class="title">
+    <h1><a href="/">一根笨茄子</a></h1>
+    <p><a href="/"></a></p>
+  </div>
+  <nav class="nav">
+    <ul>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/about">关于我</a></li>
+      
+      
+    </ul>
+    <div class="clearfix"></div>
+  </nav>
+  <div class="clearfix"></div>
+</header>
+    <div class="content"><article class="post">
+  <header>
+    
+      <div class="icon"></div>
+      <a href="/2017/11/05/boost-python/">
+  <time datetime="2017-11-05T10:33:47.000Z">
+    2017-11-05
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title">打通Python和C++</h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>Python作为世界上最好的<strong>胶水</strong>语言（哼，世界上最好的语言当然是PHP==），利用Python的简洁和C++的高效，基本可以解决99%的问题了吧~  </p>
+<p>一般的，Python和C++的交互分为这两种情况：  </p>
+<ol>
+<li>用C++扩展Python：当一个Python项目中出现了性能瓶颈时，将瓶颈部分抽离出来，用C++封装成一个Python可以调用的模块（so库）；  </li>
+<li>将Python内嵌入C++：当一个C++项目中有部分功能预期将会经常变更需求，期望获得更高的灵活性时，将这部分功能用Python实现，在C++中进行调用。  <a id="more"></a>
+这篇文章将简单介绍下第一部分的一种做法。  </li>
+</ol>
+<h2 id="Boost-Python"><a href="#Boost-Python" class="headerlink" title="Boost.Python"></a>Boost.Python</h2><p>Boost作为一个大宝库，提供了我们所需要的这一功能。并且，在Boost的许多库中，已经默认使用了Boost.Python，所以也算是经过了充分的测试。  </p>
+<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><p>Boost的大部分功能都是以头文件的形式提供的，无需安装；但是也有少部分功能，需要进行手动编译。不幸，Boost.Python也是其中之一。</p>
+<p>参照<a href="http://www.boost.org/doc/libs/1_65_1/more/getting_started/unix-variants.html" target="_blank" rel="external">Getting Started on Unix Variants</a>的第五部分内容，即可安装Boost.Python。安装完成后，可以在相关目录（我的是/usr/local/lib下）看到相关的so文件。  </p>
+<h2 id="Hello-World"><a href="#Hello-World" class="headerlink" title="Hello World"></a>Hello World</h2><p>用C++实现一个模块，在Python中调用时，可以返回一个特定的字符串。  </p>
+<figure class="highlight c"><figcaption><span>++</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;boost/python.hpp&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">char</span> <span class="keyword">const</span>* <span class="title">greet</span><span class="params">()</span></span><br><span class="line"></span>&#123;</span><br><span class="line">	return <span class="string">"hello, boost"</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">BOOST_PYTHON_MODULE(hello_boostpy)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">using</span> <span class="keyword">namespace</span> boost::python;</span><br><span class="line">	def(<span class="string">"greet"</span>, greet);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>  
+<p>太简单了，代码基本说明了一切~  </p>
+<p>将其编译成动态链接库的形式：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"> </span><br><span class="line">g++ -I /usr/include/python2.7/ -fPIC -shared -o hello_boostpy.so hello_boostpy.cc -lboost_python</span><br></pre></td></tr></table></figure>  </p>
+<p>这时可以使用ldd看看hello_boostpy.so可不可以找到libboost_python，找不到的话，需要手动将其路径加入环境变量LD_LIBRARY_PATH中，或者用ldconfig相关的命令也可以。  </p>
+<p>接下来就可以在Python中使用hello_boostpy库了：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line">sys.path.append(<span class="string">'.'</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">test</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">import</span> hello_boostpy</span><br><span class="line">    <span class="keyword">return</span> hello_boostpy.greet()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:</span><br><span class="line">    <span class="keyword">print</span> test()</span><br></pre></td></tr></table></figure>  </p>
+<h2 id="Expose-Class"><a href="#Expose-Class" class="headerlink" title="Expose Class"></a>Expose Class</h2><p>接下来，我们在C++实现的模块中，添加一个类，并且尝试向C++方向传入Python的list类型对象。  </p>
+<p>C++类：<br><figure class="highlight c"><figcaption><span>++</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;boost/python.hpp&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sstream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> boost::python;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> Person</span><br><span class="line">&#123;</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">set_name</span><span class="params">(<span class="built_in">std</span>::<span class="built_in">string</span> name)</span> </span>&#123; <span class="keyword">this</span>-&gt;name = name; &#125;</span><br><span class="line">	<span class="built_in">std</span>::<span class="function"><span class="built_in">string</span> <span class="title">print_info</span><span class="params">()</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">set_items</span><span class="params">(<span class="built_in">list</span>&amp; prices, <span class="built_in">list</span>&amp; discounts)</span></span>;</span><br><span class="line">	</span><br><span class="line">	</span><br><span class="line">	<span class="built_in">std</span>::<span class="built_in">string</span> name;</span><br><span class="line">	<span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="keyword">double</span>&gt; item_prices;</span><br><span class="line">	<span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="keyword">double</span>&gt; item_discounts;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>  </p>
+<p>其中，Python方的list类型，在Boost.Python中有一个对应的实现boost::python::list（相应的，dict、tuple等类型都有对应实现）。在set_items中，我们将会用boost::python::extract对数据类型做一个转换。  </p>
+<figure class="highlight c"><figcaption><span>++</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> Person::set_items(<span class="built_in">list</span>&amp; prices, <span class="built_in">list</span>&amp; discounts)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; len(prices); ++i)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">double</span> price = extract&lt;<span class="keyword">double</span>&gt;(prices[i]);</span><br><span class="line">		<span class="keyword">double</span> discount = extract&lt;<span class="keyword">double</span>&gt;(discounts[i]);</span><br><span class="line">		item_prices.push_back(price);</span><br><span class="line">		item_discounts.push_back(discount);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>  
+<p>Python模块定义部分依旧是非常直观的代码：<br><figure class="highlight c"><figcaption><span>++</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">BOOST_PYTHON_MODULE(person)</span><br><span class="line">&#123;</span><br><span class="line">	class_&lt;Person&gt;(<span class="string">"Person"</span>)</span><br><span class="line">		.def(<span class="string">"set_name"</span>, &amp;Person::set_name)</span><br><span class="line">		.def(<span class="string">"print_info"</span>, &amp;Person::print_info)</span><br><span class="line">		.def(<span class="string">"set_items"</span>, &amp;Person::set_items)</span><br><span class="line">	;	</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>  </p>
+<p>在Python代码中，就可以像使用一个Python定义的类一样使用Person类了：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line">sys.path.append(<span class="string">'.'</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">test</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">import</span> person</span><br><span class="line">    p = person.Person()</span><br><span class="line">    p.set_name(<span class="string">'Qie'</span>)</span><br><span class="line">    p.set_items([<span class="number">100</span>, <span class="number">123.456</span>, <span class="number">888.8</span>], [<span class="number">0.3</span>, <span class="number">0.1</span>, <span class="number">0.5</span>])</span><br><span class="line">    <span class="keyword">print</span> p.print_info()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:</span><br><span class="line">    test()</span><br></pre></td></tr></table></figure>  </p>
+<h2 id="Py"><a href="#Py" class="headerlink" title="Py++"></a>Py++</h2><p>上面的模块封装过程，看上去还是有些枯燥，有不少地方都是重复的工作。那么可不可以自动的进行呢？Py++提供了这样的能力，它可以帮你自动生成Boost.Python的相关代码，对于接口数量比较多的模块来说，可以极大的减少工作量，也减少了出错的概率。具体使用方法，可以参见<a href="http://pyplusplus.readthedocs.io/en/latest/tutorials/module_builder/module_builder.html" target="_blank" rel="external">Tutorial</a>  </p>
+<p>Boost.Python的更多内容，参见<a href="http://www.boost.org/doc/libs/1_65_1/libs/python/doc/html/reference/index.html" target="_blank" rel="external">官方文档</a> <a href="http://www.boost.org/doc/libs/1_65_1/libs/python/doc/html/tutorial/index.html" target="_blank" rel="external">Tutorial</a><br>相关代码参见<a href="https://github.com/yubo1911/saber/tree/master/boostpy" target="_blank" rel="external">GitHub saber</a></p>
+<hr>
+<p>推荐阅读：  </p>
+<p><a href="http://blog.guoyb.com/2016/07/03/python-coroutine/">Python协程：从yield/send到async/await/</a><br><a href="http://blog.guoyb.com/2016/12/13/py-hotfix/">探究如何给Python程序做hotfix</a><br><a href="http://blog.guoyb.com/2017/09/09/python-mem/">如何估算一个Python对象的内存占用</a></p>
+<p>转载请注明出处： <a href="http://blog.guoyb.com/2017/11/05/boost-python/">http://blog.guoyb.com/2017/11/05/boost-python/</a>  </p>
+<p>欢迎使用微信扫描下方二维码，关注我的微信公众号TechTalking，技术·生活·思考：<br><img src="http://guoybblog.qiniudn.com/newqrv2.jpg" alt="后端技术小黑屋">  </p>
+
+    
+  </div>
+  <footer>
+    
+      
+  <div class="categories">
+    <a class="categories-link" href="/categories/技术/">技术</a>
+  </div>
+
+      
+  <div class="tags">
+    <a class="tags-link" href="/tags/C/">C++</a>, <a class="tags-link" href="/tags/Python/">Python</a>
+  </div>
+
+      
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">评论</h1>
+  <div class="ds-thread" data-thread-key="2017/11/05/boost-python/" data-title="打通Python和C++" data-url="http://blog.guoyb.com/2017/11/05/boost-python/"></div>
+</section>
+</div>
+  </div>
+  
+  <div id="sidebar" class="widgets-right">
+  
+<div class="widget category">
+  <h3 class="title">categories</h3>
+  <ul class="entry">
+  
+    <li><a href="/categories/书单/">书单</a><small>7</small></li>
+  
+    <li><a href="/categories/技术/">技术</a><small>64</small></li>
+  
+    <li><a href="/categories/杂谈/">杂谈</a><small>17</small></li>
+  
+  </ul>
+</div>
+
+
+  
+<div class="widget tag">
+  <h3 class="title">recent_posts</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2017/11/05/boost-python/">打通Python和C++</a>
+      </li>
+    
+      <li>
+        <a href="/2017/11/02/price-discrimination/">价格歧视</a>
+      </li>
+    
+      <li>
+        <a href="/2017/11/01/waiting/">待业青年</a>
+      </li>
+    
+      <li>
+        <a href="/2017/10/25/skynet-ppt/">探索skynet（六）：PPT</a>
+      </li>
+    
+      <li>
+        <a href="/2017/10/22/brainhole/">开个脑洞</a>
+      </li>
+    
+  </ul>
+</div>
+
+
+  
+<div class="widget tagcloud">
+  <h3 class="title">tagcloud</h3>
+  <div class="entry">
+    <a href="/tags/C/" style="font-size: 11px;">C</a> <a href="/tags/C/" style="font-size: 18px;">C++</a> <a href="/tags/C-11/" style="font-size: 18px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 11px;">MySQL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/grpc/" style="font-size: 11px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 11px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/protobuf/" style="font-size: 11px;">protobuf</a> <a href="/tags/redis/" style="font-size: 13px;">redis</a> <a href="/tags/regex/" style="font-size: 13px;">regex</a> <a href="/tags/shell/" style="font-size: 10px;">shell</a> <a href="/tags/skynet/" style="font-size: 15px;">skynet</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 16px;">书单</a> <a href="/tags/内存优化/" style="font-size: 10px;">内存优化</a> <a href="/tags/学习笔记/" style="font-size: 14px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/旅行/" style="font-size: 13px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 19px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 13px;">查证记录</a> <a href="/tags/生活/" style="font-size: 12px;">生活</a> <a href="/tags/读书笔记/" style="font-size: 17px;">读书笔记</a>
+  </div>
+</div>
+
+
+  
+<div class="widget tag">
+  <h3 class="title">友情链接</h3>
+  <ul class="entry">
+  
+    
+    <li><a href="http://www.linkedin.com/in/yubo-guo-739b0071" target="_blank">LinkedIn</a></li>
+  
+    
+    <li><a href="http://www.tuicool.com/sites/2emeIjb" target="_blank">推酷站点</a></li>
+  
+  </ul>
+</div>
+
+</div>
+  
+  <footer id="footer"><div class="copyright">
+  
+  &copy; 2017 <a href="/">Yubo Guo</a>
+  
+</div>
+<div class="theme-copyright">
+  Theme by <a href="https://github.com/orderedlist" target="_blank">orderedlist</a>
+   | 
+  Redesign by <a href="http://blog.dafengning.com/" target="_blank">Chong Zi</a>
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//lib.sinaapp.com/js/jquery/1.8/jquery.min.js"></script>
+<script src="/js/scale.fix.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"guoyb"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+
+
+<div id="rightfix" style="display:none;">
+
+<a href="#comment" id="gocomm" class="fix_btn" title="提问/评论"><i><i></i></i></a>
+
+
+<a href="javascript:void(0)" id="gotop" class="fix_btn" onclick="gotop();" title="回到顶部"><i></i></a>
+<script>
+  function gotop(){
+    $('html,body').animate({
+        scrollTop : '0px'
+      }, 800);
+  }
+  $(function(){
+    _rightfix = $('#rightfix');
+    $(window).scroll(function(){
+      $sollTop = document.documentElement.scrollTop + document.body.scrollTop;
+      if($sollTop > 350){
+        _rightfix.show();
+      }else{
+        _rightfix.hide();
+      }
+    });
+  });
+</script>
+
+</div>
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+  (function($){
+    $('.fancybox').fancybox();
+  })(jQuery);
+</script>
+
+</body>
+</html>
