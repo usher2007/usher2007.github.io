@@ -1,0 +1,283 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  
+  <title>scala模式匹配的一个问题 | 一根笨茄子</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  
+    <meta name="author" content="Yubo Guo">
+  
+  
+    <meta name="description" content="最近开始用scala做一些工作。  
+scala和java可以说同源同种，而我上一次写java程序可能要追溯到快十年前了。平常习惯使用弱类型语言，突然间切到scala，还有点不太适应。最近碰到的这个小问题，就耗费掉我不少时间。  
+
+大概场景是有两份数据left和right，需要对他们做一次全连接（fullOuterJoin），然后对于得到的结果，优先选择left中的数据，left中的数据不存在">
+  
+  <meta name="description" content="最近开始用scala做一些工作。  
+scala和java可以说同源同种，而我上一次写java程序可能要追溯到快十年前了。平常习惯使用弱类型语言，突然间切到scala，还有点不太适应。最近碰到的这个小问题，就耗费掉我不少时间。  
+
+大概场景是有两份数据left和right，需要对他们做一次全连接（fullOuterJoin），然后对于得到的结果，优先选择left中的数据，left中的数据不存在">
+<meta property="og:type" content="article">
+<meta property="og:title" content="scala模式匹配的一个问题">
+<meta property="og:url" content="http://blog.guoyb.com/2017/12/09/scala-match/index.html">
+<meta property="og:site_name" content="一根笨茄子">
+<meta property="og:description" content="最近开始用scala做一些工作。  
+scala和java可以说同源同种，而我上一次写java程序可能要追溯到快十年前了。平常习惯使用弱类型语言，突然间切到scala，还有点不太适应。最近碰到的这个小问题，就耗费掉我不少时间。  
+
+大概场景是有两份数据left和right，需要对他们做一次全连接（fullOuterJoin），然后对于得到的结果，优先选择left中的数据，left中的数据不存在">
+<meta property="og:image" content="http://guoybblog.qiniudn.com/newqrv2.jpg">
+<meta property="og:updated_time" content="2017-12-09T06:16:03.569Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="scala模式匹配的一个问题">
+<meta name="twitter:description" content="最近开始用scala做一些工作。  
+scala和java可以说同源同种，而我上一次写java程序可能要追溯到快十年前了。平常习惯使用弱类型语言，突然间切到scala，还有点不太适应。最近碰到的这个小问题，就耗费掉我不少时间。  
+
+大概场景是有两份数据left和right，需要对他们做一次全连接（fullOuterJoin），然后对于得到的结果，优先选择left中的数据，left中的数据不存在">
+<meta name="twitter:image" content="http://guoybblog.qiniudn.com/newqrv2.jpg">
+  
+  
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <!--[if lt IE 9]><script src="//cdn.bootcss.com/html5shiv/3.7.0/html5shiv.min.js"></script><![endif]-->
+  
+  
+<script type="text/javascript">
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?996ee0fca2512b4c29f37f60cf6387ca";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-6897127630340076",
+    enable_page_level_ads: true
+  });
+</script>
+
+</head>
+<body>
+  <div class="wrapper">
+    <header id="header">
+  <div class="title">
+    <h1><a href="/">一根笨茄子</a></h1>
+    <p><a href="/"></a></p>
+  </div>
+  <nav class="nav">
+    <ul>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/about">关于我</a></li>
+      
+      
+    </ul>
+    <div class="clearfix"></div>
+  </nav>
+  <div class="clearfix"></div>
+</header>
+    <div class="content"><article class="post">
+  <header>
+    
+      <div class="icon"></div>
+      <a href="/2017/12/09/scala-match/">
+  <time datetime="2017-12-09T06:03:30.000Z">
+    2017-12-09
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title">scala模式匹配的一个问题</h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>最近开始用scala做一些工作。  </p>
+<p>scala和java可以说同源同种，而我上一次写java程序可能要追溯到快十年前了。平常习惯使用弱类型语言，突然间切到scala，还有点不太适应。最近碰到的这个小问题，就耗费掉我不少时间。  </p>
+<hr>
+<p>大概场景是有两份数据left和right，需要对他们做一次全连接（fullOuterJoin），然后对于得到的结果，优先选择left中的数据，left中的数据不存在则选择right中的数据。示意如下：<br><a id="more"></a><br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">scala&gt; <span class="keyword">val</span> left = sc.makeRDD(<span class="type">Seq</span>((<span class="string">"1"</span>,<span class="string">"2"</span>,<span class="string">"LEFT12"</span>),(<span class="string">"2"</span>,<span class="string">"3"</span>,<span class="string">"LEFT23"</span>)))</span><br><span class="line">left: org.apache.spark.rdd.<span class="type">RDD</span>[(<span class="type">String</span>, <span class="type">String</span>, <span class="type">String</span>)] = <span class="type">ParallelCollectionRDD</span>[<span class="number">0</span>] at makeRDD at &lt;console&gt;:<span class="number">24</span></span><br><span class="line"></span><br><span class="line">scala&gt; <span class="keyword">val</span> right = sc.makeRDD(<span class="type">Seq</span>((<span class="string">"1"</span>,<span class="string">"2"</span>,<span class="string">"RIGHT12"</span>),(<span class="string">"3"</span>,<span class="string">"4"</span>,<span class="string">"RIGHT34"</span>)))</span><br><span class="line">right: org.apache.spark.rdd.<span class="type">RDD</span>[(<span class="type">String</span>, <span class="type">String</span>, <span class="type">String</span>)] = <span class="type">ParallelCollectionRDD</span>[<span class="number">1</span>] at makeRDD at &lt;console&gt;:<span class="number">24</span></span><br><span class="line"></span><br><span class="line">scala&gt; <span class="keyword">val</span> leftmap = left.map(x =&gt; (x._1, x._2) -&gt; x._3)</span><br><span class="line">leftmap: org.apache.spark.rdd.<span class="type">RDD</span>[((<span class="type">String</span>, <span class="type">String</span>), <span class="type">String</span>)] = <span class="type">MapPartitionsRDD</span>[<span class="number">2</span>] at map at &lt;console&gt;:<span class="number">26</span></span><br><span class="line"></span><br><span class="line">scala&gt; <span class="keyword">val</span> rightmap = right.map(x =&gt; (x._1, x._2) -&gt; x._3)</span><br><span class="line">rightmap: org.apache.spark.rdd.<span class="type">RDD</span>[((<span class="type">String</span>, <span class="type">String</span>), <span class="type">String</span>)] = <span class="type">MapPartitionsRDD</span>[<span class="number">3</span>] at map at &lt;console&gt;:<span class="number">26</span></span><br></pre></td></tr></table></figure>  </p>
+<p>接下进行fullOuterJoin，查看文档后得到，fullOuterJoin返回的结果是两个Option组成的元组。感谢scala的模式匹配，可以避免写一大堆if else，以下代码看上去很美好：<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">scala&gt; <span class="keyword">val</span> total = leftmap.fullOuterJoin(rightmap).map(kv =&gt;</span><br><span class="line">     | kv._2 <span class="keyword">match</span> &#123;</span><br><span class="line">     | <span class="keyword">case</span> (<span class="type">Some</span>(s), <span class="type">None</span>) =&gt; s</span><br><span class="line">     | <span class="keyword">case</span> (<span class="type">None</span>, <span class="type">Some</span>(s)) =&gt; s</span><br><span class="line">     | <span class="keyword">case</span> (<span class="type">Some</span>(s), <span class="type">Some</span>(t)) =&gt; s</span><br><span class="line">     | <span class="keyword">case</span> _ =&gt; <span class="type">None</span></span><br><span class="line">     | &#125;)</span><br><span class="line">total: org.apache.spark.rdd.<span class="type">RDD</span>[java.io.<span class="type">Serializable</span>] = <span class="type">MapPartitionsRDD</span>[<span class="number">11</span>] at map at &lt;console&gt;:<span class="number">32</span></span><br><span class="line"></span><br><span class="line">scala&gt; total.collect()</span><br><span class="line">res3: <span class="type">Array</span>[java.io.<span class="type">Serializable</span>] = <span class="type">Array</span>(<span class="type">RIGHT34</span>, <span class="type">LEFT12</span>, <span class="type">LEFT23</span>)</span><br></pre></td></tr></table></figure></p>
+<p>但是返回值java.io.Serializable是什么鬼？这类型和我后续要把数据落地的接口不匹配，后续工作无法进行啊。  </p>
+<p>翻看过各种Stack Overflow上的问答，各种java.io.serializable的搜索结果，最终才弄明白，原因是scala的模式匹配语句match的返回值类型是各个case字句返回值类型的最近公共父类。这里的问题就出在<strong>case _ =&gt; None</strong>这一句，None类型和s的类型，导致最终scala找到java.io.serializable。  </p>
+<p>再做个试验验证下，比如这样的模式匹配：<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">scala&gt; <span class="keyword">val</span> total = leftmap.fullOuterJoin(rightmap).map(kv =&gt;</span><br><span class="line">     | kv._2 <span class="keyword">match</span> &#123;</span><br><span class="line">     | <span class="keyword">case</span> (<span class="type">Some</span>(s), <span class="type">None</span>) =&gt; <span class="number">1</span></span><br><span class="line">     | <span class="keyword">case</span> (<span class="type">None</span>, <span class="type">Some</span>(s)) =&gt; <span class="number">2</span></span><br><span class="line">     | <span class="keyword">case</span> (<span class="type">Some</span>(s), <span class="type">Some</span>(t)) =&gt; <span class="number">1</span></span><br><span class="line">     | <span class="keyword">case</span> _ =&gt; <span class="string">""</span></span><br><span class="line">     | &#125;)</span><br></pre></td></tr></table></figure></p>
+<p>返回类型将是整型和字符串类型的公共父类Any类型:<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">total: org.apache.spark.rdd.<span class="type">RDD</span>[<span class="type">Any</span>] = <span class="type">MapPartitionsRDD</span>[<span class="number">19</span>] at map at &lt;console&gt;:<span class="number">32</span></span><br></pre></td></tr></table></figure></p>
+<p>解决方案也很简单，既然我知道我要的就是字符串，那么最后一个case子句返回空字符串：<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">scala&gt; <span class="keyword">val</span> total = leftmap.fullOuterJoin(rightmap).map(kv =&gt;</span><br><span class="line">     | kv._2 <span class="keyword">match</span> &#123;</span><br><span class="line">     | <span class="keyword">case</span> (<span class="type">Some</span>(s), <span class="type">None</span>) =&gt; s</span><br><span class="line">     | <span class="keyword">case</span> (<span class="type">None</span>, <span class="type">Some</span>(s)) =&gt; s</span><br><span class="line">     | <span class="keyword">case</span> (<span class="type">Some</span>(s), <span class="type">Some</span>(t)) =&gt; s</span><br><span class="line">     | <span class="keyword">case</span> _ =&gt; <span class="string">""</span></span><br><span class="line">     | &#125;)</span><br><span class="line">total: org.apache.spark.rdd.<span class="type">RDD</span>[<span class="type">String</span>] = <span class="type">MapPartitionsRDD</span>[<span class="number">15</span>] at map at &lt;console&gt;:<span class="number">32</span></span><br><span class="line"></span><br><span class="line">scala&gt; total.collect()</span><br><span class="line">res4: <span class="type">Array</span>[<span class="type">String</span>] = <span class="type">Array</span>(<span class="type">RIGHT34</span>, <span class="type">LEFT12</span>, <span class="type">LEFT23</span>)</span><br></pre></td></tr></table></figure></p>
+<p>对于scala/spark，我还是萌新一枚，有什么说的不准确的地方，也欢迎各位大佬留言批评指正~  </p>
+<hr>
+<p>推荐阅读：  </p>
+<p><a href="http://blog.guoyb.com/2016/07/03/python-coroutine/">Python协程：从yield/send到async/await/</a><br><a href="http://blog.guoyb.com/2017/11/05/boost-python/">打通Python和C++</a><br><a href="http://blog.guoyb.com/2017/11/01/waiting/">待业青年</a></p>
+<p>转载请注明出处： <a href="http://blog.guoyb.com/2017/12/09/scala-match/">http://blog.guoyb.com/2017/12/09/scala-match/</a>  </p>
+<p>欢迎使用微信扫描下方二维码，关注我的微信公众号TechTalking，技术·生活·思考：<br><img src="http://guoybblog.qiniudn.com/newqrv2.jpg" alt="后端技术小黑屋">  </p>
+
+    
+  </div>
+  <footer>
+    
+      
+      
+  <div class="tags">
+    <a class="tags-link" href="/tags/Scala/">Scala</a>, <a class="tags-link" href="/tags/Spark/">Spark</a>
+  </div>
+
+      
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">评论</h1>
+  <div class="ds-thread" data-thread-key="2017/12/09/scala-match/" data-title="scala模式匹配的一个问题" data-url="http://blog.guoyb.com/2017/12/09/scala-match/"></div>
+</section>
+</div>
+  </div>
+  
+  <div id="sidebar" class="widgets-right">
+  
+<div class="widget category">
+  <h3 class="title">categories</h3>
+  <ul class="entry">
+  
+    <li><a href="/categories/书单/">书单</a><small>7</small></li>
+  
+    <li><a href="/categories/技术/">技术</a><small>64</small></li>
+  
+    <li><a href="/categories/杂谈/">杂谈</a><small>17</small></li>
+  
+  </ul>
+</div>
+
+
+  
+<div class="widget tag">
+  <h3 class="title">recent_posts</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2017/12/09/scala-match/">scala模式匹配的一个问题</a>
+      </li>
+    
+      <li>
+        <a href="/2017/11/05/boost-python/">打通Python和C++</a>
+      </li>
+    
+      <li>
+        <a href="/2017/11/02/price-discrimination/">价格歧视</a>
+      </li>
+    
+      <li>
+        <a href="/2017/11/01/waiting/">待业青年</a>
+      </li>
+    
+      <li>
+        <a href="/2017/10/25/skynet-ppt/">探索skynet（六）：PPT</a>
+      </li>
+    
+  </ul>
+</div>
+
+
+  
+<div class="widget tagcloud">
+  <h3 class="title">tagcloud</h3>
+  <div class="entry">
+    <a href="/tags/C/" style="font-size: 11px;">C</a> <a href="/tags/C/" style="font-size: 18px;">C++</a> <a href="/tags/C-11/" style="font-size: 18px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 11px;">MySQL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Scala/" style="font-size: 10px;">Scala</a> <a href="/tags/Spark/" style="font-size: 10px;">Spark</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/grpc/" style="font-size: 11px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 11px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/protobuf/" style="font-size: 11px;">protobuf</a> <a href="/tags/redis/" style="font-size: 13px;">redis</a> <a href="/tags/regex/" style="font-size: 13px;">regex</a> <a href="/tags/shell/" style="font-size: 10px;">shell</a> <a href="/tags/skynet/" style="font-size: 15px;">skynet</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 16px;">书单</a> <a href="/tags/内存优化/" style="font-size: 10px;">内存优化</a> <a href="/tags/学习笔记/" style="font-size: 14px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/旅行/" style="font-size: 13px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 19px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 13px;">查证记录</a> <a href="/tags/生活/" style="font-size: 12px;">生活</a> <a href="/tags/读书笔记/" style="font-size: 17px;">读书笔记</a>
+  </div>
+</div>
+
+
+  
+<div class="widget tag">
+  <h3 class="title">友情链接</h3>
+  <ul class="entry">
+  
+    
+    <li><a href="http://www.linkedin.com/in/yubo-guo-739b0071" target="_blank">LinkedIn</a></li>
+  
+    
+    <li><a href="http://www.tuicool.com/sites/2emeIjb" target="_blank">推酷站点</a></li>
+  
+  </ul>
+</div>
+
+</div>
+  
+  <footer id="footer"><div class="copyright">
+  
+  &copy; 2017 <a href="/">Yubo Guo</a>
+  
+</div>
+<div class="theme-copyright">
+  Theme by <a href="https://github.com/orderedlist" target="_blank">orderedlist</a>
+   | 
+  Redesign by <a href="http://blog.dafengning.com/" target="_blank">Chong Zi</a>
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//lib.sinaapp.com/js/jquery/1.8/jquery.min.js"></script>
+<script src="/js/scale.fix.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"guoyb"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+
+
+<div id="rightfix" style="display:none;">
+
+<a href="#comment" id="gocomm" class="fix_btn" title="提问/评论"><i><i></i></i></a>
+
+
+<a href="javascript:void(0)" id="gotop" class="fix_btn" onclick="gotop();" title="回到顶部"><i></i></a>
+<script>
+  function gotop(){
+    $('html,body').animate({
+        scrollTop : '0px'
+      }, 800);
+  }
+  $(function(){
+    _rightfix = $('#rightfix');
+    $(window).scroll(function(){
+      $sollTop = document.documentElement.scrollTop + document.body.scrollTop;
+      if($sollTop > 350){
+        _rightfix.show();
+      }else{
+        _rightfix.hide();
+      }
+    });
+  });
+</script>
+
+</div>
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+  (function($){
+    $('.fancybox').fancybox();
+  })(jQuery);
+</script>
+
+</body>
+</html>
