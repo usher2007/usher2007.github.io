@@ -1,0 +1,292 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  
+  <title>scala中的传名调用 | 一根笨茄子</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  
+    <meta name="author" content="Yubo Guo">
+  
+  
+    <meta name="description" content="scala函数调用的参数传递有两种方式：  
+
+一种是传值调用，这种方式和C语言的函数参数传递方式类似，在函数调用的时刻，计算各个参数的值，然后传递进入函数内部，scala中写作function(x: Int)；  
+一种是传名调用，这种调用方式在函数调用时并不直接计算参数的具体值，而是在函数中使用到该参数时，才进行计算，scala中写作function(x: =&amp;gt;Int)。这里有意思的地">
+  
+  <meta name="description" content="scala函数调用的参数传递有两种方式：  
+
+一种是传值调用，这种方式和C语言的函数参数传递方式类似，在函数调用的时刻，计算各个参数的值，然后传递进入函数内部，scala中写作function(x: Int)；  
+一种是传名调用，这种调用方式在函数调用时并不直接计算参数的具体值，而是在函数中使用到该参数时，才进行计算，scala中写作function(x: =&amp;gt;Int)。这里有意思的地">
+<meta property="og:type" content="article">
+<meta property="og:title" content="scala中的传名调用">
+<meta property="og:url" content="http://blog.guoyb.com/2018/01/21/scala-call-by-name/index.html">
+<meta property="og:site_name" content="一根笨茄子">
+<meta property="og:description" content="scala函数调用的参数传递有两种方式：  
+
+一种是传值调用，这种方式和C语言的函数参数传递方式类似，在函数调用的时刻，计算各个参数的值，然后传递进入函数内部，scala中写作function(x: Int)；  
+一种是传名调用，这种调用方式在函数调用时并不直接计算参数的具体值，而是在函数中使用到该参数时，才进行计算，scala中写作function(x: =&amp;gt;Int)。这里有意思的地">
+<meta property="og:image" content="http://guoybblog.qiniudn.com/newqrv2.jpg">
+<meta property="og:updated_time" content="2018-01-21T02:41:49.434Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="scala中的传名调用">
+<meta name="twitter:description" content="scala函数调用的参数传递有两种方式：  
+
+一种是传值调用，这种方式和C语言的函数参数传递方式类似，在函数调用的时刻，计算各个参数的值，然后传递进入函数内部，scala中写作function(x: Int)；  
+一种是传名调用，这种调用方式在函数调用时并不直接计算参数的具体值，而是在函数中使用到该参数时，才进行计算，scala中写作function(x: =&amp;gt;Int)。这里有意思的地">
+<meta name="twitter:image" content="http://guoybblog.qiniudn.com/newqrv2.jpg">
+  
+  
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <!--[if lt IE 9]><script src="//cdn.bootcss.com/html5shiv/3.7.0/html5shiv.min.js"></script><![endif]-->
+  
+  
+<script type="text/javascript">
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?996ee0fca2512b4c29f37f60cf6387ca";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-6897127630340076",
+    enable_page_level_ads: true
+  });
+</script>
+
+</head>
+<body>
+  <div class="wrapper">
+    <header id="header">
+  <div class="title">
+    <h1><a href="/">一根笨茄子</a></h1>
+    <p><a href="/"></a></p>
+  </div>
+  <nav class="nav">
+    <ul>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/about">关于我</a></li>
+      
+      
+    </ul>
+    <div class="clearfix"></div>
+  </nav>
+  <div class="clearfix"></div>
+</header>
+    <div class="content"><article class="post">
+  <header>
+    
+      <div class="icon"></div>
+      <a href="/2018/01/21/scala-call-by-name/">
+  <time datetime="2018-01-21T02:27:41.000Z">
+    2018-01-21
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title">scala中的传名调用</h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>scala函数调用的参数传递有两种方式：  </p>
+<ul>
+<li>一种是传值调用，这种方式和C语言的函数参数传递方式类似，在函数调用的时刻，计算各个参数的值，然后传递进入函数内部，scala中写作function(x: Int)；  </li>
+<li>一种是传名调用，这种调用方式在函数调用时并不直接计算参数的具体值，而是在函数中使用到该参数时，才进行计算，scala中写作function(x: =&gt;Int)。这里有意思的地方在于，在scala中， Int =&gt; Int表示一个函数类型，接受Int参数，返回Int返回值。那这里x的类型，就类似于一个函数，它没有参数，但是返回一个Int类型的返回值。  <a id="more"></a>
+下面看一个并没有什么卵用，只为用于说明特性的例子：  <figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> example</span><br><span class="line">  </span><br><span class="line"><span class="class"><span class="keyword">object</span> <span class="title">TestThunk</span> <span class="keyword">extends</span> <span class="title">Greeting</span> <span class="keyword">with</span> <span class="title">App</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">printAndReturnInt</span></span>() = &#123;</span><br><span class="line">    println(<span class="string">"test..."</span>)</span><br><span class="line">    <span class="number">1</span>       </span><br><span class="line">  &#125;</span><br><span class="line">  callByValue(printAndReturnInt)</span><br><span class="line">  callByName(printAndReturnInt)</span><br><span class="line">&#125;           </span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">trait</span> <span class="title">Greeting</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">callByValue</span></span>(x: <span class="type">Int</span>) = &#123;</span><br><span class="line">    println(<span class="string">"first call by value: x="</span> + x)</span><br><span class="line">    println(<span class="string">"second call by value: x="</span> + x)</span><br><span class="line">  &#125; </span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">callByName</span></span>(x: =&gt; <span class="type">Int</span>) = &#123;</span><br><span class="line">    println(<span class="string">"first call by name: x="</span> + x)</span><br><span class="line">    println(<span class="string">"second call by name: x="</span> + x)</span><br><span class="line">  &#125; </span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>  
+</li>
+</ul>
+<p>调用结果输出是：<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">test...</span><br><span class="line">first call by value: x=<span class="number">1</span></span><br><span class="line">second call by value: x=<span class="number">1</span></span><br><span class="line">test...</span><br><span class="line">first call by name: x=<span class="number">1</span></span><br><span class="line">test...</span><br><span class="line">second call by name: x=<span class="number">1</span></span><br></pre></td></tr></table></figure>  </p>
+<p>通过test…的输出，可以看出传名调用和传值调用的区别。  </p>
+<hr>
+<p>那这个传名调用，有什么作用呢？  </p>
+<p>首先，在部分情况下它可以提高效率：比如函数中没有用到这个传名调用参数的时候，这个参数就不会被计算。<br>但是，既然不会用到这个参数，你传它进函数干嘛？其实也是有这种情况的，比如熟悉的getOrElse，它的默认取值default就是一个传名调用：</p>
+<pre><code>def getOrElse[B &gt;: A](default: ⇒ B): B  
+</code></pre><p>另外，这种延迟参数计算到函数中实际调用位置的方式，也为scala的一些特性提供了支撑，比如Try：  </p>
+<p>Try的apply方法，接收的就是一个传名参数：<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">apply</span></span>[<span class="type">T</span>](r: =&gt; <span class="type">T</span>): <span class="type">Try</span>[<span class="type">T</span>] =</span><br><span class="line">    <span class="keyword">try</span> <span class="type">Success</span>(r) <span class="keyword">catch</span> &#123;</span><br><span class="line">      <span class="keyword">case</span> <span class="type">NonFatal</span>(e) =&gt; <span class="type">Failure</span>(e)</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>  </p>
+<p>只有在构造Try时使用传名参数r，将r的调用推迟到Try内部，才能够在Try内部对异常进行处理；否则的话，r将在传入Try内部之前进行计算，在计算中出现的异常将会直接抛到Try外部，就不能实现Try对于异常的包装了，是不是很神奇很有用？  </p>
+<hr>
+<p>推荐阅读：  </p>
+<p><a href="http://blog.guoyb.com/2017/12/09/scala-match/">scala模式匹配的一个问题</a><br><a href="http://blog.guoyb.com/2017/11/05/boost-python/">打通Python和C++</a><br><a href="http://blog.guoyb.com/2017/11/01/waiting/">待业青年</a></p>
+<p>转载请注明出处： <a href="http://blog.guoyb.com/2018/01/21/scala-call-by-name/">http://blog.guoyb.com/2018/01/21/scala-call-by-name/</a>  </p>
+<p>欢迎使用微信扫描下方二维码，关注我的微信公众号TechTalking，技术·生活·思考：<br><img src="http://guoybblog.qiniudn.com/newqrv2.jpg" alt="后端技术小黑屋">  </p>
+
+    
+  </div>
+  <footer>
+    
+      
+  <div class="categories">
+    <a class="categories-link" href="/categories/技术/">技术</a>
+  </div>
+
+      
+  <div class="tags">
+    <a class="tags-link" href="/tags/Scala/">Scala</a>
+  </div>
+
+      
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">Comments</h1>
+  <div class="ds-thread" data-thread-key="2018/01/21/scala-call-by-name/" data-title="scala中的传名调用" data-url="http://blog.guoyb.com/2018/01/21/scala-call-by-name/"></div>
+</section>
+</div>
+  </div>
+  
+  <div id="sidebar" class="widgets-right">
+  
+<div class="widget category">
+  <h3 class="title">categories</h3>
+  <ul class="entry">
+  
+    <li><a href="/categories/书单/">书单</a><small>8</small></li>
+  
+    <li><a href="/categories/技术/">技术</a><small>66</small></li>
+  
+    <li><a href="/categories/杂谈/">杂谈</a><small>18</small></li>
+  
+  </ul>
+</div>
+
+
+  
+<div class="widget tag">
+  <h3 class="title">recent_posts</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2018/01/21/scala-call-by-name/">scala中的传名调用</a>
+      </li>
+    
+      <li>
+        <a href="/2018/01/13/2017-booklist-2/">2017下半年书单</a>
+      </li>
+    
+      <li>
+        <a href="/2018/01/06/gz-sz/">广深路上</a>
+      </li>
+    
+      <li>
+        <a href="/2017/12/09/scala-match/">scala模式匹配的一个问题</a>
+      </li>
+    
+      <li>
+        <a href="/2017/11/05/boost-python/">打通Python和C++</a>
+      </li>
+    
+  </ul>
+</div>
+
+
+  
+<div class="widget tagcloud">
+  <h3 class="title">tagcloud</h3>
+  <div class="entry">
+    <a href="/tags/C/" style="font-size: 11.11px;">C</a> <a href="/tags/C/" style="font-size: 17.78px;">C++</a> <a href="/tags/C-11/" style="font-size: 17.78px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 11.11px;">MySQL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Scala/" style="font-size: 11.11px;">Scala</a> <a href="/tags/Spark/" style="font-size: 10px;">Spark</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/grpc/" style="font-size: 11.11px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 11.11px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/protobuf/" style="font-size: 11.11px;">protobuf</a> <a href="/tags/redis/" style="font-size: 12.22px;">redis</a> <a href="/tags/regex/" style="font-size: 12.22px;">regex</a> <a href="/tags/shell/" style="font-size: 10px;">shell</a> <a href="/tags/skynet/" style="font-size: 14.44px;">skynet</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 15.56px;">书单</a> <a href="/tags/内存优化/" style="font-size: 10px;">内存优化</a> <a href="/tags/学习笔记/" style="font-size: 13.33px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/旅行/" style="font-size: 12.22px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 18.89px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 12.22px;">查证记录</a> <a href="/tags/生活/" style="font-size: 12.22px;">生活</a> <a href="/tags/读书笔记/" style="font-size: 16.67px;">读书笔记</a>
+  </div>
+</div>
+
+
+  
+<div class="widget tag">
+  <h3 class="title">友情链接</h3>
+  <ul class="entry">
+  
+    
+    <li><a href="http://www.linkedin.com/in/yubo-guo-739b0071" target="_blank">LinkedIn</a></li>
+  
+    
+    <li><a href="http://www.tuicool.com/sites/2emeIjb" target="_blank">推酷站点</a></li>
+  
+  </ul>
+</div>
+
+</div>
+  
+  <footer id="footer"><div class="copyright">
+  
+  &copy; 2018 <a href="/">Yubo Guo</a>
+  
+</div>
+<div class="theme-copyright">
+  Theme by <a href="https://github.com/orderedlist" target="_blank">orderedlist</a>
+   | 
+  Redesign by <a href="http://blog.dafengning.com/" target="_blank">Chong Zi</a>
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//lib.sinaapp.com/js/jquery/1.8/jquery.min.js"></script>
+<script src="/js/scale.fix.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"guoyb"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+
+
+<div id="rightfix" style="display:none;">
+
+<a href="#comment" id="gocomm" class="fix_btn" title="提问/评论"><i><i></i></i></a>
+
+
+<a href="javascript:void(0)" id="gotop" class="fix_btn" onclick="gotop();" title="回到顶部"><i></i></a>
+<script>
+  function gotop(){
+    $('html,body').animate({
+        scrollTop : '0px'
+      }, 800);
+  }
+  $(function(){
+    _rightfix = $('#rightfix');
+    $(window).scroll(function(){
+      $sollTop = document.documentElement.scrollTop + document.body.scrollTop;
+      if($sollTop > 350){
+        _rightfix.show();
+      }else{
+        _rightfix.hide();
+      }
+    });
+  });
+</script>
+
+</div>
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+  (function($){
+    $('.fancybox').fancybox();
+  })(jQuery);
+</script>
+
+</body>
+</html>
