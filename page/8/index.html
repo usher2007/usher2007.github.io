@@ -75,6 +75,45 @@ var _hmt = _hmt || [];
   <header>
     
       <div class="icon"></div>
+      <a href="/2016/05/08/wedding/">
+  <time datetime="2016-05-08T04:26:08.000Z">
+    2016-05-08
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title"><a href="/2016/05/08/wedding/">说说婚礼</a></h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>五一回老家办了婚礼，由于我和我老婆两人来自同一个县城，所以时间上倒也没什么耗费，只请了一天年假就搞定了。小县城亲戚多朋友多习俗多，大家对于我们这种三四天搞定的婚礼十分不解。然而谁又知道，我们从一开始就认为这是一场为家里人而办的婚礼呢。  </p>
+<p>在我的理解中，婚礼，首先是一个仪式，它是一男一女结为夫妻的见证。从这一点上说，婚礼和去民政局领证，并无本质区别。然而，在筹备婚礼的过程中，我发现当代中国的婚礼，仪式感并不是最主要的——各种杂七杂八的风俗，并不是为了营造神圣的氛围，而是为了折腾两位新人。这一点有点像军营中，新兵蛋子一定要被老兵欺负，这样过后回想起来，一届入伍的士兵们才有“兄弟情”。或许这种风俗本无恶意，也仅仅是为了让新人对“结婚”印象深刻罢了。<br>
+    
+  </div>
+  <footer class="end-sep">
+    
+      
+        <div class="alignleft">
+          <a href="/2016/05/08/wedding/#more" class="more-link">Read More</a>
+        </div>
+      
+      
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+
+
+  
+    <article class="post">
+  <header>
+    
+      <div class="icon"></div>
       <a href="/2016/04/19/python-decorator/">
   <time datetime="2016-04-19T13:00:28.000Z">
     2016-04-19
@@ -448,56 +487,6 @@ var _hmt = _hmt || [];
 
 
   
-    <article class="post">
-  <header>
-    
-      <div class="icon"></div>
-      <a href="/2014/05/07/python-source-10/">
-  <time datetime="2014-05-07T09:13:40.000Z">
-    2014-05-07
-  </time>
-</a>
-    
-    
-  
-    <h1 class="title"><a href="/2014/05/07/python-source-10/">《Python源码剖析》读书笔记-10 Python虚拟机中的控制流</a></h1>
-  
-
-  </header>
-  
-  <div class="entry">
-    
-      <hr>
-<h3 id="第10章-Python虚拟机中的控制流"><a href="#第10章-Python虚拟机中的控制流" class="headerlink" title="第10章 Python虚拟机中的控制流"></a>第10章 Python虚拟机中的控制流</h3><ul>
-<li><p>if条件判断语句，在虚拟机中对应了COMPARE_OP，其中有几个地方需要理解：</p>
-<ul>
-<li>在slow_compare中的cmp_outcome函数，处理了Python自定义的一些比较操作，例如is，is not，in等。</li>
-<li>对于那些一般类型的比较操作（非数字，非is，is not这类Python特殊比较符），会通过PyObject_RichCompare来进行。这个函数里面的核心任务，是把待比较对象的类型对象（ob_type)上定义的比较函数指针（tp_richcompare或者tp_compare，优先tp_richcompare）取出，用这个比较函数来进行比较。如果这两个函数都不能进行比较，虚拟机还会调用更普适但是也更慢的do_richcmp。</li>
-<li>比较操作最后返回的结果，是两个对象，Py_True和Py_False。这两个对象其实都是PyIntObject类型的，包装了1和0。</li>
-<li><p>位于比较操作最后的PREDICT宏，用于预测下一条指令，如果预测正确则可以跳过许多不必要的步骤，直接执行下一条指令。这种做法的基础是，在Python源码编译出的字节码中，有一些指令经常是成对出现的，例如COMPARE_OP 和 POP_JUMP_IF_FALSE&amp;POP_JUMP_IF_TRUE。所以在处理COMPARE_OP的最后，可以添加如下预测语句。</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">PREDICT(POP_JUMP_IF_FALSE);</span><br><span class="line">PREDICT(POP_JUMP_IF_TRUE);</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>PREDICT宏的定义为：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> PREDICT(op) <span class="meta-keyword">if</span> (*next_instr == op) goto PRED_##op</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>正好就是判断下一条字节码，预测成功就直接执行下一条字节码的节奏。</p>
-    
-  </div>
-  <footer class="end-sep">
-    
-      
-        <div class="alignleft">
-          <a href="/2014/05/07/python-source-10/#more" class="more-link">Read More</a>
-        </div>
-      
-      
-    
-    <div class="clearfix"></div>
-  </footer>
-</article>
-
-
-  
 
   <nav id="pagination">
   
@@ -521,7 +510,7 @@ var _hmt = _hmt || [];
   
     <li><a href="/categories/书单/">书单</a><small>8</small></li>
   
-    <li><a href="/categories/技术/">技术</a><small>66</small></li>
+    <li><a href="/categories/技术/">技术</a><small>67</small></li>
   
     <li><a href="/categories/杂谈/">杂谈</a><small>18</small></li>
   
@@ -533,6 +522,10 @@ var _hmt = _hmt || [];
 <div class="widget tag">
   <h3 class="title">recent_posts</h3>
   <ul class="entry">
+    
+      <li>
+        <a href="/2018/01/28/data-oriented/">面向数据编程</a>
+      </li>
     
       <li>
         <a href="/2018/01/21/scala-call-by-name/">scala中的传名调用</a>
@@ -548,10 +541,6 @@ var _hmt = _hmt || [];
     
       <li>
         <a href="/2017/12/09/scala-match/">scala模式匹配的一个问题</a>
-      </li>
-    
-      <li>
-        <a href="/2017/11/05/boost-python/">打通Python和C++</a>
       </li>
     
   </ul>

@@ -4,34 +4,30 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="chrome=1">
   
-  <title>Learn C The Hard Way示例代码 | 一根笨茄子</title>
+  <title>面向数据编程 | 一根笨茄子</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   
     <meta name="author" content="Yubo Guo">
   
   
-    <meta name="description" content="之前在2016年上半年书单里也提到过，学习C语言除了K&amp;amp;R的那本经典的《C程序设计语言》之外，还可以看看Learn C The Hard Way这个在线教程，更偏向实践一点。  
-最近终于把LCTHW刷完了，其中的代码都写了一遍，确实收获蛮多的。  
-我把代码放在了GitHub上，有兴趣的读者可以点击这里查看，或者直接git clone https://github.com/yubo19">
+    <meta name="description" content="最近一阵在做一个自动化的工具，把一些机械化的重复工作，用配置数据的形式固化下来，自动进行，配置数据尽可能简单明了，最好能让产品经理也可以操作，这样就可以大大解放生产力。  
+由此，我不由得感叹，数据真是程序员和非程序员之间交流通信的良好媒介——看不懂代码？数据总能看懂吧？">
   
-  <meta name="description" content="之前在2016年上半年书单里也提到过，学习C语言除了K&amp;amp;R的那本经典的《C程序设计语言》之外，还可以看看Learn C The Hard Way这个在线教程，更偏向实践一点。  
-最近终于把LCTHW刷完了，其中的代码都写了一遍，确实收获蛮多的。  
-我把代码放在了GitHub上，有兴趣的读者可以点击这里查看，或者直接git clone https://github.com/yubo19">
+  <meta name="description" content="最近一阵在做一个自动化的工具，把一些机械化的重复工作，用配置数据的形式固化下来，自动进行，配置数据尽可能简单明了，最好能让产品经理也可以操作，这样就可以大大解放生产力。  
+由此，我不由得感叹，数据真是程序员和非程序员之间交流通信的良好媒介——看不懂代码？数据总能看懂吧？">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Learn C The Hard Way示例代码">
-<meta property="og:url" content="http://blog.guoyb.com/2016/07/23/learn-c-the-hard-way/index.html">
+<meta property="og:title" content="面向数据编程">
+<meta property="og:url" content="http://blog.guoyb.com/2018/01/28/data-oriented/index.html">
 <meta property="og:site_name" content="一根笨茄子">
-<meta property="og:description" content="之前在2016年上半年书单里也提到过，学习C语言除了K&amp;amp;R的那本经典的《C程序设计语言》之外，还可以看看Learn C The Hard Way这个在线教程，更偏向实践一点。  
-最近终于把LCTHW刷完了，其中的代码都写了一遍，确实收获蛮多的。  
-我把代码放在了GitHub上，有兴趣的读者可以点击这里查看，或者直接git clone https://github.com/yubo19">
-<meta property="og:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.jpg">
-<meta property="og:updated_time" content="2017-11-03T03:40:18.206Z">
+<meta property="og:description" content="最近一阵在做一个自动化的工具，把一些机械化的重复工作，用配置数据的形式固化下来，自动进行，配置数据尽可能简单明了，最好能让产品经理也可以操作，这样就可以大大解放生产力。  
+由此，我不由得感叹，数据真是程序员和非程序员之间交流通信的良好媒介——看不懂代码？数据总能看懂吧？">
+<meta property="og:image" content="http://guoybblog.qiniudn.com/newqrv2.jpg">
+<meta property="og:updated_time" content="2018-01-28T01:22:51.452Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Learn C The Hard Way示例代码">
-<meta name="twitter:description" content="之前在2016年上半年书单里也提到过，学习C语言除了K&amp;amp;R的那本经典的《C程序设计语言》之外，还可以看看Learn C The Hard Way这个在线教程，更偏向实践一点。  
-最近终于把LCTHW刷完了，其中的代码都写了一遍，确实收获蛮多的。  
-我把代码放在了GitHub上，有兴趣的读者可以点击这里查看，或者直接git clone https://github.com/yubo19">
-<meta name="twitter:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.jpg">
+<meta name="twitter:title" content="面向数据编程">
+<meta name="twitter:description" content="最近一阵在做一个自动化的工具，把一些机械化的重复工作，用配置数据的形式固化下来，自动进行，配置数据尽可能简单明了，最好能让产品经理也可以操作，这样就可以大大解放生产力。  
+由此，我不由得感叹，数据真是程序员和非程序员之间交流通信的良好媒介——看不懂代码？数据总能看懂吧？">
+<meta name="twitter:image" content="http://guoybblog.qiniudn.com/newqrv2.jpg">
   
   
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
@@ -82,15 +78,15 @@ var _hmt = _hmt || [];
   <header>
     
       <div class="icon"></div>
-      <a href="/2016/07/23/learn-c-the-hard-way/">
-  <time datetime="2016-07-23T09:19:07.000Z">
-    2016-07-23
+      <a href="/2018/01/28/data-oriented/">
+  <time datetime="2018-01-28T01:09:33.000Z">
+    2018-01-28
   </time>
 </a>
     
     
   
-    <h1 class="title">Learn C The Hard Way示例代码</h1>
+    <h1 class="title">面向数据编程</h1>
   
 
   </header>
@@ -98,22 +94,30 @@ var _hmt = _hmt || [];
   <div class="entry">
     
       <hr>
-<p>之前在<a href="http://blog.guoyb.com/2016/06/25/2016-booklist-1/">2016年上半年书单</a>里也提到过，学习C语言除了K&amp;R的那本经典的《C程序设计语言》之外，还可以看看<a href="http://c.learncodethehardway.org/book/" target="_blank" rel="external">Learn C The Hard Way</a>这个在线教程，更偏向实践一点。  </p>
-<p>最近终于把LCTHW刷完了，其中的代码都写了一遍，确实收获蛮多的。  </p>
-<p>我把代码放在了GitHub上，有兴趣的读者可以点击<a href="https://github.com/yubo1911/learncthehardway" target="_blank" rel="external">这里</a>查看，或者直接git clone <a href="https://github.com/yubo1911/learncthehardway.git。" target="_blank" rel="external">https://github.com/yubo1911/learncthehardway.git。</a><br><a id="more"></a>  </p>
+<p>最近一阵在做一个自动化的工具，把一些机械化的重复工作，用配置数据的形式固化下来，自动进行，配置数据尽可能简单明了，最好能让产品经理也可以操作，这样就可以大大解放生产力。  </p>
+<p>由此，我不由得感叹，数据真是程序员和非程序员之间交流通信的良好媒介——看不懂代码？数据总能看懂吧？<br><a id="more"></a><br>面向数据编程的第一个好处，就是将程序员从日常琐碎的工作中解放出来，把身上的负担分出去，然后去做更有意思的事情。  </p>
 <hr>
-<p>多说一句，作者在写完整份教程之后，在最后的一章<a href="http://c.learncodethehardway.org/book/krcritique.html" target="_blank" rel="external">《Deconstructing K&amp;RC Is Dead》</a>中可谓将K&amp;R C批判了个体无完肤，这里摘录其中一段，大家自己感受一下：  </p>
-<blockquote>
-<p>And then I will also tell people to never write another C program again. It won’t be obvious. It won’t be outright, but my goal will be to move people right off C onto other languages that are doing it better. Go, Rust, and Swift, come to mind as recent entrants that can handle the majority of tasks that C does now, so I will push people there. I will tell them that their skills at finding defects, and rigorous analysis of C code will pay massive dividends in every language and make learning any other language possible.  </p>
-<p>But C? C’s dead. It’s the language for old programmers who want to debate section A.6.2 paragraph 4 of the undefined behavior of pointers. Good riddance. I’m going to go learn Go (or Rust, or Swift, or anything else).</p>
-</blockquote>
+<p>昨天吃午饭的时候，组里的一个萌新小伙跟我闲聊起软件设计，问什么时候该使用类包装一下，什么时候该使用继承，什么时候又该使用组合等等问题。遥想当年，我也曾这样有激情有冲劲，什么都想问个为什么。扯远了，说回这件事。这时，作为一个“老”程序员，为了逼格，当然要祭出大名鼎鼎的“Gang of Four”的设计模式经典书籍，当然，最后还是要补充一句，“看情况”。补充这句的主要原因，其实就是如果陷入GoF的设计模式之中，很容易过度设计，将一个简单的功能设计的叠床架屋，得不偿失。  </p>
+<p>这时，如果能心中牢记面向数据，以解析数据为依托设计程序架构，以简化数据为目的演进程序架构，往往很多模式的使用就是很自然而然的事情。</p>
+<p>所以这是面向数据编程的第二个好处，有助于程序架构设计向更好的方向演进。  </p>
 <hr>
-<p>我的看法是，C还依然是一门非常适用于造轮子的语言，而造轮子对于程序员具有无穷的（产品经理们、老板们、投资人们理解不了的）魅力。  </p>
-<p>但是直接面向业务的程序，还是选择能更快出活的语言和框架比较好。  </p>
-<p>另外，现在有很多语言/工具都是由C语言实现的，或者是在使用哲学上类似C语言的，那么掌握C语言，对于这一类技术就是一通百通的功效了。就像对于篮球运动员，拉杆变向、迷踪步欧洲步可以直接转化成得分，但是速度、力量训练还是要做的。  </p>
+<p>在接手一个新项目，或者阅读别人的程序时，我经常会发现，通过数据能够更加方便的理解整体架构，因为数据往往是和业务紧密相关的，数据在说明业务“是什么”，而代码是在说明业务“怎么做”，上来就看执行方案，经常是搞得一头雾水。数据和代码往往能互相印证，互为解释，大大增加程序的可读性与可维护性。  </p>
+<p>在做游戏开发时，这方面可以说做到了极致，数据与逻辑分离又互为解释。对于一些陈年老系统，找不到当年的开发者时，通过和策划、QA一起同时研究对应的数据表以及相应代码，往往就能把相关的结构理解的七七八八。  </p>
+<p>这里，就是面向数据编程的第三个好处，有助于增加程序的可读性与可维护性。  </p>
 <hr>
-<p>转载请注明出处： <a href="http://blog.guoyb.com/2016/07/23/learn-c-the-hard-way/">http://blog.guoyb.com/2016/07/23/learn-c-the-hard-way/</a>  </p>
-<p>欢迎使用微信扫描下方二维码，关注我的微信公众号TechTalking，技术·生活·思考：<br><img src="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.jpg" alt="后端技术小黑屋"></p>
+<p>最后一个好处，也是往往对程序员最“有用”的好处，就是甩锅啦！对于一个完善的面向数据的功能模块来说，进入运营期后，往往就可以直接交付给策划/PM/运营，对相关的数据进行维护了。这里，一方面，技术责任大幅降低；另一方面，出了问题也会优先考虑是数据表没有填对。再者，线上问题，无需修改代码逻辑，只需修改数据文件重新加载即可，心理压力也大大降低。    </p>
+<hr>
+<p>总结一下，所谓“面向数据编程”，至少可以带来以下几个好处：  </p>
+<pre><code>1. 将程序员从日常琐碎的工作中解放出来，把身上的负担分出去，然后去做更有意思的事情；
+2. 有助于程序架构设计向更好的方向演进；
+3. 有助于增加程序的可读性与可维护性；
+4. “甩锅”。
+</code></pre><p>所以，回顾最近写的代码，找出那些可以抽取出数据的部分，面向数据编程走起吧！  </p>
+<hr>
+<p>推荐阅读：  </p>
+<p><a href="http://blog.guoyb.com/2017/12/09/scala-match/">scala模式匹配的一个问题</a><br><a href="http://blog.guoyb.com/2018/01/21/scala-call-by-name/">scala中的传名调用</a><br><a href="http://blog.guoyb.com/2017/11/01/waiting/">待业青年</a></p>
+<p>转载请注明出处： <a href="http://blog.guoyb.com/2018/01/28/data-oriented//">http://blog.guoyb.com/2018/01/28/data-oriented/</a>  </p>
+<p>欢迎使用微信扫描下方二维码，关注我的微信公众号TechTalking，技术·生活·思考：<br><img src="http://guoybblog.qiniudn.com/newqrv2.jpg" alt="后端技术小黑屋">  </p>
 
     
   </div>
@@ -126,7 +130,7 @@ var _hmt = _hmt || [];
 
       
   <div class="tags">
-    <a class="tags-link" href="/tags/C/">C</a>, <a class="tags-link" href="/tags/学习笔记/">学习笔记</a>
+    <a class="tags-link" href="/tags/杂谈/">杂谈</a>
   </div>
 
       
@@ -138,7 +142,7 @@ var _hmt = _hmt || [];
 
 <section id="comment">
   <h1 class="title">Comments</h1>
-  <div class="ds-thread" data-thread-key="2016/07/23/learn-c-the-hard-way/" data-title="Learn C The Hard Way示例代码" data-url="http://blog.guoyb.com/2016/07/23/learn-c-the-hard-way/"></div>
+  <div class="ds-thread" data-thread-key="2018/01/28/data-oriented/" data-title="面向数据编程" data-url="http://blog.guoyb.com/2018/01/28/data-oriented/"></div>
 </section>
 </div>
   </div>

@@ -75,6 +75,48 @@ var _hmt = _hmt || [];
   <header>
     
       <div class="icon"></div>
+      <a href="/2016/09/14/mooncake/">
+  <time datetime="2016-09-14T12:50:25.000Z">
+    2016-09-14
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title"><a href="/2016/09/14/mooncake/">阿里月饼事件中的一个有趣现象</a></h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>最近几位阿里巴巴安全部门的程序员，因为在内网抢购月饼时，写了个小脚本刷了100多盒月饼，被定性为与公司价值观不符，遭到辞退。这事儿闹的沸沸扬扬，连和菜头都来凑了把热闹<a href="http://chuansong.me/n/762269721839">《程序员，在麻瓜的世界里挣扎》</a>。  </p>
+<p>我注意到这个事件中的一个有趣的现象：  </p>
+<blockquote>
+<p>网易新闻的评论和知乎上对此事的评论是完全背道而驰。</p>
+</blockquote>
+    
+  </div>
+  <footer class="end-sep">
+    
+      
+        <div class="alignleft">
+          <a href="/2016/09/14/mooncake/#more" class="more-link">Read More</a>
+        </div>
+      
+      
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+
+
+  
+    <article class="post">
+  <header>
+    
+      <div class="icon"></div>
       <a href="/2016/09/12/cpp11-10/">
   <time datetime="2016-09-12T13:51:23.000Z">
     2016-09-12
@@ -441,47 +483,6 @@ var _hmt = _hmt || [];
 
 
   
-    <article class="post">
-  <header>
-    
-      <div class="icon"></div>
-      <a href="/2016/08/17/mysql-select-order/">
-  <time datetime="2016-08-17T00:28:56.000Z">
-    2016-08-17
-  </time>
-</a>
-    
-    
-  
-    <h1 class="title"><a href="/2016/08/17/mysql-select-order/">一个潜伏了5年的bug</a></h1>
-  
-
-  </header>
-  
-  <div class="entry">
-    
-      <hr>
-<p>前两天策划反馈某项活动中，理论上大概千分之一中奖率的一个奖品，连续四次被同一个玩家得到了。他之前已经找了几个程序复查过代码，都说没啥问题，但是从概率上讲，肯定是有问题的，所以希望我“为程序员正名”。经过一上午的奋战，我也算不辱使命，找出了这个潜伏了5年的bug，也了解了关于mysql的一个潜规则。  </p>
-<p>整个业务场景大概是这样的（下面代码仅为示意，不可直接运行）：  </p>
-<p>首先，每个玩家报名的时候，向数据库中插入一行，记录下活动id（activity_id），玩家uuid（player_uuid），申请序号（apply_no）以及一些其他的玩家相关信息。  </p>
-<p>同时，在内存中维护一个整数，记录当前活动的申请总人数apply_total_num。同时使用这个整数来获得下一个插入行的apply_no。<br>
-    
-  </div>
-  <footer class="end-sep">
-    
-      
-        <div class="alignleft">
-          <a href="/2016/08/17/mysql-select-order/#more" class="more-link">Read More</a>
-        </div>
-      
-      
-    
-    <div class="clearfix"></div>
-  </footer>
-</article>
-
-
-  
 
   <nav id="pagination">
   
@@ -505,7 +506,7 @@ var _hmt = _hmt || [];
   
     <li><a href="/categories/书单/">书单</a><small>8</small></li>
   
-    <li><a href="/categories/技术/">技术</a><small>66</small></li>
+    <li><a href="/categories/技术/">技术</a><small>67</small></li>
   
     <li><a href="/categories/杂谈/">杂谈</a><small>18</small></li>
   
@@ -517,6 +518,10 @@ var _hmt = _hmt || [];
 <div class="widget tag">
   <h3 class="title">recent_posts</h3>
   <ul class="entry">
+    
+      <li>
+        <a href="/2018/01/28/data-oriented/">面向数据编程</a>
+      </li>
     
       <li>
         <a href="/2018/01/21/scala-call-by-name/">scala中的传名调用</a>
@@ -532,10 +537,6 @@ var _hmt = _hmt || [];
     
       <li>
         <a href="/2017/12/09/scala-match/">scala模式匹配的一个问题</a>
-      </li>
-    
-      <li>
-        <a href="/2017/11/05/boost-python/">打通Python和C++</a>
       </li>
     
   </ul>
