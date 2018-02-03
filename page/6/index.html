@@ -75,6 +75,47 @@ var _hmt = _hmt || [];
   <header>
     
       <div class="icon"></div>
+      <a href="/2016/08/20/cpp11-7/">
+  <time datetime="2016-08-20T06:45:34.000Z">
+    2016-08-20
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title"><a href="/2016/08/20/cpp11-7/">C++11新特性之右值引用与移动</a></h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>前六篇在这里：<br>C++11新特性之新类型与初始化: <a href="http://blog.guoyb.com/2016/06/18/cpp11-1/">http://blog.guoyb.com/2016/06/18/cpp11-1</a><br>C++11新特性之类型推断与类型获取: <a href="http://blog.guoyb.com/2016/06/25/cpp11-2/">http://blog.guoyb.com/2016/06/25/cpp11-2</a><br>C++11新特性之lambda： <a href="http://blog.guoyb.com/2016/06/30/cpp11-3/">http://blog.guoyb.com/2016/06/30/cpp11-3</a><br>C++11新特性之容器相关特性： <a href="http://blog.guoyb.com/2016/07/09/cpp11-4">http://blog.guoyb.com/2016/07/09/cpp11-4</a><br>C++11新特性之智能指针： <a href="http://blog.guoyb.com/2016/08/02/cpp11-5">http://blog.guoyb.com/2016/08/02/cpp11-5</a><br>C++11新特性之Class: <a href="http://blog.guoyb.com/2016/08/14/cpp11-6">http://blog.guoyb.com/2016/08/14/cpp11-6</a></p>
+<hr>
+<p>这是C++11新特性介绍的第七部分，涉及到左右值引用、移动构造、移动赋值、完美转发等。<br>不想看toy code的读者可以直接拉到文章最后看这部分的总结。  </p>
+<h2 id="右值引用"><a href="#右值引用" class="headerlink" title="右值引用"></a>右值引用</h2><p>右值是一个行将销毁的值，例如（i * 10）这种表达式的值。新标准中允许通过&amp;&amp;标识定义一个右值引用，将其绑定到一个右值上。但是，一个右值引用<strong>变量</strong>又是一个左值，因为它是一个变量了嘛。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"test rvalue reference:\n"</span>;</span><br><span class="line"><span class="keyword">int</span> j = <span class="number">42</span>;</span><br><span class="line"><span class="keyword">int</span> &amp;lr = j;</span><br><span class="line"><span class="comment">//int &amp;&amp;rr = j; // Wrong. Can't bind a rvalue ref to a lvalue.</span></span><br><span class="line"><span class="comment">//int &amp;lr2 = i * 42; // Wrong. Can't bind a lvalue ref to a rvalue.</span></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> &amp;lr3 = j * <span class="number">42</span>;</span><br><span class="line"><span class="keyword">int</span> &amp;&amp;rr2 = j * <span class="number">42</span>;</span><br><span class="line"><span class="comment">//int &amp;&amp;rr3 = rr2; // Wrong. rr2 is a rvalue ref and rvalue ref is a lvalue.</span></span><br><span class="line"><span class="keyword">int</span> &amp;lr4 = rr2;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;j&lt;&lt;<span class="string">'\t'</span>&lt;&lt;lr&lt;&lt;<span class="string">'\t'</span>&lt;&lt;lr3&lt;&lt;<span class="string">'\t'</span>&lt;&lt;rr2&lt;&lt;<span class="string">'\t'</span>&lt;&lt;lr4&lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;<span class="string">"test rvalue ref done.\n"</span>&lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br></pre></td></tr></table></figure><br>
+    
+  </div>
+  <footer class="end-sep">
+    
+      
+        <div class="alignleft">
+          <a href="/2016/08/20/cpp11-7/#more" class="more-link">阅读全文</a>
+        </div>
+      
+      
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+
+
+  
+    <article class="post">
+  <header>
+    
+      <div class="icon"></div>
       <a href="/2016/08/17/mysql-select-order/">
   <time datetime="2016-08-17T00:28:56.000Z">
     2016-08-17
@@ -101,7 +142,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2016/08/17/mysql-select-order/#more" class="more-link">Read More</a>
+          <a href="/2016/08/17/mysql-select-order/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -142,7 +183,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2016/08/14/cpp11-6/#more" class="more-link">Read More</a>
+          <a href="/2016/08/14/cpp11-6/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -187,7 +228,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2016/08/06/something-about-strip/#more" class="more-link">Read More</a>
+          <a href="/2016/08/06/something-about-strip/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -230,7 +271,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2016/08/02/cpp11-5/#more" class="more-link">Read More</a>
+          <a href="/2016/08/02/cpp11-5/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -271,7 +312,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2016/07/28/2015-booklist/#more" class="more-link">Read More</a>
+          <a href="/2016/07/28/2015-booklist/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -311,7 +352,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2016/07/23/learn-c-the-hard-way/#more" class="more-link">Read More</a>
+          <a href="/2016/07/23/learn-c-the-hard-way/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -352,7 +393,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2016/07/22/virtualenv-trick/#more" class="more-link">Read More</a>
+          <a href="/2016/07/22/virtualenv-trick/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -406,7 +447,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2016/07/21/learn-redis-basic-commands/#more" class="more-link">Read More</a>
+          <a href="/2016/07/21/learn-redis-basic-commands/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -447,48 +488,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2016/07/17/python-vim/#more" class="more-link">Read More</a>
-        </div>
-      
-      
-    
-    <div class="clearfix"></div>
-  </footer>
-</article>
-
-
-  
-    <article class="post">
-  <header>
-    
-      <div class="icon"></div>
-      <a href="/2016/07/09/cpp11-4/">
-  <time datetime="2016-07-09T01:19:54.000Z">
-    2016-07-09
-  </time>
-</a>
-    
-    
-  
-    <h1 class="title"><a href="/2016/07/09/cpp11-4/">C++11新特性之容器相关特性</a></h1>
-  
-
-  </header>
-  
-  <div class="entry">
-    
-      <hr>
-<p>前三篇在这里：<br>C++11新特性之新类型与初始化: <a href="http://blog.guoyb.com/2016/06/18/cpp11-1/">http://blog.guoyb.com/2016/06/18/cpp11-1/</a><br>C++11新特性之类型推断与类型获取: <a href="http://blog.guoyb.com/2016/06/25/cpp11-2/">http://blog.guoyb.com/2016/06/25/cpp11-2/</a><br>C++11新特性之lambda： <a href="http://blog.guoyb.com/2016/06/30/cpp11-3/">http://blog.guoyb.com/2016/06/30/cpp11-3/</a>  </p>
-<hr>
-<p>这是C++11新特性介绍的第四部分，涉及到C++11这次更新中与容器有关的新特性。<br>不想看toy code的读者可以直接拉到文章最后看这部分的总结。  </p>
-<h2 id="cbegin和cend"><a href="#cbegin和cend" class="headerlink" title="cbegin和cend"></a>cbegin和cend</h2><p>原来的begin和end返回的iterator是否是常量取决于对应的容器类型，但是有时，即使容器不是常量类型，我们也希望获得一个const_iterator，以避免不必要的修改行为。C++11新标准中提供了cbegin和cend函数，无论容器类型，都固定返回const_iterator。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; c1 = &#123;<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>&#125;;</span><br><span class="line"><span class="keyword">auto</span> it1_1 = c1.begin();</span><br><span class="line"><span class="keyword">auto</span> it1_2 = c1.cbegin();</span><br><span class="line">*it1_1 = <span class="number">4</span>;</span><br><span class="line"><span class="comment">//*it1_2 = 5; // wrong, const iterator's value can't be changed via this iterator.</span></span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;*it1_1&lt;&lt;<span class="string">'\t'</span>&lt;&lt;*it1_2&lt;&lt;<span class="built_in">endl</span>;</span><br></pre></td></tr></table></figure><br>
-    
-  </div>
-  <footer class="end-sep">
-    
-      
-        <div class="alignleft">
-          <a href="/2016/07/09/cpp11-4/#more" class="more-link">Read More</a>
+          <a href="/2016/07/17/python-vim/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -502,10 +502,10 @@ var _hmt = _hmt || [];
 
   <nav id="pagination">
   
-    <a href="/page/5/" class="prev">Prev</a>
+    <a href="/page/5/" class="prev">上一页</a>
   
   
-    <a href="/page/7/" class="next">Next</a>
+    <a href="/page/7/" class="next">下一页</a>
   
   <div class="clearfix"></div>
 </nav>
@@ -524,7 +524,7 @@ var _hmt = _hmt || [];
   
     <li><a href="/categories/技术/">技术</a><small>67</small></li>
   
-    <li><a href="/categories/杂谈/">杂谈</a><small>18</small></li>
+    <li><a href="/categories/杂谈/">杂谈</a><small>19</small></li>
   
   </ul>
 </div>
@@ -534,6 +534,10 @@ var _hmt = _hmt || [];
 <div class="widget tag">
   <h3 class="title">recent_posts</h3>
   <ul class="entry">
+    
+      <li>
+        <a href="/2018/02/03/happy-newyear/">狗年快乐</a>
+      </li>
     
       <li>
         <a href="/2018/01/28/data-oriented/">面向数据编程</a>
@@ -551,10 +555,6 @@ var _hmt = _hmt || [];
         <a href="/2018/01/06/gz-sz/">广深路上</a>
       </li>
     
-      <li>
-        <a href="/2017/12/09/scala-match/">scala模式匹配的一个问题</a>
-      </li>
-    
   </ul>
 </div>
 
@@ -563,7 +563,7 @@ var _hmt = _hmt || [];
 <div class="widget tagcloud">
   <h3 class="title">tagcloud</h3>
   <div class="entry">
-    <a href="/tags/C/" style="font-size: 11.11px;">C</a> <a href="/tags/C/" style="font-size: 17.78px;">C++</a> <a href="/tags/C-11/" style="font-size: 17.78px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 11.11px;">MySQL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Scala/" style="font-size: 11.11px;">Scala</a> <a href="/tags/Spark/" style="font-size: 10px;">Spark</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/grpc/" style="font-size: 11.11px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 11.11px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/protobuf/" style="font-size: 11.11px;">protobuf</a> <a href="/tags/redis/" style="font-size: 12.22px;">redis</a> <a href="/tags/regex/" style="font-size: 12.22px;">regex</a> <a href="/tags/shell/" style="font-size: 10px;">shell</a> <a href="/tags/skynet/" style="font-size: 14.44px;">skynet</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 15.56px;">书单</a> <a href="/tags/内存优化/" style="font-size: 10px;">内存优化</a> <a href="/tags/学习笔记/" style="font-size: 13.33px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/旅行/" style="font-size: 12.22px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 18.89px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 12.22px;">查证记录</a> <a href="/tags/生活/" style="font-size: 12.22px;">生活</a> <a href="/tags/读书笔记/" style="font-size: 16.67px;">读书笔记</a>
+    <a href="/tags/C/" style="font-size: 11.11px;">C</a> <a href="/tags/C/" style="font-size: 17.78px;">C++</a> <a href="/tags/C-11/" style="font-size: 17.78px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 11.11px;">MySQL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Scala/" style="font-size: 11.11px;">Scala</a> <a href="/tags/Spark/" style="font-size: 10px;">Spark</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/grpc/" style="font-size: 11.11px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 11.11px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/protobuf/" style="font-size: 11.11px;">protobuf</a> <a href="/tags/redis/" style="font-size: 12.22px;">redis</a> <a href="/tags/regex/" style="font-size: 12.22px;">regex</a> <a href="/tags/shell/" style="font-size: 10px;">shell</a> <a href="/tags/skynet/" style="font-size: 14.44px;">skynet</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 15.56px;">书单</a> <a href="/tags/内存优化/" style="font-size: 10px;">内存优化</a> <a href="/tags/学习笔记/" style="font-size: 13.33px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/旅行/" style="font-size: 12.22px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 18.89px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 12.22px;">查证记录</a> <a href="/tags/生活/" style="font-size: 13.33px;">生活</a> <a href="/tags/读书笔记/" style="font-size: 16.67px;">读书笔记</a>
   </div>
 </div>
 
