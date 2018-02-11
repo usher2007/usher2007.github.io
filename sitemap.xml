@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://blog.guoyb.com/2018/02/11/rwlock/</loc>
+    
+    <lastmod>2018-02-11T14:37:55.811Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://blog.guoyb.com/2018/02/03/happy-newyear/</loc>
     
     <lastmod>2018-02-03T02:35:54.097Z</lastmod>

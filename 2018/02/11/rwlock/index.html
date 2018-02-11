@@ -1,0 +1,308 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  
+  <title>读写锁的性能一定更好吗 | 一根笨茄子</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  
+    <meta name="author" content="Yubo Guo">
+  
+  
+    <meta name="description" content="最近在写代码的时候，处理多线程间数据同步时，用到了读写锁rwlock。在多线程同步中，更常用到的是互斥量mutex，那rwlock和mutex有什么不同和优劣呢？  
+首先，一个常见的误区是，认为在读多写少的情况下，rwlock的性能一定要比mutex高。实际上，rwlock由于区分读锁和写锁，每次加锁时都要做额外的逻辑处理（如区分读锁和写锁、避免写锁“饥饿”等等），单纯从性能上来讲是要低于更为">
+  
+  <meta name="description" content="最近在写代码的时候，处理多线程间数据同步时，用到了读写锁rwlock。在多线程同步中，更常用到的是互斥量mutex，那rwlock和mutex有什么不同和优劣呢？  
+首先，一个常见的误区是，认为在读多写少的情况下，rwlock的性能一定要比mutex高。实际上，rwlock由于区分读锁和写锁，每次加锁时都要做额外的逻辑处理（如区分读锁和写锁、避免写锁“饥饿”等等），单纯从性能上来讲是要低于更为">
+<meta property="og:type" content="article">
+<meta property="og:title" content="读写锁的性能一定更好吗">
+<meta property="og:url" content="http://blog.guoyb.com/2018/02/11/rwlock/index.html">
+<meta property="og:site_name" content="一根笨茄子">
+<meta property="og:description" content="最近在写代码的时候，处理多线程间数据同步时，用到了读写锁rwlock。在多线程同步中，更常用到的是互斥量mutex，那rwlock和mutex有什么不同和优劣呢？  
+首先，一个常见的误区是，认为在读多写少的情况下，rwlock的性能一定要比mutex高。实际上，rwlock由于区分读锁和写锁，每次加锁时都要做额外的逻辑处理（如区分读锁和写锁、避免写锁“饥饿”等等），单纯从性能上来讲是要低于更为">
+<meta property="og:image" content="http://guoybblog.qiniudn.com/newqrv2.jpg">
+<meta property="og:updated_time" content="2018-02-11T14:37:55.811Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="读写锁的性能一定更好吗">
+<meta name="twitter:description" content="最近在写代码的时候，处理多线程间数据同步时，用到了读写锁rwlock。在多线程同步中，更常用到的是互斥量mutex，那rwlock和mutex有什么不同和优劣呢？  
+首先，一个常见的误区是，认为在读多写少的情况下，rwlock的性能一定要比mutex高。实际上，rwlock由于区分读锁和写锁，每次加锁时都要做额外的逻辑处理（如区分读锁和写锁、避免写锁“饥饿”等等），单纯从性能上来讲是要低于更为">
+<meta name="twitter:image" content="http://guoybblog.qiniudn.com/newqrv2.jpg">
+  
+  
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <!--[if lt IE 9]><script src="//cdn.bootcss.com/html5shiv/3.7.0/html5shiv.min.js"></script><![endif]-->
+  
+  
+<script type="text/javascript">
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?996ee0fca2512b4c29f37f60cf6387ca";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-6897127630340076",
+    enable_page_level_ads: true
+  });
+</script>
+
+</head>
+<body>
+  <div class="wrapper">
+    <header id="header">
+  <div class="title">
+    <h1><a href="/">一根笨茄子</a></h1>
+    <p><a href="/"></a></p>
+  </div>
+  <nav class="nav">
+    <ul>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/about">关于我</a></li>
+      
+      
+    </ul>
+    <div class="clearfix"></div>
+  </nav>
+  <div class="clearfix"></div>
+</header>
+    <div class="content"><article class="post">
+  <header>
+    
+      <div class="icon"></div>
+      <a href="/2018/02/11/rwlock/">
+  <time datetime="2018-02-11T14:32:50.000Z">
+    2018-02-11
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title">读写锁的性能一定更好吗</h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>最近在写代码的时候，处理多线程间数据同步时，用到了读写锁rwlock。在多线程同步中，更常用到的是互斥量mutex，那rwlock和mutex有什么不同和优劣呢？  </p>
+<p>首先，一个常见的误区是，认为在读多写少的情况下，rwlock的性能一定要比mutex高。实际上，rwlock由于区分读锁和写锁，每次加锁时都要做额外的逻辑处理（如区分读锁和写锁、避免写锁“饥饿”等等），单纯从性能上来讲是要低于更为简单的mutex的；但是，rwlock由于读锁可重入，所以实际上是提升了并行性，在读多写少的情况下可以降低时延。<br><a id="more"></a><br>我们可以做如下实验验证一下：  </p>
+<figure class="highlight cpp"><figcaption><span>test_mutex.cc</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;pthread.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">pthread_mutex_t</span> mutex;</span><br><span class="line"><span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">thread_func</span><span class="params">(<span class="keyword">void</span>* args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> j;</span><br><span class="line">        <span class="keyword">for</span>(j=<span class="number">0</span>; j&lt;<span class="number">10000000</span>; j++) &#123;</span><br><span class="line">                pthread_mutex_lock(&amp;mutex);</span><br><span class="line">                <span class="keyword">for</span>(<span class="keyword">int</span> k=<span class="number">0</span>; k&lt;<span class="number">1</span>; k++) &#123;</span><br><span class="line">                        <span class="keyword">int</span> t = i;</span><br><span class="line">                        t++;</span><br><span class="line">                &#125;</span><br><span class="line">                pthread_mutex_unlock(&amp;mutex);</span><br><span class="line">        &#125;</span><br><span class="line">        pthread_exit((void *)<span class="number">0</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">pthread_t</span> id1;</span><br><span class="line">        <span class="keyword">pthread_t</span> id2;</span><br><span class="line">        <span class="keyword">pthread_t</span> id3;</span><br><span class="line">        <span class="keyword">pthread_t</span> id4;</span><br><span class="line">        pthread_mutex_init(&amp;mutex, <span class="literal">NULL</span>);</span><br><span class="line">        pthread_create(&amp;id1, <span class="literal">NULL</span>, thread_func, (void *)<span class="number">0</span>);</span><br><span class="line">        pthread_create(&amp;id2, <span class="literal">NULL</span>, thread_func, (void *)<span class="number">0</span>);</span><br><span class="line">        pthread_create(&amp;id3, <span class="literal">NULL</span>, thread_func, (void *)<span class="number">0</span>);</span><br><span class="line">        pthread_create(&amp;id4, <span class="literal">NULL</span>, thread_func, (void *)<span class="number">0</span>);</span><br><span class="line">        pthread_join(id1, <span class="literal">NULL</span>);</span><br><span class="line">        pthread_join(id2, <span class="literal">NULL</span>);</span><br><span class="line">        pthread_join(id3, <span class="literal">NULL</span>);</span><br><span class="line">        pthread_join(id4, <span class="literal">NULL</span>);</span><br><span class="line">        pthread_mutex_destroy(&amp;mutex);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight cpp"><figcaption><span>test_rwlock.cc</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;pthread.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">pthread_rwlock_t</span> rwlock;</span><br><span class="line"><span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">thread_func</span><span class="params">(<span class="keyword">void</span>* args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> j;</span><br><span class="line">        <span class="keyword">for</span>(j=<span class="number">0</span>; j&lt;<span class="number">10000000</span>; j++) &#123;</span><br><span class="line">                pthread_rwlock_rdlock(&amp;rwlock);</span><br><span class="line">                <span class="keyword">for</span>(<span class="keyword">int</span> k=<span class="number">0</span>; k&lt;<span class="number">1</span>; k++) &#123;</span><br><span class="line">                        <span class="keyword">int</span> t = i;</span><br><span class="line">                        t++;</span><br><span class="line">                &#125;</span><br><span class="line">                pthread_rwlock_unlock(&amp;rwlock);</span><br><span class="line">        &#125;</span><br><span class="line">        pthread_exit((void *)<span class="number">0</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">pthread_t</span> id1;</span><br><span class="line">        <span class="keyword">pthread_t</span> id2;</span><br><span class="line">        <span class="keyword">pthread_t</span> id3;</span><br><span class="line">        <span class="keyword">pthread_t</span> id4;</span><br><span class="line">        pthread_rwlock_init(&amp;rwlock, <span class="literal">NULL</span>);</span><br><span class="line">        pthread_create(&amp;id1, <span class="literal">NULL</span>, thread_func, (void *)<span class="number">0</span>);</span><br><span class="line">        pthread_create(&amp;id2, <span class="literal">NULL</span>, thread_func, (void *)<span class="number">0</span>);</span><br><span class="line">        pthread_create(&amp;id3, <span class="literal">NULL</span>, thread_func, (void *)<span class="number">0</span>);</span><br><span class="line">        pthread_create(&amp;id4, <span class="literal">NULL</span>, thread_func, (void *)<span class="number">0</span>);</span><br><span class="line">        pthread_join(id1, <span class="literal">NULL</span>);</span><br><span class="line">        pthread_join(id2, <span class="literal">NULL</span>);</span><br><span class="line">        pthread_join(id3, <span class="literal">NULL</span>);</span><br><span class="line">        pthread_join(id4, <span class="literal">NULL</span>);</span><br><span class="line">        pthread_rwlock_destroy(&amp;rwlock);</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>可以看到，这两种情况下，基本没有什么计算逻辑，线程所做的事情就是在不断的加锁、解锁。  </p>
+<p>mutex的性能：  </p>
+<pre><code>real    0m2.363s
+user    0m1.904s
+sys     0m3.592s
+</code></pre><p>rwlock的性能：  </p>
+<pre><code>real    0m5.157s
+user    0m5.932s
+sys     0m10.660s
+</code></pre><p>可以看到，单纯从锁的性能上来看，mutex是要优于rwlock的。</p>
+<hr>
+<p>上面只是一个理想情况，正常情况下，在临界区内，往往都是需要针对共享资源做一些计算/IO操作的。我们将上面代码中的外层循环和内层循环改为分别改为1000次和10000次，以模仿有一定计算量的情况。测试结果如下：  </p>
+<p>mutex的性能：  </p>
+<pre><code>real    0m0.102s
+user    0m0.024s
+sys     0m0.088s
+</code></pre><p>rwlock的性能：  </p>
+<pre><code>real    0m0.045s
+user    0m0.112s
+sys     0m0.012s
+</code></pre><p>注意到，这时从real上看，rwlock已经优于mutex了。另外，对于mutex，user+sys基本等于real，可见其基本没有带来什么并行性；而rwlock的user时间就要长于real，可见内层循环部分的代码，是由一定的并行性的。  </p>
+<hr>
+<p>但是这个时候，观察CPU的使用率，基本都在满负荷运转。  </p>
+<p>我们在内层循环结束之后，用usleep(1000)模拟一段IO等待时间。这种情况下的测试结果如下：  </p>
+<p>mutex的性能：  </p>
+<pre><code>real    0m7.987s
+user    0m0.200s
+sys     0m0.412s
+</code></pre><p>rwlock的性能：</p>
+<pre><code>real    0m1.632s
+user    0m0.112s
+sys     0m0.028s
+</code></pre><p>可以看到，rwlock这时的表现更好，可重入性充分利用了线程在IO等待的时间提高了并行性。  </p>
+<hr>
+<p>上面的几个例子其实是想说明，对于这种情况，最好的办法还是针对业务场景，做一次性能测试，以实测结果为准绳来选择具体使用哪一种锁。  </p>
+<p>但是，rwlock有一个非常大的隐患，这个隐患也是由于读锁可重入带来的：读锁的可重入性前提条件是在读锁控制的临界区内，<strong>对共享资源只有读操作而没有写操作</strong>。然而，对于程序的维护者（非开发者）来说，很容易就忽视了这一点（想想你自己在接手一份别人写的代码时，会特别关注某段代码是rwlock控制的还是mutex控制的吗？），从而在读锁的范围内引入写操作。我认为这是使用读写锁时需要考虑的最严重的一个问题。  </p>
+<hr>
+<p>推荐阅读：  </p>
+<p><a href="http://blog.guoyb.com/2017/12/09/scala-match/">scala模式匹配的一个问题</a><br><a href="http://blog.guoyb.com/2017/11/05/boost-python/">打通Python和C++</a><br><a href="http://blog.guoyb.com/2017/11/01/waiting/">待业青年</a></p>
+<p>转载请注明出处： <a href="http://blog.guoyb.com/2018/02/11/rwlock/">http://blog.guoyb.com/2018/02/11/rwlock/</a>  </p>
+<p>欢迎使用微信扫描下方二维码，关注我的微信公众号TechTalking，技术·生活·思考：<br><img src="http://guoybblog.qiniudn.com/newqrv2.jpg" alt="后端技术小黑屋">  </p>
+
+    
+  </div>
+  <footer>
+    
+      
+  <div class="categories">
+    <a class="categories-link" href="/categories/技术/">技术</a>
+  </div>
+
+      
+  <div class="tags">
+    <a class="tags-link" href="/tags/mutex/">mutex</a>, <a class="tags-link" href="/tags/rwlock/">rwlock</a>
+  </div>
+
+      
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">评论</h1>
+  <div class="ds-thread" data-thread-key="2018/02/11/rwlock/" data-title="读写锁的性能一定更好吗" data-url="http://blog.guoyb.com/2018/02/11/rwlock/"></div>
+</section>
+</div>
+  </div>
+  
+  <div id="sidebar" class="widgets-right">
+  
+<div class="widget category">
+  <h3 class="title">categories</h3>
+  <ul class="entry">
+  
+    <li><a href="/categories/书单/">书单</a><small>8</small></li>
+  
+    <li><a href="/categories/技术/">技术</a><small>68</small></li>
+  
+    <li><a href="/categories/杂谈/">杂谈</a><small>19</small></li>
+  
+  </ul>
+</div>
+
+
+  
+<div class="widget tag">
+  <h3 class="title">recent_posts</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2018/02/11/rwlock/">读写锁的性能一定更好吗</a>
+      </li>
+    
+      <li>
+        <a href="/2018/02/03/happy-newyear/">狗年快乐</a>
+      </li>
+    
+      <li>
+        <a href="/2018/01/28/data-oriented/">面向数据编程</a>
+      </li>
+    
+      <li>
+        <a href="/2018/01/21/scala-call-by-name/">scala中的传名调用</a>
+      </li>
+    
+      <li>
+        <a href="/2018/01/13/2017-booklist-2/">2017下半年书单</a>
+      </li>
+    
+  </ul>
+</div>
+
+
+  
+<div class="widget tagcloud">
+  <h3 class="title">tagcloud</h3>
+  <div class="entry">
+    <a href="/tags/C/" style="font-size: 11.11px;">C</a> <a href="/tags/C/" style="font-size: 17.78px;">C++</a> <a href="/tags/C-11/" style="font-size: 17.78px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 11.11px;">MySQL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Scala/" style="font-size: 11.11px;">Scala</a> <a href="/tags/Spark/" style="font-size: 10px;">Spark</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/grpc/" style="font-size: 11.11px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 11.11px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/mutex/" style="font-size: 10px;">mutex</a> <a href="/tags/protobuf/" style="font-size: 11.11px;">protobuf</a> <a href="/tags/redis/" style="font-size: 12.22px;">redis</a> <a href="/tags/regex/" style="font-size: 12.22px;">regex</a> <a href="/tags/rwlock/" style="font-size: 10px;">rwlock</a> <a href="/tags/shell/" style="font-size: 10px;">shell</a> <a href="/tags/skynet/" style="font-size: 14.44px;">skynet</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 15.56px;">书单</a> <a href="/tags/内存优化/" style="font-size: 10px;">内存优化</a> <a href="/tags/学习笔记/" style="font-size: 13.33px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/旅行/" style="font-size: 12.22px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 18.89px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 12.22px;">查证记录</a> <a href="/tags/生活/" style="font-size: 13.33px;">生活</a> <a href="/tags/读书笔记/" style="font-size: 16.67px;">读书笔记</a>
+  </div>
+</div>
+
+
+  
+<div class="widget tag">
+  <h3 class="title">友情链接</h3>
+  <ul class="entry">
+  
+    
+    <li><a href="http://www.linkedin.com/in/yubo-guo-739b0071" target="_blank">LinkedIn</a></li>
+  
+    
+    <li><a href="http://www.tuicool.com/sites/2emeIjb" target="_blank">推酷站点</a></li>
+  
+  </ul>
+</div>
+
+</div>
+  
+  <footer id="footer"><div class="copyright">
+  
+  &copy; 2018 <a href="/">Yubo Guo</a>
+  
+</div>
+<div class="theme-copyright">
+  Theme by <a href="https://github.com/orderedlist" target="_blank">orderedlist</a>
+   | 
+  Redesign by <a href="http://blog.dafengning.com/" target="_blank">Chong Zi</a>
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//lib.sinaapp.com/js/jquery/1.8/jquery.min.js"></script>
+<script src="/js/scale.fix.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"guoyb"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+
+
+<div id="rightfix" style="display:none;">
+
+<a href="#comment" id="gocomm" class="fix_btn" title="提问/评论"><i><i></i></i></a>
+
+
+<a href="javascript:void(0)" id="gotop" class="fix_btn" onclick="gotop();" title="回到顶部"><i></i></a>
+<script>
+  function gotop(){
+    $('html,body').animate({
+        scrollTop : '0px'
+      }, 800);
+  }
+  $(function(){
+    _rightfix = $('#rightfix');
+    $(window).scroll(function(){
+      $sollTop = document.documentElement.scrollTop + document.body.scrollTop;
+      if($sollTop > 350){
+        _rightfix.show();
+      }else{
+        _rightfix.hide();
+      }
+    });
+  });
+</script>
+
+</div>
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+  (function($){
+    $('.fancybox').fancybox();
+  })(jQuery);
+</script>
+
+</body>
+</html>
