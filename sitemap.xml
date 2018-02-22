@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://blog.guoyb.com/2018/02/22/thinking-set/</loc>
+    
+    <lastmod>2018-02-22T02:04:59.198Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://blog.guoyb.com/2018/02/11/rwlock/</loc>
     
     <lastmod>2018-02-11T14:37:55.811Z</lastmod>

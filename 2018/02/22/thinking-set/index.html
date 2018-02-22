@@ -4,21 +4,30 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="chrome=1">
   
-  <title>Tag: regex | 一根笨茄子</title>
+  <title>跳出思维定势 | 一根笨茄子</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   
     <meta name="author" content="Yubo Guo">
   
   
-  <meta name="description">
-<meta property="og:type" content="website">
-<meta property="og:title" content="一根笨茄子">
-<meta property="og:url" content="http://blog.guoyb.com/tags/regex/index.html">
+    <meta name="description" content="前几天和几位同事一起探讨一道面试题：如何找出一个环形链表中“环”的起点。这里只考虑简单的”p”字型环形链表。  
+对于环形链表的问题，一般很快都能想到使用两个快慢指针来判断是否有环。但是对于如何找到”环“的起点，就需要另辟蹊径。在讨论的过程中，我发现，越是工作年限长的程序员，就越倾向于寻找”数值“解法，即类似设计快慢指针这种方式，通过程序运行寻找答案；而工作年限短，或者刚脱离学校没多久的同事，则">
+  
+  <meta name="description" content="前几天和几位同事一起探讨一道面试题：如何找出一个环形链表中“环”的起点。这里只考虑简单的”p”字型环形链表。  
+对于环形链表的问题，一般很快都能想到使用两个快慢指针来判断是否有环。但是对于如何找到”环“的起点，就需要另辟蹊径。在讨论的过程中，我发现，越是工作年限长的程序员，就越倾向于寻找”数值“解法，即类似设计快慢指针这种方式，通过程序运行寻找答案；而工作年限短，或者刚脱离学校没多久的同事，则">
+<meta property="og:type" content="article">
+<meta property="og:title" content="跳出思维定势">
+<meta property="og:url" content="http://blog.guoyb.com/2018/02/22/thinking-set/index.html">
 <meta property="og:site_name" content="一根笨茄子">
-<meta property="og:description">
+<meta property="og:description" content="前几天和几位同事一起探讨一道面试题：如何找出一个环形链表中“环”的起点。这里只考虑简单的”p”字型环形链表。  
+对于环形链表的问题，一般很快都能想到使用两个快慢指针来判断是否有环。但是对于如何找到”环“的起点，就需要另辟蹊径。在讨论的过程中，我发现，越是工作年限长的程序员，就越倾向于寻找”数值“解法，即类似设计快慢指针这种方式，通过程序运行寻找答案；而工作年限短，或者刚脱离学校没多久的同事，则">
+<meta property="og:image" content="http://guoybblog.qiniudn.com/newqrv2.jpg">
+<meta property="og:updated_time" content="2018-02-22T02:04:59.198Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="一根笨茄子">
-<meta name="twitter:description">
+<meta name="twitter:title" content="跳出思维定势">
+<meta name="twitter:description" content="前几天和几位同事一起探讨一道面试题：如何找出一个环形链表中“环”的起点。这里只考虑简单的”p”字型环形链表。  
+对于环形链表的问题，一般很快都能想到使用两个快慢指针来判断是否有环。但是对于如何找到”环“的起点，就需要另辟蹊径。在讨论的过程中，我发现，越是工作年限长的程序员，就越倾向于寻找”数值“解法，即类似设计快慢指针这种方式，通过程序运行寻找答案；而工作年限短，或者刚脱离学校没多久的同事，则">
+<meta name="twitter:image" content="http://guoybblog.qiniudn.com/newqrv2.jpg">
   
   
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
@@ -65,99 +74,63 @@ var _hmt = _hmt || [];
   </nav>
   <div class="clearfix"></div>
 </header>
-    <div class="content">
-
-
-<h2 class="archives-title tag"><span>regex</span></h2>
-
-
-
-  
-  
+    <div class="content"><article class="post">
+  <header>
     
+      <div class="icon"></div>
+      <a href="/2018/02/22/thinking-set/">
+  <time datetime="2018-02-22T01:58:34.000Z">
+    2018-02-22
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title">跳出思维定势</h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>前几天和几位同事一起探讨一道面试题：如何找出一个环形链表中“环”的起点。这里只考虑简单的”p”字型环形链表。  </p>
+<p>对于环形链表的问题，一般很快都能想到使用两个快慢指针来判断是否有环。但是对于如何找到”环“的起点，就需要另辟蹊径。在讨论的过程中，我发现，越是工作年限长的程序员，就越倾向于寻找”数值“解法，即类似设计快慢指针这种方式，通过程序运行寻找答案；而工作年限短，或者刚脱离学校没多久的同事，则更容易换到”解析解“的方式，用几个简单的等式变换，就能用一种优雅的方式，找到环的起点。<br><a id="more"></a><br>俗话说，在一个拿着锤子的人看来，所有的东西都是钉子。“思维定势”，往往让我们事倍功半，甚至错失机会。上面的例子中，有经验的程序员，往往离工程太近，而离数学太远。但是，我们工作、生活中遇到的问题，往往需要多种思维模式、多类学科知识共同来完成，才能取得最好的效果。  </p>
+<p>工作之后，由于个人时间被压缩，对于学习，心态往往变得非常功利：这个东西对工作有用，我就学一下；没用，那就先放着，省的浪费时间。殊不知，在这种情况下，一个人的思维定势会越来越严重，路也会越走越窄。  </p>
+<p>开工了，祝各位读者在新的一年里，多学点看上去没用的知识和技能~</p>
+<p><strong>P.S.</strong> 古希腊有一个经典的“四柱问题”，也是需要跳出思维定势才能解决：对于正方形的四个顶点，如何“一笔”用三根直线将四个顶点串起来，并且最后笔要回到起始点。大家不妨在不求助搜索引擎的情况下，试一试哈。</p>
+<hr>
+<p>推荐阅读：  </p>
+<p><a href="http://blog.guoyb.com/2018/02/11/rwlock/">读写锁的性能一定更好吗</a><br><a href="http://blog.guoyb.com/2018/02/03/happy-newyear/">狗年快乐</a><br><a href="http://blog.guoyb.com/2018/01/28/data-oriented/">面向数据编程</a></p>
+<p>转载请注明出处： <a href="http://blog.guoyb.com/2018/02/22/thinking-set/">http://blog.guoyb.com/2018/02/22/thinking-set/</a>  </p>
+<p>欢迎使用微信扫描下方二维码，关注我的微信公众号TechTalking，技术·生活·思考：<br><img src="http://guoybblog.qiniudn.com/newqrv2.jpg" alt="后端技术小黑屋">  </p>
+
+    
+  </div>
+  <footer>
     
       
+  <div class="categories">
+    <a class="categories-link" href="/categories/技术/">技术</a>
+  </div>
+
       
-      <section class="archives-wrapper">
-        
-        <div class="archives">
-    
-    <article class="post">
-  <header>
-    <a href="/2017/03/06/python-regex-4/">
-  <time datetime="2017-03-06T10:58:53.000Z">
-    Mar 06
-  </time>
-</a>
-    
-  
-    <h1 class="title"><a href="/2017/03/06/python-regex-4/">Python正则表达式之四：re模块</a></h1>
-  
+  <div class="tags">
+    <a class="tags-link" href="/tags/杂谈/">杂谈</a>
+  </div>
 
-  </header>
+      
+    
+    <div class="clearfix"></div>
+  </footer>
 </article>
-  
-    
-    
-    <article class="post">
-  <header>
-    <a href="/2017/03/01/python-regex-3/">
-  <time datetime="2017-03-01T10:58:47.000Z">
-    Mar 01
-  </time>
-</a>
-    
-  
-    <h1 class="title"><a href="/2017/03/01/python-regex-3/">Python正则表达式之三：贪婪</a></h1>
-  
-
-  </header>
-</article>
-  
-    
-    
-    <article class="post">
-  <header>
-    <a href="/2017/02/27/python-regex-2/">
-  <time datetime="2017-02-27T13:52:53.000Z">
-    Feb 27
-  </time>
-</a>
-    
-  
-    <h1 class="title"><a href="/2017/02/27/python-regex-2/">Python正则表达式之二：捕获</a></h1>
-  
-
-  </header>
-</article>
-  
-    
-    
-    <article class="post">
-  <header>
-    <a href="/2017/02/27/python-regex/">
-  <time datetime="2017-02-26T23:56:42.000Z">
-    Feb 27
-  </time>
-</a>
-    
-  
-    <h1 class="title"><a href="/2017/02/27/python-regex/">Python正则表达式之一：基础</a></h1>
-  
-
-  </header>
-</article>
-  
-  
-    </div></section>
-  
 
 
-<nav id="pagination">
-  
-  
-  <div class="clearfix"></div>
-</nav></div>
+<section id="comment">
+  <h1 class="title">Comments</h1>
+  <div class="ds-thread" data-thread-key="2018/02/22/thinking-set/" data-title="跳出思维定势" data-url="http://blog.guoyb.com/2018/02/22/thinking-set/"></div>
+</section>
+</div>
   </div>
   
   <div id="sidebar" class="widgets-right">
@@ -261,6 +234,8 @@ var duoshuoQuery = {short_name:"guoyb"};
 
 
 <div id="rightfix" style="display:none;">
+
+<a href="#comment" id="gocomm" class="fix_btn" title="提问/评论"><i><i></i></i></a>
 
 
 <a href="javascript:void(0)" id="gotop" class="fix_btn" onclick="gotop();" title="回到顶部"><i></i></a>
