@@ -75,6 +75,47 @@ var _hmt = _hmt || [];
   <header>
     
       <div class="icon"></div>
+      <a href="/2016/07/22/virtualenv-trick/">
+  <time datetime="2016-07-22T00:41:40.000Z">
+    2016-07-22
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title"><a href="/2016/07/22/virtualenv-trick/">使用virtualenv管理多个Python版本</a></h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>在Ubuntu14.04上默认安装的Python版本是2.7.6，而且似乎也没有更到2.7.9以上的打算。有时，运行一些模块需要更高版本的Python（比如urllib3的一些功能需要2.7.9以上），这时该怎么办呢？  </p>
+<p>之前有一次遇到这种情况，我直接wget Python2.7.11的源码编译安装，覆盖了原来的2.7.6的版本。但是这直接导致了原来系统中一些依赖2.7.6版本的模块无法启动。而从<strong>源码安装</strong>的Python版本回退回<strong>系统默认安装</strong>的Python版本的过程是极其痛苦的，apt-get purge删不干净，需要手动locate各种Python模块的位置，尤其当系统中还有源码安装的Python3时，简直不堪回首……  </p>
+<p>最近又遇到了这样的问题，花了一些时间调研了下virtualenv，发现两个参数配合使用，正好可以解决多Python版本的问题。从此，妈妈再也不用担心我搞乱Python环境啦~  </p>
+<p>下面以在Ubuntu14.04（默认Python2.7.6）上安装Python2.7.9，运行zhihu-terminal(依赖Python2.7.9）为例，记录整个流程。<br>
+    
+  </div>
+  <footer class="end-sep">
+    
+      
+        <div class="alignleft">
+          <a href="/2016/07/22/virtualenv-trick/#more" class="more-link">Read More</a>
+        </div>
+      
+      
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+
+
+  
+    <article class="post">
+  <header>
+    
+      <div class="icon"></div>
       <a href="/2016/07/21/learn-redis-basic-commands/">
   <time datetime="2016-07-21T00:06:06.000Z">
     2016-07-21
@@ -475,48 +516,6 @@ var _hmt = _hmt || [];
 
 
   
-    <article class="post">
-  <header>
-    
-      <div class="icon"></div>
-      <a href="/2016/06/12/gz-travel/">
-  <time datetime="2016-06-11T23:33:27.000Z">
-    2016-06-12
-  </time>
-</a>
-    
-    
-  
-    <h1 class="title"><a href="/2016/06/12/gz-travel/">广州有什么「鲜为人知但很有意思」的景点？</a></h1>
-  
-
-  </header>
-  
-  <div class="entry">
-    
-      <p>这是我在知乎上的一篇回答，原文在<a href="https://www.zhihu.com/question/21648404/answer/105433110?from=profile_answer_card">这里</a>  </p>
-<hr>
-<p>广州佛教四大丛林：光孝寺、六榕寺、华林寺和海幢寺。  </p>
-<p>这四座古寺，和我之前游历过的帝都雍和宫、大钟寺，青海塔尔寺，峨眉报国寺，五台山众寺庙等等具有完全不同的气质。这四座寺庙，不是属于游客的，而是属于附近百姓的。  </p>
-<p>这四座寺庙都隐藏在广州热闹的居民区中，即使在节假日也没有旅行社的各色小旗子出现。往往是转过一个便利店、潮州鱼蛋粉甚或是一个广场舞大妈出没的街角，一个香火甚旺但又异常幽静的寺庙就滑入视野了。  </p>
-<p>广州作为一个商业气氛浓厚的千年商都，这四座寺庙，却像是广州人特意保留的清静避风港一般，没有人在它们附近兜售旅游纪念品，没有人劝访客上香，更没有人摆摊算命，甚至都没有乞丐在附近赚取人们进寺庙之后极易泛滥的同情心。<br>
-    
-  </div>
-  <footer class="end-sep">
-    
-      
-        <div class="alignleft">
-          <a href="/2016/06/12/gz-travel/#more" class="more-link">Read More</a>
-        </div>
-      
-      
-    
-    <div class="clearfix"></div>
-  </footer>
-</article>
-
-
-  
 
   <nav id="pagination">
   
@@ -542,7 +541,7 @@ var _hmt = _hmt || [];
   
     <li><a href="/categories/技术/">技术</a><small>69</small></li>
   
-    <li><a href="/categories/杂谈/">杂谈</a><small>19</small></li>
+    <li><a href="/categories/杂谈/">杂谈</a><small>20</small></li>
   
   </ul>
 </div>
@@ -552,6 +551,10 @@ var _hmt = _hmt || [];
 <div class="widget tag">
   <h3 class="title">recent_posts</h3>
   <ul class="entry">
+    
+      <li>
+        <a href="/2018/03/03/hongbao-day/">开工大吉</a>
+      </li>
     
       <li>
         <a href="/2018/02/22/thinking-set/">跳出思维定势</a>
@@ -567,10 +570,6 @@ var _hmt = _hmt || [];
     
       <li>
         <a href="/2018/01/28/data-oriented/">面向数据编程</a>
-      </li>
-    
-      <li>
-        <a href="/2018/01/21/scala-call-by-name/">scala中的传名调用</a>
       </li>
     
   </ul>
