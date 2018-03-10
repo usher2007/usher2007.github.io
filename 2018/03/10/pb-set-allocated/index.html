@@ -4,34 +4,30 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="chrome=1">
   
-  <title>Learn C The Hard Way示例代码 | 一根笨茄子</title>
+  <title>protobuf中set_allocated_xxx排雷 | 一根笨茄子</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   
     <meta name="author" content="Yubo Guo">
   
   
-    <meta name="description" content="之前在2016年上半年书单里也提到过，学习C语言除了K&amp;amp;R的那本经典的《C程序设计语言》之外，还可以看看Learn C The Hard Way这个在线教程，更偏向实践一点。  
-最近终于把LCTHW刷完了，其中的代码都写了一遍，确实收获蛮多的。  
-我把代码放在了GitHub上，有兴趣的读者可以点击这里查看，或者直接git clone https://github.com/yubo19">
+    <meta name="description" content="上周帮同事排了一个protobuf中set_allocated_xxx的雷。  
+L同事写的gtest单元测试总是报段错误，而且是在最后一个EXPECT_TRUE之后。由于测试的这段代码逻辑比较简单，就是把若干变量设置到protobuf格式的message中，然后再从message中取出来验证一遍。所以一开始，我们怀疑是gtest的使用姿势不对。">
   
-  <meta name="description" content="之前在2016年上半年书单里也提到过，学习C语言除了K&amp;amp;R的那本经典的《C程序设计语言》之外，还可以看看Learn C The Hard Way这个在线教程，更偏向实践一点。  
-最近终于把LCTHW刷完了，其中的代码都写了一遍，确实收获蛮多的。  
-我把代码放在了GitHub上，有兴趣的读者可以点击这里查看，或者直接git clone https://github.com/yubo19">
+  <meta name="description" content="上周帮同事排了一个protobuf中set_allocated_xxx的雷。  
+L同事写的gtest单元测试总是报段错误，而且是在最后一个EXPECT_TRUE之后。由于测试的这段代码逻辑比较简单，就是把若干变量设置到protobuf格式的message中，然后再从message中取出来验证一遍。所以一开始，我们怀疑是gtest的使用姿势不对。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Learn C The Hard Way示例代码">
-<meta property="og:url" content="http://blog.guoyb.com/2016/07/23/learn-c-the-hard-way/index.html">
+<meta property="og:title" content="protobuf中set_allocated_xxx排雷">
+<meta property="og:url" content="http://blog.guoyb.com/2018/03/10/pb-set-allocated/index.html">
 <meta property="og:site_name" content="一根笨茄子">
-<meta property="og:description" content="之前在2016年上半年书单里也提到过，学习C语言除了K&amp;amp;R的那本经典的《C程序设计语言》之外，还可以看看Learn C The Hard Way这个在线教程，更偏向实践一点。  
-最近终于把LCTHW刷完了，其中的代码都写了一遍，确实收获蛮多的。  
-我把代码放在了GitHub上，有兴趣的读者可以点击这里查看，或者直接git clone https://github.com/yubo19">
-<meta property="og:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.jpg">
-<meta property="og:updated_time" content="2017-11-03T03:40:18.206Z">
+<meta property="og:description" content="上周帮同事排了一个protobuf中set_allocated_xxx的雷。  
+L同事写的gtest单元测试总是报段错误，而且是在最后一个EXPECT_TRUE之后。由于测试的这段代码逻辑比较简单，就是把若干变量设置到protobuf格式的message中，然后再从message中取出来验证一遍。所以一开始，我们怀疑是gtest的使用姿势不对。">
+<meta property="og:image" content="http://guoybblog.qiniudn.com/newqrv2.jpg">
+<meta property="og:updated_time" content="2018-03-10T01:20:15.285Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Learn C The Hard Way示例代码">
-<meta name="twitter:description" content="之前在2016年上半年书单里也提到过，学习C语言除了K&amp;amp;R的那本经典的《C程序设计语言》之外，还可以看看Learn C The Hard Way这个在线教程，更偏向实践一点。  
-最近终于把LCTHW刷完了，其中的代码都写了一遍，确实收获蛮多的。  
-我把代码放在了GitHub上，有兴趣的读者可以点击这里查看，或者直接git clone https://github.com/yubo19">
-<meta name="twitter:image" content="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.jpg">
+<meta name="twitter:title" content="protobuf中set_allocated_xxx排雷">
+<meta name="twitter:description" content="上周帮同事排了一个protobuf中set_allocated_xxx的雷。  
+L同事写的gtest单元测试总是报段错误，而且是在最后一个EXPECT_TRUE之后。由于测试的这段代码逻辑比较简单，就是把若干变量设置到protobuf格式的message中，然后再从message中取出来验证一遍。所以一开始，我们怀疑是gtest的使用姿势不对。">
+<meta name="twitter:image" content="http://guoybblog.qiniudn.com/newqrv2.jpg">
   
   
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
@@ -82,15 +78,15 @@ var _hmt = _hmt || [];
   <header>
     
       <div class="icon"></div>
-      <a href="/2016/07/23/learn-c-the-hard-way/">
-  <time datetime="2016-07-23T09:19:07.000Z">
-    2016-07-23
+      <a href="/2018/03/10/pb-set-allocated/">
+  <time datetime="2018-03-10T01:06:44.000Z">
+    2018-03-10
   </time>
 </a>
     
     
   
-    <h1 class="title">Learn C The Hard Way示例代码</h1>
+    <h1 class="title">protobuf中set_allocated_xxx排雷</h1>
   
 
   </header>
@@ -98,22 +94,24 @@ var _hmt = _hmt || [];
   <div class="entry">
     
       <hr>
-<p>之前在<a href="http://blog.guoyb.com/2016/06/25/2016-booklist-1/">2016年上半年书单</a>里也提到过，学习C语言除了K&amp;R的那本经典的《C程序设计语言》之外，还可以看看<a href="http://c.learncodethehardway.org/book/" target="_blank" rel="external">Learn C The Hard Way</a>这个在线教程，更偏向实践一点。  </p>
-<p>最近终于把LCTHW刷完了，其中的代码都写了一遍，确实收获蛮多的。  </p>
-<p>我把代码放在了GitHub上，有兴趣的读者可以点击<a href="https://github.com/yubo1911/learncthehardway" target="_blank" rel="external">这里</a>查看，或者直接git clone <a href="https://github.com/yubo1911/learncthehardway.git。" target="_blank" rel="external">https://github.com/yubo1911/learncthehardway.git。</a><br><a id="more"></a>  </p>
+<p>上周帮同事排了一个protobuf中set_allocated_xxx的雷。  </p>
+<p>L同事写的gtest单元测试总是报段错误，而且是在最后一个EXPECT_TRUE之后。由于测试的这段代码逻辑比较简单，就是把若干变量设置到protobuf格式的message中，然后再从message中取出来验证一遍。所以一开始，我们怀疑是gtest的使用姿势不对。<br><a id="more"></a><br>尴尬的是，和以往代码库里的test文件进行“姿势”对比之后，并没有发现什么问题。  </p>
 <hr>
-<p>多说一句，作者在写完整份教程之后，在最后的一章<a href="http://c.learncodethehardway.org/book/krcritique.html" target="_blank" rel="external">《Deconstructing K&amp;RC Is Dead》</a>中可谓将K&amp;R C批判了个体无完肤，这里摘录其中一段，大家自己感受一下：  </p>
-<blockquote>
-<p>And then I will also tell people to never write another C program again. It won’t be obvious. It won’t be outright, but my goal will be to move people right off C onto other languages that are doing it better. Go, Rust, and Swift, come to mind as recent entrants that can handle the majority of tasks that C does now, so I will push people there. I will tell them that their skills at finding defects, and rigorous analysis of C code will pay massive dividends in every language and make learning any other language possible.  </p>
-<p>But C? C’s dead. It’s the language for old programmers who want to debate section A.6.2 paragraph 4 of the undefined behavior of pointers. Good riddance. I’m going to go learn Go (or Rust, or Swift, or anything else).</p>
-</blockquote>
+<p>于是，开始翻看前面的逻辑代码。突然，发现了一个set_allocated_xxx的陌生函数：为啥陌生呢？因为对于嵌套的message对象，我一般会使用mutable_xxx这种方式来设置属性。  </p>
+<p>“<strong>allocated</strong>”，这个名字引起了我的注意。本能的，我觉得这里可能会引起指针问题。果然，L同事把一个栈上对象的指针填进了set_allocated_xxx的参数列表，而这个函数的说明是这样写的：</p>
+<ul>
+<li>void set_allocated_foo(string<em> value): Sets the string object to the field and frees the previous field value if it exists. If the string pointer is not NULL, the message takes ownership of the allocated string object and has_foo() will return true. Otherwise, if the value is NULL, the behavior is the same as calling clear_foo(). string</em>  </li>
+<li>release_foo(): Releases the ownership of the field and returns the pointer of the string object. After calling this, caller takes the ownership of the allocated string object, has_foo() will return false, and foo() will return the default value.</li>
+</ul>
+<p>也就是说，这里这个栈对象的指针被protobuf接管，在test结束时被销毁了两次：protobuf销毁一次，栈对象自己销毁一次。难怪每次都是在最后一个EXPECT_TRUE之后报错。  </p>
 <hr>
-<p>我的看法是，C还依然是一门非常适用于造轮子的语言，而造轮子对于程序员具有无穷的（产品经理们、老板们、投资人们理解不了的）魅力。  </p>
-<p>但是直接面向业务的程序，还是选择能更快出活的语言和框架比较好。  </p>
-<p>另外，现在有很多语言/工具都是由C语言实现的，或者是在使用哲学上类似C语言的，那么掌握C语言，对于这一类技术就是一通百通的功效了。就像对于篮球运动员，拉杆变向、迷踪步欧洲步可以直接转化成得分，但是速度、力量训练还是要做的。  </p>
+<p>使用新函数，文档要看仔细啊。  </p>
+<p>另外，起函数名也要深思熟虑。设想，如果G记程序员犯懒，直接起一个set_xxx_message的函数名，那我们这个bug就不知道要查多久了==||  </p>
 <hr>
-<p>转载请注明出处： <a href="http://blog.guoyb.com/2016/07/23/learn-c-the-hard-way/">http://blog.guoyb.com/2016/07/23/learn-c-the-hard-way/</a>  </p>
-<p>欢迎使用微信扫描下方二维码，关注我的微信公众号TechTalking，技术·生活·思考：<br><img src="http://7d9lwm.com1.z0.glb.clouddn.com/newqr.jpg" alt="后端技术小黑屋"></p>
+<p>推荐阅读：  </p>
+<p><a href="http://blog.guoyb.com/2018/02/11/rwlock/">读写锁的性能一定更好吗</a><br><a href="http://blog.guoyb.com/2018/01/28/data-oriented/">面向数据编程</a><br><a href="http://blog.guoyb.com/2018/01/21/scala-call-by-name/">scala中的传名调用</a></p>
+<p>转载请注明出处： <a href="http://blog.guoyb.com/2018/03/10/pb-set-allocated//">http://blog.guoyb.com/2018/03/10/pb-set-allocated/</a>  </p>
+<p>欢迎使用微信扫描下方二维码，关注我的微信公众号TechTalking，技术·生活·思考：<br><img src="http://guoybblog.qiniudn.com/newqrv2.jpg" alt="后端技术小黑屋">  </p>
 
     
   </div>
@@ -126,7 +124,7 @@ var _hmt = _hmt || [];
 
       
   <div class="tags">
-    <a class="tags-link" href="/tags/C/">C</a>, <a class="tags-link" href="/tags/学习笔记/">学习笔记</a>
+    <a class="tags-link" href="/tags/protobuf/">protobuf</a>
   </div>
 
       
@@ -138,7 +136,7 @@ var _hmt = _hmt || [];
 
 <section id="comment">
   <h1 class="title">评论</h1>
-  <div class="ds-thread" data-thread-key="2016/07/23/learn-c-the-hard-way/" data-title="Learn C The Hard Way示例代码" data-url="http://blog.guoyb.com/2016/07/23/learn-c-the-hard-way/"></div>
+  <div class="ds-thread" data-thread-key="2018/03/10/pb-set-allocated/" data-title="protobuf中set_allocated_xxx排雷" data-url="http://blog.guoyb.com/2018/03/10/pb-set-allocated/"></div>
 </section>
 </div>
   </div>

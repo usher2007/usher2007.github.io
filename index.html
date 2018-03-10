@@ -75,6 +75,45 @@ var _hmt = _hmt || [];
   <header>
     
       <div class="icon"></div>
+      <a href="/2018/03/10/pb-set-allocated/">
+  <time datetime="2018-03-10T01:06:44.000Z">
+    2018-03-10
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title"><a href="/2018/03/10/pb-set-allocated/">protobuf中set_allocated_xxx排雷</a></h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>上周帮同事排了一个protobuf中set_allocated_xxx的雷。  </p>
+<p>L同事写的gtest单元测试总是报段错误，而且是在最后一个EXPECT_TRUE之后。由于测试的这段代码逻辑比较简单，就是把若干变量设置到protobuf格式的message中，然后再从message中取出来验证一遍。所以一开始，我们怀疑是gtest的使用姿势不对。<br>
+    
+  </div>
+  <footer class="end-sep">
+    
+      
+        <div class="alignleft">
+          <a href="/2018/03/10/pb-set-allocated/#more" class="more-link">阅读全文</a>
+        </div>
+      
+      
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+
+
+  
+    <article class="post">
+  <header>
+    
+      <div class="icon"></div>
       <a href="/2018/03/03/hongbao-day/">
   <time datetime="2018-03-03T01:00:10.000Z">
     2018-03-03
@@ -97,7 +136,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2018/03/03/hongbao-day/#more" class="more-link">Read More</a>
+          <a href="/2018/03/03/hongbao-day/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -136,7 +175,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2018/02/22/thinking-set/#more" class="more-link">Read More</a>
+          <a href="/2018/02/22/thinking-set/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -175,7 +214,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2018/02/11/rwlock/#more" class="more-link">Read More</a>
+          <a href="/2018/02/11/rwlock/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -213,7 +252,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2018/02/03/happy-newyear/#more" class="more-link">Read More</a>
+          <a href="/2018/02/03/happy-newyear/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -252,7 +291,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2018/01/28/data-oriented/#more" class="more-link">Read More</a>
+          <a href="/2018/01/28/data-oriented/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -293,7 +332,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2018/01/21/scala-call-by-name/#more" class="more-link">Read More</a>
+          <a href="/2018/01/21/scala-call-by-name/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -333,7 +372,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2018/01/13/2017-booklist-2/#more" class="more-link">Read More</a>
+          <a href="/2018/01/13/2017-booklist-2/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -372,7 +411,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2018/01/06/gz-sz/#more" class="more-link">Read More</a>
+          <a href="/2018/01/06/gz-sz/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -413,49 +452,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2017/12/09/scala-match/#more" class="more-link">Read More</a>
-        </div>
-      
-      
-    
-    <div class="clearfix"></div>
-  </footer>
-</article>
-
-
-  
-    <article class="post">
-  <header>
-    
-      <div class="icon"></div>
-      <a href="/2017/11/05/boost-python/">
-  <time datetime="2017-11-05T10:33:47.000Z">
-    2017-11-05
-  </time>
-</a>
-    
-    
-  
-    <h1 class="title"><a href="/2017/11/05/boost-python/">打通Python和C++</a></h1>
-  
-
-  </header>
-  
-  <div class="entry">
-    
-      <hr>
-<p>Python作为世界上最好的<strong>胶水</strong>语言（哼，世界上最好的语言当然是PHP==），利用Python的简洁和C++的高效，基本可以解决99%的问题了吧~  </p>
-<p>一般的，Python和C++的交互分为这两种情况：  </p>
-<ol>
-<li>用C++扩展Python：当一个Python项目中出现了性能瓶颈时，将瓶颈部分抽离出来，用C++封装成一个Python可以调用的模块（so库）；  </li>
-<li>将Python内嵌入C++：当一个C++项目中有部分功能预期将会经常变更需求，期望获得更高的灵活性时，将这部分功能用Python实现，在C++中进行调用。
-    
-  </div>
-  <footer class="end-sep">
-    
-      
-        <div class="alignleft">
-          <a href="/2017/11/05/boost-python/#more" class="more-link">Read More</a>
+          <a href="/2017/12/09/scala-match/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -470,7 +467,7 @@ var _hmt = _hmt || [];
   <nav id="pagination">
   
   
-    <a href="/page/2/" class="next">Next</a>
+    <a href="/page/2/" class="next">下一页</a>
   
   <div class="clearfix"></div>
 </nav>
@@ -487,7 +484,7 @@ var _hmt = _hmt || [];
   
     <li><a href="/categories/书单/">书单</a><small>8</small></li>
   
-    <li><a href="/categories/技术/">技术</a><small>69</small></li>
+    <li><a href="/categories/技术/">技术</a><small>70</small></li>
   
     <li><a href="/categories/杂谈/">杂谈</a><small>20</small></li>
   
@@ -499,6 +496,10 @@ var _hmt = _hmt || [];
 <div class="widget tag">
   <h3 class="title">recent_posts</h3>
   <ul class="entry">
+    
+      <li>
+        <a href="/2018/03/10/pb-set-allocated/">protobuf中set_allocated_xxx排雷</a>
+      </li>
     
       <li>
         <a href="/2018/03/03/hongbao-day/">开工大吉</a>
@@ -516,10 +517,6 @@ var _hmt = _hmt || [];
         <a href="/2018/02/03/happy-newyear/">狗年快乐</a>
       </li>
     
-      <li>
-        <a href="/2018/01/28/data-oriented/">面向数据编程</a>
-      </li>
-    
   </ul>
 </div>
 
@@ -528,7 +525,7 @@ var _hmt = _hmt || [];
 <div class="widget tagcloud">
   <h3 class="title">tagcloud</h3>
   <div class="entry">
-    <a href="/tags/C/" style="font-size: 11.11px;">C</a> <a href="/tags/C/" style="font-size: 17.78px;">C++</a> <a href="/tags/C-11/" style="font-size: 17.78px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 11.11px;">MySQL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Scala/" style="font-size: 11.11px;">Scala</a> <a href="/tags/Spark/" style="font-size: 10px;">Spark</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/grpc/" style="font-size: 11.11px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 11.11px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/mutex/" style="font-size: 10px;">mutex</a> <a href="/tags/protobuf/" style="font-size: 11.11px;">protobuf</a> <a href="/tags/redis/" style="font-size: 12.22px;">redis</a> <a href="/tags/regex/" style="font-size: 12.22px;">regex</a> <a href="/tags/rwlock/" style="font-size: 10px;">rwlock</a> <a href="/tags/shell/" style="font-size: 10px;">shell</a> <a href="/tags/skynet/" style="font-size: 14.44px;">skynet</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 15.56px;">书单</a> <a href="/tags/内存优化/" style="font-size: 10px;">内存优化</a> <a href="/tags/学习笔记/" style="font-size: 13.33px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/旅行/" style="font-size: 12.22px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 18.89px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 12.22px;">查证记录</a> <a href="/tags/生活/" style="font-size: 13.33px;">生活</a> <a href="/tags/读书笔记/" style="font-size: 16.67px;">读书笔记</a>
+    <a href="/tags/C/" style="font-size: 11px;">C</a> <a href="/tags/C/" style="font-size: 18px;">C++</a> <a href="/tags/C-11/" style="font-size: 18px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 11px;">MySQL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Scala/" style="font-size: 11px;">Scala</a> <a href="/tags/Spark/" style="font-size: 10px;">Spark</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/grpc/" style="font-size: 11px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 11px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/mutex/" style="font-size: 10px;">mutex</a> <a href="/tags/protobuf/" style="font-size: 12px;">protobuf</a> <a href="/tags/redis/" style="font-size: 13px;">redis</a> <a href="/tags/regex/" style="font-size: 13px;">regex</a> <a href="/tags/rwlock/" style="font-size: 10px;">rwlock</a> <a href="/tags/shell/" style="font-size: 10px;">shell</a> <a href="/tags/skynet/" style="font-size: 15px;">skynet</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 16px;">书单</a> <a href="/tags/内存优化/" style="font-size: 10px;">内存优化</a> <a href="/tags/学习笔记/" style="font-size: 14px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/旅行/" style="font-size: 13px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 19px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 13px;">查证记录</a> <a href="/tags/生活/" style="font-size: 14px;">生活</a> <a href="/tags/读书笔记/" style="font-size: 17px;">读书笔记</a>
   </div>
 </div>
 
