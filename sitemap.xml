@@ -2,9 +2,16 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://blog.guoyb.com/2018/03/17/double-buffer/</loc>
+    
+    <lastmod>2018-03-17T01:50:53.422Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://blog.guoyb.com/2018/03/10/pb-set-allocated/</loc>
     
-    <lastmod>2018-03-10T01:20:15.285Z</lastmod>
+    <lastmod>2018-03-17T01:43:48.593Z</lastmod>
     
   </url>
   

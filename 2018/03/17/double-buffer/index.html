@@ -1,0 +1,294 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  
+  <title>使用双buffer无锁化 | 一根笨茄子</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  
+    <meta name="author" content="Yubo Guo">
+  
+  
+    <meta name="description" content="使用锁
+面对多线程读写同一块内存的情况，书接上文读写锁的性能一定更好吗，假设我们已经选定了一种锁，那么最直接想到的做法是一般这样的：  
+1234567891011// write thread&amp;#123;  LockGuard guard(lock);  obj.load();  // load会对obj的属性进行重写&amp;#125;// read thread&amp;#123;  LockGuard">
+  
+  <meta name="description" content="使用锁
+面对多线程读写同一块内存的情况，书接上文读写锁的性能一定更好吗，假设我们已经选定了一种锁，那么最直接想到的做法是一般这样的：  
+1234567891011// write thread&amp;#123;  LockGuard guard(lock);  obj.load();  // load会对obj的属性进行重写&amp;#125;// read thread&amp;#123;  LockGuard">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用双buffer无锁化">
+<meta property="og:url" content="http://blog.guoyb.com/2018/03/17/double-buffer/index.html">
+<meta property="og:site_name" content="一根笨茄子">
+<meta property="og:description" content="使用锁
+面对多线程读写同一块内存的情况，书接上文读写锁的性能一定更好吗，假设我们已经选定了一种锁，那么最直接想到的做法是一般这样的：  
+1234567891011// write thread&amp;#123;  LockGuard guard(lock);  obj.load();  // load会对obj的属性进行重写&amp;#125;// read thread&amp;#123;  LockGuard">
+<meta property="og:image" content="http://guoybblog.qiniudn.com/newqrv2.jpg">
+<meta property="og:updated_time" content="2018-03-17T01:50:53.422Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="使用双buffer无锁化">
+<meta name="twitter:description" content="使用锁
+面对多线程读写同一块内存的情况，书接上文读写锁的性能一定更好吗，假设我们已经选定了一种锁，那么最直接想到的做法是一般这样的：  
+1234567891011// write thread&amp;#123;  LockGuard guard(lock);  obj.load();  // load会对obj的属性进行重写&amp;#125;// read thread&amp;#123;  LockGuard">
+<meta name="twitter:image" content="http://guoybblog.qiniudn.com/newqrv2.jpg">
+  
+  
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <!--[if lt IE 9]><script src="//cdn.bootcss.com/html5shiv/3.7.0/html5shiv.min.js"></script><![endif]-->
+  
+  
+<script type="text/javascript">
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?996ee0fca2512b4c29f37f60cf6387ca";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-6897127630340076",
+    enable_page_level_ads: true
+  });
+</script>
+
+</head>
+<body>
+  <div class="wrapper">
+    <header id="header">
+  <div class="title">
+    <h1><a href="/">一根笨茄子</a></h1>
+    <p><a href="/"></a></p>
+  </div>
+  <nav class="nav">
+    <ul>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/about">关于我</a></li>
+      
+      
+    </ul>
+    <div class="clearfix"></div>
+  </nav>
+  <div class="clearfix"></div>
+</header>
+    <div class="content"><article class="post">
+  <header>
+    
+      <div class="icon"></div>
+      <a href="/2018/03/17/double-buffer/">
+  <time datetime="2018-03-17T01:36:54.000Z">
+    2018-03-17
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title">使用双buffer无锁化</h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p><br></p>
+<h2 id="使用锁"><a href="#使用锁" class="headerlink" title="使用锁"></a>使用锁</h2><hr>
+<p>面对多线程读写同一块内存的情况，书接上文<strong><a href="http://blog.guoyb.com/2018/02/11/rwlock/">读写锁的性能一定更好吗</a></strong>，假设我们已经选定了一种锁，那么最直接想到的做法是一般这样的：  </p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// write thread</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="function">LockGuard <span class="title">guard</span><span class="params">(lock)</span></span>;</span><br><span class="line">  obj.load();  <span class="comment">// load会对obj的属性进行重写</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// read thread</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="function">LockGuard <span class="title">guard</span><span class="params">(lock)</span></span>;</span><br><span class="line">  useObj(obj);  <span class="comment">// useObj会读取obj的属性</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>但是这样的话，会把obj的读写全部放在锁中，临界区太大，对并发性有较大影响。<br><a id="more"></a><br><br></p>
+<h2 id="缩小临界区"><a href="#缩小临界区" class="headerlink" title="缩小临界区"></a>缩小临界区</h2><hr>
+<p>为了缩小临界区，我们往往会牺牲一点内存，空间换时间：  </p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">shared_ptr</span>&lt;Obj&gt; obj;</span><br><span class="line"></span><br><span class="line"><span class="comment">// write thread</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="built_in">shared_ptr</span>&lt;Obj&gt; tmp = <span class="built_in">std</span>::make_shared&lt;Obj&gt;();</span><br><span class="line">  tmp.load();</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="function">LockGuard <span class="title">guard</span><span class="params">(lock)</span></span>;</span><br><span class="line">    obj = tmp;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// read thread</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="built_in">shared_ptr</span>&lt;Obj&gt; tmp = <span class="built_in">std</span>::make_shared&lt;Obj&gt;();</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="function">LockGuard <span class="title">guard</span><span class="params">(lock)</span></span>;</span><br><span class="line">    tmp = obj;</span><br><span class="line">  &#125;</span><br><span class="line">  useObj(tmp);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>现在，我们已经将Obj对象的load和useObj全部移除了临界区，也就意味着，这一部分的运算，可以实现并发。  </p>
+<p>其实，我们还可以使用双buffer技术，来彻底无锁化。    </p>
+<p><br></p>
+<h2 id="双buffer"><a href="#双buffer" class="headerlink" title="双buffer"></a>双buffer</h2><hr>
+<p>所谓双buffer技术，其实就是准备两个Obj，一个用来读，一个用来写。写完成之后，原子交换两个Obj；之后的读操作，都放在交换后的读对象上，而原来的读对象，在原有的“读操作”完成之后，又可以进行写操作了。</p>
+<p>但是，这里有两个问题：</p>
+<pre><code>1.“原子交换”如何做？  
+2.如何判断，原来的读对象上的读取操作都结束了？
+</code></pre><p>先看第二个问题，可以通过shared_ptr的use_count()获得其引用计数，来判断当前是否还有其他线程在读取这个Obj；  </p>
+<p>但是，shared_ptr的读写无法做到原子操作——<strong>shared_ptr的引用计数是原子的，但是shared_ptr本身不是。</strong>  </p>
+<p>这时，可以换个思路。我们将两个shared_ptr对象放到一个数组中，用一个原子的下标表示当前的读对象，此时“原子交换”，只需要原子赋值下标即可。  </p>
+<p>伪代码如下:  </p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="built_in">shared_ptr</span>&lt;Obj&gt;&gt; obj_buffers;</span><br><span class="line"><span class="built_in">std</span>::<span class="keyword">atomic_size_t</span> curr_idx;</span><br><span class="line"></span><br><span class="line"><span class="comment">// write thread</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">size_t</span> prepare = <span class="number">1</span> - curr_idx.load();</span><br><span class="line">  <span class="keyword">if</span> (obj_buffers[prepare].use_count() &gt; <span class="number">1</span>) &#123;</span><br><span class="line">  <span class="keyword">continue</span>;</span><br><span class="line">&#125;</span><br><span class="line">  obj_buffers[prepare]-&gt;load();</span><br><span class="line">  curr_idx = prepare;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// read thread</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="built_in">shared_ptr</span>&lt;Obj&gt; tmp = obj_buffers[curr_idx.load()];</span><br><span class="line">  useObj(tmp);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里需要注意的是，C++的基本类型并不保证原子性，所以这里需要使用C++11中新增的std::atomic原子类型作为下标。</p>
+<p><br></p>
+<hr>
+<p>推荐阅读：<br><a href="http://blog.guoyb.com/2018/03/10/pb-set-allocated/">protobuf中set_allocated_xxx排雷</a><br><a href="http://blog.guoyb.com/2018/02/11/rwlock/">读写锁的性能一定更好吗</a><br><a href="http://blog.guoyb.com/2018/01/28/data-oriented/">面向数据编程</a>  </p>
+<p>转载请注明出处： <a href="http://blog.guoyb.com/2018/03/17/double-buffer/">http://blog.guoyb.com/2018/03/17/double-buffer/</a>  </p>
+<p>欢迎使用微信扫描下方二维码，关注我的微信公众号TechTalking，技术·生活·思考：<br><img src="http://guoybblog.qiniudn.com/newqrv2.jpg" alt="后端技术小黑屋">  </p>
+
+    
+  </div>
+  <footer>
+    
+      
+  <div class="categories">
+    <a class="categories-link" href="/categories/技术/">技术</a>
+  </div>
+
+      
+  <div class="tags">
+    <a class="tags-link" href="/tags/C/">C++</a>
+  </div>
+
+      
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">Comments</h1>
+  <div class="ds-thread" data-thread-key="2018/03/17/double-buffer/" data-title="使用双buffer无锁化" data-url="http://blog.guoyb.com/2018/03/17/double-buffer/"></div>
+</section>
+</div>
+  </div>
+  
+  <div id="sidebar" class="widgets-right">
+  
+<div class="widget category">
+  <h3 class="title">categories</h3>
+  <ul class="entry">
+  
+    <li><a href="/categories/书单/">书单</a><small>8</small></li>
+  
+    <li><a href="/categories/技术/">技术</a><small>71</small></li>
+  
+    <li><a href="/categories/杂谈/">杂谈</a><small>20</small></li>
+  
+  </ul>
+</div>
+
+
+  
+<div class="widget tag">
+  <h3 class="title">recent_posts</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2018/03/17/double-buffer/">使用双buffer无锁化</a>
+      </li>
+    
+      <li>
+        <a href="/2018/03/10/pb-set-allocated/">protobuf中set_allocated_xxx排雷</a>
+      </li>
+    
+      <li>
+        <a href="/2018/03/03/hongbao-day/">开工大吉</a>
+      </li>
+    
+      <li>
+        <a href="/2018/02/22/thinking-set/">跳出思维定势</a>
+      </li>
+    
+      <li>
+        <a href="/2018/02/11/rwlock/">读写锁的性能一定更好吗</a>
+      </li>
+    
+  </ul>
+</div>
+
+
+  
+<div class="widget tagcloud">
+  <h3 class="title">tagcloud</h3>
+  <div class="entry">
+    <a href="/tags/C/" style="font-size: 10.91px;">C</a> <a href="/tags/C/" style="font-size: 18.18px;">C++</a> <a href="/tags/C-11/" style="font-size: 17.27px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 10.91px;">MySQL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Scala/" style="font-size: 10.91px;">Scala</a> <a href="/tags/Spark/" style="font-size: 10px;">Spark</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/grpc/" style="font-size: 10.91px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 10.91px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/mutex/" style="font-size: 10px;">mutex</a> <a href="/tags/protobuf/" style="font-size: 11.82px;">protobuf</a> <a href="/tags/redis/" style="font-size: 12.73px;">redis</a> <a href="/tags/regex/" style="font-size: 12.73px;">regex</a> <a href="/tags/rwlock/" style="font-size: 10px;">rwlock</a> <a href="/tags/shell/" style="font-size: 10px;">shell</a> <a href="/tags/skynet/" style="font-size: 14.55px;">skynet</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 15.45px;">书单</a> <a href="/tags/内存优化/" style="font-size: 10px;">内存优化</a> <a href="/tags/学习笔记/" style="font-size: 13.64px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/旅行/" style="font-size: 12.73px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 19.09px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 12.73px;">查证记录</a> <a href="/tags/生活/" style="font-size: 13.64px;">生活</a> <a href="/tags/读书笔记/" style="font-size: 16.36px;">读书笔记</a>
+  </div>
+</div>
+
+
+  
+<div class="widget tag">
+  <h3 class="title">友情链接</h3>
+  <ul class="entry">
+  
+    
+    <li><a href="http://www.linkedin.com/in/yubo-guo-739b0071" target="_blank">LinkedIn</a></li>
+  
+    
+    <li><a href="http://www.tuicool.com/sites/2emeIjb" target="_blank">推酷站点</a></li>
+  
+  </ul>
+</div>
+
+</div>
+  
+  <footer id="footer"><div class="copyright">
+  
+  &copy; 2018 <a href="/">Yubo Guo</a>
+  
+</div>
+<div class="theme-copyright">
+  Theme by <a href="https://github.com/orderedlist" target="_blank">orderedlist</a>
+   | 
+  Redesign by <a href="http://blog.dafengning.com/" target="_blank">Chong Zi</a>
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//lib.sinaapp.com/js/jquery/1.8/jquery.min.js"></script>
+<script src="/js/scale.fix.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"guoyb"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+
+
+<div id="rightfix" style="display:none;">
+
+<a href="#comment" id="gocomm" class="fix_btn" title="提问/评论"><i><i></i></i></a>
+
+
+<a href="javascript:void(0)" id="gotop" class="fix_btn" onclick="gotop();" title="回到顶部"><i></i></a>
+<script>
+  function gotop(){
+    $('html,body').animate({
+        scrollTop : '0px'
+      }, 800);
+  }
+  $(function(){
+    _rightfix = $('#rightfix');
+    $(window).scroll(function(){
+      $sollTop = document.documentElement.scrollTop + document.body.scrollTop;
+      if($sollTop > 350){
+        _rightfix.show();
+      }else{
+        _rightfix.hide();
+      }
+    });
+  });
+</script>
+
+</div>
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+  (function($){
+    $('.fancybox').fancybox();
+  })(jQuery);
+</script>
+
+</body>
+</html>
