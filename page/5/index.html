@@ -75,6 +75,47 @@ var _hmt = _hmt || [];
   <header>
     
       <div class="icon"></div>
+      <a href="/2016/12/03/bad-py-style/">
+  <time datetime="2016-12-03T05:39:46.000Z">
+    2016-12-03
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title"><a href="/2016/12/03/bad-py-style/">Python最差实践</a></h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>最近在看一些陈年老系统，其中有一些不好的代码习惯遗留下来的坑；加上最近自己也写了一段烂代码导致服务器负载飙升，所以就趁此机会总结下我看到过/写过的自认为不好的Python代码习惯，时刻提醒自己远离这些“最差实践”，避免挖坑。  </p>
+<p>下面所举的例子中，有一部分会造成性能问题，有一部分会导致隐藏bug，或日后维护、重构困难，还有一部分纯粹是我认为不够pythonic。所以大家自行甄别，取精去糟吧。  </p>
+<h2 id="函数默认参数使用可变对象"><a href="#函数默认参数使用可变对象" class="headerlink" title="函数默认参数使用可变对象"></a>函数默认参数使用可变对象</h2><p>这个例子我想大家应该在各种技术文章中见过许多遍了，也足以证明这是一个大坑。  </p>
+<p>先看错误示范吧：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">use_mutable_default_param</span><span class="params">(idx=<span class="number">0</span>, ids=[])</span>:</span></span><br><span class="line">    ids.append(idx)</span><br><span class="line">    print(idx)</span><br><span class="line">    print(ids)</span><br><span class="line"></span><br><span class="line">use_mutable_default_param(idx=<span class="number">1</span>)</span><br><span class="line">use_mutable_default_param(idx=<span class="number">2</span>)</span><br></pre></td></tr></table></figure><br>
+    
+  </div>
+  <footer class="end-sep">
+    
+      
+        <div class="alignleft">
+          <a href="/2016/12/03/bad-py-style/#more" class="more-link">Read More</a>
+        </div>
+      
+      
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+
+
+  
+    <article class="post">
+  <header>
+    
+      <div class="icon"></div>
       <a href="/2016/11/23/ghub/">
   <time datetime="2016-11-23T00:42:14.000Z">
     2016-11-23
@@ -433,48 +474,6 @@ var _hmt = _hmt || [];
 
 
   
-    <article class="post">
-  <header>
-    
-      <div class="icon"></div>
-      <a href="/2016/09/09/learn-redis-other/">
-  <time datetime="2016-09-09T00:21:18.000Z">
-    2016-09-09
-  </time>
-</a>
-    
-    
-  
-    <h1 class="title"><a href="/2016/09/09/learn-redis-other/">Redis学习笔记4-脚本、持久化和集群</a></h1>
-  
-
-  </header>
-  
-  <div class="entry">
-    
-      <hr>
-<p>Redis学习笔记1-基础命令及数据结构： <a href="http://blog.guoyb.com/2016/07/21/learn-redis-basic-commands">http://blog.guoyb.com/2016/07/21/learn-redis-basic-commands/</a><br>Redis学习笔记2-事务与过期时间： <a href="http://blog.guoyb.com/2016/08/23/learn-redis-adv">http://blog.guoyb.com/2016/08/23/learn-redis-adv/</a><br>Redis学习笔记3-排序与消息通知： <a href="http://blog.guoyb.com/2016/08/24/learn-redis-adv-2">http://blog.guoyb.com/2016/08/24/learn-redis-adv-2/</a>  </p>
-<hr>
-<p>学习笔记的第四部分记录Redis的脚本功能、持久化和集群。  </p>
-<hr>
-<h2 id="脚本"><a href="#脚本" class="headerlink" title="脚本"></a>脚本</h2><p>在Python中使用redis-py来操作redis数据库。<br>
-    
-  </div>
-  <footer class="end-sep">
-    
-      
-        <div class="alignleft">
-          <a href="/2016/09/09/learn-redis-other/#more" class="more-link">Read More</a>
-        </div>
-      
-      
-    
-    <div class="clearfix"></div>
-  </footer>
-</article>
-
-
-  
 
   <nav id="pagination">
   
@@ -500,7 +499,7 @@ var _hmt = _hmt || [];
   
     <li><a href="/categories/技术/">技术</a><small>71</small></li>
   
-    <li><a href="/categories/杂谈/">杂谈</a><small>20</small></li>
+    <li><a href="/categories/杂谈/">杂谈</a><small>21</small></li>
   
   </ul>
 </div>
@@ -510,6 +509,10 @@ var _hmt = _hmt || [];
 <div class="widget tag">
   <h3 class="title">recent_posts</h3>
   <ul class="entry">
+    
+      <li>
+        <a href="/2018/03/24/gz-sz-diff/">广深不一样</a>
+      </li>
     
       <li>
         <a href="/2018/03/17/double-buffer/">使用双buffer无锁化</a>
@@ -527,10 +530,6 @@ var _hmt = _hmt || [];
         <a href="/2018/02/22/thinking-set/">跳出思维定势</a>
       </li>
     
-      <li>
-        <a href="/2018/02/11/rwlock/">读写锁的性能一定更好吗</a>
-      </li>
-    
   </ul>
 </div>
 
@@ -539,7 +538,7 @@ var _hmt = _hmt || [];
 <div class="widget tagcloud">
   <h3 class="title">tagcloud</h3>
   <div class="entry">
-    <a href="/tags/C/" style="font-size: 10.91px;">C</a> <a href="/tags/C/" style="font-size: 18.18px;">C++</a> <a href="/tags/C-11/" style="font-size: 17.27px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 10.91px;">MySQL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Scala/" style="font-size: 10.91px;">Scala</a> <a href="/tags/Spark/" style="font-size: 10px;">Spark</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/grpc/" style="font-size: 10.91px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 10.91px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/mutex/" style="font-size: 10px;">mutex</a> <a href="/tags/protobuf/" style="font-size: 11.82px;">protobuf</a> <a href="/tags/redis/" style="font-size: 12.73px;">redis</a> <a href="/tags/regex/" style="font-size: 12.73px;">regex</a> <a href="/tags/rwlock/" style="font-size: 10px;">rwlock</a> <a href="/tags/shell/" style="font-size: 10px;">shell</a> <a href="/tags/skynet/" style="font-size: 14.55px;">skynet</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 15.45px;">书单</a> <a href="/tags/内存优化/" style="font-size: 10px;">内存优化</a> <a href="/tags/学习笔记/" style="font-size: 13.64px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/旅行/" style="font-size: 12.73px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 19.09px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 12.73px;">查证记录</a> <a href="/tags/生活/" style="font-size: 13.64px;">生活</a> <a href="/tags/读书笔记/" style="font-size: 16.36px;">读书笔记</a>
+    <a href="/tags/C/" style="font-size: 10.91px;">C</a> <a href="/tags/C/" style="font-size: 18.18px;">C++</a> <a href="/tags/C-11/" style="font-size: 17.27px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 10.91px;">MySQL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Scala/" style="font-size: 10.91px;">Scala</a> <a href="/tags/Spark/" style="font-size: 10px;">Spark</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/grpc/" style="font-size: 10.91px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 10.91px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/mutex/" style="font-size: 10px;">mutex</a> <a href="/tags/protobuf/" style="font-size: 11.82px;">protobuf</a> <a href="/tags/redis/" style="font-size: 12.73px;">redis</a> <a href="/tags/regex/" style="font-size: 12.73px;">regex</a> <a href="/tags/rwlock/" style="font-size: 10px;">rwlock</a> <a href="/tags/shell/" style="font-size: 10px;">shell</a> <a href="/tags/skynet/" style="font-size: 14.55px;">skynet</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 15.45px;">书单</a> <a href="/tags/内存优化/" style="font-size: 10px;">内存优化</a> <a href="/tags/学习笔记/" style="font-size: 13.64px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/旅行/" style="font-size: 12.73px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 19.09px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 12.73px;">查证记录</a> <a href="/tags/生活/" style="font-size: 14.55px;">生活</a> <a href="/tags/读书笔记/" style="font-size: 16.36px;">读书笔记</a>
   </div>
 </div>
 

@@ -75,6 +75,44 @@ var _hmt = _hmt || [];
   <header>
     
       <div class="icon"></div>
+      <a href="/2017/09/16/flock/">
+  <time datetime="2017-09-16T01:38:47.000Z">
+    2017-09-16
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title"><a href="/2017/09/16/flock/">给shell脚本加锁</a></h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>在内部测试服务器上，有一个shell脚本用于将csv数据表格转换成Python数据文件。在执行过程中的某一步，由于需要对一些文件进行写操作，所以如果同时有两个人运行了导表程序，则第二个人运行到此步骤时，就会失败并退出，这既拖慢了第一个人的导表速度，而且对第二人的体验也不好（运行了五分钟然后告诉我失败了？黑人问号……）。所以我就想给这个shell脚本加个锁，保证同一时刻只能有一个实例在运行，并及早给出其他用户提示信息。<br>
+    
+  </div>
+  <footer class="end-sep">
+    
+      
+        <div class="alignleft">
+          <a href="/2017/09/16/flock/#more" class="more-link">Read More</a>
+        </div>
+      
+      
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+
+
+  
+    <article class="post">
+  <header>
+    
+      <div class="icon"></div>
       <a href="/2017/09/09/python-mem/">
   <time datetime="2017-09-09T05:40:04.000Z">
     2017-09-09
@@ -427,46 +465,6 @@ var _hmt = _hmt || [];
 
 
   
-    <article class="post">
-  <header>
-    
-      <div class="icon"></div>
-      <a href="/2017/03/02/paojiao/">
-  <time datetime="2017-03-02T00:29:28.000Z">
-    2017-03-02
-  </time>
-</a>
-    
-    
-  
-    <h1 class="title"><a href="/2017/03/02/paojiao/">一次泡脚引发的“命案”</a></h1>
-  
-
-  </header>
-  
-  <div class="entry">
-    
-      <hr>
-<p><img src="http://7d9lwm.com1.z0.glb.clouddn.com/mockingbird-1.png" alt=""><br>最近闲了，晚上在家不时泡个脚，顺便捧起《寂静的春天》阅读几页，某天泡脚时发现书中知更鸟的英文是robin，得意地向Mr.Guo显摆了一番。<br>Mr.Guo反击说:”杀死一只知更鸟”<br>我:”啊?! 你说那本书吗？”<br>Mr.Guo:”是啊，我还没看过…后来还拍过电影”（Mr.Guo已经开始在网上搜索了）<br>我:”那我们先看书再看电影，好不好？”<br>Mr.Guo叫嚣道:”知更鸟是Mockingbird！”<br>我:”不是啊，这书上写的是robin！”(两人反复嚷嚷了2遍，感觉要打起来了)<br>Mr.Guo:”你看嘛，杀死一只知更鸟翻译的是To Kill a Mockingbird！”<br>我:”到底谁错了，去查大英辞典吧！”</p>
-<hr>
-<p>若是点进来为了看热闹的童鞋，看到这里就可以毫不回头地走了，自封为学术帝的童鞋往下看是学术烧脑阶段。<br>
-    
-  </div>
-  <footer class="end-sep">
-    
-      
-        <div class="alignleft">
-          <a href="/2017/03/02/paojiao/#more" class="more-link">Read More</a>
-        </div>
-      
-      
-    
-    <div class="clearfix"></div>
-  </footer>
-</article>
-
-
-  
 
   <nav id="pagination">
   
@@ -492,7 +490,7 @@ var _hmt = _hmt || [];
   
     <li><a href="/categories/技术/">技术</a><small>71</small></li>
   
-    <li><a href="/categories/杂谈/">杂谈</a><small>20</small></li>
+    <li><a href="/categories/杂谈/">杂谈</a><small>21</small></li>
   
   </ul>
 </div>
@@ -502,6 +500,10 @@ var _hmt = _hmt || [];
 <div class="widget tag">
   <h3 class="title">recent_posts</h3>
   <ul class="entry">
+    
+      <li>
+        <a href="/2018/03/24/gz-sz-diff/">广深不一样</a>
+      </li>
     
       <li>
         <a href="/2018/03/17/double-buffer/">使用双buffer无锁化</a>
@@ -519,10 +521,6 @@ var _hmt = _hmt || [];
         <a href="/2018/02/22/thinking-set/">跳出思维定势</a>
       </li>
     
-      <li>
-        <a href="/2018/02/11/rwlock/">读写锁的性能一定更好吗</a>
-      </li>
-    
   </ul>
 </div>
 
@@ -531,7 +529,7 @@ var _hmt = _hmt || [];
 <div class="widget tagcloud">
   <h3 class="title">tagcloud</h3>
   <div class="entry">
-    <a href="/tags/C/" style="font-size: 10.91px;">C</a> <a href="/tags/C/" style="font-size: 18.18px;">C++</a> <a href="/tags/C-11/" style="font-size: 17.27px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 10.91px;">MySQL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Scala/" style="font-size: 10.91px;">Scala</a> <a href="/tags/Spark/" style="font-size: 10px;">Spark</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/grpc/" style="font-size: 10.91px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 10.91px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/mutex/" style="font-size: 10px;">mutex</a> <a href="/tags/protobuf/" style="font-size: 11.82px;">protobuf</a> <a href="/tags/redis/" style="font-size: 12.73px;">redis</a> <a href="/tags/regex/" style="font-size: 12.73px;">regex</a> <a href="/tags/rwlock/" style="font-size: 10px;">rwlock</a> <a href="/tags/shell/" style="font-size: 10px;">shell</a> <a href="/tags/skynet/" style="font-size: 14.55px;">skynet</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 15.45px;">书单</a> <a href="/tags/内存优化/" style="font-size: 10px;">内存优化</a> <a href="/tags/学习笔记/" style="font-size: 13.64px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/旅行/" style="font-size: 12.73px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 19.09px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 12.73px;">查证记录</a> <a href="/tags/生活/" style="font-size: 13.64px;">生活</a> <a href="/tags/读书笔记/" style="font-size: 16.36px;">读书笔记</a>
+    <a href="/tags/C/" style="font-size: 10.91px;">C</a> <a href="/tags/C/" style="font-size: 18.18px;">C++</a> <a href="/tags/C-11/" style="font-size: 17.27px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 10.91px;">MySQL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Scala/" style="font-size: 10.91px;">Scala</a> <a href="/tags/Spark/" style="font-size: 10px;">Spark</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/grpc/" style="font-size: 10.91px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 10.91px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/mutex/" style="font-size: 10px;">mutex</a> <a href="/tags/protobuf/" style="font-size: 11.82px;">protobuf</a> <a href="/tags/redis/" style="font-size: 12.73px;">redis</a> <a href="/tags/regex/" style="font-size: 12.73px;">regex</a> <a href="/tags/rwlock/" style="font-size: 10px;">rwlock</a> <a href="/tags/shell/" style="font-size: 10px;">shell</a> <a href="/tags/skynet/" style="font-size: 14.55px;">skynet</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 15.45px;">书单</a> <a href="/tags/内存优化/" style="font-size: 10px;">内存优化</a> <a href="/tags/学习笔记/" style="font-size: 13.64px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/旅行/" style="font-size: 12.73px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 19.09px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 12.73px;">查证记录</a> <a href="/tags/生活/" style="font-size: 14.55px;">生活</a> <a href="/tags/读书笔记/" style="font-size: 16.36px;">读书笔记</a>
   </div>
 </div>
 
