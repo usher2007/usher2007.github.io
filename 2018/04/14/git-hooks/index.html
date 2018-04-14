@@ -21,11 +21,13 @@
 <meta property="og:site_name" content="一根笨茄子">
 <meta property="og:description" content="最近组内的小伙伴们被部门内的整个code review流程搞得头痛不已（回头我详细说说我对code review的看法），所以一些非线上核心业务的工程，纷纷迁移至Git平台。公司的Git平台使用的是一个定制化的GitLabs，各种权限的管理基本都下放到了组这一级别，所以更加自由灵活。  
 当然，Git的灵活并不意味着要放弃对代码质量的要求。所以，利用Git提供的Hooks（钩子），可以方便的将一">
-<meta property="og:updated_time" content="2018-04-14T01:41:39.457Z">
+<meta property="og:image" content="http://guoybblog.qiniudn.com/newqrv2.jpg">
+<meta property="og:updated_time" content="2018-04-14T02:04:37.555Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="一个新朋友 Git Hooks">
 <meta name="twitter:description" content="最近组内的小伙伴们被部门内的整个code review流程搞得头痛不已（回头我详细说说我对code review的看法），所以一些非线上核心业务的工程，纷纷迁移至Git平台。公司的Git平台使用的是一个定制化的GitLabs，各种权限的管理基本都下放到了组这一级别，所以更加自由灵活。  
 当然，Git的灵活并不意味着要放弃对代码质量的要求。所以，利用Git提供的Hooks（钩子），可以方便的将一">
+<meta name="twitter:image" content="http://guoybblog.qiniudn.com/newqrv2.jpg">
   
   
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
@@ -104,6 +106,10 @@ pre-rebase，post-checkout，post-merge， pre-push……
 <pre><code>pre-receive、update、post-receive  
 </code></pre><p>这几个Hooks都和push操作有关。放到服务器端运行，可以方便的和发布系统结合，或者干脆自己实现一个发布系统。  </p>
 <p>更多详细的有关Git hooks的介绍，可以参阅<strong><a href="https://git-scm.com/book/gr/v2/Customizing-Git-Git-Hooks" target="_blank" rel="external">官方文档</a></strong></p>
+<hr>
+<p>推荐阅读：<br><a href="http://blog.guoyb.com/2018/03/17/double-buffer/">使用双buffer无锁化</a><br><a href="http://blog.guoyb.com/2018/03/31/dont-copy/">不要拷贝</a><br><a href="http://blog.guoyb.com/2018/02/11/rwlock/">读写锁的性能一定更好吗</a>  </p>
+<p>转载请注明出处： <a href="http://blog.guoyb.com/2018/04/14/git-hooks/">http://blog.guoyb.com/2018/04/14/git-hooks/</a>  </p>
+<p>欢迎使用微信扫描下方二维码，关注我的微信公众号TechTalking，技术·生活·思考：<br><img src="http://guoybblog.qiniudn.com/newqrv2.jpg" alt="后端技术小黑屋">  </p>
 
     
   </div>
