@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://blog.guoyb.com/2018/04/21/spark-scala-future/</loc>
+    
+    <lastmod>2018-04-21T02:32:01.280Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://blog.guoyb.com/2018/04/14/git-hooks/</loc>
     
     <lastmod>2018-04-14T02:04:37.555Z</lastmod>

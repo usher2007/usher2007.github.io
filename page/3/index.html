@@ -75,6 +75,46 @@ var _hmt = _hmt || [];
   <header>
     
       <div class="icon"></div>
+      <a href="/2017/10/12/skynet-5/">
+  <time datetime="2017-10-12T13:18:17.000Z">
+    2017-10-12
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title"><a href="/2017/10/12/skynet-5/">探索skynet（五）：随笔</a></h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>最近准备在组内做一个有关skynet的分享，所以对skynet产生了一些“形而上”的思考。这篇文章将不涉及具体的代码细节，就是就着skynet这个框架“扯扯淡”，随便写写。  </p>
+<h2 id="skynet的核心是什么"><a href="#skynet的核心是什么" class="headerlink" title="skynet的核心是什么"></a>skynet的核心是什么</h2><p>skynet从Erlang借鉴而来，主要借鉴它的Actor模型，用以充分利用多核实现并行计算。所以skynet可以说是一个C语言+lua语言实现的Actor模型框架。  </p>
+<p>skynet中的每一个Actor，原则上，都是一个so库。每个Actor，对应于一个自己的消息队列。所有消息队列又串成了一个<strong>消息队列的大队列</strong>。多个工作线程，不断的从<strong>大队列</strong>中拿出消息队列，取出消息，找到对应的Actor（也就是so库），将消息扔给so库去处理。从这个角度来说，Actor（so库），不过是一个<strong>消息处理器</strong>。<br>
+    
+  </div>
+  <footer class="end-sep">
+    
+      
+        <div class="alignleft">
+          <a href="/2017/10/12/skynet-5/#more" class="more-link">阅读全文</a>
+        </div>
+      
+      
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+
+
+  
+    <article class="post">
+  <header>
+    
+      <div class="icon"></div>
       <a href="/2017/09/28/optimize/">
   <time datetime="2017-09-27T23:42:26.000Z">
     2017-09-28
@@ -99,7 +139,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2017/09/28/optimize/#more" class="more-link">Read More</a>
+          <a href="/2017/09/28/optimize/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -137,7 +177,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2017/09/21/depressed/#more" class="more-link">Read More</a>
+          <a href="/2017/09/21/depressed/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -175,7 +215,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2017/09/16/flock/#more" class="more-link">Read More</a>
+          <a href="/2017/09/16/flock/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -214,7 +254,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2017/09/09/python-mem/#more" class="more-link">Read More</a>
+          <a href="/2017/09/09/python-mem/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -255,7 +295,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2017/09/02/python-cmp/#more" class="more-link">Read More</a>
+          <a href="/2017/09/02/python-cmp/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -295,7 +335,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2017/06/30/2017-booklist-1/#more" class="more-link">Read More</a>
+          <a href="/2017/06/30/2017-booklist-1/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -333,7 +373,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2017/04/26/japan/#more" class="more-link">Read More</a>
+          <a href="/2017/04/26/japan/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -372,7 +412,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2017/03/26/skynet-4/#more" class="more-link">Read More</a>
+          <a href="/2017/03/26/skynet-4/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -410,46 +450,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2017/03/15/python-obmalloc-trick/#more" class="more-link">Read More</a>
-        </div>
-      
-      
-    
-    <div class="clearfix"></div>
-  </footer>
-</article>
-
-
-  
-    <article class="post">
-  <header>
-    
-      <div class="icon"></div>
-      <a href="/2017/03/12/about-house/">
-  <time datetime="2017-03-12T08:10:13.000Z">
-    2017-03-12
-  </time>
-</a>
-    
-    
-  
-    <h1 class="title"><a href="/2017/03/12/about-house/">高房价在扼杀什么</a></h1>
-  
-
-  </header>
-  
-  <div class="entry">
-    
-      <hr>
-<p>这个周末，看到水木上一篇文章<a href="http://www.newsmth.net/nForum/#!article/CAS/145386">《被疏解了》</a>，大意就是说一个三北博士（本科、硕士、博士都是北大的），毕业后进入中科院北京某研究所工作三年，还是由于房价太高以及子女教育问题，选择去南京了。  </p>
-<p>每隔一段时间，就会有这样的一篇热文，来控诉帝都的房价。本来我都习以为常了——一时逃离北上广，一时又逃回北上广，循环往复——但是正好最近目前住的小区里也发生了一件相关的小事，让我又有了一些新的感慨。<br>
-    
-  </div>
-  <footer class="end-sep">
-    
-      
-        <div class="alignleft">
-          <a href="/2017/03/12/about-house/#more" class="more-link">Read More</a>
+          <a href="/2017/03/15/python-obmalloc-trick/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -463,10 +464,10 @@ var _hmt = _hmt || [];
 
   <nav id="pagination">
   
-    <a href="/page/2/" class="prev">Prev</a>
+    <a href="/page/2/" class="prev">上一页</a>
   
   
-    <a href="/page/4/" class="next">Next</a>
+    <a href="/page/4/" class="next">下一页</a>
   
   <div class="clearfix"></div>
 </nav>
@@ -483,7 +484,7 @@ var _hmt = _hmt || [];
   
     <li><a href="/categories/书单/">书单</a><small>8</small></li>
   
-    <li><a href="/categories/技术/">技术</a><small>73</small></li>
+    <li><a href="/categories/技术/">技术</a><small>74</small></li>
   
     <li><a href="/categories/杂谈/">杂谈</a><small>21</small></li>
   
@@ -495,6 +496,10 @@ var _hmt = _hmt || [];
 <div class="widget tag">
   <h3 class="title">recent_posts</h3>
   <ul class="entry">
+    
+      <li>
+        <a href="/2018/04/21/spark-scala-future/">Spark“并行”写</a>
+      </li>
     
       <li>
         <a href="/2018/04/14/git-hooks/">一个新朋友 Git Hooks</a>
@@ -512,10 +517,6 @@ var _hmt = _hmt || [];
         <a href="/2018/03/17/double-buffer/">使用双buffer无锁化</a>
       </li>
     
-      <li>
-        <a href="/2018/03/10/pb-set-allocated/">protobuf中set_allocated_xxx排雷</a>
-      </li>
-    
   </ul>
 </div>
 
@@ -524,7 +525,7 @@ var _hmt = _hmt || [];
 <div class="widget tagcloud">
   <h3 class="title">tagcloud</h3>
   <div class="entry">
-    <a href="/tags/C/" style="font-size: 10.91px;">C</a> <a href="/tags/C/" style="font-size: 18.18px;">C++</a> <a href="/tags/C-11/" style="font-size: 17.27px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Git/" style="font-size: 10px;">Git</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 10.91px;">MySQL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Scala/" style="font-size: 10.91px;">Scala</a> <a href="/tags/Spark/" style="font-size: 10px;">Spark</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/grpc/" style="font-size: 10.91px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 10.91px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/mutex/" style="font-size: 10px;">mutex</a> <a href="/tags/protobuf/" style="font-size: 11.82px;">protobuf</a> <a href="/tags/redis/" style="font-size: 12.73px;">redis</a> <a href="/tags/regex/" style="font-size: 12.73px;">regex</a> <a href="/tags/rwlock/" style="font-size: 10px;">rwlock</a> <a href="/tags/shell/" style="font-size: 10px;">shell</a> <a href="/tags/skynet/" style="font-size: 14.55px;">skynet</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 15.45px;">书单</a> <a href="/tags/内存优化/" style="font-size: 10px;">内存优化</a> <a href="/tags/学习笔记/" style="font-size: 13.64px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/旅行/" style="font-size: 12.73px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 19.09px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 12.73px;">查证记录</a> <a href="/tags/生活/" style="font-size: 14.55px;">生活</a> <a href="/tags/读书笔记/" style="font-size: 16.36px;">读书笔记</a>
+    <a href="/tags/C/" style="font-size: 10.91px;">C</a> <a href="/tags/C/" style="font-size: 18.18px;">C++</a> <a href="/tags/C-11/" style="font-size: 17.27px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Git/" style="font-size: 10px;">Git</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 10.91px;">MySQL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Scala/" style="font-size: 11.82px;">Scala</a> <a href="/tags/Spark/" style="font-size: 10.91px;">Spark</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/grpc/" style="font-size: 10.91px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 10.91px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/mutex/" style="font-size: 10px;">mutex</a> <a href="/tags/protobuf/" style="font-size: 11.82px;">protobuf</a> <a href="/tags/redis/" style="font-size: 12.73px;">redis</a> <a href="/tags/regex/" style="font-size: 12.73px;">regex</a> <a href="/tags/rwlock/" style="font-size: 10px;">rwlock</a> <a href="/tags/shell/" style="font-size: 10px;">shell</a> <a href="/tags/skynet/" style="font-size: 14.55px;">skynet</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 15.45px;">书单</a> <a href="/tags/内存优化/" style="font-size: 10px;">内存优化</a> <a href="/tags/学习笔记/" style="font-size: 13.64px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/旅行/" style="font-size: 12.73px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 19.09px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 12.73px;">查证记录</a> <a href="/tags/生活/" style="font-size: 14.55px;">生活</a> <a href="/tags/读书笔记/" style="font-size: 16.36px;">读书笔记</a>
   </div>
 </div>
 

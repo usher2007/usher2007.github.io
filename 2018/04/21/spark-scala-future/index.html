@@ -4,29 +4,25 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="chrome=1">
   
-  <title>价格歧视 | 一根笨茄子</title>
+  <title>Spark“并行”写 | 一根笨茄子</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   
     <meta name="author" content="Yubo Guo">
   
   
-    <meta name="description" content="这几天在看刘鹏老师的《计算广告》，其中讲到定价策略时，提到了一个奥特莱斯的选址问题。大意是奥特莱斯一般都会建在距离市区一个小时车程的地方，这样那些不在乎价格的土豪，仍然会选择在市内进行“正价”消费；与此同时，拓展了那些愿意花费时间驱车前往以获取折扣的这部分消费群体。这样，商场的营收是更优的。我一想，这不就是大学微观经济学课上讲到的“价格歧视”么！  
-说到价格歧视，其实是一个很有意思的话题。它的">
+    <meta name="description" content="spark本来已经是一个分布式的计算平台，按说不应该手工去处理并行/异步的事情。但是，最近我实现的一个spark任务，需要一次写出数十个分区的数据，虽然这些分区的数据之间完全独立，但坑爹的是，基础数据平台提供的写数据接口只支持同步的一次写一个分区的数据。这样造成的结果就是，用循环来实现时，虽然我有很多个计算节点，数据（RDD）也分布于各个节点之上，但是我只能等一个分区写完成后，再写下一个分区：因">
   
-  <meta name="description" content="这几天在看刘鹏老师的《计算广告》，其中讲到定价策略时，提到了一个奥特莱斯的选址问题。大意是奥特莱斯一般都会建在距离市区一个小时车程的地方，这样那些不在乎价格的土豪，仍然会选择在市内进行“正价”消费；与此同时，拓展了那些愿意花费时间驱车前往以获取折扣的这部分消费群体。这样，商场的营收是更优的。我一想，这不就是大学微观经济学课上讲到的“价格歧视”么！  
-说到价格歧视，其实是一个很有意思的话题。它的">
+  <meta name="description" content="spark本来已经是一个分布式的计算平台，按说不应该手工去处理并行/异步的事情。但是，最近我实现的一个spark任务，需要一次写出数十个分区的数据，虽然这些分区的数据之间完全独立，但坑爹的是，基础数据平台提供的写数据接口只支持同步的一次写一个分区的数据。这样造成的结果就是，用循环来实现时，虽然我有很多个计算节点，数据（RDD）也分布于各个节点之上，但是我只能等一个分区写完成后，再写下一个分区：因">
 <meta property="og:type" content="article">
-<meta property="og:title" content="价格歧视">
-<meta property="og:url" content="http://blog.guoyb.com/2017/11/02/price-discrimination/index.html">
+<meta property="og:title" content="Spark“并行”写">
+<meta property="og:url" content="http://blog.guoyb.com/2018/04/21/spark-scala-future/index.html">
 <meta property="og:site_name" content="一根笨茄子">
-<meta property="og:description" content="这几天在看刘鹏老师的《计算广告》，其中讲到定价策略时，提到了一个奥特莱斯的选址问题。大意是奥特莱斯一般都会建在距离市区一个小时车程的地方，这样那些不在乎价格的土豪，仍然会选择在市内进行“正价”消费；与此同时，拓展了那些愿意花费时间驱车前往以获取折扣的这部分消费群体。这样，商场的营收是更优的。我一想，这不就是大学微观经济学课上讲到的“价格歧视”么！  
-说到价格歧视，其实是一个很有意思的话题。它的">
+<meta property="og:description" content="spark本来已经是一个分布式的计算平台，按说不应该手工去处理并行/异步的事情。但是，最近我实现的一个spark任务，需要一次写出数十个分区的数据，虽然这些分区的数据之间完全独立，但坑爹的是，基础数据平台提供的写数据接口只支持同步的一次写一个分区的数据。这样造成的结果就是，用循环来实现时，虽然我有很多个计算节点，数据（RDD）也分布于各个节点之上，但是我只能等一个分区写完成后，再写下一个分区：因">
 <meta property="og:image" content="http://guoybblog.qiniudn.com/newqrv2.jpg">
-<meta property="og:updated_time" content="2017-11-03T03:42:21.629Z">
+<meta property="og:updated_time" content="2018-04-21T02:32:01.280Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="价格歧视">
-<meta name="twitter:description" content="这几天在看刘鹏老师的《计算广告》，其中讲到定价策略时，提到了一个奥特莱斯的选址问题。大意是奥特莱斯一般都会建在距离市区一个小时车程的地方，这样那些不在乎价格的土豪，仍然会选择在市内进行“正价”消费；与此同时，拓展了那些愿意花费时间驱车前往以获取折扣的这部分消费群体。这样，商场的营收是更优的。我一想，这不就是大学微观经济学课上讲到的“价格歧视”么！  
-说到价格歧视，其实是一个很有意思的话题。它的">
+<meta name="twitter:title" content="Spark“并行”写">
+<meta name="twitter:description" content="spark本来已经是一个分布式的计算平台，按说不应该手工去处理并行/异步的事情。但是，最近我实现的一个spark任务，需要一次写出数十个分区的数据，虽然这些分区的数据之间完全独立，但坑爹的是，基础数据平台提供的写数据接口只支持同步的一次写一个分区的数据。这样造成的结果就是，用循环来实现时，虽然我有很多个计算节点，数据（RDD）也分布于各个节点之上，但是我只能等一个分区写完成后，再写下一个分区：因">
 <meta name="twitter:image" content="http://guoybblog.qiniudn.com/newqrv2.jpg">
   
   
@@ -78,15 +74,15 @@ var _hmt = _hmt || [];
   <header>
     
       <div class="icon"></div>
-      <a href="/2017/11/02/price-discrimination/">
-  <time datetime="2017-11-01T23:53:26.000Z">
-    2017-11-02
+      <a href="/2018/04/21/spark-scala-future/">
+  <time datetime="2018-04-21T02:20:11.000Z">
+    2018-04-21
   </time>
 </a>
     
     
   
-    <h1 class="title">价格歧视</h1>
+    <h1 class="title">Spark“并行”写</h1>
   
 
   </header>
@@ -94,15 +90,20 @@ var _hmt = _hmt || [];
   <div class="entry">
     
       <hr>
-<p>这几天在看刘鹏老师的《计算广告》，其中讲到定价策略时，提到了一个奥特莱斯的选址问题。大意是奥特莱斯一般都会建在距离市区一个小时车程的地方，这样那些不在乎价格的土豪，仍然会选择在市内进行“正价”消费；与此同时，拓展了那些愿意花费时间驱车前往以获取折扣的这部分消费群体。这样，商场的营收是更优的。我一想，这不就是大学微观经济学课上讲到的“价格歧视”么！  </p>
-<p>说到价格歧视，其实是一个很有意思的话题。它的出发点就是一句话：同一件商品，带给不同人的收益是不一样的。<br><a id="more"></a><br>举一个最简单的例子：《红楼梦》这本书，在京东上的售价可以从20元跨越到100+元。它们的内容都是曹雪芹+高鹗写的那一百多回，包装、印刷上的差异也绝不至于差出几倍的成本。其实，这样做的原因，就是为了择出那些对红楼梦有特别偏好、对红楼梦的价格不敏感的消费者群体。对于普通消费者来说，红楼梦价钱在40元以下才会考虑购买；而对于红楼铁粉来说，可能这个阈值就去到了200元！那么对于定价的人来说，如果统一定价，定高了，就会损失大量的普通读者；定低了呢，红楼铁粉的溢价又赚不到了。于是书商们就各显神通，用“精装”、“仿古线装”等各种成本不高的方式，对消费人群进行划分，从而获得更大的收益。  </p>
-<p>这是一种“向上价格歧视”的定价策略（“歧视土豪”），生活中，更常见的是“向下价格歧视”（“歧视diaosi”）。比如现在很常见的团购，虽然只是设定了<strong>固定菜品套餐</strong>、<strong>需要用手机提前支付下单获得团购券</strong>这些障碍，但是已经足以区分出价格敏感和价格不敏感的客户群体。再比如，去M记吃饭时，经常会有服务员在门口发放优惠券，那为什么麦当劳不直接按照打折后的价格出售餐品呢？这其实也是价格歧视：用“领取优惠券”这一动作，区分出了价格敏感的客户和价格不敏感的客户。  </p>
-<p>这些都是针对不同的客户群体采用的价格歧视策略。另外，还有一种价格歧视，是针对商品数量的。比如，M记的第二杯半价策略：你在买了第一杯饮料的前提下，对于第二杯的购买意愿是有下降的(边际效用递减)，这时如果M记仍然按原价出售第二杯，则很有可能一分钱都赚不到；而第二杯半价的策略，则会成功的扩大销售额，同时，消费者也得到了好处（以更低的价格享受第二杯饮料，长胖不算）。虽然我认为，与其说这是价格歧视，不如说这是“单身狗歧视”^_^  </p>
-<p>现在快双十一了，老婆已经向我抱怨过好几次，现在的双十一活动，红包越来越难抢，活动规则也越来越复杂，感觉智商都不够用了……唉，其实你只是被“歧视”了而已啊。  </p>
+<p>spark本来已经是一个分布式的计算平台，按说不应该手工去处理并行/异步的事情。但是，最近我实现的一个spark任务，需要一次写出数十个分区的数据，虽然这些分区的数据之间完全独立，但坑爹的是，基础数据平台提供的写数据接口只支持<strong>同步</strong>的一次写一个分区的数据。这样造成的结果就是，用循环来实现时，虽然我有很多个计算节点，数据（RDD）也分布于各个节点之上，但是我只能等一个分区写完成后，再写下一个分区：因为“写分区”这个任务的下发是同步阻塞的。<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">partitions</span><br><span class="line">  .map(part =&gt;  writeToDisk(data.filter(part), part))</span><br></pre></td></tr></table></figure><br><a id="more"></a></p>
+<h2 id="引入Future"><a href="#引入Future" class="headerlink" title="引入Future"></a>引入Future</h2><hr>
+<p>这里要感谢scala提供的Future方案。它可以方便的将同步的阻塞操作包装成异步操作并行下发。  </p>
+<p>配合Await.ready操作来等待所有future完成，我们可以将上面的代码改写为：<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">partitions</span><br><span class="line">  .map(part =&gt; <span class="type">Future</span> &#123; writeToDisk(data.filter(data.part == part), part) &#125;)</span><br><span class="line">  .map(f =&gt; <span class="type">Await</span>.ready(f, <span class="type">Duration</span>.<span class="type">Inf</span>))</span><br></pre></td></tr></table></figure><br><br></p>
+<h2 id="避免data重复计算"><a href="#避免data重复计算" class="headerlink" title="避免data重复计算"></a>避免data重复计算</h2><hr>
+<p>在spark中，我们知道使用cache/persist可以避免数据流的重复计算。在这里也是一样，Future之前需要将data用cache/persist打个点。  </p>
+<p>但是这样还！不！够！  </p>
+<p>在这里我们希望发生的事情是data在future之前先计算好（只计算一次），然后异步的分发下去写对应的分区。  </p>
+<p>但是由于spark的惰性计算特性，使用Future之后，多个job并行下发，每个job在执行时data都还没有计算出来，也就没有cache的数据。反应到spark ui上的jobs页面的情况就是，看上去多个job并行执行了，但是cache操作并没有带来tasks skipped。  </p>
+<p>这时，我们需要在future之前，强制把data计算出来并cache住。这里其实只需要调用一些不影响数据的action算子即可，例如data.count()。  </p>
+<p>最终的结果，在使用上面的改进措施之后，我的这个spark任务执行时间缩短了约60%。<br><br></p>
 <hr>
-<p>推荐阅读：  </p>
-<p><a href="http://blog.guoyb.com/2017/03/12/about-house/">高房价在扼杀什么</a><br><a href="http://blog.guoyb.com/2017/11/01/waiting/">待业青年</a></p>
-<p>转载请注明出处： <a href="http://blog.guoyb.com/2017/11/02/price-discrimination/">http://blog.guoyb.com/2017/11/02/price-discrimination/</a>  </p>
+<p>推荐阅读：<br><a href="http://blog.guoyb.com/2018/03/17/double-buffer/">使用双buffer无锁化</a><br><a href="http://blog.guoyb.com/2018/03/31/dont-copy/">不要拷贝</a><br><a href="http://blog.guoyb.com/2018/04/14/git-hooks/">一个新朋友 Git Hooks</a>  </p>
+<p>转载请注明出处： <a href="http://blog.guoyb.com/2018/04/21/spark-scala-future/">http://blog.guoyb.com/2018/04/21/spark-scala-future/</a>  </p>
 <p>欢迎使用微信扫描下方二维码，关注我的微信公众号TechTalking，技术·生活·思考：<br><img src="http://guoybblog.qiniudn.com/newqrv2.jpg" alt="后端技术小黑屋">  </p>
 
     
@@ -111,12 +112,12 @@ var _hmt = _hmt || [];
     
       
   <div class="categories">
-    <a class="categories-link" href="/categories/杂谈/">杂谈</a>
+    <a class="categories-link" href="/categories/技术/">技术</a>
   </div>
 
       
   <div class="tags">
-    <a class="tags-link" href="/tags/杂谈/">杂谈</a>
+    <a class="tags-link" href="/tags/Scala/">Scala</a>, <a class="tags-link" href="/tags/Spark/">Spark</a>
   </div>
 
       
@@ -128,7 +129,7 @@ var _hmt = _hmt || [];
 
 <section id="comment">
   <h1 class="title">评论</h1>
-  <div class="ds-thread" data-thread-key="2017/11/02/price-discrimination/" data-title="价格歧视" data-url="http://blog.guoyb.com/2017/11/02/price-discrimination/"></div>
+  <div class="ds-thread" data-thread-key="2018/04/21/spark-scala-future/" data-title="Spark“并行”写" data-url="http://blog.guoyb.com/2018/04/21/spark-scala-future/"></div>
 </section>
 </div>
   </div>
