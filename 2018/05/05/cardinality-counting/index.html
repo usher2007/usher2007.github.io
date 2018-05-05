@@ -1,0 +1,309 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  
+  <title>Cardinality Counting | 一根笨茄子</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  
+    <meta name="author" content="Yubo Guo">
+  
+  
+    <meta name="description" content="Cardinality Counting，基数计数，可以理解为广义上的UV统计。当你需要计算某维度下的用户个数、商品个数等各种需要去重（unique）的统计量时，就需要用到基数计数技术。  
+考察一个基数计数方法的优劣，主要需要考虑插入速度、计数速度、合并速度以及空间消耗四个方面。  
+假设如下一个应用场景：我们希望获得年龄、性别、地域、种族等多个维度叉乘下的用户数量，并且能够自由选择维度进行聚合">
+  
+  <meta name="description" content="Cardinality Counting，基数计数，可以理解为广义上的UV统计。当你需要计算某维度下的用户个数、商品个数等各种需要去重（unique）的统计量时，就需要用到基数计数技术。  
+考察一个基数计数方法的优劣，主要需要考虑插入速度、计数速度、合并速度以及空间消耗四个方面。  
+假设如下一个应用场景：我们希望获得年龄、性别、地域、种族等多个维度叉乘下的用户数量，并且能够自由选择维度进行聚合">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Cardinality Counting">
+<meta property="og:url" content="http://blog.guoyb.com/2018/05/05/cardinality-counting/index.html">
+<meta property="og:site_name" content="一根笨茄子">
+<meta property="og:description" content="Cardinality Counting，基数计数，可以理解为广义上的UV统计。当你需要计算某维度下的用户个数、商品个数等各种需要去重（unique）的统计量时，就需要用到基数计数技术。  
+考察一个基数计数方法的优劣，主要需要考虑插入速度、计数速度、合并速度以及空间消耗四个方面。  
+假设如下一个应用场景：我们希望获得年龄、性别、地域、种族等多个维度叉乘下的用户数量，并且能够自由选择维度进行聚合">
+<meta property="og:image" content="http://guoybblog.qiniudn.com/newqrv2.jpg">
+<meta property="og:updated_time" content="2018-05-05T00:14:10.261Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Cardinality Counting">
+<meta name="twitter:description" content="Cardinality Counting，基数计数，可以理解为广义上的UV统计。当你需要计算某维度下的用户个数、商品个数等各种需要去重（unique）的统计量时，就需要用到基数计数技术。  
+考察一个基数计数方法的优劣，主要需要考虑插入速度、计数速度、合并速度以及空间消耗四个方面。  
+假设如下一个应用场景：我们希望获得年龄、性别、地域、种族等多个维度叉乘下的用户数量，并且能够自由选择维度进行聚合">
+<meta name="twitter:image" content="http://guoybblog.qiniudn.com/newqrv2.jpg">
+  
+  
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <!--[if lt IE 9]><script src="//cdn.bootcss.com/html5shiv/3.7.0/html5shiv.min.js"></script><![endif]-->
+  
+  
+<script type="text/javascript">
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?996ee0fca2512b4c29f37f60cf6387ca";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-6897127630340076",
+    enable_page_level_ads: true
+  });
+</script>
+
+</head>
+<body>
+  <div class="wrapper">
+    <header id="header">
+  <div class="title">
+    <h1><a href="/">一根笨茄子</a></h1>
+    <p><a href="/"></a></p>
+  </div>
+  <nav class="nav">
+    <ul>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/about">关于我</a></li>
+      
+      
+    </ul>
+    <div class="clearfix"></div>
+  </nav>
+  <div class="clearfix"></div>
+</header>
+    <div class="content"><article class="post">
+  <header>
+    
+      <div class="icon"></div>
+      <a href="/2018/05/05/cardinality-counting/">
+  <time datetime="2018-05-04T23:52:34.000Z">
+    2018-05-05
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title">Cardinality Counting</h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <p>Cardinality Counting，基数计数，可以理解为广义上的UV统计。当你需要计算某维度下的用户个数、商品个数等各种需要去重（unique）的统计量时，就需要用到基数计数技术。  </p>
+<p>考察一个基数计数方法的优劣，主要需要考虑插入速度、计数速度、合并速度以及空间消耗四个方面。  </p>
+<p>假设如下一个应用场景：我们希望获得年龄、性别、地域、种族等多个维度叉乘下的用户数量，并且能够自由选择维度进行聚合并得到相关的用户数量。<br><a id="more"></a></p>
+<h2 id="bitmap"><a href="#bitmap" class="headerlink" title="bitmap"></a>bitmap</h2><p>bitmap是用一个长bit串来存储所有用户的出现情况。  </p>
+<p>插入时可以直接定位到对应的bit[O(1)]，计数只需统计1的个数[O(N)]，多维度聚合时也只需将多个bit串做或操作即可[O(N)]。所以，这里插入速度、计数速度、合并速度均可以接受。  </p>
+<p>但是，bitmap在空间消耗上是不紧凑的：假设我们有1000W用户，那么无论当前维度组合下的实际用户数量有多少（即使只有1个用户），我们都至少需要1000W个bit，即大约1.2MB的空间来存储。这显然是极大的浪费。考虑上面的维度组合，20(年龄区间数）x2（性别）x300（地级市级别）x56（民族）x1.2M=787.5GB，这还是只有四个维度，1000W用户的情况。  </p>
+<p>当然，我们也可以采用分维度单独存储bitmap的形式（维度组合时采用与而非或的操作），但是这也需要空间（20 + 2 + 300 + 56） * 1.2M = 453.6M。实际情况下，维度往往多很多，用户数量也可能更多，并且为了考虑未来用户数量的增长，往往需要更多的bit位数，所以bitmap在空间消耗这一点上是有问题的。<br><br></p>
+<h2 id="b-tree"><a href="#b-tree" class="headerlink" title="b-tree"></a>b-tree</h2><p>我们也可以参考数据库索引的方式，使用b-tree来存储不同维度下的用户信息。  </p>
+<p>b-tree在查找和插入方面均是O(logM)的复杂度，计数为O(M)，空间消耗为O(logM)。注意，这里的M为当前维度组合下的用户数量M，而非上述bitmap中的用户总数量N，一般情况下M&lt;&lt;N。因此b-tree是一个空间紧凑的方法。b-tree在查找插入、计数和空间消耗方面取得了一个比较好的平衡。  </p>
+<p>但是，b-tree不能高效的进行合并操作：合并两个b-tree相当于重建一颗b-tree。所以使用b-tree时，我们无法高效的进行自由维度的聚合操作。<br><br>  </p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><table>
+<thead>
+<tr>
+<th></th>
+<th>查找插入</th>
+<th>计数</th>
+<th>合并</th>
+<th>空间</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>bitmap</td>
+<td>√</td>
+<td>√</td>
+<td>√</td>
+<td>×</td>
+</tr>
+<tr>
+<td>b-tree</td>
+<td>√</td>
+<td>√</td>
+<td>×</td>
+<td>√</td>
+</tr>
+</tbody>
+</table>
+<p>那么，有没有一种方法可以在这四项中都取得优异的表现呢？  </p>
+<p>注意，这里bitmap和b-tree给出的统计值都是精确值。如果在数据量非常大的情况下，我们可以损失一些精度，来换取这四项的优秀表现。这类算法就是基数估计算法。其中最具有代表性的就是LogLog Counting和HyperLogLog Counting算法。后面我会找时间总结一下这类算法。<br><br></p>
+<hr>
+<p>推荐阅读：<br><a href="http://blog.guoyb.com/2018/03/17/double-buffer/">使用双buffer无锁化</a><br><a href="http://blog.guoyb.com/2018/03/31/dont-copy/">不要拷贝</a><br><a href="http://blog.guoyb.com/2018/04/21/spark-scala-future/">Spark“并行”写</a>  </p>
+<p>转载请注明出处： <a href="http://blog.guoyb.com/2018/05/05/cardinality-counting/">http://blog.guoyb.com/2018/05/05/cardinality-counting/</a>  </p>
+<p>欢迎使用微信扫描下方二维码，关注我的微信公众号TechTalking，技术·生活·思考：<br><img src="http://guoybblog.qiniudn.com/newqrv2.jpg" alt="后端技术小黑屋">   </p>
+
+    
+  </div>
+  <footer>
+    
+      
+  <div class="categories">
+    <a class="categories-link" href="/categories/技术/">技术</a>
+  </div>
+
+      
+  <div class="tags">
+    <a class="tags-link" href="/tags/大数据/">大数据</a>
+  </div>
+
+      
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">评论</h1>
+  <div class="ds-thread" data-thread-key="2018/05/05/cardinality-counting/" data-title="Cardinality Counting" data-url="http://blog.guoyb.com/2018/05/05/cardinality-counting/"></div>
+</section>
+</div>
+  </div>
+  
+  <div id="sidebar" class="widgets-right">
+  
+<div class="widget category">
+  <h3 class="title">categories</h3>
+  <ul class="entry">
+  
+    <li><a href="/categories/书单/">书单</a><small>8</small></li>
+  
+    <li><a href="/categories/技术/">技术</a><small>75</small></li>
+  
+    <li><a href="/categories/杂谈/">杂谈</a><small>21</small></li>
+  
+  </ul>
+</div>
+
+
+  
+<div class="widget tag">
+  <h3 class="title">recent_posts</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2018/05/05/cardinality-counting/">Cardinality Counting</a>
+      </li>
+    
+      <li>
+        <a href="/2018/04/21/spark-scala-future/">Spark“并行”写</a>
+      </li>
+    
+      <li>
+        <a href="/2018/04/14/git-hooks/">一个新朋友 Git Hooks</a>
+      </li>
+    
+      <li>
+        <a href="/2018/03/31/dont-copy/">不要拷贝</a>
+      </li>
+    
+      <li>
+        <a href="/2018/03/24/gz-sz-diff/">广深不一样</a>
+      </li>
+    
+  </ul>
+</div>
+
+
+  
+<div class="widget tagcloud">
+  <h3 class="title">tagcloud</h3>
+  <div class="entry">
+    <a href="/tags/C/" style="font-size: 10.91px;">C</a> <a href="/tags/C/" style="font-size: 18.18px;">C++</a> <a href="/tags/C-11/" style="font-size: 17.27px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Git/" style="font-size: 10px;">Git</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 10.91px;">MySQL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Scala/" style="font-size: 11.82px;">Scala</a> <a href="/tags/Spark/" style="font-size: 10.91px;">Spark</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/grpc/" style="font-size: 10.91px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 10.91px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/mutex/" style="font-size: 10px;">mutex</a> <a href="/tags/protobuf/" style="font-size: 11.82px;">protobuf</a> <a href="/tags/redis/" style="font-size: 12.73px;">redis</a> <a href="/tags/regex/" style="font-size: 12.73px;">regex</a> <a href="/tags/rwlock/" style="font-size: 10px;">rwlock</a> <a href="/tags/shell/" style="font-size: 10px;">shell</a> <a href="/tags/skynet/" style="font-size: 14.55px;">skynet</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 15.45px;">书单</a> <a href="/tags/内存优化/" style="font-size: 10px;">内存优化</a> <a href="/tags/大数据/" style="font-size: 10px;">大数据</a> <a href="/tags/学习笔记/" style="font-size: 13.64px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/旅行/" style="font-size: 12.73px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 19.09px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 12.73px;">查证记录</a> <a href="/tags/生活/" style="font-size: 14.55px;">生活</a> <a href="/tags/读书笔记/" style="font-size: 16.36px;">读书笔记</a>
+  </div>
+</div>
+
+
+  
+<div class="widget tag">
+  <h3 class="title">友情链接</h3>
+  <ul class="entry">
+  
+    
+    <li><a href="http://www.linkedin.com/in/yubo-guo-739b0071" target="_blank">LinkedIn</a></li>
+  
+    
+    <li><a href="http://www.tuicool.com/sites/2emeIjb" target="_blank">推酷站点</a></li>
+  
+  </ul>
+</div>
+
+</div>
+  
+  <footer id="footer"><div class="copyright">
+  
+  &copy; 2018 <a href="/">Yubo Guo</a>
+  
+</div>
+<div class="theme-copyright">
+  Theme by <a href="https://github.com/orderedlist" target="_blank">orderedlist</a>
+   | 
+  Redesign by <a href="http://blog.dafengning.com/" target="_blank">Chong Zi</a>
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//lib.sinaapp.com/js/jquery/1.8/jquery.min.js"></script>
+<script src="/js/scale.fix.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"guoyb"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+
+
+<div id="rightfix" style="display:none;">
+
+<a href="#comment" id="gocomm" class="fix_btn" title="提问/评论"><i><i></i></i></a>
+
+
+<a href="javascript:void(0)" id="gotop" class="fix_btn" onclick="gotop();" title="回到顶部"><i></i></a>
+<script>
+  function gotop(){
+    $('html,body').animate({
+        scrollTop : '0px'
+      }, 800);
+  }
+  $(function(){
+    _rightfix = $('#rightfix');
+    $(window).scroll(function(){
+      $sollTop = document.documentElement.scrollTop + document.body.scrollTop;
+      if($sollTop > 350){
+        _rightfix.show();
+      }else{
+        _rightfix.hide();
+      }
+    });
+  });
+</script>
+
+</div>
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+  (function($){
+    $('.fancybox').fancybox();
+  })(jQuery);
+</script>
+
+</body>
+</html>
