@@ -75,6 +75,46 @@ var _hmt = _hmt || [];
   <header>
     
       <div class="icon"></div>
+      <a href="/2018/05/19/cardinality-estimation/">
+  <time datetime="2018-05-19T04:13:28.000Z">
+    2018-05-19
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title"><a href="/2018/05/19/cardinality-estimation/">Cardinality Estimation</a></h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>在之前的文章，Cardinality Counting中，我们介绍的方法，都是可以精确统计基数的。但是，在现在动辄TB、PB级数据量的情况下，无论是BTree还是bitmap，都有很多缺陷，并且精确性这一优势也被海量数据的前提所抵消（想象一下，统计uv时，100000000和100000001有区别吗）。  </p>
+<p>相反的，我们可以采用一些基于概率的方法，在误差可控的前提下，对基数做出合理的估计。  </p>
+<p>目前，最常用的基数估计方法，是HyperLogLog（HLL）。<br>
+    
+  </div>
+  <footer class="end-sep">
+    
+      
+        <div class="alignleft">
+          <a href="/2018/05/19/cardinality-estimation/#more" class="more-link">Read More</a>
+        </div>
+      
+      
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+
+
+  
+    <article class="post">
+  <header>
+    
+      <div class="icon"></div>
       <a href="/2018/05/05/cardinality-counting/">
   <time datetime="2018-05-04T23:52:34.000Z">
     2018-05-05
@@ -90,7 +130,8 @@ var _hmt = _hmt || [];
   
   <div class="entry">
     
-      <p>Cardinality Counting，基数计数，可以理解为广义上的UV统计。当你需要计算某维度下的用户个数、商品个数等各种需要去重（unique）的统计量时，就需要用到基数计数技术。  </p>
+      <hr>
+<p>Cardinality Counting，基数计数，可以理解为广义上的UV统计。当你需要计算某维度下的用户个数、商品个数等各种需要去重（unique）的统计量时，就需要用到基数计数技术。  </p>
 <p>考察一个基数计数方法的优劣，主要需要考虑插入速度、计数速度、合并速度以及空间消耗四个方面。  </p>
 <p>假设如下一个应用场景：我们希望获得年龄、性别、地域、种族等多个维度叉乘下的用户数量，并且能够自由选择维度进行聚合并得到相关的用户数量。<br>
     
@@ -99,7 +140,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2018/05/05/cardinality-counting/#more" class="more-link">阅读全文</a>
+          <a href="/2018/05/05/cardinality-counting/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -137,7 +178,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2018/04/21/spark-scala-future/#more" class="more-link">阅读全文</a>
+          <a href="/2018/04/21/spark-scala-future/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -177,7 +218,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2018/04/14/git-hooks/#more" class="more-link">阅读全文</a>
+          <a href="/2018/04/14/git-hooks/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -219,7 +260,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2018/03/31/dont-copy/#more" class="more-link">阅读全文</a>
+          <a href="/2018/03/31/dont-copy/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -259,7 +300,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2018/03/24/gz-sz-diff/#more" class="more-link">阅读全文</a>
+          <a href="/2018/03/24/gz-sz-diff/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -301,7 +342,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2018/03/17/double-buffer/#more" class="more-link">阅读全文</a>
+          <a href="/2018/03/17/double-buffer/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -340,7 +381,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2018/03/10/pb-set-allocated/#more" class="more-link">阅读全文</a>
+          <a href="/2018/03/10/pb-set-allocated/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -377,7 +418,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2018/03/03/hongbao-day/#more" class="more-link">阅读全文</a>
+          <a href="/2018/03/03/hongbao-day/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -416,46 +457,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2018/02/22/thinking-set/#more" class="more-link">阅读全文</a>
-        </div>
-      
-      
-    
-    <div class="clearfix"></div>
-  </footer>
-</article>
-
-
-  
-    <article class="post">
-  <header>
-    
-      <div class="icon"></div>
-      <a href="/2018/02/11/rwlock/">
-  <time datetime="2018-02-11T14:32:50.000Z">
-    2018-02-11
-  </time>
-</a>
-    
-    
-  
-    <h1 class="title"><a href="/2018/02/11/rwlock/">读写锁的性能一定更好吗</a></h1>
-  
-
-  </header>
-  
-  <div class="entry">
-    
-      <hr>
-<p>最近在写代码的时候，处理多线程间数据同步时，用到了读写锁rwlock。在多线程同步中，更常用到的是互斥量mutex，那rwlock和mutex有什么不同和优劣呢？  </p>
-<p>首先，一个常见的误区是，认为在读多写少的情况下，rwlock的性能一定要比mutex高。实际上，rwlock由于区分读锁和写锁，每次加锁时都要做额外的逻辑处理（如区分读锁和写锁、避免写锁“饥饿”等等），单纯从性能上来讲是要低于更为简单的mutex的；但是，rwlock由于读锁可重入，所以实际上是提升了并行性，在读多写少的情况下可以降低时延。<br>
-    
-  </div>
-  <footer class="end-sep">
-    
-      
-        <div class="alignleft">
-          <a href="/2018/02/11/rwlock/#more" class="more-link">阅读全文</a>
+          <a href="/2018/02/22/thinking-set/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -470,7 +472,7 @@ var _hmt = _hmt || [];
   <nav id="pagination">
   
   
-    <a href="/page/2/" class="next">下一页</a>
+    <a href="/page/2/" class="next">Next</a>
   
   <div class="clearfix"></div>
 </nav>
@@ -487,7 +489,7 @@ var _hmt = _hmt || [];
   
     <li><a href="/categories/书单/">书单</a><small>8</small></li>
   
-    <li><a href="/categories/技术/">技术</a><small>75</small></li>
+    <li><a href="/categories/技术/">技术</a><small>76</small></li>
   
     <li><a href="/categories/杂谈/">杂谈</a><small>21</small></li>
   
@@ -499,6 +501,10 @@ var _hmt = _hmt || [];
 <div class="widget tag">
   <h3 class="title">recent_posts</h3>
   <ul class="entry">
+    
+      <li>
+        <a href="/2018/05/19/cardinality-estimation/">Cardinality Estimation</a>
+      </li>
     
       <li>
         <a href="/2018/05/05/cardinality-counting/">Cardinality Counting</a>
@@ -516,10 +522,6 @@ var _hmt = _hmt || [];
         <a href="/2018/03/31/dont-copy/">不要拷贝</a>
       </li>
     
-      <li>
-        <a href="/2018/03/24/gz-sz-diff/">广深不一样</a>
-      </li>
-    
   </ul>
 </div>
 
@@ -528,7 +530,7 @@ var _hmt = _hmt || [];
 <div class="widget tagcloud">
   <h3 class="title">tagcloud</h3>
   <div class="entry">
-    <a href="/tags/C/" style="font-size: 10.91px;">C</a> <a href="/tags/C/" style="font-size: 18.18px;">C++</a> <a href="/tags/C-11/" style="font-size: 17.27px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Git/" style="font-size: 10px;">Git</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 10.91px;">MySQL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Scala/" style="font-size: 11.82px;">Scala</a> <a href="/tags/Spark/" style="font-size: 10.91px;">Spark</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/grpc/" style="font-size: 10.91px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 10.91px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/mutex/" style="font-size: 10px;">mutex</a> <a href="/tags/protobuf/" style="font-size: 11.82px;">protobuf</a> <a href="/tags/redis/" style="font-size: 12.73px;">redis</a> <a href="/tags/regex/" style="font-size: 12.73px;">regex</a> <a href="/tags/rwlock/" style="font-size: 10px;">rwlock</a> <a href="/tags/shell/" style="font-size: 10px;">shell</a> <a href="/tags/skynet/" style="font-size: 14.55px;">skynet</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 15.45px;">书单</a> <a href="/tags/内存优化/" style="font-size: 10px;">内存优化</a> <a href="/tags/大数据/" style="font-size: 10px;">大数据</a> <a href="/tags/学习笔记/" style="font-size: 13.64px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/旅行/" style="font-size: 12.73px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 19.09px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 12.73px;">查证记录</a> <a href="/tags/生活/" style="font-size: 14.55px;">生活</a> <a href="/tags/读书笔记/" style="font-size: 16.36px;">读书笔记</a>
+    <a href="/tags/C/" style="font-size: 10.91px;">C</a> <a href="/tags/C/" style="font-size: 18.18px;">C++</a> <a href="/tags/C-11/" style="font-size: 17.27px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Git/" style="font-size: 10px;">Git</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 10.91px;">MySQL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Scala/" style="font-size: 11.82px;">Scala</a> <a href="/tags/Spark/" style="font-size: 10.91px;">Spark</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/grpc/" style="font-size: 10.91px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 10.91px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/mutex/" style="font-size: 10px;">mutex</a> <a href="/tags/protobuf/" style="font-size: 11.82px;">protobuf</a> <a href="/tags/redis/" style="font-size: 12.73px;">redis</a> <a href="/tags/regex/" style="font-size: 12.73px;">regex</a> <a href="/tags/rwlock/" style="font-size: 10px;">rwlock</a> <a href="/tags/shell/" style="font-size: 10px;">shell</a> <a href="/tags/skynet/" style="font-size: 14.55px;">skynet</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 15.45px;">书单</a> <a href="/tags/内存优化/" style="font-size: 10px;">内存优化</a> <a href="/tags/大数据/" style="font-size: 10.91px;">大数据</a> <a href="/tags/学习笔记/" style="font-size: 13.64px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/旅行/" style="font-size: 12.73px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 19.09px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 12.73px;">查证记录</a> <a href="/tags/生活/" style="font-size: 14.55px;">生活</a> <a href="/tags/读书笔记/" style="font-size: 16.36px;">读书笔记</a>
   </div>
 </div>
 

@@ -4,44 +4,30 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="chrome=1">
   
-  <title>《Python源码剖析》读书笔记-1 准备工作和对象初探 | 一根笨茄子</title>
+  <title>Cardinality Estimation | 一根笨茄子</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   
     <meta name="author" content="Yubo Guo">
   
   
-    <meta name="description" content="第0章 准备工作
-在更改int_print函数时，会报错missing ‘;’ before ‘type’ ，原因是c的变量声明必须位于函数的最上方。（与C++不同）
-关于PyObject_GC_New,其实是个宏，而不是函数。
-1#define PyObject_GC_New(type, typeobj) ( (type *) _PyObject_GC_New(typeobj) )
-
-其中，_">
+    <meta name="description" content="在之前的文章，Cardinality Counting中，我们介绍的方法，都是可以精确统计基数的。但是，在现在动辄TB、PB级数据量的情况下，无论是BTree还是bitmap，都有很多缺陷，并且精确性这一优势也被海量数据的前提所抵消（想象一下，统计uv时，100000000和100000001有区别吗）。  
+相反的，我们可以采用一些基于概率的方法，在误差可控的前提下，对基数做出合理的估计。">
   
-  <meta name="description" content="第0章 准备工作
-在更改int_print函数时，会报错missing ‘;’ before ‘type’ ，原因是c的变量声明必须位于函数的最上方。（与C++不同）
-关于PyObject_GC_New,其实是个宏，而不是函数。
-1#define PyObject_GC_New(type, typeobj) ( (type *) _PyObject_GC_New(typeobj) )
-
-其中，_">
+  <meta name="description" content="在之前的文章，Cardinality Counting中，我们介绍的方法，都是可以精确统计基数的。但是，在现在动辄TB、PB级数据量的情况下，无论是BTree还是bitmap，都有很多缺陷，并且精确性这一优势也被海量数据的前提所抵消（想象一下，统计uv时，100000000和100000001有区别吗）。  
+相反的，我们可以采用一些基于概率的方法，在误差可控的前提下，对基数做出合理的估计。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="《Python源码剖析》读书笔记-1 准备工作和对象初探">
-<meta property="og:url" content="http://blog.guoyb.com/2014/03/18/python-source-1/index.html">
+<meta property="og:title" content="Cardinality Estimation">
+<meta property="og:url" content="http://blog.guoyb.com/2018/05/19/cardinality-estimation/index.html">
 <meta property="og:site_name" content="一根笨茄子">
-<meta property="og:description" content="第0章 准备工作
-在更改int_print函数时，会报错missing ‘;’ before ‘type’ ，原因是c的变量声明必须位于函数的最上方。（与C++不同）
-关于PyObject_GC_New,其实是个宏，而不是函数。
-1#define PyObject_GC_New(type, typeobj) ( (type *) _PyObject_GC_New(typeobj) )
-
-其中，_">
-<meta property="og:updated_time" content="2017-11-03T03:45:16.940Z">
+<meta property="og:description" content="在之前的文章，Cardinality Counting中，我们介绍的方法，都是可以精确统计基数的。但是，在现在动辄TB、PB级数据量的情况下，无论是BTree还是bitmap，都有很多缺陷，并且精确性这一优势也被海量数据的前提所抵消（想象一下，统计uv时，100000000和100000001有区别吗）。  
+相反的，我们可以采用一些基于概率的方法，在误差可控的前提下，对基数做出合理的估计。">
+<meta property="og:image" content="http://guoybblog.qiniudn.com/newqrv2.jpg">
+<meta property="og:updated_time" content="2018-05-19T04:15:59.701Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="《Python源码剖析》读书笔记-1 准备工作和对象初探">
-<meta name="twitter:description" content="第0章 准备工作
-在更改int_print函数时，会报错missing ‘;’ before ‘type’ ，原因是c的变量声明必须位于函数的最上方。（与C++不同）
-关于PyObject_GC_New,其实是个宏，而不是函数。
-1#define PyObject_GC_New(type, typeobj) ( (type *) _PyObject_GC_New(typeobj) )
-
-其中，_">
+<meta name="twitter:title" content="Cardinality Estimation">
+<meta name="twitter:description" content="在之前的文章，Cardinality Counting中，我们介绍的方法，都是可以精确统计基数的。但是，在现在动辄TB、PB级数据量的情况下，无论是BTree还是bitmap，都有很多缺陷，并且精确性这一优势也被海量数据的前提所抵消（想象一下，统计uv时，100000000和100000001有区别吗）。  
+相反的，我们可以采用一些基于概率的方法，在误差可控的前提下，对基数做出合理的估计。">
+<meta name="twitter:image" content="http://guoybblog.qiniudn.com/newqrv2.jpg">
   
   
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
@@ -92,15 +78,15 @@ var _hmt = _hmt || [];
   <header>
     
       <div class="icon"></div>
-      <a href="/2014/03/18/python-source-1/">
-  <time datetime="2014-03-18T05:48:49.000Z">
-    2014-03-18
+      <a href="/2018/05/19/cardinality-estimation/">
+  <time datetime="2018-05-19T04:13:28.000Z">
+    2018-05-19
   </time>
 </a>
     
     
   
-    <h1 class="title">《Python源码剖析》读书笔记-1 准备工作和对象初探</h1>
+    <h1 class="title">Cardinality Estimation</h1>
   
 
   </header>
@@ -108,44 +94,40 @@ var _hmt = _hmt || [];
   <div class="entry">
     
       <hr>
-<h2 id="第0章-准备工作"><a href="#第0章-准备工作" class="headerlink" title="第0章 准备工作"></a>第0章 准备工作</h2><ul>
-<li>在更改int_print函数时，会报错missing ‘;’ before ‘type’ ，原因是c的变量声明必须位于函数的最上方。（与C++不同）</li>
-<li><p>关于PyObject_GC_New,其实是个宏，而不是函数。</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> PyObject_GC_New(type, typeobj) ( (type *) _PyObject_GC_New(typeobj) )</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li><p>其中，_PyObject_GC_New是个函数， 根据typeobj（这是个结构体），返回一段大小的内存。封装成PyObject的指针。</p>
-<a id="more"></a>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">PyObject *_PyObject_GC_New(PyTypeObject *tp)</span><br><span class="line">&#123;</span><br><span class="line"> 	PyObject *op = _PyObject_GC_Malloc(_PyObject_SIZE(tp));</span><br><span class="line">   	<span class="keyword">if</span> (op != <span class="literal">NULL</span>)</span><br><span class="line">   	    op = PyObject_INIT(op, tp);</span><br><span class="line">   	return op;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>这里面，_PyObject_GC_Malloc是对malloc的一个比较深的封装，里面做了异常处理、GC相关的初始化等内容（还没细看内存管理相关内容）</p>
-</li>
-<li><p>PyObject_GC_New按照如下方式使用:</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PyObject* intObj = PyObject_GC_New(PyObject, &amp;PyInt_Type)</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>其中，PyObject是返回类型，PyInt_Type是python启动时静态分配的变量，代表int类型。他的类型是_typeobject，是最复杂的类型之一。</p>
-</li>
-</ul>
-</li>
-</ul>
+<p>在之前的文章，Cardinality Counting中，我们介绍的方法，都是可以精确统计基数的。但是，在现在动辄TB、PB级数据量的情况下，无论是BTree还是bitmap，都有很多缺陷，并且精确性这一优势也被海量数据的前提所抵消（想象一下，统计uv时，100000000和100000001有区别吗）。  </p>
+<p>相反的，我们可以采用一些基于概率的方法，在误差可控的前提下，对基数做出合理的估计。  </p>
+<p>目前，最常用的基数估计方法，是HyperLogLog（HLL）。<br><a id="more"></a></p>
+<h2 id="算法思想"><a href="#算法思想" class="headerlink" title="算法思想"></a>算法思想</h2><p>HLL算法的思想其实是基于LogLog Counting（LLC），论文详见2003年的《Loglog Counting of Large Cardinalities》。下面简单介绍一下其基本思想。  </p>
+<p>首先，我们对每一个元素用适当的哈希算法进行哈希（结果均匀，碰撞可以忽略不计）得到一个二进制01序列。对每一个元素，统计其由低到高，第一个出现1的bit位置，记为m。遍历所有的元素，得到m的最大值M，则可以用2^M来估计基数n的大小。  </p>
+<p>直观上讲，如果一个集合中元素的个数越多，则其中元素哈希后得到的01序列，第一个1出现的位置的最大值M也会越大，所以用2^M来估计n似乎是合理的。  </p>
+<p>但是，为什么是2^M，而不是2xM或者3^M呢？  </p>
+<h2 id="概率分析"><a href="#概率分析" class="headerlink" title="概率分析"></a>概率分析</h2><p>这其中，有一些概率论方面的推理：  </p>
+<p>由于哈希算法的良好特性，则每一个元素哈希后的01序列都可以看做一次不断抛硬币的过程，正面为1，反面为0。不断抛硬币直到得到一个正面的过程，就是一个伯努利过程。  </p>
+<p>那么考虑如下两个问题：  </p>
+<pre><code>1. 进行n次伯努利过程，抛硬币的次数均不大于k的概率
+2. 进行n次伯努利过程，至少有一个抛硬币次数等于k的概率
+</code></pre><p>分析过程如下：  </p>
+<pre><code>1. 针对一次伯努利过程，
+    p(X&lt;=k) = 1 - p(X&gt;k)，p(n&gt;k)表示前k次的结果都是反面，
+所以
+    p(X&lt;=k) = 1 - p(X&gt;k) = 1 - (1/2)^k
+那么对于n次伯努利过程，第一个问题的概率就是
+    pn(X&lt;=k) = (1-(1/2)^k)^n
+2. 概率论教导我们，“至少”=1-“都不”。
+    pn&apos;(X==k) = 1 - pn(X!=k) = 1-(1-P(X==k))^n
+    = 1 - (1-(1/2)^k)^n
+</code></pre><p>当n&lt;&lt;2^k时，pn’(X==k)≈0。 </p>
+<p>当n&gt;&gt;2^k时，pn(X&lt;=k)≈0。</p>
+<p>如果我们取k为这n次伯努利过程中抛掷硬币次数的最大值M，那么我们将发现，理应，pn’(X==M) &gt;&gt; 0且pn(X&lt;=M) &gt;&gt; 0。所以n&lt;<2^m和n>&gt;2^M都将不成立。那么，用2^M作为n的一个粗略估计就是恰当。  </2^m和n></p>
+<p>当然，为了减少偶然因素的影响，LLC还使用了分桶平均的策略；另外，为了实现无偏的估计，还是用了偏差修正系数。不过这些都不影响其最基础的思想来源于上面的伯努利过程。  </p>
+<h2 id="LLC与HLL"><a href="#LLC与HLL" class="headerlink" title="LLC与HLL"></a>LLC与HLL</h2><p>LLC的空间复杂度仅有O(log（logNmax))，并且非常易于合并（分桶比较记录值得大小，去max即可）。</p>
+<p>HLL在LLC的基础上做了进一步的改进，使得其估计误差更小更稳定。因此，在海量数据统计领域，HLL获得了广泛的应用。  </p>
+<p>目前，redis中内置了HLL的实现（PFADD, PFCOUNT, PFMERGE），用12K内存，即可统计接近2^64个不同元素的基数，可以说是非常强大了。此外，postgresql也提供了扩展插件用于支持HLL。</p>
+<p><br></p>
 <hr>
-<p>##第1章 Python对象初探</p>
-<ul>
-<li>_typeobject(也就是PyTypeObject)中定义了三族函数，tp_as_number, tp_as_sequence, tp_as_mapping，分别定义了该类型作为数字、序列和字典时的行为。例如，tp_as_number中就定义了nb_add, nb_subtract等。</li>
-<li>类型的类型。python C中根据PyObject的定义，每个对象最开头都有一个整数表示引用计数；一个PyTypeObject对象表示对象的类型；而PyTypeObject的实例，也是一个对象，其开头也有一个PyTypeObject表示其类型。那么这个类型对象就是PyType_Type，这是一个静态定义的PyTypeObject的实例，在typeobject.c中定义。</li>
-<li>一个int的定义过程：<ul>
-<li>通过PyObject_New(PyObject, &amp;PyInt_Type)得到一个PyObject,引用计数置1，而类型信息用PyInt_Type来赋予。</li>
-<li>PyInt_Type是一个静态定义的PyTypeObject，其引用计数为1，类型信息定义为PyType_Type。</li>
-<li>PyType_Type也是一个静态定义PyTypeObject, 其引用计数为1， 类型信息也定义为PyType_Type。</li>
-</ul>
-</li>
-<li><p>多态性的实现。每一个对象都由PyObject*指向，而每一个PyObject对象的前两个元素都是一个引用计数和一个PyTypeObject的指针。在PyTypeObject结构体中，保存了许多与类型相关的函数指针（tp_xxx)，由此实现多态。例如：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> Print（PyObject* obj)</span><br><span class="line">&#123;</span><br><span class="line">    obj-&gt;ob_type-&gt;tp_print(obj);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<ul>
-<li>如果obj是一个整型，那么其ob_type指向静态定义的PyInt_Type，其中的tp_print函数指针指向的函数将实现Int类型的print方法；</li>
-<li>如果obj是一个字符串，那么其ob_type指向静态定义的PyString_Type，其中的tp_print函数指针指向的函数将实现String类型的print方法。</li>
-</ul>
-</li>
-</ul>
+<p>推荐阅读：<br><a href="http://blog.guoyb.com/2018/03/17/double-buffer/">使用双buffer无锁化</a><br><a href="http://blog.guoyb.com/2018/05/05/cardinality-counting/">Cardinality Counting</a><br><a href="http://blog.guoyb.com/2018/04/21/spark-scala-future/">Spark“并行”写</a>  </p>
+<p>转载请注明出处： <a href="http://blog.guoyb.com/2018/05/19/cardinality-estimation/">http://blog.guoyb.com/2018/05/19/cardinality-estimation/</a>  </p>
+<p>欢迎使用微信扫描下方二维码，关注我的微信公众号TechTalking，技术·生活·思考：<br><img src="http://guoybblog.qiniudn.com/newqrv2.jpg" alt="后端技术小黑屋">   </p>
 
     
   </div>
@@ -158,7 +140,7 @@ var _hmt = _hmt || [];
 
       
   <div class="tags">
-    <a class="tags-link" href="/tags/Python/">Python</a>, <a class="tags-link" href="/tags/读书笔记/">读书笔记</a>
+    <a class="tags-link" href="/tags/大数据/">大数据</a>
   </div>
 
       
@@ -170,7 +152,7 @@ var _hmt = _hmt || [];
 
 <section id="comment">
   <h1 class="title">Comments</h1>
-  <div class="ds-thread" data-thread-key="2014/03/18/python-source-1/" data-title="《Python源码剖析》读书笔记-1 准备工作和对象初探" data-url="http://blog.guoyb.com/2014/03/18/python-source-1/"></div>
+  <div class="ds-thread" data-thread-key="2018/05/19/cardinality-estimation/" data-title="Cardinality Estimation" data-url="http://blog.guoyb.com/2018/05/19/cardinality-estimation/"></div>
 </section>
 </div>
   </div>
