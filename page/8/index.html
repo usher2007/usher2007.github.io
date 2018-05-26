@@ -75,6 +75,60 @@ var _hmt = _hmt || [];
   <header>
     
       <div class="icon"></div>
+      <a href="/2016/07/21/learn-redis-basic-commands/">
+  <time datetime="2016-07-21T00:06:06.000Z">
+    2016-07-21
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title"><a href="/2016/07/21/learn-redis-basic-commands/">Redis学习笔记1-基础命令及数据结构</a></h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>Redis是一个内存中的数据存储系统，可用作数据库、缓存或消息中间件等。  </p>
+<p>学习笔记的第1部分记录Redis的基础命令及数据结构。  </p>
+<hr>
+<h2 id="启动Redis"><a href="#启动Redis" class="headerlink" title="启动Redis"></a>启动Redis</h2><p>redis-server –port 6379  </p>
+<p>配置自动启动脚本、配置文件等：  </p>
+<ul>
+<li>sudo cp utils/redis_init_script /etc/init.d/</li>
+<li>sudo mv /etc/init.d/redis_init_script /etc/init.d/redis_6379</li>
+<li>sudo mkdir /etc/redis</li>
+<li>sudo mkdir -p /var/redis/6379</li>
+<li>sudo cp redis.conf /etc/redis/6379.conf</li>
+<li>sudo vim /etc/redis//6379.conf  : daemonize yes；pidfile /var/run/redis_6379.pid；port 6379；dir /var/redis/6379</li>
+</ul>
+<p>命令行客户端：  </p>
+<p>redis-cli -h 127.0.0.1 -p 6379  </p>
+<p>简单测试Redis是否启动：  </p>
+<p>redis-cli -h 127.0.0.1 -p 6379 PING             #PONG<br>
+    
+  </div>
+  <footer class="end-sep">
+    
+      
+        <div class="alignleft">
+          <a href="/2016/07/21/learn-redis-basic-commands/#more" class="more-link">Read More</a>
+        </div>
+      
+      
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+
+
+  
+    <article class="post">
+  <header>
+    
+      <div class="icon"></div>
       <a href="/2016/07/17/python-vim/">
   <time datetime="2016-07-17T01:10:24.000Z">
     2016-07-17
@@ -463,47 +517,6 @@ var _hmt = _hmt || [];
 
 
   
-    <article class="post">
-  <header>
-    
-      <div class="icon"></div>
-      <a href="/2016/05/29/echo-server-2/">
-  <time datetime="2016-05-29T07:47:42.000Z">
-    2016-05-29
-  </time>
-</a>
-    
-    
-  
-    <h1 class="title"><a href="/2016/05/29/echo-server-2/">echoserver的几种实现-2(libuv)</a></h1>
-  
-
-  </header>
-  
-  <div class="entry">
-    
-      <hr>
-<p>在<a href="http://blog.guoyb.com/2016/05/22/echo-server/">echoserver的几种实现-1</a>中，通过socket、select、epoll几种方式实现了echoserver，了解了select和epoll模型的优劣。接下来，我将通过libuv实现另一个echoserver，学习libuv的使用。libuv的源码在<a href="https://github.com/libuv/libuv">这里</a>，一个比较好的教程在<a href="http://nikhilm.github.io/uvbook/">这里</a>。<br>libuv是node.js实现时所用到的事件库，可以通过注册事件回调的方式实现异步处理系统中的IO事件。  </p>
-<hr>
-<p>使用libuv，一般都会用到一个uv_loop_t的数据结构，它表示了程序中的主循环，保存了需要处理的事件、内部使用的文件描述符、当前的状态等信息。一般的，直接使用libuv的默认uv_loop_t结构：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">uv_loop_t</span> *loop;</span><br><span class="line">loop = uv_default_loop();</span><br></pre></td></tr></table></figure><br>uv_default_loop使用了一个简单的单例实现。如果必要的话，初始化一个全局的uv_loop_t结构体；将此结构体的指针返回。  </p>
-<hr>
-    
-  </div>
-  <footer class="end-sep">
-    
-      
-        <div class="alignleft">
-          <a href="/2016/05/29/echo-server-2/#more" class="more-link">Read More</a>
-        </div>
-      
-      
-    
-    <div class="clearfix"></div>
-  </footer>
-</article>
-
-
-  
 
   <nav id="pagination">
   
@@ -527,7 +540,7 @@ var _hmt = _hmt || [];
   
     <li><a href="/categories/书单/">书单</a><small>8</small></li>
   
-    <li><a href="/categories/技术/">技术</a><small>76</small></li>
+    <li><a href="/categories/技术/">技术</a><small>77</small></li>
   
     <li><a href="/categories/杂谈/">杂谈</a><small>21</small></li>
   
@@ -539,6 +552,10 @@ var _hmt = _hmt || [];
 <div class="widget tag">
   <h3 class="title">recent_posts</h3>
   <ul class="entry">
+    
+      <li>
+        <a href="/2018/05/26/block-chain/">区块链/比特币科普八问</a>
+      </li>
     
       <li>
         <a href="/2018/05/19/cardinality-estimation/">Cardinality Estimation</a>
@@ -556,10 +573,6 @@ var _hmt = _hmt || [];
         <a href="/2018/04/14/git-hooks/">一个新朋友 Git Hooks</a>
       </li>
     
-      <li>
-        <a href="/2018/03/31/dont-copy/">不要拷贝</a>
-      </li>
-    
   </ul>
 </div>
 
@@ -568,7 +581,7 @@ var _hmt = _hmt || [];
 <div class="widget tagcloud">
   <h3 class="title">tagcloud</h3>
   <div class="entry">
-    <a href="/tags/C/" style="font-size: 10.91px;">C</a> <a href="/tags/C/" style="font-size: 18.18px;">C++</a> <a href="/tags/C-11/" style="font-size: 17.27px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Git/" style="font-size: 10px;">Git</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 10.91px;">MySQL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Scala/" style="font-size: 11.82px;">Scala</a> <a href="/tags/Spark/" style="font-size: 10.91px;">Spark</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/grpc/" style="font-size: 10.91px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 10.91px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/mutex/" style="font-size: 10px;">mutex</a> <a href="/tags/protobuf/" style="font-size: 11.82px;">protobuf</a> <a href="/tags/redis/" style="font-size: 12.73px;">redis</a> <a href="/tags/regex/" style="font-size: 12.73px;">regex</a> <a href="/tags/rwlock/" style="font-size: 10px;">rwlock</a> <a href="/tags/shell/" style="font-size: 10px;">shell</a> <a href="/tags/skynet/" style="font-size: 14.55px;">skynet</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 15.45px;">书单</a> <a href="/tags/内存优化/" style="font-size: 10px;">内存优化</a> <a href="/tags/大数据/" style="font-size: 10.91px;">大数据</a> <a href="/tags/学习笔记/" style="font-size: 13.64px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/旅行/" style="font-size: 12.73px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 19.09px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 12.73px;">查证记录</a> <a href="/tags/生活/" style="font-size: 14.55px;">生活</a> <a href="/tags/读书笔记/" style="font-size: 16.36px;">读书笔记</a>
+    <a href="/tags/C/" style="font-size: 10.91px;">C</a> <a href="/tags/C/" style="font-size: 18.18px;">C++</a> <a href="/tags/C-11/" style="font-size: 17.27px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Git/" style="font-size: 10px;">Git</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 10.91px;">MySQL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Scala/" style="font-size: 11.82px;">Scala</a> <a href="/tags/Spark/" style="font-size: 10.91px;">Spark</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/grpc/" style="font-size: 10.91px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 10.91px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/mutex/" style="font-size: 10px;">mutex</a> <a href="/tags/protobuf/" style="font-size: 11.82px;">protobuf</a> <a href="/tags/redis/" style="font-size: 12.73px;">redis</a> <a href="/tags/regex/" style="font-size: 12.73px;">regex</a> <a href="/tags/rwlock/" style="font-size: 10px;">rwlock</a> <a href="/tags/shell/" style="font-size: 10px;">shell</a> <a href="/tags/skynet/" style="font-size: 14.55px;">skynet</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 15.45px;">书单</a> <a href="/tags/内存优化/" style="font-size: 10px;">内存优化</a> <a href="/tags/大数据/" style="font-size: 11.82px;">大数据</a> <a href="/tags/学习笔记/" style="font-size: 13.64px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/旅行/" style="font-size: 12.73px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 19.09px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 12.73px;">查证记录</a> <a href="/tags/生活/" style="font-size: 14.55px;">生活</a> <a href="/tags/读书笔记/" style="font-size: 16.36px;">读书笔记</a>
   </div>
 </div>
 
