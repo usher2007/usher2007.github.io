@@ -4,21 +4,31 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="chrome=1">
   
-  <title>Tag: Scala | 一根笨茄子</title>
+  <title>Vim中的查找替换 | 一根笨茄子</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   
     <meta name="author" content="Yubo Guo">
   
   
-  <meta name="description">
-<meta property="og:type" content="website">
-<meta property="og:title" content="一根笨茄子">
-<meta property="og:url" content="http://blog.guoyb.com/tags/Scala/index.html">
+    <meta name="description" content="前两天同事在群里发了个通知，大致意思是大家做文案时不要用“最”，否则会违反广告法带来罚单。  
+我皮了一下，回了个“%s/最/第二/g”。">
+  
+  <meta name="description" content="前两天同事在群里发了个通知，大致意思是大家做文案时不要用“最”，否则会违反广告法带来罚单。  
+我皮了一下，回了个“%s/最/第二/g”。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Vim中的查找替换">
+<meta property="og:url" content="http://blog.guoyb.com/2018/06/09/vim-replace/index.html">
 <meta property="og:site_name" content="一根笨茄子">
-<meta property="og:description">
+<meta property="og:description" content="前两天同事在群里发了个通知，大致意思是大家做文案时不要用“最”，否则会违反广告法带来罚单。  
+我皮了一下，回了个“%s/最/第二/g”。">
+<meta property="og:image" content="http://guoybblog.qiniudn.com/%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE.png">
+<meta property="og:image" content="http://guoybblog.qiniudn.com/newqrv2.jpg">
+<meta property="og:updated_time" content="2018-06-09T01:31:19.718Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="一根笨茄子">
-<meta name="twitter:description">
+<meta name="twitter:title" content="Vim中的查找替换">
+<meta name="twitter:description" content="前两天同事在群里发了个通知，大致意思是大家做文案时不要用“最”，否则会违反广告法带来罚单。  
+我皮了一下，回了个“%s/最/第二/g”。">
+<meta name="twitter:image" content="http://guoybblog.qiniudn.com/%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE.png">
   
   
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
@@ -65,90 +75,90 @@ var _hmt = _hmt || [];
   </nav>
   <div class="clearfix"></div>
 </header>
-    <div class="content">
-
-
-<h2 class="archives-title tag"><span>Scala</span></h2>
-
-
-
-  
-  
-    
-    
-      
-      
-      <section class="archives-wrapper">
-        
-        <div class="archives">
-    
-    <article class="post">
+    <div class="content"><article class="post">
   <header>
-    <a href="/2018/04/21/spark-scala-future/">
-  <time datetime="2018-04-21T02:20:11.000Z">
-    Apr 21
+    
+      <div class="icon"></div>
+      <a href="/2018/06/09/vim-replace/">
+  <time datetime="2018-06-09T01:14:26.000Z">
+    2018-06-09
   </time>
 </a>
     
+    
   
-    <h1 class="title"><a href="/2018/04/21/spark-scala-future/">Spark“并行”写</a></h1>
+    <h1 class="title">Vim中的查找替换</h1>
   
 
   </header>
-</article>
   
+  <div class="entry">
     
-    
-    <article class="post">
-  <header>
-    <a href="/2018/01/21/scala-call-by-name/">
-  <time datetime="2018-01-21T02:27:41.000Z">
-    Jan 21
-  </time>
-</a>
-    
-  
-    <h1 class="title"><a href="/2018/01/21/scala-call-by-name/">scala中的传名调用</a></h1>
-  
+      <hr>
+<p>前两天同事在群里发了个通知，大致意思是大家做文案时不要用“最”，否则会违反广告法带来罚单。  </p>
+<p>我皮了一下，回了个“%s/最/第二/g”。<br><img src="http://guoybblog.qiniudn.com/%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE.png" alt="微信截图"><br><a id="more"></a><br>用vim的人都知道，这是把所有“最”替换成“第二”的意思。其实vim的查找替换功能非常强大，用的好可以极大提升效率。<br><br></p>
+<hr>
+<p>vim的查找替换命令如下所示：</p>
+<pre><code>:{作用范围}s/{目标}/{替换}/{替换标志}
+</code></pre><p><br></p>
+<ul>
+<li>作用范围：<ul>
+<li>当前行 s<br><strong>:s/最/第二/g</strong>    把当前行的所有“最”替换成“第二”</li>
+<li>全文 %s<br><strong>:%s/最/第二/g</strong>   把全文的所有“最”替换成“第二”</li>
+<li>8-15行 8,15s<br><strong>:8,15s/最/第二/g</strong> 把8-15行的所有“最”替换成“第二”</li>
+<li>当前行与接下来的5行   .,+5s<br><strong>:.,+5s/最/第二/g</strong> 把当前行与接下来的5行的所有“最”替换成“第二”<br><br></li>
+</ul>
+</li>
+<li>目标：支持正则表达式<br><br></li>
+<li>替换标志：<ul>
+<li>全局所有目标 g<br>例子如上面所示</li>
+<li>大小写不敏感 i ，大小写敏感I<br><strong>:%s/foo/bar/ig</strong>   把全文的所有“foo”替换为“bar”，忽略大小写</li>
+<li>需要确认 c<br><strong>:%s/最/第二/gc</strong>  把全文的所有“最”替换为“第二”，但是每一个都需要确认<ul>
+<li>这时每次替换都会提示: <strong>replace with 第二 (y/n/a/q/l/^E/^Y)?</strong></li>
+<li>y 确认替换当前的“最”</li>
+<li>n 不替换当前的“最”</li>
+<li>a 替换所有</li>
+<li>q 退出查找模式</li>
+<li>l 替换当前位置并退出</li>
+<li>^E 窗口向下移动一行</li>
+<li>^Y 窗口向上移动一行</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><br></p>
+<hr>
+<p>推荐阅读：<br><a href="http://blog.guoyb.com/2018/03/17/double-buffer/">使用双buffer无锁化</a><br><a href="http://blog.guoyb.com/2018/03/31/dont-copy/">不要拷贝</a><br><a href="http://blog.guoyb.com/2018/04/21/spark-scala-future/">Spark“并行”写</a>  </p>
+<p>转载请注明出处： <a href="http://blog.guoyb.com/2018/06/09/vim-replace/">http://blog.guoyb.com/2018/06/09/vim-replace/</a>  </p>
+<p>欢迎使用微信扫描下方二维码，关注我的微信公众号TechTalking，技术·生活·思考：<br><img src="http://guoybblog.qiniudn.com/newqrv2.jpg" alt="后端技术小黑屋">  </p>
 
-  </header>
-</article>
-  
     
+  </div>
+  <footer>
     
       
-        </div></section>
-      
-      
-      <section class="archives-wrapper">
-        
-        <div class="archives">
-    
-    <article class="post">
-  <header>
-    <a href="/2017/12/09/scala-match/">
-  <time datetime="2017-12-09T06:03:30.000Z">
-    Dec 09
-  </time>
-</a>
-    
-  
-    <h1 class="title"><a href="/2017/12/09/scala-match/">scala模式匹配的一个问题</a></h1>
-  
+  <div class="categories">
+    <a class="categories-link" href="/categories/技术/">技术</a>
+  </div>
 
-  </header>
+      
+  <div class="tags">
+    <a class="tags-link" href="/tags/Vim/">Vim</a>
+  </div>
+
+      
+    
+    <div class="clearfix"></div>
+  </footer>
 </article>
-  
-  
-    </div></section>
-  
 
 
-<nav id="pagination">
-  
-  
-  <div class="clearfix"></div>
-</nav></div>
+<section id="comment">
+  <h1 class="title">Comments</h1>
+  <div class="ds-thread" data-thread-key="2018/06/09/vim-replace/" data-title="Vim中的查找替换" data-url="http://blog.guoyb.com/2018/06/09/vim-replace/"></div>
+</section>
+</div>
   </div>
   
   <div id="sidebar" class="widgets-right">
@@ -252,6 +262,8 @@ var duoshuoQuery = {short_name:"guoyb"};
 
 
 <div id="rightfix" style="display:none;">
+
+<a href="#comment" id="gocomm" class="fix_btn" title="提问/评论"><i><i></i></i></a>
 
 
 <a href="javascript:void(0)" id="gotop" class="fix_btn" onclick="gotop();" title="回到顶部"><i></i></a>
