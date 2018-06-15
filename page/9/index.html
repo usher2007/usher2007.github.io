@@ -75,6 +75,45 @@ var _hmt = _hmt || [];
   <header>
     
       <div class="icon"></div>
+      <a href="/2016/06/19/hexo-server/">
+  <time datetime="2016-06-19T11:45:04.000Z">
+    2016-06-19
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title"><a href="/2016/06/19/hexo-server/">hexo server无法打开调试博客页面问题的查证记录</a></h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>今天更新博客，突然发现启动hexo server之后，使用浏览器打开127.0.0.1:4000无法加载博客的本地测试页面。<br>经过一番查证，发现问题出现4000端口被其他程序占用了。 </p>
+<p>在Windows中，可以使用如下命令查找得到占用4000端口的进程：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">D:\&gt;netstat -aon|findstr &quot;4000&quot;</span><br><span class="line">TCP    127.0.0.1:80        0.0.0.0:0              LISTENING      692</span><br><span class="line">D:\&gt;tasklist|findstr &quot;692&quot;</span><br><span class="line">FoxitProtect.exe               692 Services                   0     22,780 K </span><br></pre></td></tr></table></figure><br>是福昕阅读器的黑锅。停止掉此进程或者直接卸载对应软件后，hexo server就可以顺利加载本地测试页面了。<br>
+    
+  </div>
+  <footer class="end-sep">
+    
+      
+        <div class="alignleft">
+          <a href="/2016/06/19/hexo-server/#more" class="more-link">阅读全文</a>
+        </div>
+      
+      
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+
+
+  
+    <article class="post">
+  <header>
+    
+      <div class="icon"></div>
       <a href="/2016/06/18/cpp11-1/">
   <time datetime="2016-06-18T10:31:09.000Z">
     2016-06-18
@@ -102,7 +141,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2016/06/18/cpp11-1/#more" class="more-link">Read More</a>
+          <a href="/2016/06/18/cpp11-1/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -144,7 +183,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2016/06/12/gz-travel/#more" class="more-link">Read More</a>
+          <a href="/2016/06/12/gz-travel/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -185,7 +224,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2016/05/29/echo-server-2/#more" class="more-link">Read More</a>
+          <a href="/2016/05/29/echo-server-2/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -224,7 +263,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2016/05/25/makefile-ld/#more" class="more-link">Read More</a>
+          <a href="/2016/05/25/makefile-ld/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -262,7 +301,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2016/05/22/echo-server/#more" class="more-link">Read More</a>
+          <a href="/2016/05/22/echo-server/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -301,7 +340,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2016/05/08/wedding/#more" class="more-link">Read More</a>
+          <a href="/2016/05/08/wedding/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -341,7 +380,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2016/04/19/python-decorator/#more" class="more-link">Read More</a>
+          <a href="/2016/04/19/python-decorator/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -383,7 +422,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2016/04/17/linux-must-do/#more" class="more-link">Read More</a>
+          <a href="/2016/04/17/linux-must-do/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -424,49 +463,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2016/04/10/international/#more" class="more-link">Read More</a>
-        </div>
-      
-      
-    
-    <div class="clearfix"></div>
-  </footer>
-</article>
-
-
-  
-    <article class="post">
-  <header>
-    
-      <div class="icon"></div>
-      <a href="/2015/01/24/sgjm-reviewmd/">
-  <time datetime="2015-01-24T14:29:28.000Z">
-    2015-01-24
-  </time>
-</a>
-    
-    
-  
-    <h1 class="title"><a href="/2015/01/24/sgjm-reviewmd/">《三国机密》感</a></h1>
-  
-
-  </header>
-  
-  <div class="entry">
-    
-      <p>（感谢柚子童鞋投稿）</p>
-<hr>
-<ul>
-<li>作为程序员的女朋友，死皮赖脸地要在他博客上挤一篇小文刷存在感，感谢郭先森的慷慨允许。</li>
-<li>2015的开年手机掉厕所，然后被我洗坏了（虽然i6出来了，但是，郭先森，我真的不是故意的，我是有意的^-^）。正好，借这段时间，沉淀自己，过过没有手机的古墓派日子吧。不知不觉半个多月过去了，原来没有手机依然可以在这个时代安然地存在下去。。。</li>
-<li>没有手机的日子，每天上下班的2个小时都在发呆，郭先森贴心地给了他心爱的kindle,斟酌许久推荐了马伯庸的《三国机密》。马伯庸是谁？哪里人？什么时候出名的作家？呵呵，看到这些问题就会发现我是个伪书迷了，嗯，已经很久很久没好好看完一部完整的小说了。
-    
-  </div>
-  <footer class="end-sep">
-    
-      
-        <div class="alignleft">
-          <a href="/2015/01/24/sgjm-reviewmd/#more" class="more-link">Read More</a>
+          <a href="/2016/04/10/international/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -480,10 +477,10 @@ var _hmt = _hmt || [];
 
   <nav id="pagination">
   
-    <a href="/page/8/" class="prev">Prev</a>
+    <a href="/page/8/" class="prev">上一页</a>
   
   
-    <a href="/page/10/" class="next">Next</a>
+    <a href="/page/10/" class="next">下一页</a>
   
   <div class="clearfix"></div>
 </nav>
@@ -500,7 +497,7 @@ var _hmt = _hmt || [];
   
     <li><a href="/categories/书单/">书单</a><small>8</small></li>
   
-    <li><a href="/categories/技术/">技术</a><small>79</small></li>
+    <li><a href="/categories/技术/">技术</a><small>80</small></li>
   
     <li><a href="/categories/杂谈/">杂谈</a><small>21</small></li>
   
@@ -512,6 +509,10 @@ var _hmt = _hmt || [];
 <div class="widget tag">
   <h3 class="title">recent_posts</h3>
   <ul class="entry">
+    
+      <li>
+        <a href="/2018/06/16/linux-mem/">关于内存泄露的一场虚惊</a>
+      </li>
     
       <li>
         <a href="/2018/06/09/vim-replace/">Vim中的查找替换</a>
@@ -529,10 +530,6 @@ var _hmt = _hmt || [];
         <a href="/2018/05/19/cardinality-estimation/">Cardinality Estimation</a>
       </li>
     
-      <li>
-        <a href="/2018/05/05/cardinality-counting/">Cardinality Counting</a>
-      </li>
-    
   </ul>
 </div>
 
@@ -541,7 +538,7 @@ var _hmt = _hmt || [];
 <div class="widget tagcloud">
   <h3 class="title">tagcloud</h3>
   <div class="entry">
-    <a href="/tags/C/" style="font-size: 10.91px;">C</a> <a href="/tags/C/" style="font-size: 18.18px;">C++</a> <a href="/tags/C-11/" style="font-size: 17.27px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Git/" style="font-size: 10px;">Git</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 10.91px;">MySQL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Scala/" style="font-size: 11.82px;">Scala</a> <a href="/tags/Spark/" style="font-size: 10.91px;">Spark</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10.91px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/grpc/" style="font-size: 10.91px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 10.91px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/mutex/" style="font-size: 10px;">mutex</a> <a href="/tags/protobuf/" style="font-size: 11.82px;">protobuf</a> <a href="/tags/redis/" style="font-size: 12.73px;">redis</a> <a href="/tags/regex/" style="font-size: 12.73px;">regex</a> <a href="/tags/rwlock/" style="font-size: 10px;">rwlock</a> <a href="/tags/shell/" style="font-size: 10px;">shell</a> <a href="/tags/skynet/" style="font-size: 14.55px;">skynet</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 15.45px;">书单</a> <a href="/tags/内存优化/" style="font-size: 10px;">内存优化</a> <a href="/tags/大数据/" style="font-size: 12.73px;">大数据</a> <a href="/tags/学习笔记/" style="font-size: 13.64px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/旅行/" style="font-size: 12.73px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 19.09px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 12.73px;">查证记录</a> <a href="/tags/生活/" style="font-size: 14.55px;">生活</a> <a href="/tags/读书笔记/" style="font-size: 16.36px;">读书笔记</a>
+    <a href="/tags/C/" style="font-size: 10.91px;">C</a> <a href="/tags/C/" style="font-size: 18.18px;">C++</a> <a href="/tags/C-11/" style="font-size: 17.27px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Git/" style="font-size: 10px;">Git</a> <a href="/tags/Linux/" style="font-size: 10px;">Linux</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 10.91px;">MySQL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Scala/" style="font-size: 11.82px;">Scala</a> <a href="/tags/Spark/" style="font-size: 10.91px;">Spark</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10.91px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/grpc/" style="font-size: 10.91px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 10.91px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/mutex/" style="font-size: 10px;">mutex</a> <a href="/tags/protobuf/" style="font-size: 11.82px;">protobuf</a> <a href="/tags/redis/" style="font-size: 12.73px;">redis</a> <a href="/tags/regex/" style="font-size: 12.73px;">regex</a> <a href="/tags/rwlock/" style="font-size: 10px;">rwlock</a> <a href="/tags/shell/" style="font-size: 10px;">shell</a> <a href="/tags/skynet/" style="font-size: 14.55px;">skynet</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 15.45px;">书单</a> <a href="/tags/内存优化/" style="font-size: 10px;">内存优化</a> <a href="/tags/大数据/" style="font-size: 12.73px;">大数据</a> <a href="/tags/学习笔记/" style="font-size: 13.64px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/旅行/" style="font-size: 12.73px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 19.09px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 12.73px;">查证记录</a> <a href="/tags/生活/" style="font-size: 14.55px;">生活</a> <a href="/tags/读书笔记/" style="font-size: 16.36px;">读书笔记</a>
   </div>
 </div>
 
