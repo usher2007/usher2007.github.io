@@ -75,6 +75,51 @@ var _hmt = _hmt || [];
   <header>
     
       <div class="icon"></div>
+      <a href="/2016/06/25/cpp11-2/">
+  <time datetime="2016-06-25T00:30:41.000Z">
+    2016-06-25
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title"><a href="/2016/06/25/cpp11-2/">C++11新特性之类型推断与类型获取</a></h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>C++11新特性之新类型与初始化: <a href="http://blog.guoyb.com/2016/06/18/cpp11-1/">http://blog.guoyb.com/2016/06/18/cpp11-1/</a>  </p>
+<hr>
+<p>这是C++11新特性介绍的第二部分，涉及到C++11这次更新中较为重要的特性类型推断(auto)与类型获取（decltype）。<br>不想看toy code的读者可以直接拉到文章最后看这部分的总结。   </p>
+<h2 id="简单的类型推断"><a href="#简单的类型推断" class="headerlink" title="简单的类型推断"></a>简单的类型推断</h2><p>C++11新标准中增加了auto类型说明符，可以让编译器帮我们分析表达式的类型。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">double</span> val1 = <span class="number">1.1</span>, val2 = <span class="number">2.2</span>;</span><br><span class="line"><span class="keyword">auto</span> sum = val1 + val2;</span><br><span class="line"><span class="keyword">auto</span> val3 = <span class="number">0.3</span>, *p = &amp;val3;</span><br><span class="line"><span class="comment">//auto val4 = 0, val5 = 0.0; // wrong. different types.</span></span><br><span class="line"><span class="comment">//auto sum2; // wrong, auto type must be initialized.</span></span><br><span class="line"><span class="keyword">double</span> val6 = <span class="number">1.6</span>, &amp;rval6 = val6;</span><br><span class="line"><span class="keyword">auto</span> aval6 = rval6;</span><br><span class="line">aval6 = <span class="number">6.0</span>; <span class="comment">// aval6 is not a reference.</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="string">"test simple auto:\n"</span>&lt;&lt;val1&lt;&lt;<span class="string">'\t'</span>&lt;&lt;val2&lt;&lt;<span class="string">'\t'</span>&lt;&lt;sum&lt;&lt;<span class="string">'\t'</span>&lt;&lt;val3&lt;&lt;<span class="string">'\t'</span>&lt;&lt;p&lt;&lt;<span class="string">'\t'</span>&lt;&lt;val6&lt;&lt;<span class="string">'\t'</span>&lt;&lt;rval6&lt;&lt;<span class="string">'\t'</span>&lt;&lt;aval6&lt;&lt;<span class="built_in">endl</span>;</span><br></pre></td></tr></table></figure>  </p>
+<p>需要注意的是</p>
+<blockquote>
+<p>1.使用auto定义的变量必须有初始值，不然无法进行类型推断<br>2.在同一条语句中使用auto定义的变量，其基础类型必须一致  </p>
+</blockquote>
+    
+  </div>
+  <footer class="end-sep">
+    
+      
+        <div class="alignleft">
+          <a href="/2016/06/25/cpp11-2/#more" class="more-link">Read More</a>
+        </div>
+      
+      
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+
+
+  
+    <article class="post">
+  <header>
+    
+      <div class="icon"></div>
       <a href="/2016/06/19/hexo-server/">
   <time datetime="2016-06-19T11:45:04.000Z">
     2016-06-19
@@ -99,7 +144,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2016/06/19/hexo-server/#more" class="more-link">阅读全文</a>
+          <a href="/2016/06/19/hexo-server/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -141,7 +186,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2016/06/18/cpp11-1/#more" class="more-link">阅读全文</a>
+          <a href="/2016/06/18/cpp11-1/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -183,7 +228,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2016/06/12/gz-travel/#more" class="more-link">阅读全文</a>
+          <a href="/2016/06/12/gz-travel/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -224,7 +269,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2016/05/29/echo-server-2/#more" class="more-link">阅读全文</a>
+          <a href="/2016/05/29/echo-server-2/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -263,7 +308,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2016/05/25/makefile-ld/#more" class="more-link">阅读全文</a>
+          <a href="/2016/05/25/makefile-ld/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -301,7 +346,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2016/05/22/echo-server/#more" class="more-link">阅读全文</a>
+          <a href="/2016/05/22/echo-server/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -340,7 +385,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2016/05/08/wedding/#more" class="more-link">阅读全文</a>
+          <a href="/2016/05/08/wedding/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -380,7 +425,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2016/04/19/python-decorator/#more" class="more-link">阅读全文</a>
+          <a href="/2016/04/19/python-decorator/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -422,48 +467,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2016/04/17/linux-must-do/#more" class="more-link">阅读全文</a>
-        </div>
-      
-      
-    
-    <div class="clearfix"></div>
-  </footer>
-</article>
-
-
-  
-    <article class="post">
-  <header>
-    
-      <div class="icon"></div>
-      <a href="/2016/04/10/international/">
-  <time datetime="2016-04-10T07:05:43.000Z">
-    2016-04-10
-  </time>
-</a>
-    
-    
-  
-    <h1 class="title"><a href="/2016/04/10/international/">谈谈国际化</a></h1>
-  
-
-  </header>
-  
-  <div class="entry">
-    
-      <hr>
-<p>最近高晓松在晓松奇谈里谈到了韩国，不无艳羡的称赞韩国娱乐业中有大量从业人员留学欧美，具有“国际视野”，从而造就了韩国娱乐业的空前繁荣。</p>
-<p>我对于“国际视野”也有一些自己的想法。</p>
-<p>与具有国际视野相反的，我们经常说某个人山炮、土鳖。到底是什么样的行为、形象，让我们能够区分一个是否具有国际视野呢？是他的穿着打扮？能说一口流利的英语？手机里存着的世界各地的旅行照片？</p>
-<p>好像都不是。我15岁从县城到省城上高中，那时我开始觉得县城的人“土”；18岁从省城到北京上大学，又开始觉得省城的人“土”——也并不是城市现代化的高楼大厦让我有如此看法：刚上大学那会儿，五道口也就是一个大城乡结合部，还比不上高中所在的坞城路的建筑洋气。后来我工作了，陆续有县城的亲戚到广州来游玩、探望我。相处的时间长了，我才发现其中的问题在哪里。<br>
-    
-  </div>
-  <footer class="end-sep">
-    
-      
-        <div class="alignleft">
-          <a href="/2016/04/10/international/#more" class="more-link">阅读全文</a>
+          <a href="/2016/04/17/linux-must-do/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -477,10 +481,10 @@ var _hmt = _hmt || [];
 
   <nav id="pagination">
   
-    <a href="/page/8/" class="prev">上一页</a>
+    <a href="/page/8/" class="prev">Prev</a>
   
   
-    <a href="/page/10/" class="next">下一页</a>
+    <a href="/page/10/" class="next">Next</a>
   
   <div class="clearfix"></div>
 </nav>
@@ -497,7 +501,7 @@ var _hmt = _hmt || [];
   
     <li><a href="/categories/书单/">书单</a><small>8</small></li>
   
-    <li><a href="/categories/技术/">技术</a><small>80</small></li>
+    <li><a href="/categories/技术/">技术</a><small>81</small></li>
   
     <li><a href="/categories/杂谈/">杂谈</a><small>21</small></li>
   
@@ -509,6 +513,10 @@ var _hmt = _hmt || [];
 <div class="widget tag">
   <h3 class="title">recent_posts</h3>
   <ul class="entry">
+    
+      <li>
+        <a href="/2018/06/23/auc/">机器学习中的AUC是什么？</a>
+      </li>
     
       <li>
         <a href="/2018/06/16/linux-mem/">关于内存泄露的一场虚惊</a>
@@ -526,10 +534,6 @@ var _hmt = _hmt || [];
         <a href="/2018/05/26/block-chain/">区块链/比特币科普八问</a>
       </li>
     
-      <li>
-        <a href="/2018/05/19/cardinality-estimation/">Cardinality Estimation</a>
-      </li>
-    
   </ul>
 </div>
 
@@ -538,7 +542,7 @@ var _hmt = _hmt || [];
 <div class="widget tagcloud">
   <h3 class="title">tagcloud</h3>
   <div class="entry">
-    <a href="/tags/C/" style="font-size: 10.91px;">C</a> <a href="/tags/C/" style="font-size: 18.18px;">C++</a> <a href="/tags/C-11/" style="font-size: 17.27px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Git/" style="font-size: 10px;">Git</a> <a href="/tags/Linux/" style="font-size: 10px;">Linux</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 10.91px;">MySQL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Scala/" style="font-size: 11.82px;">Scala</a> <a href="/tags/Spark/" style="font-size: 10.91px;">Spark</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10.91px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/grpc/" style="font-size: 10.91px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 10.91px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/mutex/" style="font-size: 10px;">mutex</a> <a href="/tags/protobuf/" style="font-size: 11.82px;">protobuf</a> <a href="/tags/redis/" style="font-size: 12.73px;">redis</a> <a href="/tags/regex/" style="font-size: 12.73px;">regex</a> <a href="/tags/rwlock/" style="font-size: 10px;">rwlock</a> <a href="/tags/shell/" style="font-size: 10px;">shell</a> <a href="/tags/skynet/" style="font-size: 14.55px;">skynet</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 15.45px;">书单</a> <a href="/tags/内存优化/" style="font-size: 10px;">内存优化</a> <a href="/tags/大数据/" style="font-size: 12.73px;">大数据</a> <a href="/tags/学习笔记/" style="font-size: 13.64px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/旅行/" style="font-size: 12.73px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 19.09px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 12.73px;">查证记录</a> <a href="/tags/生活/" style="font-size: 14.55px;">生活</a> <a href="/tags/读书笔记/" style="font-size: 16.36px;">读书笔记</a>
+    <a href="/tags/C/" style="font-size: 10.91px;">C</a> <a href="/tags/C/" style="font-size: 18.18px;">C++</a> <a href="/tags/C-11/" style="font-size: 17.27px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Git/" style="font-size: 10px;">Git</a> <a href="/tags/Linux/" style="font-size: 10.91px;">Linux</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 10.91px;">MySQL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Scala/" style="font-size: 11.82px;">Scala</a> <a href="/tags/Spark/" style="font-size: 10.91px;">Spark</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10.91px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/grpc/" style="font-size: 10.91px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 10.91px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/mutex/" style="font-size: 10px;">mutex</a> <a href="/tags/protobuf/" style="font-size: 11.82px;">protobuf</a> <a href="/tags/redis/" style="font-size: 12.73px;">redis</a> <a href="/tags/regex/" style="font-size: 12.73px;">regex</a> <a href="/tags/rwlock/" style="font-size: 10px;">rwlock</a> <a href="/tags/shell/" style="font-size: 10px;">shell</a> <a href="/tags/skynet/" style="font-size: 14.55px;">skynet</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 15.45px;">书单</a> <a href="/tags/内存优化/" style="font-size: 10px;">内存优化</a> <a href="/tags/大数据/" style="font-size: 12.73px;">大数据</a> <a href="/tags/学习笔记/" style="font-size: 13.64px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/旅行/" style="font-size: 12.73px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 19.09px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 12.73px;">查证记录</a> <a href="/tags/生活/" style="font-size: 14.55px;">生活</a> <a href="/tags/读书笔记/" style="font-size: 16.36px;">读书笔记</a>
   </div>
 </div>
 

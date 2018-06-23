@@ -1,0 +1,306 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  
+  <title>机器学习中的AUC是什么？ | 一根笨茄子</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  
+    <meta name="author" content="Yubo Guo">
+  
+  
+    <meta name="description" content="工作中经常要和香饽饽算法工程师对接。作为一名开发狗，虽然“抽特征、做模型、玄学调参、搞策略”这四部曲都不太懂，但是为了能够正常交流，同时也不至于被忽悠，那么，算法同学嘴里是不时蹦出领域名词儿还是要了解一下的啦。  
+今天就说说算法同学经常挂在嘴边的一个指标——AUC。  
+AUC ROC简介AUC是Area Under Curve的简写，这里的Curve其实是指ROC曲线。">
+  
+  <meta name="description" content="工作中经常要和香饽饽算法工程师对接。作为一名开发狗，虽然“抽特征、做模型、玄学调参、搞策略”这四部曲都不太懂，但是为了能够正常交流，同时也不至于被忽悠，那么，算法同学嘴里是不时蹦出领域名词儿还是要了解一下的啦。  
+今天就说说算法同学经常挂在嘴边的一个指标——AUC。  
+AUC ROC简介AUC是Area Under Curve的简写，这里的Curve其实是指ROC曲线。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="机器学习中的AUC是什么？">
+<meta property="og:url" content="http://blog.guoyb.com/2018/06/23/auc/index.html">
+<meta property="og:site_name" content="一根笨茄子">
+<meta property="og:description" content="工作中经常要和香饽饽算法工程师对接。作为一名开发狗，虽然“抽特征、做模型、玄学调参、搞策略”这四部曲都不太懂，但是为了能够正常交流，同时也不至于被忽悠，那么，算法同学嘴里是不时蹦出领域名词儿还是要了解一下的啦。  
+今天就说说算法同学经常挂在嘴边的一个指标——AUC。  
+AUC ROC简介AUC是Area Under Curve的简写，这里的Curve其实是指ROC曲线。">
+<meta property="og:image" content="http://guoybblog.qiniudn.com/Roccurves.png">
+<meta property="og:image" content="http://guoybblog.qiniudn.com/newqrv2.jpg">
+<meta property="og:updated_time" content="2018-06-23T01:58:32.105Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="机器学习中的AUC是什么？">
+<meta name="twitter:description" content="工作中经常要和香饽饽算法工程师对接。作为一名开发狗，虽然“抽特征、做模型、玄学调参、搞策略”这四部曲都不太懂，但是为了能够正常交流，同时也不至于被忽悠，那么，算法同学嘴里是不时蹦出领域名词儿还是要了解一下的啦。  
+今天就说说算法同学经常挂在嘴边的一个指标——AUC。  
+AUC ROC简介AUC是Area Under Curve的简写，这里的Curve其实是指ROC曲线。">
+<meta name="twitter:image" content="http://guoybblog.qiniudn.com/Roccurves.png">
+  
+  
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <!--[if lt IE 9]><script src="//cdn.bootcss.com/html5shiv/3.7.0/html5shiv.min.js"></script><![endif]-->
+  
+  
+<script type="text/javascript">
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?996ee0fca2512b4c29f37f60cf6387ca";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-6897127630340076",
+    enable_page_level_ads: true
+  });
+</script>
+
+</head>
+<body>
+  <div class="wrapper">
+    <header id="header">
+  <div class="title">
+    <h1><a href="/">一根笨茄子</a></h1>
+    <p><a href="/"></a></p>
+  </div>
+  <nav class="nav">
+    <ul>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/about">关于我</a></li>
+      
+      
+    </ul>
+    <div class="clearfix"></div>
+  </nav>
+  <div class="clearfix"></div>
+</header>
+    <div class="content"><article class="post">
+  <header>
+    
+      <div class="icon"></div>
+      <a href="/2018/06/23/auc/">
+  <time datetime="2018-06-23T01:42:44.000Z">
+    2018-06-23
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title">机器学习中的AUC是什么？</h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>工作中经常要和香饽饽算法工程师对接。作为一名开发狗，虽然“抽特征、做模型、玄学调参、搞策略”这四部曲都不太懂，但是为了能够正常交流，同时也不至于被忽悠，那么，算法同学嘴里是不时蹦出领域名词儿还是要了解一下的啦。  </p>
+<p>今天就说说算法同学经常挂在嘴边的一个指标——AUC。  </p>
+<h3 id="AUC-ROC简介"><a href="#AUC-ROC简介" class="headerlink" title="AUC ROC简介"></a>AUC ROC简介</h3><p>AUC是Area Under Curve的简写，这里的Curve其实是指ROC曲线。<br><a id="more"></a><br>ROC曲线又是什么鬼？ROC全称receiver operating characteristic curve，翻译为受试者工作特性曲线。先不用管这个不明所以的鬼翻译，直接看ROC曲线的横纵坐标都是啥。<br><img src="http://guoybblog.qiniudn.com/Roccurves.png" alt="ROC示意图"></p>
+<p>ROC曲线的X轴是假阳性率（FP），Y轴为真阳性率（TP）。  </p>
+<pre><code>假阳性率=真实类别为0但是预测为1的样本数/真实类别为0的样本数
+真阳性率=真实类别为1预测也为1的样本数/真实类别为1的样本数
+</code></pre><p>从这里也可以看出，AUC只能用于二分类模型的评估。  </p>
+<p>那么关于FP和TP，我们找一些直观的感受看看：  </p>
+<pre><code>a.如果一个算法直接把所有的样本，都预测为正样本，那么显然FP=1.0，TP=1.0；这个可以对应ROC曲线的右上角那个点。
+b.如果一个算法直接把所有的样本，都预测为负样本，那么显然FP=0.0，TP=0.0；这个可以对应ROC曲线的左下角那个点。
+</code></pre><p>到这里，我遇到了我在看ROC曲线时的一个不解的地方：  </p>
+<p>为什么对于<strong>1</strong>个二分类算法，能够画出一条ROC曲线（无数个点）出来呢？ROC曲线的每一点代表什么含义呢？   </p>
+<p>看了ROC曲线的具体绘制过程，应该就可以理解了。</p>
+<h3 id="ROC曲线的绘制"><a href="#ROC曲线的绘制" class="headerlink" title="ROC曲线的绘制"></a>ROC曲线的绘制</h3><p>我们在使用一个二分类算法做预测时，一般的是会给出样本属于正样本的概率Pi。  </p>
+<p>然后，我们会选定一个阈值P0，当Pi&gt;=P0时，预测为正样本；当Pi&lt;P0时预测为负样本。  </p>
+<p>至此，选定一个算法A，每选定一个阈值P0，<a，p0>都可以算出FP/TP，也就对应了ROC曲线上的一个点。  </a，p0></p>
+<p>那具体绘制ROC曲线时，这些阈值如何选取，FP/TP组合成的所有点又该如何排列呢？  </p>
+<p>具体流程是这样:  </p>
+<ol>
+<li>将所有测试样本的预测概率Pi按照从大到小排列</li>
+<li>从大到小，依次取各个Pi的值作为阈值。<ul>
+<li>考虑P0=P1的情况，这时只有一个样本被预测为1，其余所有样本都被预测为0。这里FP和TP都会很小，所以这个点会接近左下角。</li>
+<li>随着阈值P0不断变小（条件放宽），预测为1的样本越来越多，FP和TP都应该越来越大。表现为ROC曲线由左下角向右上角不断蔓延。</li>
+<li>考虑P0=Pn的情况，这时所有样本都被预测为1。这时FP=TP=1.0，这时ROC曲线达到右上角。</li>
+</ul>
+</li>
+</ol>
+<p>所以，ROC曲线其实有三个要素：算法A，测试数据D，阈值集合P。它评价了一个算法A，在测试数据D上，选取不同的阈值P时，假阳性率和真阳性率的表现。  </p>
+<p>当然，真阳性率越大，假阳性率越小越好。所以表现为ROC曲线越上凸，算法的分类效果越优秀。  </p>
+<p>AUC（ROC曲线下的面积），就可以用来评价ROC曲线的上凸程度。</p>
+<hr>
+<p>一般，AUC的值是要大于0.5的，因为直接使用正负样本的自然概率来预测，得到的AUC就是0.5（可以思考下为什么哈）。  </p>
+<p>另外，还有一个指标logloss，也经常和AUC一起用于评价分类效果。有兴趣的同学可以对比着学习下。  </p>
+<p><br></p>
+<hr>
+<p>推荐阅读：<br><a href="http://blog.guoyb.com/2018/03/17/double-buffer/">使用双buffer无锁化</a><br><a href="http://blog.guoyb.com/2018/03/31/dont-copy/">不要拷贝</a><br><a href="http://blog.guoyb.com/2018/06/16/linux-mem/">关于内存泄露的一场虚惊</a>  </p>
+<p>转载请注明出处： <a href="http://blog.guoyb.com/2018/06/23/auc/">http://blog.guoyb.com/2018/06/23/auc/</a>  </p>
+<p>欢迎使用微信扫描下方二维码，关注我的微信公众号TechTalking，技术·生活·思考：<br><img src="http://guoybblog.qiniudn.com/newqrv2.jpg" alt="后端技术小黑屋">  </p>
+
+    
+  </div>
+  <footer>
+    
+      
+  <div class="categories">
+    <a class="categories-link" href="/categories/技术/">技术</a>
+  </div>
+
+      
+  <div class="tags">
+    <a class="tags-link" href="/tags/Linux/">Linux</a>
+  </div>
+
+      
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">Comments</h1>
+  <div class="ds-thread" data-thread-key="2018/06/23/auc/" data-title="机器学习中的AUC是什么？" data-url="http://blog.guoyb.com/2018/06/23/auc/"></div>
+</section>
+</div>
+  </div>
+  
+  <div id="sidebar" class="widgets-right">
+  
+<div class="widget category">
+  <h3 class="title">categories</h3>
+  <ul class="entry">
+  
+    <li><a href="/categories/书单/">书单</a><small>8</small></li>
+  
+    <li><a href="/categories/技术/">技术</a><small>81</small></li>
+  
+    <li><a href="/categories/杂谈/">杂谈</a><small>21</small></li>
+  
+  </ul>
+</div>
+
+
+  
+<div class="widget tag">
+  <h3 class="title">recent_posts</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2018/06/23/auc/">机器学习中的AUC是什么？</a>
+      </li>
+    
+      <li>
+        <a href="/2018/06/16/linux-mem/">关于内存泄露的一场虚惊</a>
+      </li>
+    
+      <li>
+        <a href="/2018/06/09/vim-replace/">Vim中的查找替换</a>
+      </li>
+    
+      <li>
+        <a href="/2018/06/02/kv-db/">Memcached、Redis、MongoDB、HBase对比</a>
+      </li>
+    
+      <li>
+        <a href="/2018/05/26/block-chain/">区块链/比特币科普八问</a>
+      </li>
+    
+  </ul>
+</div>
+
+
+  
+<div class="widget tagcloud">
+  <h3 class="title">tagcloud</h3>
+  <div class="entry">
+    <a href="/tags/C/" style="font-size: 10.91px;">C</a> <a href="/tags/C/" style="font-size: 18.18px;">C++</a> <a href="/tags/C-11/" style="font-size: 17.27px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Git/" style="font-size: 10px;">Git</a> <a href="/tags/Linux/" style="font-size: 10.91px;">Linux</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 10.91px;">MySQL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Scala/" style="font-size: 11.82px;">Scala</a> <a href="/tags/Spark/" style="font-size: 10.91px;">Spark</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10.91px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/grpc/" style="font-size: 10.91px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 10.91px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/mutex/" style="font-size: 10px;">mutex</a> <a href="/tags/protobuf/" style="font-size: 11.82px;">protobuf</a> <a href="/tags/redis/" style="font-size: 12.73px;">redis</a> <a href="/tags/regex/" style="font-size: 12.73px;">regex</a> <a href="/tags/rwlock/" style="font-size: 10px;">rwlock</a> <a href="/tags/shell/" style="font-size: 10px;">shell</a> <a href="/tags/skynet/" style="font-size: 14.55px;">skynet</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 15.45px;">书单</a> <a href="/tags/内存优化/" style="font-size: 10px;">内存优化</a> <a href="/tags/大数据/" style="font-size: 12.73px;">大数据</a> <a href="/tags/学习笔记/" style="font-size: 13.64px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/旅行/" style="font-size: 12.73px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 19.09px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 12.73px;">查证记录</a> <a href="/tags/生活/" style="font-size: 14.55px;">生活</a> <a href="/tags/读书笔记/" style="font-size: 16.36px;">读书笔记</a>
+  </div>
+</div>
+
+
+  
+<div class="widget tag">
+  <h3 class="title">友情链接</h3>
+  <ul class="entry">
+  
+    
+    <li><a href="http://www.linkedin.com/in/yubo-guo-739b0071" target="_blank">LinkedIn</a></li>
+  
+    
+    <li><a href="http://www.tuicool.com/sites/2emeIjb" target="_blank">推酷站点</a></li>
+  
+  </ul>
+</div>
+
+</div>
+  
+  <footer id="footer"><div class="copyright">
+  
+  &copy; 2018 <a href="/">Yubo Guo</a>
+  
+</div>
+<div class="theme-copyright">
+  Theme by <a href="https://github.com/orderedlist" target="_blank">orderedlist</a>
+   | 
+  Redesign by <a href="http://blog.dafengning.com/" target="_blank">Chong Zi</a>
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//lib.sinaapp.com/js/jquery/1.8/jquery.min.js"></script>
+<script src="/js/scale.fix.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"guoyb"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+
+
+<div id="rightfix" style="display:none;">
+
+<a href="#comment" id="gocomm" class="fix_btn" title="提问/评论"><i><i></i></i></a>
+
+
+<a href="javascript:void(0)" id="gotop" class="fix_btn" onclick="gotop();" title="回到顶部"><i></i></a>
+<script>
+  function gotop(){
+    $('html,body').animate({
+        scrollTop : '0px'
+      }, 800);
+  }
+  $(function(){
+    _rightfix = $('#rightfix');
+    $(window).scroll(function(){
+      $sollTop = document.documentElement.scrollTop + document.body.scrollTop;
+      if($sollTop > 350){
+        _rightfix.show();
+      }else{
+        _rightfix.hide();
+      }
+    });
+  });
+</script>
+
+</div>
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+  (function($){
+    $('.fancybox').fancybox();
+  })(jQuery);
+</script>
+
+</body>
+</html>
