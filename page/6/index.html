@@ -75,6 +75,47 @@ var _hmt = _hmt || [];
   <header>
     
       <div class="icon"></div>
+      <a href="/2016/12/13/py-hotfix/">
+  <time datetime="2016-12-13T00:10:32.000Z">
+    2016-12-13
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title"><a href="/2016/12/13/py-hotfix/">探究如何给Python程序做hotfix</a></h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>使用Python来写服务器端程序，很大的一个优势就是可以进行热更新，即在不停机的情况下，使改动后的程序生效。在开发阶段，这个功能可以大大提高开发效率（写代码–启动服务器–看效果–改代码–hotfix–看效果–提交~）；而在生产环境中，可以以最小的代价（不停机）修复线上的bug。  </p>
+<p>我在项目中使用hotfix功能很长世间了，大概了解它是利用了Python的import/reload功能，但是并没有去自己研究过。最近看了云风大大写的一篇文章：<a href="http://blog.codingnow.com/2016/11/lua_update.html">如何让 lua 做尽量正确的热更新</a>，收获很多。也觉得应该研究一下Python的hotfix机制，毕竟是跟了自己这么久的小伙伴嘛。  </p>
+<hr>
+<h2 id="import"><a href="#import" class="headerlink" title="import"></a>import</h2><p>说到hotfix就要从import语句说起。<br>
+    
+  </div>
+  <footer class="end-sep">
+    
+      
+        <div class="alignleft">
+          <a href="/2016/12/13/py-hotfix/#more" class="more-link">阅读全文</a>
+        </div>
+      
+      
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+
+
+  
+    <article class="post">
+  <header>
+    
+      <div class="icon"></div>
       <a href="/2016/12/03/bad-py-style/">
   <time datetime="2016-12-03T05:39:46.000Z">
     2016-12-03
@@ -101,7 +142,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2016/12/03/bad-py-style/#more" class="more-link">Read More</a>
+          <a href="/2016/12/03/bad-py-style/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -141,7 +182,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2016/11/23/ghub/#more" class="more-link">Read More</a>
+          <a href="/2016/11/23/ghub/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -182,7 +223,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2016/10/24/guizhou/#more" class="more-link">Read More</a>
+          <a href="/2016/10/24/guizhou/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -222,7 +263,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2016/10/15/grpc/#more" class="more-link">Read More</a>
+          <a href="/2016/10/15/grpc/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -262,7 +303,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2016/09/26/docopt/#more" class="more-link">Read More</a>
+          <a href="/2016/09/26/docopt/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -301,7 +342,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2016/09/19/cpp11-all/#more" class="more-link">Read More</a>
+          <a href="/2016/09/19/cpp11-all/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -341,7 +382,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2016/09/18/cpp11-11/#more" class="more-link">Read More</a>
+          <a href="/2016/09/18/cpp11-11/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -383,7 +424,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2016/09/14/mooncake/#more" class="more-link">Read More</a>
+          <a href="/2016/09/14/mooncake/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -423,47 +464,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2016/09/12/cpp11-10/#more" class="more-link">Read More</a>
-        </div>
-      
-      
-    
-    <div class="clearfix"></div>
-  </footer>
-</article>
-
-
-  
-    <article class="post">
-  <header>
-    
-      <div class="icon"></div>
-      <a href="/2016/09/10/cpp11-9/">
-  <time datetime="2016-09-10T00:15:46.000Z">
-    2016-09-10
-  </time>
-</a>
-    
-    
-  
-    <h1 class="title"><a href="/2016/09/10/cpp11-9/">C++11新特性之正则表达式</a></h1>
-  
-
-  </header>
-  
-  <div class="entry">
-    
-      <hr>
-<p>前八篇在这里：<br>C++11新特性之新类型与初始化: <a href="http://blog.guoyb.com/2016/06/18/cpp11-1/">http://blog.guoyb.com/2016/06/18/cpp11-1</a><br>C++11新特性之类型推断与类型获取: <a href="http://blog.guoyb.com/2016/06/25/cpp11-2/">http://blog.guoyb.com/2016/06/25/cpp11-2</a><br>C++11新特性之lambda： <a href="http://blog.guoyb.com/2016/06/30/cpp11-3/">http://blog.guoyb.com/2016/06/30/cpp11-3</a><br>C++11新特性之容器相关特性： <a href="http://blog.guoyb.com/2016/07/09/cpp11-4">http://blog.guoyb.com/2016/07/09/cpp11-4</a><br>C++11新特性之智能指针： <a href="http://blog.guoyb.com/2016/08/02/cpp11-5">http://blog.guoyb.com/2016/08/02/cpp11-5</a><br>C++11新特性之Class: <a href="http://blog.guoyb.com/2016/08/14/cpp11-6">http://blog.guoyb.com/2016/08/14/cpp11-6</a><br>C++11新特性之右值引用与移动： <a href="http://blog.guoyb.com/2016/08/20/cpp11-7">http://blog.guoyb.com/2016/08/20/cpp11-7</a><br>C++11新特性之template： <a href="http://blog.guoyb.com/2016/08/31/cpp11-8">http://blog.guoyb.com/2016/08/31/cpp11-8</a>  </p>
-<hr>
-<p>这是C++11新特性介绍的第九部分，涉及到正则表达式相关的新特性。<br>不想看toy code的读者可以直接拉到文章最后看这部分的总结。<br>
-    
-  </div>
-  <footer class="end-sep">
-    
-      
-        <div class="alignleft">
-          <a href="/2016/09/10/cpp11-9/#more" class="more-link">Read More</a>
+          <a href="/2016/09/12/cpp11-10/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -477,10 +478,10 @@ var _hmt = _hmt || [];
 
   <nav id="pagination">
   
-    <a href="/page/5/" class="prev">Prev</a>
+    <a href="/page/5/" class="prev">上一页</a>
   
   
-    <a href="/page/7/" class="next">Next</a>
+    <a href="/page/7/" class="next">下一页</a>
   
   <div class="clearfix"></div>
 </nav>
@@ -495,7 +496,7 @@ var _hmt = _hmt || [];
   <h3 class="title">categories</h3>
   <ul class="entry">
   
-    <li><a href="/categories/书单/">书单</a><small>8</small></li>
+    <li><a href="/categories/书单/">书单</a><small>9</small></li>
   
     <li><a href="/categories/技术/">技术</a><small>81</small></li>
   
@@ -509,6 +510,10 @@ var _hmt = _hmt || [];
 <div class="widget tag">
   <h3 class="title">recent_posts</h3>
   <ul class="entry">
+    
+      <li>
+        <a href="/2018/06/30/2018-booklist-1/">2018年上半年书单</a>
+      </li>
     
       <li>
         <a href="/2018/06/23/auc/">机器学习中的AUC是什么？</a>
@@ -526,10 +531,6 @@ var _hmt = _hmt || [];
         <a href="/2018/06/02/kv-db/">Memcached、Redis、MongoDB、HBase对比</a>
       </li>
     
-      <li>
-        <a href="/2018/05/26/block-chain/">区块链/比特币科普八问</a>
-      </li>
-    
   </ul>
 </div>
 
@@ -538,7 +539,7 @@ var _hmt = _hmt || [];
 <div class="widget tagcloud">
   <h3 class="title">tagcloud</h3>
   <div class="entry">
-    <a href="/tags/C/" style="font-size: 10.91px;">C</a> <a href="/tags/C/" style="font-size: 18.18px;">C++</a> <a href="/tags/C-11/" style="font-size: 17.27px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Git/" style="font-size: 10px;">Git</a> <a href="/tags/Linux/" style="font-size: 10.91px;">Linux</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 10.91px;">MySQL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Scala/" style="font-size: 11.82px;">Scala</a> <a href="/tags/Spark/" style="font-size: 10.91px;">Spark</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10.91px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/grpc/" style="font-size: 10.91px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 10.91px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/mutex/" style="font-size: 10px;">mutex</a> <a href="/tags/protobuf/" style="font-size: 11.82px;">protobuf</a> <a href="/tags/redis/" style="font-size: 12.73px;">redis</a> <a href="/tags/regex/" style="font-size: 12.73px;">regex</a> <a href="/tags/rwlock/" style="font-size: 10px;">rwlock</a> <a href="/tags/shell/" style="font-size: 10px;">shell</a> <a href="/tags/skynet/" style="font-size: 14.55px;">skynet</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 15.45px;">书单</a> <a href="/tags/内存优化/" style="font-size: 10px;">内存优化</a> <a href="/tags/大数据/" style="font-size: 12.73px;">大数据</a> <a href="/tags/学习笔记/" style="font-size: 13.64px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/旅行/" style="font-size: 12.73px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 19.09px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 12.73px;">查证记录</a> <a href="/tags/生活/" style="font-size: 14.55px;">生活</a> <a href="/tags/读书笔记/" style="font-size: 16.36px;">读书笔记</a>
+    <a href="/tags/C/" style="font-size: 11.11px;">C</a> <a href="/tags/C/" style="font-size: 18.89px;">C++</a> <a href="/tags/C-11/" style="font-size: 17.78px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Git/" style="font-size: 10px;">Git</a> <a href="/tags/Linux/" style="font-size: 11.11px;">Linux</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 11.11px;">MySQL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Scala/" style="font-size: 12.22px;">Scala</a> <a href="/tags/Spark/" style="font-size: 11.11px;">Spark</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 11.11px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/grpc/" style="font-size: 11.11px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 11.11px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/mutex/" style="font-size: 10px;">mutex</a> <a href="/tags/protobuf/" style="font-size: 12.22px;">protobuf</a> <a href="/tags/redis/" style="font-size: 13.33px;">redis</a> <a href="/tags/regex/" style="font-size: 13.33px;">regex</a> <a href="/tags/rwlock/" style="font-size: 10px;">rwlock</a> <a href="/tags/shell/" style="font-size: 10px;">shell</a> <a href="/tags/skynet/" style="font-size: 15.56px;">skynet</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 16.67px;">书单</a> <a href="/tags/内存优化/" style="font-size: 10px;">内存优化</a> <a href="/tags/大数据/" style="font-size: 13.33px;">大数据</a> <a href="/tags/学习笔记/" style="font-size: 14.44px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/旅行/" style="font-size: 13.33px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 20px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 13.33px;">查证记录</a> <a href="/tags/生活/" style="font-size: 15.56px;">生活</a> <a href="/tags/读书笔记/" style="font-size: 16.67px;">读书笔记</a>
   </div>
 </div>
 
