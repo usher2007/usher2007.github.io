@@ -1,0 +1,287 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  
+  <title>再谈右值引用与移动语义 | 一根笨茄子</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  
+    <meta name="author" content="Yubo Guo">
+  
+  
+    <meta name="description" content="之前在总结C++11新特性的时候，写过一篇文章，专门说到了右值引用、移动语义以及从中牵扯出来的引用折叠和完美转发等概念《C++11新特性之右值引用与移动》。  
+那篇文章例子很多，仔细阅读后也可以完全理解这几个概念。但是今天我想重新组织下语言，就像面试中被问到“你怎么看待C++中的右值引用和移动语义”，进行一次小总结。当然，如果你最近也正好需要面试，下面的文字可能能帮你梳理一遍思路。">
+  
+  <meta name="description" content="之前在总结C++11新特性的时候，写过一篇文章，专门说到了右值引用、移动语义以及从中牵扯出来的引用折叠和完美转发等概念《C++11新特性之右值引用与移动》。  
+那篇文章例子很多，仔细阅读后也可以完全理解这几个概念。但是今天我想重新组织下语言，就像面试中被问到“你怎么看待C++中的右值引用和移动语义”，进行一次小总结。当然，如果你最近也正好需要面试，下面的文字可能能帮你梳理一遍思路。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="再谈右值引用与移动语义">
+<meta property="og:url" content="http://blog.guoyb.com/2018/07/07/move-again/index.html">
+<meta property="og:site_name" content="一根笨茄子">
+<meta property="og:description" content="之前在总结C++11新特性的时候，写过一篇文章，专门说到了右值引用、移动语义以及从中牵扯出来的引用折叠和完美转发等概念《C++11新特性之右值引用与移动》。  
+那篇文章例子很多，仔细阅读后也可以完全理解这几个概念。但是今天我想重新组织下语言，就像面试中被问到“你怎么看待C++中的右值引用和移动语义”，进行一次小总结。当然，如果你最近也正好需要面试，下面的文字可能能帮你梳理一遍思路。">
+<meta property="og:image" content="http://guoybblog.qiniudn.com/newqrv2.jpg">
+<meta property="og:updated_time" content="2018-07-07T01:02:30.230Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="再谈右值引用与移动语义">
+<meta name="twitter:description" content="之前在总结C++11新特性的时候，写过一篇文章，专门说到了右值引用、移动语义以及从中牵扯出来的引用折叠和完美转发等概念《C++11新特性之右值引用与移动》。  
+那篇文章例子很多，仔细阅读后也可以完全理解这几个概念。但是今天我想重新组织下语言，就像面试中被问到“你怎么看待C++中的右值引用和移动语义”，进行一次小总结。当然，如果你最近也正好需要面试，下面的文字可能能帮你梳理一遍思路。">
+<meta name="twitter:image" content="http://guoybblog.qiniudn.com/newqrv2.jpg">
+  
+  
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <!--[if lt IE 9]><script src="//cdn.bootcss.com/html5shiv/3.7.0/html5shiv.min.js"></script><![endif]-->
+  
+  
+<script type="text/javascript">
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?996ee0fca2512b4c29f37f60cf6387ca";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-6897127630340076",
+    enable_page_level_ads: true
+  });
+</script>
+
+</head>
+<body>
+  <div class="wrapper">
+    <header id="header">
+  <div class="title">
+    <h1><a href="/">一根笨茄子</a></h1>
+    <p><a href="/"></a></p>
+  </div>
+  <nav class="nav">
+    <ul>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/about">关于我</a></li>
+      
+      
+    </ul>
+    <div class="clearfix"></div>
+  </nav>
+  <div class="clearfix"></div>
+</header>
+    <div class="content"><article class="post">
+  <header>
+    
+      <div class="icon"></div>
+      <a href="/2018/07/07/move-again/">
+  <time datetime="2018-07-07T00:17:57.000Z">
+    2018-07-07
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title">再谈右值引用与移动语义</h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>之前在总结C++11新特性的时候，写过一篇文章，专门说到了右值引用、移动语义以及从中牵扯出来的引用折叠和完美转发等概念<a href="http://blog.guoyb.com/2016/08/20/cpp11-7/">《C++11新特性之右值引用与移动》</a>。  </p>
+<p>那篇文章例子很多，仔细阅读后也可以完全理解这几个概念。但是今天我想重新组织下语言，就像面试中被问到“你怎么看待C++中的右值引用和移动语义”，进行一次小总结。当然，如果你最近也正好需要面试，下面的文字可能能帮你梳理一遍思路。<br><a id="more"></a>  </p>
+<h2 id="右值引用"><a href="#右值引用" class="headerlink" title="右值引用"></a>右值引用</h2><hr>
+<p>右值引用就是对右值的引用（废话），而右值是相对于左值而言的：左值持久，右值短暂。  </p>
+<pre><code>右值这个概念在C++11之前就已经存在了，比如你写一个 ```5*j=6``` 这样的表达式，就会被编译器提示，不能给右值赋值。
+</code></pre><p>右值引用，是一种<strong>类型</strong>。类型可以用来定义变量，用右值引用这个类型来定义的变量，<strong>是一个左值</strong>。这一点很绕，也是完美转发比较难理解的地方。<br><br>  </p>
+<h2 id="std-move"><a href="#std-move" class="headerlink" title="std::move"></a>std::move</h2><hr>
+<p>std::move虽然叫move，但是它并没有<strong>实现</strong>任何移动的功能（也就是没有实现移动语义）。  </p>
+<p>那std::move是干嘛的呢？其实它只是做了一个类型转换：传入一个左值变量，返回其右值引用。  </p>
+<p>对，就是这么简单。<br><br>  </p>
+<h2 id="移动语义"><a href="#移动语义" class="headerlink" title="移动语义"></a>移动语义</h2><hr>
+<p>右值引用和左值引用是两种不同的类型，既然是不同的类型，那用作函数参数时，就可以实现<strong>重载</strong>：由具体传入的参数类型来决定调用哪个版本的函数。  </p>
+<p>如果是右值引用为参数的版本，我们说其拥有<strong>移动语义</strong>，即，这个函数被批准<strong>窃取</strong>参数的内部资源，而不用做深度拷贝，这样效率较高。但是，移动语义有个重要的限制：  </p>
+<pre><code>被用作参数的右值引用所指向（绑定）的对象，在移动语义完成之后，内部资源已被“窃取”，不能再被其他地方使用；其只是维持一个可析构可销毁的状态。  
+</code></pre><p>移动之后的变量可析构可销毁，由移动语义的实现方保证；移动之后不被其他地方使用，则由移动语义的调用方保证。  </p>
+<p>所以，说白了，移动语义，就是在C++添加了右值引用这一类型之后，对原有的函数（左值引用，拷贝语义），增加了一个重载的版本。这个版本做出了一些限制（参数调用后可析构可销毁，不可再次使用），也带来了效率提升（比如拷贝指针而非深度拷贝内存块）。而要调用到这个新的重载版本呢，就需要用std::move强制的获得一个右值引用类型变量。<br><br></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><hr>
+<p>其实就这么点东西。引用折叠和完美转发找时间再说，稍微有点麻烦，而且用到的地方也更少一些。  </p>
+<p>目前标准库以及protobuf中的类型都已实现了移动语义，基本可以放心使用。如果是自定义的类型，想要使用移动语义，就需要自己去重载右值引用参数版本的带有移动语义的函数了。重载时，要记得需要保证右值引用移动后的可析构可销毁状态~  </p>
+<p><br></p>
+<hr>
+<p>推荐阅读：<br><a href="http://blog.guoyb.com/2016/08/20/cpp11-7/">C++11新特性之右值引用与移动</a><br><a href="http://blog.guoyb.com/2018/03/31/dont-copy/">不要拷贝</a><br><a href="http://blog.guoyb.com/2018/06/16/linux-mem/">关于内存泄露的一场虚惊</a>  </p>
+<p>转载请注明出处： <a href="http://blog.guoyb.com/2018/07/07/move-again/">http://blog.guoyb.com/2018/07/07/move-again/</a>  </p>
+<p>欢迎使用微信扫描下方二维码，关注我的微信公众号TechTalking，技术·生活·思考：<br><img src="http://guoybblog.qiniudn.com/newqrv2.jpg" alt="后端技术小黑屋">  </p>
+
+    
+  </div>
+  <footer>
+    
+      
+  <div class="categories">
+    <a class="categories-link" href="/categories/技术/">技术</a>
+  </div>
+
+      
+  <div class="tags">
+    <a class="tags-link" href="/tags/C/">C++</a>, <a class="tags-link" href="/tags/C-11/">C++11</a>
+  </div>
+
+      
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">Comments</h1>
+  <div class="ds-thread" data-thread-key="2018/07/07/move-again/" data-title="再谈右值引用与移动语义" data-url="http://blog.guoyb.com/2018/07/07/move-again/"></div>
+</section>
+</div>
+  </div>
+  
+  <div id="sidebar" class="widgets-right">
+  
+<div class="widget category">
+  <h3 class="title">categories</h3>
+  <ul class="entry">
+  
+    <li><a href="/categories/书单/">书单</a><small>9</small></li>
+  
+    <li><a href="/categories/技术/">技术</a><small>82</small></li>
+  
+    <li><a href="/categories/杂谈/">杂谈</a><small>21</small></li>
+  
+  </ul>
+</div>
+
+
+  
+<div class="widget tag">
+  <h3 class="title">recent_posts</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2018/07/07/move-again/">再谈右值引用与移动语义</a>
+      </li>
+    
+      <li>
+        <a href="/2018/06/30/2018-booklist-1/">2018年上半年书单</a>
+      </li>
+    
+      <li>
+        <a href="/2018/06/23/auc/">机器学习中的AUC是什么？</a>
+      </li>
+    
+      <li>
+        <a href="/2018/06/16/linux-mem/">关于内存泄露的一场虚惊</a>
+      </li>
+    
+      <li>
+        <a href="/2018/06/09/vim-replace/">Vim中的查找替换</a>
+      </li>
+    
+  </ul>
+</div>
+
+
+  
+<div class="widget tagcloud">
+  <h3 class="title">tagcloud</h3>
+  <div class="entry">
+    <a href="/tags/C/" style="font-size: 11.11px;">C</a> <a href="/tags/C/" style="font-size: 18.89px;">C++</a> <a href="/tags/C-11/" style="font-size: 17.78px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Git/" style="font-size: 10px;">Git</a> <a href="/tags/Linux/" style="font-size: 11.11px;">Linux</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 11.11px;">MySQL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Scala/" style="font-size: 12.22px;">Scala</a> <a href="/tags/Spark/" style="font-size: 11.11px;">Spark</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 11.11px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/grpc/" style="font-size: 11.11px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 11.11px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/mutex/" style="font-size: 10px;">mutex</a> <a href="/tags/protobuf/" style="font-size: 12.22px;">protobuf</a> <a href="/tags/redis/" style="font-size: 13.33px;">redis</a> <a href="/tags/regex/" style="font-size: 13.33px;">regex</a> <a href="/tags/rwlock/" style="font-size: 10px;">rwlock</a> <a href="/tags/shell/" style="font-size: 10px;">shell</a> <a href="/tags/skynet/" style="font-size: 15.56px;">skynet</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 16.67px;">书单</a> <a href="/tags/内存优化/" style="font-size: 10px;">内存优化</a> <a href="/tags/大数据/" style="font-size: 13.33px;">大数据</a> <a href="/tags/学习笔记/" style="font-size: 14.44px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/旅行/" style="font-size: 13.33px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 20px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 13.33px;">查证记录</a> <a href="/tags/生活/" style="font-size: 15.56px;">生活</a> <a href="/tags/读书笔记/" style="font-size: 16.67px;">读书笔记</a>
+  </div>
+</div>
+
+
+  
+<div class="widget tag">
+  <h3 class="title">友情链接</h3>
+  <ul class="entry">
+  
+    
+    <li><a href="http://www.linkedin.com/in/yubo-guo-739b0071" target="_blank">LinkedIn</a></li>
+  
+    
+    <li><a href="http://www.tuicool.com/sites/2emeIjb" target="_blank">推酷站点</a></li>
+  
+  </ul>
+</div>
+
+</div>
+  
+  <footer id="footer"><div class="copyright">
+  
+  &copy; 2018 <a href="/">Yubo Guo</a>
+  
+</div>
+<div class="theme-copyright">
+  Theme by <a href="https://github.com/orderedlist" target="_blank">orderedlist</a>
+   | 
+  Redesign by <a href="http://blog.dafengning.com/" target="_blank">Chong Zi</a>
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//lib.sinaapp.com/js/jquery/1.8/jquery.min.js"></script>
+<script src="/js/scale.fix.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"guoyb"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+
+
+<div id="rightfix" style="display:none;">
+
+<a href="#comment" id="gocomm" class="fix_btn" title="提问/评论"><i><i></i></i></a>
+
+
+<a href="javascript:void(0)" id="gotop" class="fix_btn" onclick="gotop();" title="回到顶部"><i></i></a>
+<script>
+  function gotop(){
+    $('html,body').animate({
+        scrollTop : '0px'
+      }, 800);
+  }
+  $(function(){
+    _rightfix = $('#rightfix');
+    $(window).scroll(function(){
+      $sollTop = document.documentElement.scrollTop + document.body.scrollTop;
+      if($sollTop > 350){
+        _rightfix.show();
+      }else{
+        _rightfix.hide();
+      }
+    });
+  });
+</script>
+
+</div>
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+  (function($){
+    $('.fancybox').fancybox();
+  })(jQuery);
+</script>
+
+</body>
+</html>

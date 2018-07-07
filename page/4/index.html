@@ -75,6 +75,45 @@ var _hmt = _hmt || [];
   <header>
     
       <div class="icon"></div>
+      <a href="/2017/09/28/optimize/">
+  <time datetime="2017-09-27T23:42:26.000Z">
+    2017-09-28
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title"><a href="/2017/09/28/optimize/">如何做好一次优化与重构</a></h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>上周周版本更新后的三天，我基本上都在不断的做hotfix，原因是之前我对一个跨服战场老系统里的部分代码逻辑进行重构和优化，本意是可以大幅降低服务器的单点负载，均衡服务器压力；但是不成想却引出几个比较难追查的问题。到昨天新的周版本上线，目前这一波阵痛期才算已经过去。  </p>
+<h2 id="首先是自我检讨的部分"><a href="#首先是自我检讨的部分" class="headerlink" title="首先是自我检讨的部分"></a>首先是自我检讨的部分</h2><p>对运行了好几年的代码进行重构，很大的风险在于不能彻底理解这段代码的主人当时的想法：他为什么要这么做？这段看似“愚蠢”的代码，是不是在避开什么陷阱？尤其是在这个程序员已经离开项目组的时候。对于这次优化，我想当然的以为，当时是因为底层没有提供相关的支持（确实没有），所以才遗留下这样一段低效的逻辑。所以当我给底层架构添加上相关支持以后，就大刀阔斧的直接进行改动了。其实，这段代码还隐含的避免了其他问题，这个问题在这次的风波中也是爆发的最集中的一个。<br>
+    
+  </div>
+  <footer class="end-sep">
+    
+      
+        <div class="alignleft">
+          <a href="/2017/09/28/optimize/#more" class="more-link">Read More</a>
+        </div>
+      
+      
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+
+
+  
+    <article class="post">
+  <header>
+    
+      <div class="icon"></div>
       <a href="/2017/09/21/depressed/">
   <time datetime="2017-09-20T23:43:43.000Z">
     2017-09-21
@@ -98,7 +137,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2017/09/21/depressed/#more" class="more-link">阅读全文</a>
+          <a href="/2017/09/21/depressed/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -136,7 +175,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2017/09/16/flock/#more" class="more-link">阅读全文</a>
+          <a href="/2017/09/16/flock/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -175,7 +214,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2017/09/09/python-mem/#more" class="more-link">阅读全文</a>
+          <a href="/2017/09/09/python-mem/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -216,7 +255,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2017/09/02/python-cmp/#more" class="more-link">阅读全文</a>
+          <a href="/2017/09/02/python-cmp/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -256,7 +295,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2017/06/30/2017-booklist-1/#more" class="more-link">阅读全文</a>
+          <a href="/2017/06/30/2017-booklist-1/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -294,7 +333,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2017/04/26/japan/#more" class="more-link">阅读全文</a>
+          <a href="/2017/04/26/japan/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -333,7 +372,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2017/03/26/skynet-4/#more" class="more-link">阅读全文</a>
+          <a href="/2017/03/26/skynet-4/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -371,7 +410,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2017/03/15/python-obmalloc-trick/#more" class="more-link">阅读全文</a>
+          <a href="/2017/03/15/python-obmalloc-trick/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -410,46 +449,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2017/03/12/about-house/#more" class="more-link">阅读全文</a>
-        </div>
-      
-      
-    
-    <div class="clearfix"></div>
-  </footer>
-</article>
-
-
-  
-    <article class="post">
-  <header>
-    
-      <div class="icon"></div>
-      <a href="/2017/03/08/skynet-3/">
-  <time datetime="2017-03-08T11:03:32.000Z">
-    2017-03-08
-  </time>
-</a>
-    
-    
-  
-    <h1 class="title"><a href="/2017/03/08/skynet-3/">探索skynet（三）：消息队列</a></h1>
-  
-
-  </header>
-  
-  <div class="entry">
-    
-      <hr>
-<p>skynet框架底层使用消息队列作为各个服务之间通信的工具，之前在<a href="http://blog.guoyb.com/2017/02/12/skynet-2/">探索skynet如何启动一个服务</a>时也提到了创建skynet_context时会初始化一个队列，并且也笼统的提到了如何为一个服务设置callback。那么接下来就详细的看看，skynet里有关消息队列的部分是如何设计和实现的。  </p>
-<h2 id="基础结构"><a href="#基础结构" class="headerlink" title="基础结构"></a>基础结构</h2><p>skynet中有关消息队列的实现主要放在skynet_mq.c中。<br><figure class="highlight c"><figcaption><span>skynet_mq.c</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> message_queue &#123;</span><br><span class="line">	<span class="keyword">struct</span> spinlock lock;</span><br><span class="line">	<span class="keyword">uint32_t</span> handle;</span><br><span class="line">	<span class="keyword">int</span> cap;</span><br><span class="line">	<span class="keyword">int</span> head;</span><br><span class="line">	<span class="keyword">int</span> tail;</span><br><span class="line">	<span class="keyword">int</span> release;</span><br><span class="line">	<span class="keyword">int</span> in_global;</span><br><span class="line">	<span class="keyword">int</span> overload;</span><br><span class="line">	<span class="keyword">int</span> overload_threshold;</span><br><span class="line">	<span class="keyword">struct</span> skynet_message *<span class="built_in">queue</span>;</span><br><span class="line">	<span class="keyword">struct</span> message_queue *next;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> global_queue &#123;</span><br><span class="line">	<span class="keyword">struct</span> message_queue *head;</span><br><span class="line">	<span class="keyword">struct</span> message_queue *tail;</span><br><span class="line">	<span class="keyword">struct</span> spinlock lock;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure><br>
-    
-  </div>
-  <footer class="end-sep">
-    
-      
-        <div class="alignleft">
-          <a href="/2017/03/08/skynet-3/#more" class="more-link">阅读全文</a>
+          <a href="/2017/03/12/about-house/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -463,10 +463,10 @@ var _hmt = _hmt || [];
 
   <nav id="pagination">
   
-    <a href="/page/3/" class="prev">上一页</a>
+    <a href="/page/3/" class="prev">Prev</a>
   
   
-    <a href="/page/5/" class="next">下一页</a>
+    <a href="/page/5/" class="next">Next</a>
   
   <div class="clearfix"></div>
 </nav>
@@ -483,7 +483,7 @@ var _hmt = _hmt || [];
   
     <li><a href="/categories/书单/">书单</a><small>9</small></li>
   
-    <li><a href="/categories/技术/">技术</a><small>81</small></li>
+    <li><a href="/categories/技术/">技术</a><small>82</small></li>
   
     <li><a href="/categories/杂谈/">杂谈</a><small>21</small></li>
   
@@ -495,6 +495,10 @@ var _hmt = _hmt || [];
 <div class="widget tag">
   <h3 class="title">recent_posts</h3>
   <ul class="entry">
+    
+      <li>
+        <a href="/2018/07/07/move-again/">再谈右值引用与移动语义</a>
+      </li>
     
       <li>
         <a href="/2018/06/30/2018-booklist-1/">2018年上半年书单</a>
@@ -510,10 +514,6 @@ var _hmt = _hmt || [];
     
       <li>
         <a href="/2018/06/09/vim-replace/">Vim中的查找替换</a>
-      </li>
-    
-      <li>
-        <a href="/2018/06/02/kv-db/">Memcached、Redis、MongoDB、HBase对比</a>
       </li>
     
   </ul>

@@ -75,6 +75,47 @@ var _hmt = _hmt || [];
   <header>
     
       <div class="icon"></div>
+      <a href="/2018/01/21/scala-call-by-name/">
+  <time datetime="2018-01-21T02:27:41.000Z">
+    2018-01-21
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title"><a href="/2018/01/21/scala-call-by-name/">scala中的传名调用</a></h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>scala函数调用的参数传递有两种方式：  </p>
+<ul>
+<li>一种是传值调用，这种方式和C语言的函数参数传递方式类似，在函数调用的时刻，计算各个参数的值，然后传递进入函数内部，scala中写作function(x: Int)；  </li>
+<li>一种是传名调用，这种调用方式在函数调用时并不直接计算参数的具体值，而是在函数中使用到该参数时，才进行计算，scala中写作function(x: =&gt;Int)。这里有意思的地方在于，在scala中， Int =&gt; Int表示一个函数类型，接受Int参数，返回Int返回值。那这里x的类型，就类似于一个函数，它没有参数，但是返回一个Int类型的返回值。
+    
+  </div>
+  <footer class="end-sep">
+    
+      
+        <div class="alignleft">
+          <a href="/2018/01/21/scala-call-by-name/#more" class="more-link">Read More</a>
+        </div>
+      
+      
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+
+
+  
+    <article class="post">
+  <header>
+    
+      <div class="icon"></div>
       <a href="/2018/01/13/2017-booklist-2/">
   <time datetime="2018-01-13T02:41:20.000Z">
     2018-01-13
@@ -100,7 +141,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2018/01/13/2017-booklist-2/#more" class="more-link">阅读全文</a>
+          <a href="/2018/01/13/2017-booklist-2/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -139,7 +180,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2018/01/06/gz-sz/#more" class="more-link">阅读全文</a>
+          <a href="/2018/01/06/gz-sz/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -180,7 +221,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2017/12/09/scala-match/#more" class="more-link">阅读全文</a>
+          <a href="/2017/12/09/scala-match/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -222,7 +263,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2017/11/05/boost-python/#more" class="more-link">阅读全文</a>
+          <a href="/2017/11/05/boost-python/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -261,7 +302,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2017/11/02/price-discrimination/#more" class="more-link">阅读全文</a>
+          <a href="/2017/11/02/price-discrimination/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -300,7 +341,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2017/11/01/waiting/#more" class="more-link">阅读全文</a>
+          <a href="/2017/11/01/waiting/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -343,7 +384,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2017/10/25/skynet-ppt/#more" class="more-link">阅读全文</a>
+          <a href="/2017/10/25/skynet-ppt/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -382,7 +423,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2017/10/22/brainhole/#more" class="more-link">阅读全文</a>
+          <a href="/2017/10/22/brainhole/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -422,46 +463,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2017/10/12/skynet-5/#more" class="more-link">阅读全文</a>
-        </div>
-      
-      
-    
-    <div class="clearfix"></div>
-  </footer>
-</article>
-
-
-  
-    <article class="post">
-  <header>
-    
-      <div class="icon"></div>
-      <a href="/2017/09/28/optimize/">
-  <time datetime="2017-09-27T23:42:26.000Z">
-    2017-09-28
-  </time>
-</a>
-    
-    
-  
-    <h1 class="title"><a href="/2017/09/28/optimize/">如何做好一次优化与重构</a></h1>
-  
-
-  </header>
-  
-  <div class="entry">
-    
-      <hr>
-<p>上周周版本更新后的三天，我基本上都在不断的做hotfix，原因是之前我对一个跨服战场老系统里的部分代码逻辑进行重构和优化，本意是可以大幅降低服务器的单点负载，均衡服务器压力；但是不成想却引出几个比较难追查的问题。到昨天新的周版本上线，目前这一波阵痛期才算已经过去。  </p>
-<h2 id="首先是自我检讨的部分"><a href="#首先是自我检讨的部分" class="headerlink" title="首先是自我检讨的部分"></a>首先是自我检讨的部分</h2><p>对运行了好几年的代码进行重构，很大的风险在于不能彻底理解这段代码的主人当时的想法：他为什么要这么做？这段看似“愚蠢”的代码，是不是在避开什么陷阱？尤其是在这个程序员已经离开项目组的时候。对于这次优化，我想当然的以为，当时是因为底层没有提供相关的支持（确实没有），所以才遗留下这样一段低效的逻辑。所以当我给底层架构添加上相关支持以后，就大刀阔斧的直接进行改动了。其实，这段代码还隐含的避免了其他问题，这个问题在这次的风波中也是爆发的最集中的一个。<br>
-    
-  </div>
-  <footer class="end-sep">
-    
-      
-        <div class="alignleft">
-          <a href="/2017/09/28/optimize/#more" class="more-link">阅读全文</a>
+          <a href="/2017/10/12/skynet-5/#more" class="more-link">Read More</a>
         </div>
       
       
@@ -475,10 +477,10 @@ var _hmt = _hmt || [];
 
   <nav id="pagination">
   
-    <a href="/page/2/" class="prev">上一页</a>
+    <a href="/page/2/" class="prev">Prev</a>
   
   
-    <a href="/page/4/" class="next">下一页</a>
+    <a href="/page/4/" class="next">Next</a>
   
   <div class="clearfix"></div>
 </nav>
@@ -495,7 +497,7 @@ var _hmt = _hmt || [];
   
     <li><a href="/categories/书单/">书单</a><small>9</small></li>
   
-    <li><a href="/categories/技术/">技术</a><small>81</small></li>
+    <li><a href="/categories/技术/">技术</a><small>82</small></li>
   
     <li><a href="/categories/杂谈/">杂谈</a><small>21</small></li>
   
@@ -507,6 +509,10 @@ var _hmt = _hmt || [];
 <div class="widget tag">
   <h3 class="title">recent_posts</h3>
   <ul class="entry">
+    
+      <li>
+        <a href="/2018/07/07/move-again/">再谈右值引用与移动语义</a>
+      </li>
     
       <li>
         <a href="/2018/06/30/2018-booklist-1/">2018年上半年书单</a>
@@ -522,10 +528,6 @@ var _hmt = _hmt || [];
     
       <li>
         <a href="/2018/06/09/vim-replace/">Vim中的查找替换</a>
-      </li>
-    
-      <li>
-        <a href="/2018/06/02/kv-db/">Memcached、Redis、MongoDB、HBase对比</a>
       </li>
     
   </ul>
