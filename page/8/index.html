@@ -75,6 +75,47 @@ var _hmt = _hmt || [];
   <header>
     
       <div class="icon"></div>
+      <a href="/2016/08/17/mysql-select-order/">
+  <time datetime="2016-08-17T00:28:56.000Z">
+    2016-08-17
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title"><a href="/2016/08/17/mysql-select-order/">一个潜伏了5年的bug</a></h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>前两天策划反馈某项活动中，理论上大概千分之一中奖率的一个奖品，连续四次被同一个玩家得到了。他之前已经找了几个程序复查过代码，都说没啥问题，但是从概率上讲，肯定是有问题的，所以希望我“为程序员正名”。经过一上午的奋战，我也算不辱使命，找出了这个潜伏了5年的bug，也了解了关于mysql的一个潜规则。  </p>
+<p>整个业务场景大概是这样的（下面代码仅为示意，不可直接运行）：  </p>
+<p>首先，每个玩家报名的时候，向数据库中插入一行，记录下活动id（activity_id），玩家uuid（player_uuid），申请序号（apply_no）以及一些其他的玩家相关信息。  </p>
+<p>同时，在内存中维护一个整数，记录当前活动的申请总人数apply_total_num。同时使用这个整数来获得下一个插入行的apply_no。<br>
+    
+  </div>
+  <footer class="end-sep">
+    
+      
+        <div class="alignleft">
+          <a href="/2016/08/17/mysql-select-order/#more" class="more-link">Read More</a>
+        </div>
+      
+      
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+
+
+  
+    <article class="post">
+  <header>
+    
+      <div class="icon"></div>
       <a href="/2016/08/14/cpp11-6/">
   <time datetime="2016-08-14T00:14:04.000Z">
     2016-08-14
@@ -458,55 +499,6 @@ var _hmt = _hmt || [];
 
 
   
-    <article class="post">
-  <header>
-    
-      <div class="icon"></div>
-      <a href="/2016/07/03/python-coroutine/">
-  <time datetime="2016-07-03T02:35:59.000Z">
-    2016-07-03
-  </time>
-</a>
-    
-    
-  
-    <h1 class="title"><a href="/2016/07/03/python-coroutine/">Python协程：从yield/send到async/await</a></h1>
-  
-
-  </header>
-  
-  <div class="entry">
-    
-      <hr>
-<p>Python由于众所周知的GIL的原因，导致其线程无法发挥多核的并行计算能力（当然，后来有了multiprocessing，可以实现多进程并行），显得比较鸡肋。既然在GIL之下，同一时刻只能有一个线程在运行，那么对于CPU密集的程序来说，线程之间的切换开销就成了拖累，而以I/O为瓶颈的程序正是协程所擅长的：  </p>
-<p><strong>多任务并发（非并行），每个任务在合适的时候挂起（发起I/O）和恢复(I/O结束)</strong>  </p>
-<p>Python中的协程经历了很长的一段发展历程。其大概经历了如下三个阶段：  </p>
-<blockquote>
-<ol>
-<li>最初的生成器变形yield/send</li>
-<li>引入@asyncio.coroutine和yield from  </li>
-<li>在最近的Python3.5版本中引入async/await关键字  </li>
-</ol>
-</blockquote>
-<h2 id="从yield说起"><a href="#从yield说起" class="headerlink" title="从yield说起"></a>从yield说起</h2><p>先看一段普通的计算斐波那契续列的代码：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">old_fib</span><span class="params">(n)</span>:</span></span><br><span class="line">	res = [<span class="number">0</span>] * n</span><br><span class="line">	index = <span class="number">0</span></span><br><span class="line">	a = <span class="number">0</span></span><br><span class="line">	b = <span class="number">1</span></span><br><span class="line">	<span class="keyword">while</span> index &lt; n:</span><br><span class="line">		res[index] = b</span><br><span class="line">		a, b = b, a + b</span><br><span class="line">		index += <span class="number">1</span></span><br><span class="line">	<span class="keyword">return</span> res</span><br><span class="line"></span><br><span class="line">print(<span class="string">'-'</span>*<span class="number">10</span> + <span class="string">'test old fib'</span> + <span class="string">'-'</span>*<span class="number">10</span>)</span><br><span class="line"><span class="keyword">for</span> fib_res <span class="keyword">in</span> old_fib(<span class="number">20</span>):</span><br><span class="line">	print(fib_res)</span><br></pre></td></tr></table></figure>  </p>
-<p>如果我们仅仅是需要拿到斐波那契序列的第n位，或者仅仅是希望依此产生斐波那契序列，那么上面这种传统方式就会比较耗费内存。<br>
-    
-  </div>
-  <footer class="end-sep">
-    
-      
-        <div class="alignleft">
-          <a href="/2016/07/03/python-coroutine/#more" class="more-link">Read More</a>
-        </div>
-      
-      
-    
-    <div class="clearfix"></div>
-  </footer>
-</article>
-
-
-  
 
   <nav id="pagination">
   
@@ -530,7 +522,7 @@ var _hmt = _hmt || [];
   
     <li><a href="/categories/书单/">书单</a><small>9</small></li>
   
-    <li><a href="/categories/技术/">技术</a><small>82</small></li>
+    <li><a href="/categories/技术/">技术</a><small>83</small></li>
   
     <li><a href="/categories/杂谈/">杂谈</a><small>21</small></li>
   
@@ -542,6 +534,10 @@ var _hmt = _hmt || [];
 <div class="widget tag">
   <h3 class="title">recent_posts</h3>
   <ul class="entry">
+    
+      <li>
+        <a href="/2018/07/28/mutex-sleep/">踩坑记：临界区内要小心</a>
+      </li>
     
       <li>
         <a href="/2018/07/07/move-again/">再谈右值引用与移动语义</a>
@@ -557,10 +553,6 @@ var _hmt = _hmt || [];
     
       <li>
         <a href="/2018/06/16/linux-mem/">关于内存泄露的一场虚惊</a>
-      </li>
-    
-      <li>
-        <a href="/2018/06/09/vim-replace/">Vim中的查找替换</a>
       </li>
     
   </ul>

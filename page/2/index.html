@@ -75,6 +75,44 @@ var _hmt = _hmt || [];
   <header>
     
       <div class="icon"></div>
+      <a href="/2018/04/21/spark-scala-future/">
+  <time datetime="2018-04-21T02:20:11.000Z">
+    2018-04-21
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title"><a href="/2018/04/21/spark-scala-future/">Spark“并行”写</a></h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>spark本来已经是一个分布式的计算平台，按说不应该手工去处理并行/异步的事情。但是，最近我实现的一个spark任务，需要一次写出数十个分区的数据，虽然这些分区的数据之间完全独立，但坑爹的是，基础数据平台提供的写数据接口只支持<strong>同步</strong>的一次写一个分区的数据。这样造成的结果就是，用循环来实现时，虽然我有很多个计算节点，数据（RDD）也分布于各个节点之上，但是我只能等一个分区写完成后，再写下一个分区：因为“写分区”这个任务的下发是同步阻塞的。<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">partitions</span><br><span class="line">  .map(part =&gt;  writeToDisk(data.filter(part), part))</span><br></pre></td></tr></table></figure><br>
+    
+  </div>
+  <footer class="end-sep">
+    
+      
+        <div class="alignleft">
+          <a href="/2018/04/21/spark-scala-future/#more" class="more-link">Read More</a>
+        </div>
+      
+      
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+
+
+  
+    <article class="post">
+  <header>
+    
+      <div class="icon"></div>
       <a href="/2018/04/14/git-hooks/">
   <time datetime="2018-04-14T01:33:56.000Z">
     2018-04-14
@@ -427,45 +465,6 @@ var _hmt = _hmt || [];
 
 
   
-    <article class="post">
-  <header>
-    
-      <div class="icon"></div>
-      <a href="/2018/01/28/data-oriented/">
-  <time datetime="2018-01-28T01:09:33.000Z">
-    2018-01-28
-  </time>
-</a>
-    
-    
-  
-    <h1 class="title"><a href="/2018/01/28/data-oriented/">面向数据编程</a></h1>
-  
-
-  </header>
-  
-  <div class="entry">
-    
-      <hr>
-<p>最近一阵在做一个自动化的工具，把一些机械化的重复工作，用配置数据的形式固化下来，自动进行，配置数据尽可能简单明了，最好能让产品经理也可以操作，这样就可以大大解放生产力。  </p>
-<p>由此，我不由得感叹，数据真是程序员和非程序员之间交流通信的良好媒介——看不懂代码？数据总能看懂吧？<br>
-    
-  </div>
-  <footer class="end-sep">
-    
-      
-        <div class="alignleft">
-          <a href="/2018/01/28/data-oriented/#more" class="more-link">Read More</a>
-        </div>
-      
-      
-    
-    <div class="clearfix"></div>
-  </footer>
-</article>
-
-
-  
 
   <nav id="pagination">
   
@@ -489,7 +488,7 @@ var _hmt = _hmt || [];
   
     <li><a href="/categories/书单/">书单</a><small>9</small></li>
   
-    <li><a href="/categories/技术/">技术</a><small>82</small></li>
+    <li><a href="/categories/技术/">技术</a><small>83</small></li>
   
     <li><a href="/categories/杂谈/">杂谈</a><small>21</small></li>
   
@@ -501,6 +500,10 @@ var _hmt = _hmt || [];
 <div class="widget tag">
   <h3 class="title">recent_posts</h3>
   <ul class="entry">
+    
+      <li>
+        <a href="/2018/07/28/mutex-sleep/">踩坑记：临界区内要小心</a>
+      </li>
     
       <li>
         <a href="/2018/07/07/move-again/">再谈右值引用与移动语义</a>
@@ -516,10 +519,6 @@ var _hmt = _hmt || [];
     
       <li>
         <a href="/2018/06/16/linux-mem/">关于内存泄露的一场虚惊</a>
-      </li>
-    
-      <li>
-        <a href="/2018/06/09/vim-replace/">Vim中的查找替换</a>
       </li>
     
   </ul>

@@ -75,6 +75,45 @@ var _hmt = _hmt || [];
   <header>
     
       <div class="icon"></div>
+      <a href="/2018/01/28/data-oriented/">
+  <time datetime="2018-01-28T01:09:33.000Z">
+    2018-01-28
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title"><a href="/2018/01/28/data-oriented/">面向数据编程</a></h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>最近一阵在做一个自动化的工具，把一些机械化的重复工作，用配置数据的形式固化下来，自动进行，配置数据尽可能简单明了，最好能让产品经理也可以操作，这样就可以大大解放生产力。  </p>
+<p>由此，我不由得感叹，数据真是程序员和非程序员之间交流通信的良好媒介——看不懂代码？数据总能看懂吧？<br>
+    
+  </div>
+  <footer class="end-sep">
+    
+      
+        <div class="alignleft">
+          <a href="/2018/01/28/data-oriented/#more" class="more-link">Read More</a>
+        </div>
+      
+      
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+
+
+  
+    <article class="post">
+  <header>
+    
+      <div class="icon"></div>
       <a href="/2018/01/21/scala-call-by-name/">
   <time datetime="2018-01-21T02:27:41.000Z">
     2018-01-21
@@ -434,46 +473,6 @@ var _hmt = _hmt || [];
 
 
   
-    <article class="post">
-  <header>
-    
-      <div class="icon"></div>
-      <a href="/2017/10/12/skynet-5/">
-  <time datetime="2017-10-12T13:18:17.000Z">
-    2017-10-12
-  </time>
-</a>
-    
-    
-  
-    <h1 class="title"><a href="/2017/10/12/skynet-5/">探索skynet（五）：随笔</a></h1>
-  
-
-  </header>
-  
-  <div class="entry">
-    
-      <hr>
-<p>最近准备在组内做一个有关skynet的分享，所以对skynet产生了一些“形而上”的思考。这篇文章将不涉及具体的代码细节，就是就着skynet这个框架“扯扯淡”，随便写写。  </p>
-<h2 id="skynet的核心是什么"><a href="#skynet的核心是什么" class="headerlink" title="skynet的核心是什么"></a>skynet的核心是什么</h2><p>skynet从Erlang借鉴而来，主要借鉴它的Actor模型，用以充分利用多核实现并行计算。所以skynet可以说是一个C语言+lua语言实现的Actor模型框架。  </p>
-<p>skynet中的每一个Actor，原则上，都是一个so库。每个Actor，对应于一个自己的消息队列。所有消息队列又串成了一个<strong>消息队列的大队列</strong>。多个工作线程，不断的从<strong>大队列</strong>中拿出消息队列，取出消息，找到对应的Actor（也就是so库），将消息扔给so库去处理。从这个角度来说，Actor（so库），不过是一个<strong>消息处理器</strong>。<br>
-    
-  </div>
-  <footer class="end-sep">
-    
-      
-        <div class="alignleft">
-          <a href="/2017/10/12/skynet-5/#more" class="more-link">Read More</a>
-        </div>
-      
-      
-    
-    <div class="clearfix"></div>
-  </footer>
-</article>
-
-
-  
 
   <nav id="pagination">
   
@@ -497,7 +496,7 @@ var _hmt = _hmt || [];
   
     <li><a href="/categories/书单/">书单</a><small>9</small></li>
   
-    <li><a href="/categories/技术/">技术</a><small>82</small></li>
+    <li><a href="/categories/技术/">技术</a><small>83</small></li>
   
     <li><a href="/categories/杂谈/">杂谈</a><small>21</small></li>
   
@@ -509,6 +508,10 @@ var _hmt = _hmt || [];
 <div class="widget tag">
   <h3 class="title">recent_posts</h3>
   <ul class="entry">
+    
+      <li>
+        <a href="/2018/07/28/mutex-sleep/">踩坑记：临界区内要小心</a>
+      </li>
     
       <li>
         <a href="/2018/07/07/move-again/">再谈右值引用与移动语义</a>
@@ -524,10 +527,6 @@ var _hmt = _hmt || [];
     
       <li>
         <a href="/2018/06/16/linux-mem/">关于内存泄露的一场虚惊</a>
-      </li>
-    
-      <li>
-        <a href="/2018/06/09/vim-replace/">Vim中的查找替换</a>
       </li>
     
   </ul>

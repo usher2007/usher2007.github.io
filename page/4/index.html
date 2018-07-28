@@ -75,6 +75,46 @@ var _hmt = _hmt || [];
   <header>
     
       <div class="icon"></div>
+      <a href="/2017/10/12/skynet-5/">
+  <time datetime="2017-10-12T13:18:17.000Z">
+    2017-10-12
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title"><a href="/2017/10/12/skynet-5/">探索skynet（五）：随笔</a></h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>最近准备在组内做一个有关skynet的分享，所以对skynet产生了一些“形而上”的思考。这篇文章将不涉及具体的代码细节，就是就着skynet这个框架“扯扯淡”，随便写写。  </p>
+<h2 id="skynet的核心是什么"><a href="#skynet的核心是什么" class="headerlink" title="skynet的核心是什么"></a>skynet的核心是什么</h2><p>skynet从Erlang借鉴而来，主要借鉴它的Actor模型，用以充分利用多核实现并行计算。所以skynet可以说是一个C语言+lua语言实现的Actor模型框架。  </p>
+<p>skynet中的每一个Actor，原则上，都是一个so库。每个Actor，对应于一个自己的消息队列。所有消息队列又串成了一个<strong>消息队列的大队列</strong>。多个工作线程，不断的从<strong>大队列</strong>中拿出消息队列，取出消息，找到对应的Actor（也就是so库），将消息扔给so库去处理。从这个角度来说，Actor（so库），不过是一个<strong>消息处理器</strong>。<br>
+    
+  </div>
+  <footer class="end-sep">
+    
+      
+        <div class="alignleft">
+          <a href="/2017/10/12/skynet-5/#more" class="more-link">Read More</a>
+        </div>
+      
+      
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+
+
+  
+    <article class="post">
+  <header>
+    
+      <div class="icon"></div>
       <a href="/2017/09/28/optimize/">
   <time datetime="2017-09-27T23:42:26.000Z">
     2017-09-28
@@ -421,45 +461,6 @@ var _hmt = _hmt || [];
 
 
   
-    <article class="post">
-  <header>
-    
-      <div class="icon"></div>
-      <a href="/2017/03/12/about-house/">
-  <time datetime="2017-03-12T08:10:13.000Z">
-    2017-03-12
-  </time>
-</a>
-    
-    
-  
-    <h1 class="title"><a href="/2017/03/12/about-house/">高房价在扼杀什么</a></h1>
-  
-
-  </header>
-  
-  <div class="entry">
-    
-      <hr>
-<p>这个周末，看到水木上一篇文章<a href="http://www.newsmth.net/nForum/#!article/CAS/145386">《被疏解了》</a>，大意就是说一个三北博士（本科、硕士、博士都是北大的），毕业后进入中科院北京某研究所工作三年，还是由于房价太高以及子女教育问题，选择去南京了。  </p>
-<p>每隔一段时间，就会有这样的一篇热文，来控诉帝都的房价。本来我都习以为常了——一时逃离北上广，一时又逃回北上广，循环往复——但是正好最近目前住的小区里也发生了一件相关的小事，让我又有了一些新的感慨。<br>
-    
-  </div>
-  <footer class="end-sep">
-    
-      
-        <div class="alignleft">
-          <a href="/2017/03/12/about-house/#more" class="more-link">Read More</a>
-        </div>
-      
-      
-    
-    <div class="clearfix"></div>
-  </footer>
-</article>
-
-
-  
 
   <nav id="pagination">
   
@@ -483,7 +484,7 @@ var _hmt = _hmt || [];
   
     <li><a href="/categories/书单/">书单</a><small>9</small></li>
   
-    <li><a href="/categories/技术/">技术</a><small>82</small></li>
+    <li><a href="/categories/技术/">技术</a><small>83</small></li>
   
     <li><a href="/categories/杂谈/">杂谈</a><small>21</small></li>
   
@@ -495,6 +496,10 @@ var _hmt = _hmt || [];
 <div class="widget tag">
   <h3 class="title">recent_posts</h3>
   <ul class="entry">
+    
+      <li>
+        <a href="/2018/07/28/mutex-sleep/">踩坑记：临界区内要小心</a>
+      </li>
     
       <li>
         <a href="/2018/07/07/move-again/">再谈右值引用与移动语义</a>
@@ -510,10 +515,6 @@ var _hmt = _hmt || [];
     
       <li>
         <a href="/2018/06/16/linux-mem/">关于内存泄露的一场虚惊</a>
-      </li>
-    
-      <li>
-        <a href="/2018/06/09/vim-replace/">Vim中的查找替换</a>
       </li>
     
   </ul>
