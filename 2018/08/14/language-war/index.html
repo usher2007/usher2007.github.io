@@ -1,0 +1,276 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  
+  <title>我看语言之争 | 一根笨茄子</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  
+    <meta name="author" content="Yubo Guo">
+  
+  
+    <meta name="description" content="我不是一个语言原教旨主义者，但是不得不承认，“语言鄙视链”这东西确实存在。一般来说，强类型鄙视弱类型的，编译型的鄙视解释型的，分布式的鄙视单机的，函数式的鄙视面向对象的鄙视过程式的……不过最近某P语言借助人工智能东风，有从鄙视链底端逆袭的趋势。">
+  
+  <meta name="description" content="我不是一个语言原教旨主义者，但是不得不承认，“语言鄙视链”这东西确实存在。一般来说，强类型鄙视弱类型的，编译型的鄙视解释型的，分布式的鄙视单机的，函数式的鄙视面向对象的鄙视过程式的……不过最近某P语言借助人工智能东风，有从鄙视链底端逆袭的趋势。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="我看语言之争">
+<meta property="og:url" content="http://blog.guoyb.com/2018/08/14/language-war/index.html">
+<meta property="og:site_name" content="一根笨茄子">
+<meta property="og:description" content="我不是一个语言原教旨主义者，但是不得不承认，“语言鄙视链”这东西确实存在。一般来说，强类型鄙视弱类型的，编译型的鄙视解释型的，分布式的鄙视单机的，函数式的鄙视面向对象的鄙视过程式的……不过最近某P语言借助人工智能东风，有从鄙视链底端逆袭的趋势。">
+<meta property="og:image" content="http://guoybblog.qiniudn.com/newqrv2.jpg">
+<meta property="og:updated_time" content="2018-08-14T00:03:56.098Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="我看语言之争">
+<meta name="twitter:description" content="我不是一个语言原教旨主义者，但是不得不承认，“语言鄙视链”这东西确实存在。一般来说，强类型鄙视弱类型的，编译型的鄙视解释型的，分布式的鄙视单机的，函数式的鄙视面向对象的鄙视过程式的……不过最近某P语言借助人工智能东风，有从鄙视链底端逆袭的趋势。">
+<meta name="twitter:image" content="http://guoybblog.qiniudn.com/newqrv2.jpg">
+  
+  
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <!--[if lt IE 9]><script src="//cdn.bootcss.com/html5shiv/3.7.0/html5shiv.min.js"></script><![endif]-->
+  
+  
+<script type="text/javascript">
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?996ee0fca2512b4c29f37f60cf6387ca";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-6897127630340076",
+    enable_page_level_ads: true
+  });
+</script>
+
+</head>
+<body>
+  <div class="wrapper">
+    <header id="header">
+  <div class="title">
+    <h1><a href="/">一根笨茄子</a></h1>
+    <p><a href="/"></a></p>
+  </div>
+  <nav class="nav">
+    <ul>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/about">关于我</a></li>
+      
+      
+    </ul>
+    <div class="clearfix"></div>
+  </nav>
+  <div class="clearfix"></div>
+</header>
+    <div class="content"><article class="post">
+  <header>
+    
+      <div class="icon"></div>
+      <a href="/2018/08/14/language-war/">
+  <time datetime="2018-08-13T23:51:10.000Z">
+    2018-08-14
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title">我看语言之争</h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>我不是一个语言原教旨主义者，但是不得不承认，“语言鄙视链”这东西确实存在。一般来说，强类型鄙视弱类型的，编译型的鄙视解释型的，分布式的鄙视单机的，函数式的鄙视面向对象的鄙视过程式的……不过最近某P语言借助人工智能东风，有从鄙视链底端逆袭的趋势。<br><a id="more"></a></p>
+<h2 id="现状"><a href="#现状" class="headerlink" title="现状"></a>现状</h2><p>其实，每种语言都有他适用的方面。  </p>
+<p>理想的状态应该是，系统中的各个模块，用最适合的语言编写；模块和模块之间，通过网络、文件等介质实现隔离。凯撒的归凯撒，上帝的归上帝。  </p>
+<p>但是现实情况却往往无法做到这样。  </p>
+<p>一方面，你很难全面的掌握所有的系统设计，也就是说，新设计的系统可能要依赖于当前已有的各种系统，这些依赖可能是紧耦合的，让你必须使用相同的语言；也可能这些系统的接口设计，提供了解耦的功能，但是相关的解析工具又只提供了为数不多的语言支持，这时你要不要自己用“合适”的语言实现一遍呢？  </p>
+<p>另一方面，团队中人员的技术栈也可能会成为掣肘的力量，你敢冒这样的风险吗？值不值呢？</p>
+<h2 id="无奈"><a href="#无奈" class="headerlink" title="无奈"></a>无奈</h2><p>其实越是大公司、或者成熟稳定的技术团队，在这方面是举步维艰。  </p>
+<p>这么说吧，使用一门新语言，难度不亚于内部创业，不仅需要证明新语言在某重要方面优于公司已有技术框架，而且还要自建适配于新语言的各种配套设施，比如测试框架，比如代码自动审查工具，比如集成环境等等，因为这些如果使用现有语言都是成熟的。想要把大家从当前的舒适区中拽出来，你当然需要又当爹又当妈，至少得创造一个差不多的另一个舒适区。</p>
+<h2 id="与之相处"><a href="#与之相处" class="headerlink" title="与之相处"></a>与之相处</h2><p>有一种策略，叫做“面向收入编程”。  </p>
+<p>有时候，作为一个干活的程序员，很难决定整个公司或者团队的技术方向选择，那么我们至少可以影响我们自己。       </p>
+<p>在“带着镣铐跳舞”的情况下，尽量学习、吸收一些通用能力，或者能证明自己通用能力的能力是非常重要的。每个人都有充分的理由相信，一个视野开阔，同时又能在某一方面精钻的人，是能够很快的适应新环境并作出一番贡献的。说白了，我当下用什么、做什么可能不由我自己决定，但是用的好不好、做的好不好是可以的，并且，我思考什么、学习什么就更是由内因所决定的。</p>
+<p>很多人说华为的技术栈在外面没用，“一入华为深似海”。但是，我也见到有不少优秀的前华为员工，出来后很快就转换了技术栈并且做的风生水起。你愿意做哪一种人呢？</p>
+<p><br>  </p>
+<hr>
+<p>推荐阅读：<br><a href="http://blog.guoyb.com/2018/06/30/2018-booklist-1/">2018年上半年书单</a><br><a href="http://blog.guoyb.com/2018/05/26/block-chain/">区块链比特币科普八问</a><br><a href="http://blog.guoyb.com/2018/02/22/thinking-set/">跳出思维定势</a>  </p>
+<p>转载请注明出处： <a href="http://blog.guoyb.com/2018/08/14/language-war/">http://blog.guoyb.com/2018/08/14/language-war/</a>  </p>
+<p>欢迎使用微信扫描下方二维码，关注我的微信公众号TechTalking，技术·生活·思考：<br><img src="http://guoybblog.qiniudn.com/newqrv2.jpg" alt="后端技术小黑屋">  </p>
+
+    
+  </div>
+  <footer>
+    
+      
+  <div class="categories">
+    <a class="categories-link" href="/categories/技术/">技术</a>
+  </div>
+
+      
+  <div class="tags">
+    <a class="tags-link" href="/tags/杂谈/">杂谈</a>
+  </div>
+
+      
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">Comments</h1>
+  <div class="ds-thread" data-thread-key="2018/08/14/language-war/" data-title="我看语言之争" data-url="http://blog.guoyb.com/2018/08/14/language-war/"></div>
+</section>
+</div>
+  </div>
+  
+  <div id="sidebar" class="widgets-right">
+  
+<div class="widget category">
+  <h3 class="title">categories</h3>
+  <ul class="entry">
+  
+    <li><a href="/categories/书单/">书单</a><small>9</small></li>
+  
+    <li><a href="/categories/技术/">技术</a><small>84</small></li>
+  
+    <li><a href="/categories/杂谈/">杂谈</a><small>21</small></li>
+  
+  </ul>
+</div>
+
+
+  
+<div class="widget tag">
+  <h3 class="title">recent_posts</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2018/08/14/language-war/">我看语言之争</a>
+      </li>
+    
+      <li>
+        <a href="/2018/07/28/mutex-sleep/">踩坑记：临界区内要小心</a>
+      </li>
+    
+      <li>
+        <a href="/2018/07/07/move-again/">再谈右值引用与移动语义</a>
+      </li>
+    
+      <li>
+        <a href="/2018/06/30/2018-booklist-1/">2018年上半年书单</a>
+      </li>
+    
+      <li>
+        <a href="/2018/06/23/auc/">机器学习中的AUC是什么？</a>
+      </li>
+    
+  </ul>
+</div>
+
+
+  
+<div class="widget tagcloud">
+  <h3 class="title">tagcloud</h3>
+  <div class="entry">
+    <a href="/tags/C/" style="font-size: 11px;">C</a> <a href="/tags/C/" style="font-size: 18px;">C++</a> <a href="/tags/C-11/" style="font-size: 17px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Git/" style="font-size: 10px;">Git</a> <a href="/tags/Linux/" style="font-size: 11px;">Linux</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 11px;">MySQL</a> <a href="/tags/Python/" style="font-size: 19px;">Python</a> <a href="/tags/Scala/" style="font-size: 12px;">Scala</a> <a href="/tags/Spark/" style="font-size: 11px;">Spark</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 11px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/grpc/" style="font-size: 11px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 11px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/mutex/" style="font-size: 10px;">mutex</a> <a href="/tags/protobuf/" style="font-size: 12px;">protobuf</a> <a href="/tags/redis/" style="font-size: 13px;">redis</a> <a href="/tags/regex/" style="font-size: 13px;">regex</a> <a href="/tags/rwlock/" style="font-size: 10px;">rwlock</a> <a href="/tags/shell/" style="font-size: 10px;">shell</a> <a href="/tags/skynet/" style="font-size: 15px;">skynet</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 16px;">书单</a> <a href="/tags/内存优化/" style="font-size: 10px;">内存优化</a> <a href="/tags/大数据/" style="font-size: 13px;">大数据</a> <a href="/tags/学习笔记/" style="font-size: 14px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/旅行/" style="font-size: 13px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 20px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 13px;">查证记录</a> <a href="/tags/生活/" style="font-size: 15px;">生活</a> <a href="/tags/读书笔记/" style="font-size: 16px;">读书笔记</a>
+  </div>
+</div>
+
+
+  
+<div class="widget tag">
+  <h3 class="title">友情链接</h3>
+  <ul class="entry">
+  
+    
+    <li><a href="http://www.linkedin.com/in/yubo-guo-739b0071" target="_blank">LinkedIn</a></li>
+  
+    
+    <li><a href="http://www.tuicool.com/sites/2emeIjb" target="_blank">推酷站点</a></li>
+  
+  </ul>
+</div>
+
+</div>
+  
+  <footer id="footer"><div class="copyright">
+  
+  &copy; 2018 <a href="/">Yubo Guo</a>
+  
+</div>
+<div class="theme-copyright">
+  Theme by <a href="https://github.com/orderedlist" target="_blank">orderedlist</a>
+   | 
+  Redesign by <a href="http://blog.dafengning.com/" target="_blank">Chong Zi</a>
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//lib.sinaapp.com/js/jquery/1.8/jquery.min.js"></script>
+<script src="/js/scale.fix.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"guoyb"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+
+
+<div id="rightfix" style="display:none;">
+
+<a href="#comment" id="gocomm" class="fix_btn" title="提问/评论"><i><i></i></i></a>
+
+
+<a href="javascript:void(0)" id="gotop" class="fix_btn" onclick="gotop();" title="回到顶部"><i></i></a>
+<script>
+  function gotop(){
+    $('html,body').animate({
+        scrollTop : '0px'
+      }, 800);
+  }
+  $(function(){
+    _rightfix = $('#rightfix');
+    $(window).scroll(function(){
+      $sollTop = document.documentElement.scrollTop + document.body.scrollTop;
+      if($sollTop > 350){
+        _rightfix.show();
+      }else{
+        _rightfix.hide();
+      }
+    });
+  });
+</script>
+
+</div>
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+  (function($){
+    $('.fancybox').fancybox();
+  })(jQuery);
+</script>
+
+</body>
+</html>

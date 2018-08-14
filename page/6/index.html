@@ -75,6 +75,46 @@ var _hmt = _hmt || [];
   <header>
     
       <div class="icon"></div>
+      <a href="/2017/01/19/skynet-1/">
+  <time datetime="2017-01-19T00:05:46.000Z">
+    2017-01-19
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title"><a href="/2017/01/19/skynet-1/">探索skynet（一）：从skynet_sample说起</a></h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>skynet是云风写的一个轻量级的游戏服务器框架。它以<strong>服务</strong>为主要的逻辑对象，底层框架支持服务之间的同步/异步调用。由于服务并不是占用独立进程，所以服务之间的调用实现的非常高效。同时，为每个服务启动了一个lua虚拟机（lua_State），实现了服务之间的互不干扰。  </p>
+<p>但是，skynet是非常轻量的，它并没有实现其他游戏服务器框架中常有的场景管理、用户AOI管理等功能，这些功能，skynet使用者可以按照自己的设计思路使用若干个服务实现。  </p>
+<p>skynet是开源的，使用c和lua实现，使用者可以只使用lua而不需要有c基础。在<a href="https://github.com/cloudwu/skynet">GitHub</a>的页面上有非常详细的<a href="https://github.com/cloudwu/skynet/wiki">wiki页</a>，我在阅读源码的过程中就在不断的参考wiki页，非常有帮助。<br>
+    
+  </div>
+  <footer class="end-sep">
+    
+      
+        <div class="alignleft">
+          <a href="/2017/01/19/skynet-1/#more" class="more-link">Read More</a>
+        </div>
+      
+      
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+
+
+  
+    <article class="post">
+  <header>
+    
+      <div class="icon"></div>
       <a href="/2017/01/14/2016-booklist-2/">
   <time datetime="2017-01-14T05:25:58.000Z">
     2017-01-14
@@ -434,46 +474,6 @@ var _hmt = _hmt || [];
 
 
   
-    <article class="post">
-  <header>
-    
-      <div class="icon"></div>
-      <a href="/2016/09/18/cpp11-11/">
-  <time datetime="2016-09-17T23:52:17.000Z">
-    2016-09-18
-  </time>
-</a>
-    
-    
-  
-    <h1 class="title"><a href="/2016/09/18/cpp11-11/">C++11新特性之杂项</a></h1>
-  
-
-  </header>
-  
-  <div class="entry">
-    
-      <hr>
-<p>前十篇在这里：<br>C++11新特性之新类型与初始化: <a href="http://blog.guoyb.com/2016/06/18/cpp11-1/">http://blog.guoyb.com/2016/06/18/cpp11-1</a><br>C++11新特性之类型推断与类型获取: <a href="http://blog.guoyb.com/2016/06/25/cpp11-2/">http://blog.guoyb.com/2016/06/25/cpp11-2</a><br>C++11新特性之lambda： <a href="http://blog.guoyb.com/2016/06/30/cpp11-3/">http://blog.guoyb.com/2016/06/30/cpp11-3</a><br>C++11新特性之容器相关特性： <a href="http://blog.guoyb.com/2016/07/09/cpp11-4">http://blog.guoyb.com/2016/07/09/cpp11-4</a><br>C++11新特性之智能指针： <a href="http://blog.guoyb.com/2016/08/02/cpp11-5">http://blog.guoyb.com/2016/08/02/cpp11-5</a><br>C++11新特性之Class: <a href="http://blog.guoyb.com/2016/08/14/cpp11-6">http://blog.guoyb.com/2016/08/14/cpp11-6</a><br>C++11新特性之右值引用与移动： <a href="http://blog.guoyb.com/2016/08/20/cpp11-7">http://blog.guoyb.com/2016/08/20/cpp11-7</a><br>C++11新特性之template： <a href="http://blog.guoyb.com/2016/08/31/cpp11-8">http://blog.guoyb.com/2016/08/31/cpp11-8</a><br>C++11新特性之正则表达式： <a href="http://blog.guoyb.com/2016/09/10/cpp11-9">http://blog.guoyb.com/2016/09/10/cpp11-9</a><br>C++11新特性之随机数库： <a href="http://blog.guoyb.com/2016/09/12/cpp11-10">http://blog.guoyb.com/2016/09/12/cpp11-10/</a>  </p>
-<hr>
-<p>这是C++11新特性介绍的第十一部分，涉及到一些不好归类的新特性。<br>不想看toy code的读者可以直接拉到文章最后看这部分的总结。<br>
-    
-  </div>
-  <footer class="end-sep">
-    
-      
-        <div class="alignleft">
-          <a href="/2016/09/18/cpp11-11/#more" class="more-link">Read More</a>
-        </div>
-      
-      
-    
-    <div class="clearfix"></div>
-  </footer>
-</article>
-
-
-  
 
   <nav id="pagination">
   
@@ -497,7 +497,7 @@ var _hmt = _hmt || [];
   
     <li><a href="/categories/书单/">书单</a><small>9</small></li>
   
-    <li><a href="/categories/技术/">技术</a><small>83</small></li>
+    <li><a href="/categories/技术/">技术</a><small>84</small></li>
   
     <li><a href="/categories/杂谈/">杂谈</a><small>21</small></li>
   
@@ -509,6 +509,10 @@ var _hmt = _hmt || [];
 <div class="widget tag">
   <h3 class="title">recent_posts</h3>
   <ul class="entry">
+    
+      <li>
+        <a href="/2018/08/14/language-war/">我看语言之争</a>
+      </li>
     
       <li>
         <a href="/2018/07/28/mutex-sleep/">踩坑记：临界区内要小心</a>
@@ -526,10 +530,6 @@ var _hmt = _hmt || [];
         <a href="/2018/06/23/auc/">机器学习中的AUC是什么？</a>
       </li>
     
-      <li>
-        <a href="/2018/06/16/linux-mem/">关于内存泄露的一场虚惊</a>
-      </li>
-    
   </ul>
 </div>
 
@@ -538,7 +538,7 @@ var _hmt = _hmt || [];
 <div class="widget tagcloud">
   <h3 class="title">tagcloud</h3>
   <div class="entry">
-    <a href="/tags/C/" style="font-size: 11.11px;">C</a> <a href="/tags/C/" style="font-size: 18.89px;">C++</a> <a href="/tags/C-11/" style="font-size: 17.78px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Git/" style="font-size: 10px;">Git</a> <a href="/tags/Linux/" style="font-size: 11.11px;">Linux</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 11.11px;">MySQL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Scala/" style="font-size: 12.22px;">Scala</a> <a href="/tags/Spark/" style="font-size: 11.11px;">Spark</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 11.11px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/grpc/" style="font-size: 11.11px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 11.11px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/mutex/" style="font-size: 10px;">mutex</a> <a href="/tags/protobuf/" style="font-size: 12.22px;">protobuf</a> <a href="/tags/redis/" style="font-size: 13.33px;">redis</a> <a href="/tags/regex/" style="font-size: 13.33px;">regex</a> <a href="/tags/rwlock/" style="font-size: 10px;">rwlock</a> <a href="/tags/shell/" style="font-size: 10px;">shell</a> <a href="/tags/skynet/" style="font-size: 15.56px;">skynet</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 16.67px;">书单</a> <a href="/tags/内存优化/" style="font-size: 10px;">内存优化</a> <a href="/tags/大数据/" style="font-size: 13.33px;">大数据</a> <a href="/tags/学习笔记/" style="font-size: 14.44px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/旅行/" style="font-size: 13.33px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 20px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 13.33px;">查证记录</a> <a href="/tags/生活/" style="font-size: 15.56px;">生活</a> <a href="/tags/读书笔记/" style="font-size: 16.67px;">读书笔记</a>
+    <a href="/tags/C/" style="font-size: 11px;">C</a> <a href="/tags/C/" style="font-size: 18px;">C++</a> <a href="/tags/C-11/" style="font-size: 17px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Git/" style="font-size: 10px;">Git</a> <a href="/tags/Linux/" style="font-size: 11px;">Linux</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 11px;">MySQL</a> <a href="/tags/Python/" style="font-size: 19px;">Python</a> <a href="/tags/Scala/" style="font-size: 12px;">Scala</a> <a href="/tags/Spark/" style="font-size: 11px;">Spark</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 11px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/grpc/" style="font-size: 11px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 11px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/mutex/" style="font-size: 10px;">mutex</a> <a href="/tags/protobuf/" style="font-size: 12px;">protobuf</a> <a href="/tags/redis/" style="font-size: 13px;">redis</a> <a href="/tags/regex/" style="font-size: 13px;">regex</a> <a href="/tags/rwlock/" style="font-size: 10px;">rwlock</a> <a href="/tags/shell/" style="font-size: 10px;">shell</a> <a href="/tags/skynet/" style="font-size: 15px;">skynet</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 16px;">书单</a> <a href="/tags/内存优化/" style="font-size: 10px;">内存优化</a> <a href="/tags/大数据/" style="font-size: 13px;">大数据</a> <a href="/tags/学习笔记/" style="font-size: 14px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/旅行/" style="font-size: 13px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 20px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 13px;">查证记录</a> <a href="/tags/生活/" style="font-size: 15px;">生活</a> <a href="/tags/读书笔记/" style="font-size: 16px;">读书笔记</a>
   </div>
 </div>
 
