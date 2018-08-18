@@ -4,21 +4,37 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="chrome=1">
   
-  <title>标签: mutex | 一根笨茄子</title>
+  <title>线程数与多核CPU的关系 | 一根笨茄子</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   
     <meta name="author" content="Yubo Guo">
   
   
-  <meta name="description">
-<meta property="og:type" content="website">
-<meta property="og:title" content="一根笨茄子">
-<meta property="og:url" content="http://blog.guoyb.com/tags/mutex/index.html">
+    <meta name="description" content="多线程程序大家都在写，那多核CPU的服务器上，线程数开多少个比较合适，你知道吗？  
+这里，首先要厘清CPU数、核数、processor数这么几个概念。  
+比如，使用top查看负载时，按1，看到的CPU0~CPUn，这里的数量其实是processor数。">
+  
+  <meta name="description" content="多线程程序大家都在写，那多核CPU的服务器上，线程数开多少个比较合适，你知道吗？  
+这里，首先要厘清CPU数、核数、processor数这么几个概念。  
+比如，使用top查看负载时，按1，看到的CPU0~CPUn，这里的数量其实是processor数。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="线程数与多核CPU的关系">
+<meta property="og:url" content="http://blog.guoyb.com/2018/08/18/cpu-cores/index.html">
 <meta property="og:site_name" content="一根笨茄子">
-<meta property="og:description">
+<meta property="og:description" content="多线程程序大家都在写，那多核CPU的服务器上，线程数开多少个比较合适，你知道吗？  
+这里，首先要厘清CPU数、核数、processor数这么几个概念。  
+比如，使用top查看负载时，按1，看到的CPU0~CPUn，这里的数量其实是processor数。">
+<meta property="og:image" content="http://guoybblog.qiniudn.com/CPU.png">
+<meta property="og:image" content="http://guoybblog.qiniudn.com/cpu2.png">
+<meta property="og:image" content="http://guoybblog.qiniudn.com/cpu4.png">
+<meta property="og:image" content="http://guoybblog.qiniudn.com/newqrv2.jpg">
+<meta property="og:updated_time" content="2018-08-18T07:03:10.650Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="一根笨茄子">
-<meta name="twitter:description">
+<meta name="twitter:title" content="线程数与多核CPU的关系">
+<meta name="twitter:description" content="多线程程序大家都在写，那多核CPU的服务器上，线程数开多少个比较合适，你知道吗？  
+这里，首先要厘清CPU数、核数、processor数这么几个概念。  
+比如，使用top查看负载时，按1，看到的CPU0~CPUn，这里的数量其实是processor数。">
+<meta name="twitter:image" content="http://guoybblog.qiniudn.com/CPU.png">
   
   
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
@@ -65,48 +81,80 @@ var _hmt = _hmt || [];
   </nav>
   <div class="clearfix"></div>
 </header>
-    <div class="content">
-
-
-<h2 class="archives-title tag"><span>mutex</span></h2>
-
-
-
-  
-  
-    
-    
-      
-      
-      <section class="archives-wrapper">
-        
-        <div class="archives">
-    
-    <article class="post">
+    <div class="content"><article class="post">
   <header>
-    <a href="/2018/02/11/rwlock/">
-  <time datetime="2018-02-11T14:32:50.000Z">
-    Feb 11
+    
+      <div class="icon"></div>
+      <a href="/2018/08/18/cpu-cores/">
+  <time datetime="2018-08-18T06:37:27.000Z">
+    2018-08-18
   </time>
 </a>
     
+    
   
-    <h1 class="title"><a href="/2018/02/11/rwlock/">读写锁的性能一定更好吗</a></h1>
+    <h1 class="title">线程数与多核CPU的关系</h1>
   
 
   </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>多线程程序大家都在写，那多核CPU的服务器上，线程数开多少个比较合适，你知道吗？  </p>
+<p>这里，首先要厘清CPU数、核数、processor数这么几个概念。  </p>
+<p>比如，使用top查看负载时，按1，看到的CPU0~CPUn，这里的数量其实是processor数。<br><a id="more"></a><br><img src="http://guoybblog.qiniudn.com/CPU.png" alt="CPU"></p>
+<p>而使用cat /proc/cpuinfo看到的输出中，就可以看到cpu cores、processor这几个概念。  </p>
+<p><img src="http://guoybblog.qiniudn.com/cpu2.png" alt="CPU">  </p>
+<p>那这几个概念区别是什么？  </p>
+<pre><code>CPU：独立的中央处理单元，体现在主板上是有多个CPU的槽位。  
+CPU cores：在每一个CPU上，都可能有多个核（core），每一个核中都有独立的一套ALU、FPU、Cache等组件，所以这个概念也被称作物理核。  
+processor：这个主要得益于超线程技术，可以让一个物理核模拟出多个逻辑核，即processor。
+简单来说就是，当有多个计算任务时，可以让其中一个计算任务使用ALU的时候，另一个则去使用FPU。
+这样就可以充分利用物理核中的各个部件，使得同一个物理核中，也可以并行处理多个计算任务。  
+</code></pre><p>厘清了这些概念之后，那么应该怎么去选择设置程序的线程数呢？  </p>
+<p>理论上来说，对于计算密集型的任务，线程数应该和CPU所能提供的并行数一致。那这里的“并行数”应该采取物理核数还是processor数呢？  </p>
+<p>用事实说话。  </p>
+<p>我用一个2CPU，每个CPU上12个物理核，每个物理核上2个逻辑processor的服务器做测试。线程数分别使用6、10、12、30、48、96。  </p>
+<p><img src="http://guoybblog.qiniudn.com/cpu4.png" alt="CPU">  </p>
+<p>可以看到，线程数超过processor数量（48），或者小于物理核数量（24），吞吐量都会收到较大影响。所以对于测试的计算密集型任务，线程数应该设置再24~48之间。  </p>
+<p>具体来看，吞吐量、CPU负载在24（物理核数）到48（processor数）之间，没有明显变化。但是99时延有个缓慢的上升（10%）左右，平均时延有小幅下降（4%）。  </p>
+<p>对时延更具体的统计也可以看到，时延曲线的毛刺会随着线程数的降低而降低。  </p>
+<p>那么，为什么这里“超线程”技术，并没有像理论中的那样加大并行度，从而提高吞吐量呢？  </p>
+<p>我想，可能是由于在我的程序（以及大部分程序）中，对各个计算部件（FPU\ALU）的使用并不是均匀的，一般ALU的使用占大头，FPU的使用只占小部分，所以超线程技术并不能带来很大的并行度提升；而这一点点提升，也被线程切换带来的消耗所抵消了。  </p>
+<p>综上，对于计算密集型的任务，一般建议将线程数设置为物理核数。具体的，还需要针对不同的程序，做对应压力测试得到合适的参数选择。  </p>
+<p><br>  </p>
+<hr>
+<p>推荐阅读：<br><a href="http://blog.guoyb.com/2018/03/17/double-buffer/">使用双buffer无锁化</a><br><a href="http://blog.guoyb.com/2018/07/28/mutex-sleep/">踩坑记：临界区内要小心</a><br><a href="http://blog.guoyb.com/2018/02/11/rwlock/">读写锁的性能一定更好吗</a>  </p>
+<p>转载请注明出处： <a href="http://blog.guoyb.com/2018/08/18/cpu-cores/">http://blog.guoyb.com/2018/08/18/cpu-cores/</a>  </p>
+<p>欢迎使用微信扫描下方二维码，关注我的微信公众号TechTalking，技术·生活·思考：<br><img src="http://guoybblog.qiniudn.com/newqrv2.jpg" alt="后端技术小黑屋">  </p>
+
+    
+  </div>
+  <footer>
+    
+      
+  <div class="categories">
+    <a class="categories-link" href="/categories/技术/">技术</a>
+  </div>
+
+      
+  <div class="tags">
+    <a class="tags-link" href="/tags/C/">C++</a>
+  </div>
+
+      
+    
+    <div class="clearfix"></div>
+  </footer>
 </article>
-  
-  
-    </div></section>
-  
 
 
-<nav id="pagination">
-  
-  
-  <div class="clearfix"></div>
-</nav></div>
+<section id="comment">
+  <h1 class="title">评论</h1>
+  <div class="ds-thread" data-thread-key="2018/08/18/cpu-cores/" data-title="线程数与多核CPU的关系" data-url="http://blog.guoyb.com/2018/08/18/cpu-cores/"></div>
+</section>
+</div>
   </div>
   
   <div id="sidebar" class="widgets-right">
@@ -210,6 +258,8 @@ var duoshuoQuery = {short_name:"guoyb"};
 
 
 <div id="rightfix" style="display:none;">
+
+<a href="#comment" id="gocomm" class="fix_btn" title="提问/评论"><i><i></i></i></a>
 
 
 <a href="javascript:void(0)" id="gotop" class="fix_btn" onclick="gotop();" title="回到顶部"><i></i></a>
