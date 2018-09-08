@@ -75,6 +75,46 @@ var _hmt = _hmt || [];
   <header>
     
       <div class="icon"></div>
+      <a href="/2017/02/27/python-regex/">
+  <time datetime="2017-02-26T23:56:42.000Z">
+    2017-02-27
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title"><a href="/2017/02/27/python-regex/">Python正则表达式之一：基础</a></h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>前一阵，QA提了一个需求，我一看此需求用正则表达式最合适不过。考虑到之前每次使用正则表达式，都是临时抱佛脚，于是这次我就一边完成任务一边系统的学习了一遍正则表达式。主要参考PyCon2016上的一个视频<a href="https://www.youtube.com/watch?v=W4ReH9IPH-Q&amp;list=WL&amp;index=1&amp;t=215s">Regular Expressions</a>。我将分几篇文章对正则表达式进行总结。以下是第一部分，基础：  </p>
+<h2 id="基础部分"><a href="#基础部分" class="headerlink" title="基础部分"></a>基础部分</h2><hr>
+<p>这里总结了正则表达式最基础的用法，其中大部分内容对我（以及大部分程序员）来说都是平时经常用到的，所以我就一笔带过了，只对其中的几处用例子说明。<br>
+    
+  </div>
+  <footer class="end-sep">
+    
+      
+        <div class="alignleft">
+          <a href="/2017/02/27/python-regex/#more" class="more-link">Read More</a>
+        </div>
+      
+      
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+
+
+  
+    <article class="post">
+  <header>
+    
+      <div class="icon"></div>
       <a href="/2017/02/19/mysql-remote-connect/">
   <time datetime="2017-02-19T02:24:33.000Z">
     2017-02-19
@@ -432,46 +472,6 @@ var _hmt = _hmt || [];
 
 
   
-    <article class="post">
-  <header>
-    
-      <div class="icon"></div>
-      <a href="/2016/10/15/grpc/">
-  <time datetime="2016-10-15T06:55:51.000Z">
-    2016-10-15
-  </time>
-</a>
-    
-    
-  
-    <h1 class="title"><a href="/2016/10/15/grpc/">grpc：google官方的rpc框架</a></h1>
-  
-
-  </header>
-  
-  <div class="entry">
-    
-      <hr>
-<p>protobuf是在项目中经常会用到的一个库，它提供了方便的工具和接口，可以对结构化数据进行序列化和反序列化，便于网络传输。  </p>
-<p>其实，如果将一个函数调用用结构化数据表示出来，利用protobuf序列化后通过网络传递到远端，在远端进行反序列化解析，就自然地实现了rpc（Remote Procedure Call）的功能。  </p>
-<p>protobuf中保留了关键字rpc，并且提供了一个RpcChannel的类，供开发者自己实现rpc框架。实现这个rpc框架，其实主要是实现RpcChannel::CallMethod这个接口。我们自己的项目中，就使用了一套自己实现的基于ansyncore的RpcChannel，而某度最近也开源了其基于protobuf的<a href="https://github.com/baidu/sofa-pbrpc">rpc框架</a>，网络部分是使用的Boost::Asio，有兴趣的读者可以自行前往其github wiki页面学习。<br>
-    
-  </div>
-  <footer class="end-sep">
-    
-      
-        <div class="alignleft">
-          <a href="/2016/10/15/grpc/#more" class="more-link">Read More</a>
-        </div>
-      
-      
-    
-    <div class="clearfix"></div>
-  </footer>
-</article>
-
-
-  
 
   <nav id="pagination">
   
@@ -495,7 +495,7 @@ var _hmt = _hmt || [];
   
     <li><a href="/categories/书单/">书单</a><small>10</small></li>
   
-    <li><a href="/categories/技术/">技术</a><small>85</small></li>
+    <li><a href="/categories/技术/">技术</a><small>86</small></li>
   
     <li><a href="/categories/杂谈/">杂谈</a><small>21</small></li>
   
@@ -507,6 +507,10 @@ var _hmt = _hmt || [];
 <div class="widget tag">
   <h3 class="title">recent_posts</h3>
   <ul class="entry">
+    
+      <li>
+        <a href="/2018/09/08/protobuf-reflection/">ProtoBuf中的反射</a>
+      </li>
     
       <li>
         <a href="/2018/08/25/antifragile/">《反脆弱》读后</a>
@@ -522,10 +526,6 @@ var _hmt = _hmt || [];
     
       <li>
         <a href="/2018/07/28/mutex-sleep/">踩坑记：临界区内要小心</a>
-      </li>
-    
-      <li>
-        <a href="/2018/07/07/move-again/">再谈右值引用与移动语义</a>
       </li>
     
   </ul>
