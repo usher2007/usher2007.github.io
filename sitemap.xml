@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://blog.guoyb.com/2018/09/15/crontab-auto-kill/</loc>
+    
+    <lastmod>2018-09-15T00:58:01.486Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://blog.guoyb.com/2018/09/08/protobuf-reflection/</loc>
     
     <lastmod>2018-09-08T03:37:19.474Z</lastmod>
