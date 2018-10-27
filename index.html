@@ -75,6 +75,46 @@ var _hmt = _hmt || [];
   <header>
     
       <div class="icon"></div>
+      <a href="/2018/10/27/uint-minus/">
+  <time datetime="2018-10-27T01:02:56.000Z">
+    2018-10-27
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title"><a href="/2018/10/27/uint-minus/">慎用unsigned int减法</a></h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>最近在做一个缓存的清理策略时，遇到了一个诡异的bug。  </p>
+<p>缓存每次命中，都会更新一个时间戳；然后定期清理的时候，用当前时间now减去缓存的时间戳，如果差值大于7天，则清理掉这个缓存项。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">uint32_t</span> now = time();</span><br><span class="line">... <span class="comment">// Some other code</span></span><br><span class="line"><span class="keyword">if</span> (now - hash_elem.timestamp &gt; expire_interval) &#123;</span><br><span class="line">  erase(hash_elem);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+    
+  </div>
+  <footer class="end-sep">
+    
+      
+        <div class="alignleft">
+          <a href="/2018/10/27/uint-minus/#more" class="more-link">Read More</a>
+        </div>
+      
+      
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+
+
+  
+    <article class="post">
+  <header>
+    
+      <div class="icon"></div>
       <a href="/2018/09/22/interview/">
   <time datetime="2018-09-22T00:16:28.000Z">
     2018-09-22
@@ -436,46 +476,6 @@ var _hmt = _hmt || [];
 
 
   
-    <article class="post">
-  <header>
-    
-      <div class="icon"></div>
-      <a href="/2018/06/23/auc/">
-  <time datetime="2018-06-23T01:42:44.000Z">
-    2018-06-23
-  </time>
-</a>
-    
-    
-  
-    <h1 class="title"><a href="/2018/06/23/auc/">机器学习中的AUC是什么？</a></h1>
-  
-
-  </header>
-  
-  <div class="entry">
-    
-      <hr>
-<p>工作中经常要和香饽饽算法工程师对接。作为一名开发狗，虽然“抽特征、做模型、玄学调参、搞策略”这四部曲都不太懂，但是为了能够正常交流，同时也不至于被忽悠，那么，算法同学嘴里是不时蹦出领域名词儿还是要了解一下的啦。  </p>
-<p>今天就说说算法同学经常挂在嘴边的一个指标——AUC。  </p>
-<h3 id="AUC-ROC简介"><a href="#AUC-ROC简介" class="headerlink" title="AUC ROC简介"></a>AUC ROC简介</h3><p>AUC是Area Under Curve的简写，这里的Curve其实是指ROC曲线。<br>
-    
-  </div>
-  <footer class="end-sep">
-    
-      
-        <div class="alignleft">
-          <a href="/2018/06/23/auc/#more" class="more-link">Read More</a>
-        </div>
-      
-      
-    
-    <div class="clearfix"></div>
-  </footer>
-</article>
-
-
-  
 
   <nav id="pagination">
   
@@ -511,6 +511,10 @@ var _hmt = _hmt || [];
   <ul class="entry">
     
       <li>
+        <a href="/2018/10/27/uint-minus/">慎用unsigned int减法</a>
+      </li>
+    
+      <li>
         <a href="/2018/09/22/interview/">面试造核弹，工作拧螺丝？</a>
       </li>
     
@@ -524,10 +528,6 @@ var _hmt = _hmt || [];
     
       <li>
         <a href="/2018/08/25/antifragile/">《反脆弱》读后</a>
-      </li>
-    
-      <li>
-        <a href="/2018/08/18/cpu-cores/">线程数与多核CPU的关系</a>
       </li>
     
   </ul>
