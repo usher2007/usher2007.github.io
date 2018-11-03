@@ -21,13 +21,13 @@
 <meta property="og:site_name" content="一根笨茄子">
 <meta property="og:description" content="最近在写代码的时候，处理多线程间数据同步时，用到了读写锁rwlock。在多线程同步中，更常用到的是互斥量mutex，那rwlock和mutex有什么不同和优劣呢？  
 首先，一个常见的误区是，认为在读多写少的情况下，rwlock的性能一定要比mutex高。实际上，rwlock由于区分读锁和写锁，每次加锁时都要做额外的逻辑处理（如区分读锁和写锁、避免写锁“饥饿”等等），单纯从性能上来讲是要低于更为">
-<meta property="og:image" content="http://guoybblog.qiniudn.com/newqrv2.jpg">
-<meta property="og:updated_time" content="2018-02-11T14:37:55.812Z">
+<meta property="og:image" content="https://picabstract-preview-ftn.weiyun.com/ftn_pic_abs_v3/a37c88e2cf4b9a9672b29447408503614a9b4661ef1e8c9160c705805d2296cfc291f567a6c097c59bdf4ccfdb770a3a?pictype=scale&from=30113&version=3.3.3.3&uin=523977091&fname=%E4%BA%8C%E7%BB%B4%E7%A0%81.jpg&size=750">
+<meta property="og:updated_time" content="2018-11-03T03:20:56.839Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="读写锁的性能一定更好吗">
 <meta name="twitter:description" content="最近在写代码的时候，处理多线程间数据同步时，用到了读写锁rwlock。在多线程同步中，更常用到的是互斥量mutex，那rwlock和mutex有什么不同和优劣呢？  
 首先，一个常见的误区是，认为在读多写少的情况下，rwlock的性能一定要比mutex高。实际上，rwlock由于区分读锁和写锁，每次加锁时都要做额外的逻辑处理（如区分读锁和写锁、避免写锁“饥饿”等等），单纯从性能上来讲是要低于更为">
-<meta name="twitter:image" content="http://guoybblog.qiniudn.com/newqrv2.jpg">
+<meta name="twitter:image" content="https://picabstract-preview-ftn.weiyun.com/ftn_pic_abs_v3/a37c88e2cf4b9a9672b29447408503614a9b4661ef1e8c9160c705805d2296cfc291f567a6c097c59bdf4ccfdb770a3a?pictype=scale&from=30113&version=3.3.3.3&uin=523977091&fname=%E4%BA%8C%E7%BB%B4%E7%A0%81.jpg&size=750">
   
   
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
@@ -138,7 +138,7 @@ sys     0m0.028s
 <p>推荐阅读：  </p>
 <p><a href="http://blog.guoyb.com/2017/12/09/scala-match/">scala模式匹配的一个问题</a><br><a href="http://blog.guoyb.com/2017/11/05/boost-python/">打通Python和C++</a><br><a href="http://blog.guoyb.com/2017/11/01/waiting/">待业青年</a></p>
 <p>转载请注明出处： <a href="http://blog.guoyb.com/2018/02/11/rwlock/">http://blog.guoyb.com/2018/02/11/rwlock/</a>  </p>
-<p>欢迎使用微信扫描下方二维码，关注我的微信公众号TechTalking，技术·生活·思考：<br><img src="http://guoybblog.qiniudn.com/newqrv2.jpg" alt="后端技术小黑屋">  </p>
+<p>欢迎使用微信扫描下方二维码，关注我的微信公众号TechTalking，技术·生活·思考：<br><img src="https://picabstract-preview-ftn.weiyun.com/ftn_pic_abs_v3/a37c88e2cf4b9a9672b29447408503614a9b4661ef1e8c9160c705805d2296cfc291f567a6c097c59bdf4ccfdb770a3a?pictype=scale&amp;from=30113&amp;version=3.3.3.3&amp;uin=523977091&amp;fname=%E4%BA%8C%E7%BB%B4%E7%A0%81.jpg&amp;size=750" alt="后端技术小黑屋">  </p>
 
     
   </div>
@@ -162,7 +162,7 @@ sys     0m0.028s
 
 
 <section id="comment">
-  <h1 class="title">评论</h1>
+  <h1 class="title">Comments</h1>
   <div class="ds-thread" data-thread-key="2018/02/11/rwlock/" data-title="读写锁的性能一定更好吗" data-url="http://blog.guoyb.com/2018/02/11/rwlock/"></div>
 </section>
 </div>
@@ -176,7 +176,7 @@ sys     0m0.028s
   
     <li><a href="/categories/书单/">书单</a><small>10</small></li>
   
-    <li><a href="/categories/技术/">技术</a><small>89</small></li>
+    <li><a href="/categories/技术/">技术</a><small>90</small></li>
   
     <li><a href="/categories/杂谈/">杂谈</a><small>21</small></li>
   
@@ -188,6 +188,10 @@ sys     0m0.028s
 <div class="widget tag">
   <h3 class="title">recent_posts</h3>
   <ul class="entry">
+    
+      <li>
+        <a href="/2018/11/03/dynamic-cast/">关于dynamic_cast</a>
+      </li>
     
       <li>
         <a href="/2018/10/27/uint-minus/">慎用unsigned int减法</a>
@@ -203,10 +207,6 @@ sys     0m0.028s
     
       <li>
         <a href="/2018/09/08/protobuf-reflection/">ProtoBuf中的反射</a>
-      </li>
-    
-      <li>
-        <a href="/2018/08/25/antifragile/">《反脆弱》读后</a>
       </li>
     
   </ul>

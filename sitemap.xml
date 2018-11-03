@@ -2,107 +2,240 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>http://blog.guoyb.com/2018/10/27/uint-minus/</loc>
+    <loc>http://blog.guoyb.com/2018/11/03/dynamic-cast/</loc>
     
-    <lastmod>2018-10-27T02:17:10.065Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://blog.guoyb.com/2018/09/22/interview/</loc>
-    
-    <lastmod>2018-09-22T01:45:00.076Z</lastmod>
+    <lastmod>2018-11-03T04:22:36.613Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://blog.guoyb.com/2018/09/15/crontab-auto-kill/</loc>
+    <loc>http://blog.guoyb.com/2017/11/05/boost-python/</loc>
     
-    <lastmod>2018-09-15T00:58:01.486Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://blog.guoyb.com/2018/09/08/protobuf-reflection/</loc>
-    
-    <lastmod>2018-09-08T03:37:19.474Z</lastmod>
+    <lastmod>2018-11-03T03:22:07.003Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://blog.guoyb.com/2018/08/25/antifragile/</loc>
+    <loc>http://blog.guoyb.com/2017/12/09/scala-match/</loc>
     
-    <lastmod>2018-08-25T02:17:48.607Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://blog.guoyb.com/2018/08/18/cpu-cores/</loc>
-    
-    <lastmod>2018-08-18T07:03:10.650Z</lastmod>
+    <lastmod>2018-11-03T03:21:54.984Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://blog.guoyb.com/2018/08/14/language-war/</loc>
+    <loc>http://blog.guoyb.com/2018/01/06/gz-sz/</loc>
     
-    <lastmod>2018-08-14T00:03:56.098Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://blog.guoyb.com/2018/07/28/mutex-sleep/</loc>
-    
-    <lastmod>2018-07-28T01:32:02.147Z</lastmod>
+    <lastmod>2018-11-03T03:21:45.469Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://blog.guoyb.com/2018/07/07/move-again/</loc>
+    <loc>http://blog.guoyb.com/2018/01/13/2017-booklist-2/</loc>
     
-    <lastmod>2018-07-07T01:02:30.230Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://blog.guoyb.com/2018/06/30/2018-booklist-1/</loc>
-    
-    <lastmod>2018-06-30T10:30:58.821Z</lastmod>
+    <lastmod>2018-11-03T03:21:35.237Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://blog.guoyb.com/2018/06/23/auc/</loc>
+    <loc>http://blog.guoyb.com/2018/01/21/scala-call-by-name/</loc>
     
-    <lastmod>2018-06-23T01:58:32.105Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://blog.guoyb.com/2018/06/16/linux-mem/</loc>
-    
-    <lastmod>2018-06-15T23:43:57.338Z</lastmod>
+    <lastmod>2018-11-03T03:21:26.774Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://blog.guoyb.com/2018/06/09/vim-replace/</loc>
+    <loc>http://blog.guoyb.com/2018/01/28/data-oriented/</loc>
     
-    <lastmod>2018-06-09T01:31:19.718Z</lastmod>
+    <lastmod>2018-11-03T03:21:16.895Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://blog.guoyb.com/2018/06/02/kv-db/</loc>
+    <loc>http://blog.guoyb.com/2018/02/03/happy-newyear/</loc>
     
-    <lastmod>2018-06-02T03:14:25.907Z</lastmod>
+    <lastmod>2018-11-03T03:21:07.867Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://blog.guoyb.com/2018/02/11/rwlock/</loc>
+    
+    <lastmod>2018-11-03T03:20:56.839Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://blog.guoyb.com/2018/02/22/thinking-set/</loc>
+    
+    <lastmod>2018-11-03T03:20:45.716Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://blog.guoyb.com/2018/03/03/hongbao-day/</loc>
+    
+    <lastmod>2018-11-03T03:20:37.192Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://blog.guoyb.com/2018/03/10/pb-set-allocated/</loc>
+    
+    <lastmod>2018-11-03T03:20:27.040Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://blog.guoyb.com/2018/03/17/double-buffer/</loc>
+    
+    <lastmod>2018-11-03T03:20:17.432Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://blog.guoyb.com/2018/03/24/gz-sz-diff/</loc>
+    
+    <lastmod>2018-11-03T03:20:07.714Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://blog.guoyb.com/2018/03/31/dont-copy/</loc>
+    
+    <lastmod>2018-11-03T03:19:58.983Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://blog.guoyb.com/2018/04/14/git-hooks/</loc>
+    
+    <lastmod>2018-11-03T03:19:48.332Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://blog.guoyb.com/2018/04/21/spark-scala-future/</loc>
+    
+    <lastmod>2018-11-03T03:19:39.919Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://blog.guoyb.com/2018/05/05/cardinality-counting/</loc>
+    
+    <lastmod>2018-11-03T03:19:31.497Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://blog.guoyb.com/2018/05/19/cardinality-estimation/</loc>
+    
+    <lastmod>2018-11-03T03:19:21.866Z</lastmod>
     
   </url>
   
   <url>
     <loc>http://blog.guoyb.com/2018/05/26/block-chain/</loc>
     
-    <lastmod>2018-05-26T02:14:18.662Z</lastmod>
+    <lastmod>2018-11-03T03:19:13.244Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://blog.guoyb.com/2018/06/02/kv-db/</loc>
+    
+    <lastmod>2018-11-03T03:19:03.951Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://blog.guoyb.com/2018/06/09/vim-replace/</loc>
+    
+    <lastmod>2018-11-03T03:18:54.551Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://blog.guoyb.com/2018/06/16/linux-mem/</loc>
+    
+    <lastmod>2018-11-03T03:18:44.873Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://blog.guoyb.com/2018/06/23/auc/</loc>
+    
+    <lastmod>2018-11-03T03:18:36.722Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://blog.guoyb.com/2018/06/30/2018-booklist-1/</loc>
+    
+    <lastmod>2018-11-03T03:18:27.157Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://blog.guoyb.com/2018/07/07/move-again/</loc>
+    
+    <lastmod>2018-11-03T03:18:16.142Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://blog.guoyb.com/2018/07/28/mutex-sleep/</loc>
+    
+    <lastmod>2018-11-03T03:17:59.449Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://blog.guoyb.com/2018/08/14/language-war/</loc>
+    
+    <lastmod>2018-11-03T03:17:47.195Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://blog.guoyb.com/2018/08/18/cpu-cores/</loc>
+    
+    <lastmod>2018-11-03T03:17:36.119Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://blog.guoyb.com/2018/08/25/antifragile/</loc>
+    
+    <lastmod>2018-11-03T03:17:23.527Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://blog.guoyb.com/2018/09/08/protobuf-reflection/</loc>
+    
+    <lastmod>2018-11-03T03:12:41.582Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://blog.guoyb.com/2018/09/15/crontab-auto-kill/</loc>
+    
+    <lastmod>2018-11-03T03:12:30.198Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://blog.guoyb.com/2018/09/22/interview/</loc>
+    
+    <lastmod>2018-11-03T03:12:12.979Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://blog.guoyb.com/2018/10/27/uint-minus/</loc>
+    
+    <lastmod>2018-11-03T03:11:22.501Z</lastmod>
     
   </url>
   
@@ -110,132 +243,6 @@
     <loc>http://blog.guoyb.com/about/index.html</loc>
     
     <lastmod>2018-05-19T04:43:31.986Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://blog.guoyb.com/2018/05/19/cardinality-estimation/</loc>
-    
-    <lastmod>2018-05-19T04:15:59.701Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://blog.guoyb.com/2018/05/05/cardinality-counting/</loc>
-    
-    <lastmod>2018-05-19T04:14:14.634Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://blog.guoyb.com/2018/04/21/spark-scala-future/</loc>
-    
-    <lastmod>2018-04-21T02:32:01.280Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://blog.guoyb.com/2018/04/14/git-hooks/</loc>
-    
-    <lastmod>2018-04-14T02:04:37.556Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://blog.guoyb.com/2018/03/31/dont-copy/</loc>
-    
-    <lastmod>2018-03-31T02:22:29.456Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://blog.guoyb.com/2018/03/24/gz-sz-diff/</loc>
-    
-    <lastmod>2018-03-24T02:13:25.331Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://blog.guoyb.com/2018/03/17/double-buffer/</loc>
-    
-    <lastmod>2018-03-17T01:50:53.422Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://blog.guoyb.com/2018/03/10/pb-set-allocated/</loc>
-    
-    <lastmod>2018-03-17T01:43:48.593Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://blog.guoyb.com/2018/03/03/hongbao-day/</loc>
-    
-    <lastmod>2018-03-03T01:57:21.409Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://blog.guoyb.com/2018/02/22/thinking-set/</loc>
-    
-    <lastmod>2018-02-22T02:04:59.198Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://blog.guoyb.com/2018/02/11/rwlock/</loc>
-    
-    <lastmod>2018-02-11T14:37:55.812Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://blog.guoyb.com/2018/02/03/happy-newyear/</loc>
-    
-    <lastmod>2018-02-03T02:35:54.097Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://blog.guoyb.com/2018/01/28/data-oriented/</loc>
-    
-    <lastmod>2018-01-28T01:22:51.452Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://blog.guoyb.com/2018/01/21/scala-call-by-name/</loc>
-    
-    <lastmod>2018-01-21T02:41:49.435Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://blog.guoyb.com/2018/01/13/2017-booklist-2/</loc>
-    
-    <lastmod>2018-01-13T03:06:20.279Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://blog.guoyb.com/2018/01/06/gz-sz/</loc>
-    
-    <lastmod>2018-01-06T01:39:37.227Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://blog.guoyb.com/2017/12/09/scala-match/</loc>
-    
-    <lastmod>2017-12-09T06:28:41.188Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://blog.guoyb.com/2017/11/05/boost-python/</loc>
-    
-    <lastmod>2017-11-05T12:42:04.213Z</lastmod>
     
   </url>
   

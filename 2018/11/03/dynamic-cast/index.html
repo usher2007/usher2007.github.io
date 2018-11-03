@@ -1,0 +1,279 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  
+  <title>关于dynamic_cast | 一根笨茄子</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  
+    <meta name="author" content="Yubo Guo">
+  
+  
+    <meta name="description" content="有时候，项目需求紧，时间少，写代码往往就抓起什么用什么，比较少考虑设计的合理性。dynamic_cast就是一例。  
+dynamic_cast一般用于down cast，即将父类的指针（或引用）转换成子类的指针（或引用），并提供了运行时的类型检查（RTTI功能），转换失败时，会返回一个nullptr（引用则抛出bad cast异常）。">
+  
+  <meta name="description" content="有时候，项目需求紧，时间少，写代码往往就抓起什么用什么，比较少考虑设计的合理性。dynamic_cast就是一例。  
+dynamic_cast一般用于down cast，即将父类的指针（或引用）转换成子类的指针（或引用），并提供了运行时的类型检查（RTTI功能），转换失败时，会返回一个nullptr（引用则抛出bad cast异常）。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="关于dynamic_cast">
+<meta property="og:url" content="http://blog.guoyb.com/2018/11/03/dynamic-cast/index.html">
+<meta property="og:site_name" content="一根笨茄子">
+<meta property="og:description" content="有时候，项目需求紧，时间少，写代码往往就抓起什么用什么，比较少考虑设计的合理性。dynamic_cast就是一例。  
+dynamic_cast一般用于down cast，即将父类的指针（或引用）转换成子类的指针（或引用），并提供了运行时的类型检查（RTTI功能），转换失败时，会返回一个nullptr（引用则抛出bad cast异常）。">
+<meta property="og:image" content="https://picabstract-preview-ftn.weiyun.com/ftn_pic_abs_v3/a37c88e2cf4b9a9672b29447408503614a9b4661ef1e8c9160c705805d2296cfc291f567a6c097c59bdf4ccfdb770a3a?pictype=scale&from=30113&version=3.3.3.3&uin=523977091&fname=%E4%BA%8C%E7%BB%B4%E7%A0%81.jpg&size=750">
+<meta property="og:updated_time" content="2018-11-03T04:22:36.613Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="关于dynamic_cast">
+<meta name="twitter:description" content="有时候，项目需求紧，时间少，写代码往往就抓起什么用什么，比较少考虑设计的合理性。dynamic_cast就是一例。  
+dynamic_cast一般用于down cast，即将父类的指针（或引用）转换成子类的指针（或引用），并提供了运行时的类型检查（RTTI功能），转换失败时，会返回一个nullptr（引用则抛出bad cast异常）。">
+<meta name="twitter:image" content="https://picabstract-preview-ftn.weiyun.com/ftn_pic_abs_v3/a37c88e2cf4b9a9672b29447408503614a9b4661ef1e8c9160c705805d2296cfc291f567a6c097c59bdf4ccfdb770a3a?pictype=scale&from=30113&version=3.3.3.3&uin=523977091&fname=%E4%BA%8C%E7%BB%B4%E7%A0%81.jpg&size=750">
+  
+  
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <!--[if lt IE 9]><script src="//cdn.bootcss.com/html5shiv/3.7.0/html5shiv.min.js"></script><![endif]-->
+  
+  
+<script type="text/javascript">
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?996ee0fca2512b4c29f37f60cf6387ca";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-6897127630340076",
+    enable_page_level_ads: true
+  });
+</script>
+
+</head>
+<body>
+  <div class="wrapper">
+    <header id="header">
+  <div class="title">
+    <h1><a href="/">一根笨茄子</a></h1>
+    <p><a href="/"></a></p>
+  </div>
+  <nav class="nav">
+    <ul>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/about">关于我</a></li>
+      
+      
+    </ul>
+    <div class="clearfix"></div>
+  </nav>
+  <div class="clearfix"></div>
+</header>
+    <div class="content"><article class="post">
+  <header>
+    
+      <div class="icon"></div>
+      <a href="/2018/11/03/dynamic-cast/">
+  <time datetime="2018-11-03T02:03:25.000Z">
+    2018-11-03
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title">关于dynamic_cast</h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>有时候，项目需求紧，时间少，写代码往往就抓起什么用什么，比较少考虑设计的合理性。dynamic_cast就是一例。  </p>
+<p>dynamic_cast一般用于down cast，即将父类的指针（或引用）转换成子类的指针（或引用），并提供了运行时的类型检查（RTTI功能），转换失败时，会返回一个nullptr（引用则抛出bad cast异常）。<br><a id="more"></a><br>在菱形继承关系中，还可以完成到兄弟类型的转化，不过如果涉及到菱形继承，我觉得还是应该立马审视下当前的类型设计结构，太复杂了，《深入理解C++对象模型》没读过10遍以上，很容易出问题=-=  </p>
+<p>我遇到的问题比较简单，几个protobuf的消息对象，可以通过一个枚举类型的变量区分。在处理逻辑中需要对它们分别进行处理，但是处理逻辑中，有一大块的逻辑是通用的。  </p>
+<p>考虑到protobuf的消息类型全部继承自protobuf::Message，于是我将这一块通用逻辑，抽象成了一个共用函数，以protobuf::Message的指针为参数。  </p>
+<p>在这个共用函数中，又有部分逻辑是针对各个特定的消息MessageA，MessageB……的，于是在这里，我根据上面说到的可以用于区分类型的枚举对象，将Message*指针分别dynamic_cast到MessageA*，MessageB*等，然后进行特殊的逻辑。  </p>
+<p>但是，dynamic_cast是有性能损失的，毕竟要动态检查类型。有人测算过，dynamic_cast对比static_cast，时延要多4倍。而在我的程序里，消除掉dynamic_cast之后，时延可以缩短40%左右。  </p>
+<p>其实，大部分的down cast，都可以通过继承、重载来实现。这样就把需要在线做的动态类型判断，放到编译期完成了。  </p>
+<p>针对我这里的需求，其实完全可以把通用的逻辑，用模板的方式实现，再配合同名不同参函数的重载，分别实现针对子类型特有的逻辑。这样，在编译期，就为每一种类型生成了自己独立的逻辑通路，运行时就可以完全规避掉动态类型转换，从而提高性能。  </p>
+<p>毕竟，代码里各处xxx_cast&lt;&gt;，看起来还是非常不舒服的，是吧？</p>
+<hr>
+<p>据说，C++在设计之初，类型转换中引入static_cast,dynamic_cast,reinterpret_cast这么多难以拼写的cast，就是为了让大家尽量少用……  </p>
+<p><br>  </p>
+<hr>
+<p>推荐阅读：<br><a href="http://blog.guoyb.com/2018/03/17/double-buffer/">使用双buffer无锁化</a><br><a href="http://blog.guoyb.com/2018/10/27/uint-minus/">慎用unsigned int减法</a><br><a href="http://blog.guoyb.com/2018/02/11/rwlock/">读写锁的性能一定更好吗</a>  </p>
+<p>转载请注明出处： <a href="http://blog.guoyb.com/2018/11/03/dynamic_cast/">http://blog.guoyb.com/2018/11/03/dynamic_cast/</a>  </p>
+<p>欢迎使用微信扫描下方二维码，关注我的微信公众号TechTalking，技术·生活·思考：<br><img src="https://picabstract-preview-ftn.weiyun.com/ftn_pic_abs_v3/a37c88e2cf4b9a9672b29447408503614a9b4661ef1e8c9160c705805d2296cfc291f567a6c097c59bdf4ccfdb770a3a?pictype=scale&amp;from=30113&amp;version=3.3.3.3&amp;uin=523977091&amp;fname=%E4%BA%8C%E7%BB%B4%E7%A0%81.jpg&amp;size=750" alt="后端技术小黑屋">  </p>
+
+    
+  </div>
+  <footer>
+    
+      
+  <div class="categories">
+    <a class="categories-link" href="/categories/技术/">技术</a>
+  </div>
+
+      
+  <div class="tags">
+    <a class="tags-link" href="/tags/C/">C++</a>
+  </div>
+
+      
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">Comments</h1>
+  <div class="ds-thread" data-thread-key="2018/11/03/dynamic-cast/" data-title="关于dynamic_cast" data-url="http://blog.guoyb.com/2018/11/03/dynamic-cast/"></div>
+</section>
+</div>
+  </div>
+  
+  <div id="sidebar" class="widgets-right">
+  
+<div class="widget category">
+  <h3 class="title">categories</h3>
+  <ul class="entry">
+  
+    <li><a href="/categories/书单/">书单</a><small>10</small></li>
+  
+    <li><a href="/categories/技术/">技术</a><small>90</small></li>
+  
+    <li><a href="/categories/杂谈/">杂谈</a><small>21</small></li>
+  
+  </ul>
+</div>
+
+
+  
+<div class="widget tag">
+  <h3 class="title">recent_posts</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2018/11/03/dynamic-cast/">关于dynamic_cast</a>
+      </li>
+    
+      <li>
+        <a href="/2018/10/27/uint-minus/">慎用unsigned int减法</a>
+      </li>
+    
+      <li>
+        <a href="/2018/09/22/interview/">面试造核弹，工作拧螺丝？</a>
+      </li>
+    
+      <li>
+        <a href="/2018/09/15/crontab-auto-kill/">crontab为何自动中断</a>
+      </li>
+    
+      <li>
+        <a href="/2018/09/08/protobuf-reflection/">ProtoBuf中的反射</a>
+      </li>
+    
+  </ul>
+</div>
+
+
+  
+<div class="widget tagcloud">
+  <h3 class="title">tagcloud</h3>
+  <div class="entry">
+    <a href="/tags/C/" style="font-size: 10.91px;">C</a> <a href="/tags/C/" style="font-size: 18.18px;">C++</a> <a href="/tags/C-11/" style="font-size: 17.27px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Git/" style="font-size: 10px;">Git</a> <a href="/tags/Linux/" style="font-size: 10.91px;">Linux</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 10.91px;">MySQL</a> <a href="/tags/Python/" style="font-size: 19.09px;">Python</a> <a href="/tags/Scala/" style="font-size: 11.82px;">Scala</a> <a href="/tags/Spark/" style="font-size: 10.91px;">Spark</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10.91px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/crontab/" style="font-size: 10px;">crontab</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/grpc/" style="font-size: 10.91px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 10.91px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/mutex/" style="font-size: 10px;">mutex</a> <a href="/tags/protobuf/" style="font-size: 12.73px;">protobuf</a> <a href="/tags/redis/" style="font-size: 12.73px;">redis</a> <a href="/tags/regex/" style="font-size: 12.73px;">regex</a> <a href="/tags/rwlock/" style="font-size: 10px;">rwlock</a> <a href="/tags/shell/" style="font-size: 10.91px;">shell</a> <a href="/tags/skynet/" style="font-size: 14.55px;">skynet</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 16.36px;">书单</a> <a href="/tags/内存优化/" style="font-size: 10px;">内存优化</a> <a href="/tags/大数据/" style="font-size: 12.73px;">大数据</a> <a href="/tags/学习笔记/" style="font-size: 13.64px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/旅行/" style="font-size: 12.73px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 20px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 12.73px;">查证记录</a> <a href="/tags/生活/" style="font-size: 14.55px;">生活</a> <a href="/tags/读书笔记/" style="font-size: 15.45px;">读书笔记</a>
+  </div>
+</div>
+
+
+  
+<div class="widget tag">
+  <h3 class="title">友情链接</h3>
+  <ul class="entry">
+  
+    
+    <li><a href="http://www.linkedin.com/in/yubo-guo-739b0071" target="_blank">LinkedIn</a></li>
+  
+    
+    <li><a href="http://www.tuicool.com/sites/2emeIjb" target="_blank">推酷站点</a></li>
+  
+  </ul>
+</div>
+
+</div>
+  
+  <footer id="footer"><div class="copyright">
+  
+  &copy; 2018 <a href="/">Yubo Guo</a>
+  
+</div>
+<div class="theme-copyright">
+  Theme by <a href="https://github.com/orderedlist" target="_blank">orderedlist</a>
+   | 
+  Redesign by <a href="http://blog.dafengning.com/" target="_blank">Chong Zi</a>
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//lib.sinaapp.com/js/jquery/1.8/jquery.min.js"></script>
+<script src="/js/scale.fix.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"guoyb"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+
+
+<div id="rightfix" style="display:none;">
+
+<a href="#comment" id="gocomm" class="fix_btn" title="提问/评论"><i><i></i></i></a>
+
+
+<a href="javascript:void(0)" id="gotop" class="fix_btn" onclick="gotop();" title="回到顶部"><i></i></a>
+<script>
+  function gotop(){
+    $('html,body').animate({
+        scrollTop : '0px'
+      }, 800);
+  }
+  $(function(){
+    _rightfix = $('#rightfix');
+    $(window).scroll(function(){
+      $sollTop = document.documentElement.scrollTop + document.body.scrollTop;
+      if($sollTop > 350){
+        _rightfix.show();
+      }else{
+        _rightfix.hide();
+      }
+    });
+  });
+</script>
+
+</div>
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+  (function($){
+    $('.fancybox').fancybox();
+  })(jQuery);
+</script>
+
+</body>
+</html>
