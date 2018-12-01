@@ -75,6 +75,45 @@ var _hmt = _hmt || [];
   <header>
     
       <div class="icon"></div>
+      <a href="/2018/07/07/move-again/">
+  <time datetime="2018-07-07T00:17:57.000Z">
+    2018-07-07
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title"><a href="/2018/07/07/move-again/">再谈右值引用与移动语义</a></h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>之前在总结C++11新特性的时候，写过一篇文章，专门说到了右值引用、移动语义以及从中牵扯出来的引用折叠和完美转发等概念<a href="http://blog.guoyb.com/2016/08/20/cpp11-7/">《C++11新特性之右值引用与移动》</a>。  </p>
+<p>那篇文章例子很多，仔细阅读后也可以完全理解这几个概念。但是今天我想重新组织下语言，就像面试中被问到“你怎么看待C++中的右值引用和移动语义”，进行一次小总结。当然，如果你最近也正好需要面试，下面的文字可能能帮你梳理一遍思路。<br>
+    
+  </div>
+  <footer class="end-sep">
+    
+      
+        <div class="alignleft">
+          <a href="/2018/07/07/move-again/#more" class="more-link">Read More</a>
+        </div>
+      
+      
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+
+
+  
+    <article class="post">
+  <header>
+    
+      <div class="icon"></div>
       <a href="/2018/06/30/2018-booklist-1/">
   <time datetime="2018-06-30T10:10:07.000Z">
     2018-06-30
@@ -433,46 +472,6 @@ var _hmt = _hmt || [];
 
 
   
-    <article class="post">
-  <header>
-    
-      <div class="icon"></div>
-      <a href="/2018/04/14/git-hooks/">
-  <time datetime="2018-04-14T01:33:56.000Z">
-    2018-04-14
-  </time>
-</a>
-    
-    
-  
-    <h1 class="title"><a href="/2018/04/14/git-hooks/">一个新朋友 Git Hooks</a></h1>
-  
-
-  </header>
-  
-  <div class="entry">
-    
-      <hr>
-<p>最近组内的小伙伴们被部门内的整个code review流程搞得头痛不已（回头我详细说说我对code review的看法），所以一些非线上核心业务的工程，纷纷迁移至Git平台。公司的Git平台使用的是一个定制化的GitLabs，各种权限的管理基本都下放到了组这一级别，所以更加自由灵活。  </p>
-<p>当然，Git的灵活并不意味着要放弃对代码质量的要求。所以，利用Git提供的Hooks（钩子），可以方便的将一些Lint程序添加到commit之前，做自动检查。你需要做的，仅仅是将相关的脚本，复制到.git/hooks目录下；并且，在检查失败时返回非0值，这就会阻止Git接下来的工作。  </p>
-<p>.git/hooks目录下有一些以.sample结尾的Hooks例程，可供参考。<br>
-    
-  </div>
-  <footer class="end-sep">
-    
-      
-        <div class="alignleft">
-          <a href="/2018/04/14/git-hooks/#more" class="more-link">Read More</a>
-        </div>
-      
-      
-    
-    <div class="clearfix"></div>
-  </footer>
-</article>
-
-
-  
 
   <nav id="pagination">
   
@@ -496,7 +495,7 @@ var _hmt = _hmt || [];
   
     <li><a href="/categories/书单/">书单</a><small>10</small></li>
   
-    <li><a href="/categories/技术/">技术</a><small>90</small></li>
+    <li><a href="/categories/技术/">技术</a><small>91</small></li>
   
     <li><a href="/categories/杂谈/">杂谈</a><small>21</small></li>
   
@@ -508,6 +507,10 @@ var _hmt = _hmt || [];
 <div class="widget tag">
   <h3 class="title">recent_posts</h3>
   <ul class="entry">
+    
+      <li>
+        <a href="/2018/12/01/disable-htt/">我为什么关掉了超线程</a>
+      </li>
     
       <li>
         <a href="/2018/11/03/dynamic-cast/">关于dynamic_cast</a>
@@ -523,10 +526,6 @@ var _hmt = _hmt || [];
     
       <li>
         <a href="/2018/09/15/crontab-auto-kill/">crontab为何自动中断</a>
-      </li>
-    
-      <li>
-        <a href="/2018/09/08/protobuf-reflection/">ProtoBuf中的反射</a>
       </li>
     
   </ul>

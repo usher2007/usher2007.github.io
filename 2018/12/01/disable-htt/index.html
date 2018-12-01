@@ -1,0 +1,303 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  
+  <title>我为什么关掉了超线程 | 一根笨茄子</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  
+    <meta name="author" content="Yubo Guo">
+  
+  
+    <meta name="description" content="最近在一个服务的服务器进行机型置换时，又碰到了关于线程数、多核CPU、超线程的问题。  
+我之前已经在《线程数与多核CPU的关系》中讨论过物理核与超线程的关系，并且建议计算密集型任务，应该将线程数设置为物理核数。  
+但是，这次机型替换，还是出现了问题。">
+  
+  <meta name="description" content="最近在一个服务的服务器进行机型置换时，又碰到了关于线程数、多核CPU、超线程的问题。  
+我之前已经在《线程数与多核CPU的关系》中讨论过物理核与超线程的关系，并且建议计算密集型任务，应该将线程数设置为物理核数。  
+但是，这次机型替换，还是出现了问题。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="我为什么关掉了超线程">
+<meta property="og:url" content="http://blog.guoyb.com/2018/12/01/disable-htt/index.html">
+<meta property="og:site_name" content="一根笨茄子">
+<meta property="og:description" content="最近在一个服务的服务器进行机型置换时，又碰到了关于线程数、多核CPU、超线程的问题。  
+我之前已经在《线程数与多核CPU的关系》中讨论过物理核与超线程的关系，并且建议计算密集型任务，应该将线程数设置为物理核数。  
+但是，这次机型替换，还是出现了问题。">
+<meta property="og:image" content="https://picabstract-preview-ftn.weiyun.com/ftn_pic_abs_v3/a37c88e2cf4b9a9672b29447408503614a9b4661ef1e8c9160c705805d2296cfc291f567a6c097c59bdf4ccfdb770a3a?pictype=scale&from=30113&version=3.3.3.3&uin=523977091&fname=%E4%BA%8C%E7%BB%B4%E7%A0%81.jpg&size=750">
+<meta property="og:updated_time" content="2018-12-01T05:12:44.995Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="我为什么关掉了超线程">
+<meta name="twitter:description" content="最近在一个服务的服务器进行机型置换时，又碰到了关于线程数、多核CPU、超线程的问题。  
+我之前已经在《线程数与多核CPU的关系》中讨论过物理核与超线程的关系，并且建议计算密集型任务，应该将线程数设置为物理核数。  
+但是，这次机型替换，还是出现了问题。">
+<meta name="twitter:image" content="https://picabstract-preview-ftn.weiyun.com/ftn_pic_abs_v3/a37c88e2cf4b9a9672b29447408503614a9b4661ef1e8c9160c705805d2296cfc291f567a6c097c59bdf4ccfdb770a3a?pictype=scale&from=30113&version=3.3.3.3&uin=523977091&fname=%E4%BA%8C%E7%BB%B4%E7%A0%81.jpg&size=750">
+  
+  
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <!--[if lt IE 9]><script src="//cdn.bootcss.com/html5shiv/3.7.0/html5shiv.min.js"></script><![endif]-->
+  
+  
+<script type="text/javascript">
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?996ee0fca2512b4c29f37f60cf6387ca";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-6897127630340076",
+    enable_page_level_ads: true
+  });
+</script>
+
+</head>
+<body>
+  <div class="wrapper">
+    <header id="header">
+  <div class="title">
+    <h1><a href="/">一根笨茄子</a></h1>
+    <p><a href="/"></a></p>
+  </div>
+  <nav class="nav">
+    <ul>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/about">关于我</a></li>
+      
+      
+    </ul>
+    <div class="clearfix"></div>
+  </nav>
+  <div class="clearfix"></div>
+</header>
+    <div class="content"><article class="post">
+  <header>
+    
+      <div class="icon"></div>
+      <a href="/2018/12/01/disable-htt/">
+  <time datetime="2018-12-01T01:27:23.000Z">
+    2018-12-01
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title">我为什么关掉了超线程</h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>最近在一个服务的服务器进行机型置换时，又碰到了关于线程数、多核CPU、超线程的问题。  </p>
+<p>我之前已经在<a href="http://blog.guoyb.com/2018/08/18/cpu-cores/">《线程数与多核CPU的关系》</a>中讨论过物理核与超线程的关系，并且建议计算密集型任务，应该将线程数设置为物理核数。  </p>
+<p>但是，这次机型替换，还是出现了问题。<br><a id="more"></a>  </p>
+<h2 id="多核与主频"><a href="#多核与主频" class="headerlink" title="多核与主频"></a>多核与主频</h2><p>原来我们服务使用的是一款单CPU，4物理核，8逻辑核（超线程，HTT）的服务器，主频3.4G。这次替换的新机型是双CPU，每个CPU20物理核，40逻辑核（HTT），一共是80核的服务器，但是主频只有2.5G。  </p>
+<p>考虑到这个服务是一个时延敏感的服务，看到主频这里，我的心是凉的。但是网络上也有很多说法表明（主要是Intel的官方宣传文章），在更小制程更新架构的情况下，较低主频的新版CPU也可以取得打平甚至超过旧版高主频CPU的性能表现。  </p>
+<p>至于为什么多核CPU反而主频更低呢？这主要是功耗上的考虑。40个物理核密集布在一块板上，高主频会带来高功耗，散热就是一个大问题了。因此，目前市面上的这种几十核的CPU，主频基本都在2.xG左右。  </p>
+<p>第二个担忧是为了充分利用多核CPU的性能，程序的线程数需要大大提高，那这里会不会带来锁的争用从而导致性能下降？好在之前，<a href="http://blog.guoyb.com/2018/03/17/double-buffer/">《使用双buffer无锁化》</a>已经解决了大部分锁的问题，现在的服务基本是一个无锁的计算密集型程序。  </p>
+<h2 id="超线程"><a href="#超线程" class="headerlink" title="超线程"></a>超线程</h2><p>那么部署、测试、压测、上线。  </p>
+<p>请求量变大，新机器上的时延直接飙到原来的两倍还多。</p>
+<p>请教了经常配置使用这种新机型的运维同学，告诉我可以尝试关闭超线程试试。果然，关闭超线程后，时延只比原来的8核机高不到10%，且随着负载增加没有明显变化，符合上游服务的时延要求。  </p>
+<p>那为什么关闭超线程有效呢？  </p>
+<p>首先，我们要了解什么是超线程。  </p>
+<pre><code>超线程，是一种用于提升CPU计算并行度的处理器技术，用一个物理核模拟两个逻辑核。
+这两个逻辑核拥有自己的中断、状态，但是共用物理核的计算资源。
+超线程技术旨在提高CPU计算资源的使用率，从而提高计算并行度。  
+</code></pre><p>超线程技术基于这样一个现实，那就是大多数程序运行时，CPU资源并没有得到充分的利用。比如CPU缓存未命中、分支预测错误或者等待数据时，CPU中的计算资源其实是闲置的。超线程技术，可以通过硬件指令，将这些闲置的CPU资源，调度给其他的指令，从而整体上提高CPU的资源利用率。  </p>
+<p>那么为什么我们程序关闭了超线程，反而时延性能提升了呢？</p>
+<p>可能有以下几个方面的原因：</p>
+<ul>
+<li><p>超线程带来的效率提升绝对赶不上新增一个独立的物理核，因为超线程没有增加任何的计算资源，而是允许两个任务共享同一个物理核的现有计算资源。所以如果处理器有充足的计算资源未被充分利用时，超线程可以带来比较大的提升，另一个线程可以在某些计算资源空闲时，插入执行。这样在同一个时钟周期内，可以计算更多的任务。这里带来的性能提升，更大的是吞吐量的提升，而非单任务计算时延的提升。如果应用程序前后依赖少，可以编译成独立的指令执行，CPU层面的吞吐量提升也可以带来应用程序层面的计算时延下降；但是，满足这样要求的业务太少，大部分应用程序都是有前后依赖的。</p>
+</li>
+<li><p>超线程的利用率是否高，和操作系统有关。如果操作系统不理解超线程（如Linux2.6之前，windows server2003等），那么就有可能将本来可以分发给两个物理核的计算任务，分发给了同一个物理核上的两个超线程。这样的话，反而会带来性能损失。  </p>
+</li>
+<li><p>有研究表明，超线程依赖于操作系统对CPU的调度。但是如果应用程序开启了CPU绑定功能，则有可能破坏这种调度的完整性，反而带来性能损失。不幸的是，由于我们应用程序内部逻辑需要，必须要开启CPU绑定功能。这里可能是个比较主要的问题。</p>
+</li>
+<li><p>为了实现超线程技术，物理核中需要多加一个逻辑处理单元。即使没有指令给超线程出来的那个逻辑核计算时，这个新增的逻辑处理单元，也会占据一定的物理核资源，带来性能影响。</p>
+</li>
+</ul>
+<p>另外，超线程程序会带来耗电量的大幅提升。这在服务器程序来说，可能带来功耗的提升导致散热问题从而降频，而对于目前智能手机来说，电池续航也会是一个严重的问题。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>超线程技术，目前基本上是服务器CPU的标配了。但是具体能够带来多大的性能提升，还是要取决于具体的应用程序与操作系统。  </p>
+<p>如果你发现服务器性能不达标，不妨将超线程关掉试试。</p>
+<p><br>  </p>
+<hr>
+<p>推荐阅读：<br><a href="http://blog.guoyb.com/2018/03/17/double-buffer/">使用双buffer无锁化</a><br><a href="http://blog.guoyb.com/2018/07/28/mutex-sleep/">踩坑记：临界区内要小心</a><br><a href="http://blog.guoyb.com/2018/02/11/rwlock/">读写锁的性能一定更好吗</a>  </p>
+<p>转载请注明出处： <a href="http://blog.guoyb.com/2018/12/01/disable-htt/">http://blog.guoyb.com/2018/12/01/disable-htt/</a>  </p>
+<p>欢迎使用微信扫描下方二维码，关注我的微信公众号TechTalking，技术·生活·思考：<br><img src="https://picabstract-preview-ftn.weiyun.com/ftn_pic_abs_v3/a37c88e2cf4b9a9672b29447408503614a9b4661ef1e8c9160c705805d2296cfc291f567a6c097c59bdf4ccfdb770a3a?pictype=scale&amp;from=30113&amp;version=3.3.3.3&amp;uin=523977091&amp;fname=%E4%BA%8C%E7%BB%B4%E7%A0%81.jpg&amp;size=750" alt="后端技术小黑屋">  </p>
+
+    
+  </div>
+  <footer>
+    
+      
+  <div class="categories">
+    <a class="categories-link" href="/categories/技术/">技术</a>
+  </div>
+
+      
+  <div class="tags">
+    <a class="tags-link" href="/tags/C/">C++</a>
+  </div>
+
+      
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">Comments</h1>
+  <div class="ds-thread" data-thread-key="2018/12/01/disable-htt/" data-title="我为什么关掉了超线程" data-url="http://blog.guoyb.com/2018/12/01/disable-htt/"></div>
+</section>
+</div>
+  </div>
+  
+  <div id="sidebar" class="widgets-right">
+  
+<div class="widget category">
+  <h3 class="title">categories</h3>
+  <ul class="entry">
+  
+    <li><a href="/categories/书单/">书单</a><small>10</small></li>
+  
+    <li><a href="/categories/技术/">技术</a><small>91</small></li>
+  
+    <li><a href="/categories/杂谈/">杂谈</a><small>21</small></li>
+  
+  </ul>
+</div>
+
+
+  
+<div class="widget tag">
+  <h3 class="title">recent_posts</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2018/12/01/disable-htt/">我为什么关掉了超线程</a>
+      </li>
+    
+      <li>
+        <a href="/2018/11/03/dynamic-cast/">关于dynamic_cast</a>
+      </li>
+    
+      <li>
+        <a href="/2018/10/27/uint-minus/">慎用unsigned int减法</a>
+      </li>
+    
+      <li>
+        <a href="/2018/09/22/interview/">面试造核弹，工作拧螺丝？</a>
+      </li>
+    
+      <li>
+        <a href="/2018/09/15/crontab-auto-kill/">crontab为何自动中断</a>
+      </li>
+    
+  </ul>
+</div>
+
+
+  
+<div class="widget tagcloud">
+  <h3 class="title">tagcloud</h3>
+  <div class="entry">
+    <a href="/tags/C/" style="font-size: 10.91px;">C</a> <a href="/tags/C/" style="font-size: 18.18px;">C++</a> <a href="/tags/C-11/" style="font-size: 17.27px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Git/" style="font-size: 10px;">Git</a> <a href="/tags/Linux/" style="font-size: 10.91px;">Linux</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 10.91px;">MySQL</a> <a href="/tags/Python/" style="font-size: 19.09px;">Python</a> <a href="/tags/Scala/" style="font-size: 11.82px;">Scala</a> <a href="/tags/Spark/" style="font-size: 10.91px;">Spark</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10.91px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/crontab/" style="font-size: 10px;">crontab</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/grpc/" style="font-size: 10.91px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 10.91px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/mutex/" style="font-size: 10px;">mutex</a> <a href="/tags/protobuf/" style="font-size: 12.73px;">protobuf</a> <a href="/tags/redis/" style="font-size: 12.73px;">redis</a> <a href="/tags/regex/" style="font-size: 12.73px;">regex</a> <a href="/tags/rwlock/" style="font-size: 10px;">rwlock</a> <a href="/tags/shell/" style="font-size: 10.91px;">shell</a> <a href="/tags/skynet/" style="font-size: 14.55px;">skynet</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 16.36px;">书单</a> <a href="/tags/内存优化/" style="font-size: 10px;">内存优化</a> <a href="/tags/大数据/" style="font-size: 12.73px;">大数据</a> <a href="/tags/学习笔记/" style="font-size: 13.64px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/旅行/" style="font-size: 12.73px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 20px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 12.73px;">查证记录</a> <a href="/tags/生活/" style="font-size: 14.55px;">生活</a> <a href="/tags/读书笔记/" style="font-size: 15.45px;">读书笔记</a>
+  </div>
+</div>
+
+
+  
+<div class="widget tag">
+  <h3 class="title">友情链接</h3>
+  <ul class="entry">
+  
+    
+    <li><a href="http://www.linkedin.com/in/yubo-guo-739b0071" target="_blank">LinkedIn</a></li>
+  
+    
+    <li><a href="http://www.tuicool.com/sites/2emeIjb" target="_blank">推酷站点</a></li>
+  
+  </ul>
+</div>
+
+</div>
+  
+  <footer id="footer"><div class="copyright">
+  
+  &copy; 2018 <a href="/">Yubo Guo</a>
+  
+</div>
+<div class="theme-copyright">
+  Theme by <a href="https://github.com/orderedlist" target="_blank">orderedlist</a>
+   | 
+  Redesign by <a href="http://blog.dafengning.com/" target="_blank">Chong Zi</a>
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//lib.sinaapp.com/js/jquery/1.8/jquery.min.js"></script>
+<script src="/js/scale.fix.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"guoyb"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+
+
+<div id="rightfix" style="display:none;">
+
+<a href="#comment" id="gocomm" class="fix_btn" title="提问/评论"><i><i></i></i></a>
+
+
+<a href="javascript:void(0)" id="gotop" class="fix_btn" onclick="gotop();" title="回到顶部"><i></i></a>
+<script>
+  function gotop(){
+    $('html,body').animate({
+        scrollTop : '0px'
+      }, 800);
+  }
+  $(function(){
+    _rightfix = $('#rightfix');
+    $(window).scroll(function(){
+      $sollTop = document.documentElement.scrollTop + document.body.scrollTop;
+      if($sollTop > 350){
+        _rightfix.show();
+      }else{
+        _rightfix.hide();
+      }
+    });
+  });
+</script>
+
+</div>
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+  (function($){
+    $('.fancybox').fancybox();
+  })(jQuery);
+</script>
+
+</body>
+</html>
