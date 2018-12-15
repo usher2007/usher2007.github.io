@@ -75,6 +75,45 @@ var _hmt = _hmt || [];
   <header>
     
       <div class="icon"></div>
+      <a href="/2018/01/28/data-oriented/">
+  <time datetime="2018-01-28T01:09:33.000Z">
+    2018-01-28
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title"><a href="/2018/01/28/data-oriented/">面向数据编程</a></h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>最近一阵在做一个自动化的工具，把一些机械化的重复工作，用配置数据的形式固化下来，自动进行，配置数据尽可能简单明了，最好能让产品经理也可以操作，这样就可以大大解放生产力。  </p>
+<p>由此，我不由得感叹，数据真是程序员和非程序员之间交流通信的良好媒介——看不懂代码？数据总能看懂吧？<br>
+    
+  </div>
+  <footer class="end-sep">
+    
+      
+        <div class="alignleft">
+          <a href="/2018/01/28/data-oriented/#more" class="more-link">阅读全文</a>
+        </div>
+      
+      
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+
+
+  
+    <article class="post">
+  <header>
+    
+      <div class="icon"></div>
       <a href="/2018/01/21/scala-call-by-name/">
   <time datetime="2018-01-21T02:27:41.000Z">
     2018-01-21
@@ -101,7 +140,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2018/01/21/scala-call-by-name/#more" class="more-link">Read More</a>
+          <a href="/2018/01/21/scala-call-by-name/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -141,7 +180,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2018/01/13/2017-booklist-2/#more" class="more-link">Read More</a>
+          <a href="/2018/01/13/2017-booklist-2/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -180,7 +219,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2018/01/06/gz-sz/#more" class="more-link">Read More</a>
+          <a href="/2018/01/06/gz-sz/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -221,7 +260,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2017/12/09/scala-match/#more" class="more-link">Read More</a>
+          <a href="/2017/12/09/scala-match/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -263,7 +302,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2017/11/05/boost-python/#more" class="more-link">Read More</a>
+          <a href="/2017/11/05/boost-python/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -302,7 +341,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2017/11/02/price-discrimination/#more" class="more-link">Read More</a>
+          <a href="/2017/11/02/price-discrimination/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -341,7 +380,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2017/11/01/waiting/#more" class="more-link">Read More</a>
+          <a href="/2017/11/01/waiting/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -384,7 +423,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2017/10/25/skynet-ppt/#more" class="more-link">Read More</a>
+          <a href="/2017/10/25/skynet-ppt/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -423,47 +462,7 @@ var _hmt = _hmt || [];
     
       
         <div class="alignleft">
-          <a href="/2017/10/22/brainhole/#more" class="more-link">Read More</a>
-        </div>
-      
-      
-    
-    <div class="clearfix"></div>
-  </footer>
-</article>
-
-
-  
-    <article class="post">
-  <header>
-    
-      <div class="icon"></div>
-      <a href="/2017/10/12/skynet-5/">
-  <time datetime="2017-10-12T13:18:17.000Z">
-    2017-10-12
-  </time>
-</a>
-    
-    
-  
-    <h1 class="title"><a href="/2017/10/12/skynet-5/">探索skynet（五）：随笔</a></h1>
-  
-
-  </header>
-  
-  <div class="entry">
-    
-      <hr>
-<p>最近准备在组内做一个有关skynet的分享，所以对skynet产生了一些“形而上”的思考。这篇文章将不涉及具体的代码细节，就是就着skynet这个框架“扯扯淡”，随便写写。  </p>
-<h2 id="skynet的核心是什么"><a href="#skynet的核心是什么" class="headerlink" title="skynet的核心是什么"></a>skynet的核心是什么</h2><p>skynet从Erlang借鉴而来，主要借鉴它的Actor模型，用以充分利用多核实现并行计算。所以skynet可以说是一个C语言+lua语言实现的Actor模型框架。  </p>
-<p>skynet中的每一个Actor，原则上，都是一个so库。每个Actor，对应于一个自己的消息队列。所有消息队列又串成了一个<strong>消息队列的大队列</strong>。多个工作线程，不断的从<strong>大队列</strong>中拿出消息队列，取出消息，找到对应的Actor（也就是so库），将消息扔给so库去处理。从这个角度来说，Actor（so库），不过是一个<strong>消息处理器</strong>。<br>
-    
-  </div>
-  <footer class="end-sep">
-    
-      
-        <div class="alignleft">
-          <a href="/2017/10/12/skynet-5/#more" class="more-link">Read More</a>
+          <a href="/2017/10/22/brainhole/#more" class="more-link">阅读全文</a>
         </div>
       
       
@@ -477,10 +476,10 @@ var _hmt = _hmt || [];
 
   <nav id="pagination">
   
-    <a href="/page/3/" class="prev">Prev</a>
+    <a href="/page/3/" class="prev">上一页</a>
   
   
-    <a href="/page/5/" class="next">Next</a>
+    <a href="/page/5/" class="next">下一页</a>
   
   <div class="clearfix"></div>
 </nav>
@@ -499,7 +498,7 @@ var _hmt = _hmt || [];
   
     <li><a href="/categories/技术/">技术</a><small>91</small></li>
   
-    <li><a href="/categories/杂谈/">杂谈</a><small>21</small></li>
+    <li><a href="/categories/杂谈/">杂谈</a><small>22</small></li>
   
   </ul>
 </div>
@@ -509,6 +508,10 @@ var _hmt = _hmt || [];
 <div class="widget tag">
   <h3 class="title">recent_posts</h3>
   <ul class="entry">
+    
+      <li>
+        <a href="/2018/12/15/winter-comming/">寒冬来了 闲聊几句</a>
+      </li>
     
       <li>
         <a href="/2018/12/01/disable-htt/">我为什么关掉了超线程</a>
@@ -524,10 +527,6 @@ var _hmt = _hmt || [];
     
       <li>
         <a href="/2018/09/22/interview/">面试造核弹，工作拧螺丝？</a>
-      </li>
-    
-      <li>
-        <a href="/2018/09/15/crontab-auto-kill/">crontab为何自动中断</a>
       </li>
     
   </ul>
