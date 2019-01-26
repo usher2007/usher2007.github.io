@@ -75,6 +75,44 @@ var _hmt = _hmt || [];
   <header>
     
       <div class="icon"></div>
+      <a href="/2017/03/15/python-obmalloc-trick/">
+  <time datetime="2017-03-15T00:01:53.000Z">
+    2017-03-15
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title"><a href="/2017/03/15/python-obmalloc-trick/">Python内存管理模块的一个奇技淫巧</a></h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>最近在读Python源码中有关内存管理的部分。Python在分配小块内存（小于256字节）时，采用了内存池，以降低对内核内存分配程序的调用频次。在内存池的设计上，采用了一个分层的设计，由上到下依次是arena、pool、block。这次我看到的这个比较费解的结构，就来自于分配内存时，对于pool的处理。<br>
+    
+  </div>
+  <footer class="end-sep">
+    
+      
+        <div class="alignleft">
+          <a href="/2017/03/15/python-obmalloc-trick/#more" class="more-link">阅读全文</a>
+        </div>
+      
+      
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+
+
+  
+    <article class="post">
+  <header>
+    
+      <div class="icon"></div>
       <a href="/2017/03/12/about-house/">
   <time datetime="2017-03-12T08:10:13.000Z">
     2017-03-12
@@ -430,46 +468,6 @@ var _hmt = _hmt || [];
 
 
   
-    <article class="post">
-  <header>
-    
-      <div class="icon"></div>
-      <a href="/2017/01/19/skynet-1/">
-  <time datetime="2017-01-19T00:05:46.000Z">
-    2017-01-19
-  </time>
-</a>
-    
-    
-  
-    <h1 class="title"><a href="/2017/01/19/skynet-1/">探索skynet（一）：从skynet_sample说起</a></h1>
-  
-
-  </header>
-  
-  <div class="entry">
-    
-      <hr>
-<p>skynet是云风写的一个轻量级的游戏服务器框架。它以<strong>服务</strong>为主要的逻辑对象，底层框架支持服务之间的同步/异步调用。由于服务并不是占用独立进程，所以服务之间的调用实现的非常高效。同时，为每个服务启动了一个lua虚拟机（lua_State），实现了服务之间的互不干扰。  </p>
-<p>但是，skynet是非常轻量的，它并没有实现其他游戏服务器框架中常有的场景管理、用户AOI管理等功能，这些功能，skynet使用者可以按照自己的设计思路使用若干个服务实现。  </p>
-<p>skynet是开源的，使用c和lua实现，使用者可以只使用lua而不需要有c基础。在<a href="https://github.com/cloudwu/skynet">GitHub</a>的页面上有非常详细的<a href="https://github.com/cloudwu/skynet/wiki">wiki页</a>，我在阅读源码的过程中就在不断的参考wiki页，非常有帮助。<br>
-    
-  </div>
-  <footer class="end-sep">
-    
-      
-        <div class="alignleft">
-          <a href="/2017/01/19/skynet-1/#more" class="more-link">阅读全文</a>
-        </div>
-      
-      
-    
-    <div class="clearfix"></div>
-  </footer>
-</article>
-
-
-  
 
   <nav id="pagination">
   
@@ -491,7 +489,7 @@ var _hmt = _hmt || [];
   <h3 class="title">categories</h3>
   <ul class="entry">
   
-    <li><a href="/categories/书单/">书单</a><small>10</small></li>
+    <li><a href="/categories/书单/">书单</a><small>11</small></li>
   
     <li><a href="/categories/技术/">技术</a><small>91</small></li>
   
@@ -507,6 +505,10 @@ var _hmt = _hmt || [];
   <ul class="entry">
     
       <li>
+        <a href="/2019/01/26/2018-booklist-2/">2018年下半年书单</a>
+      </li>
+    
+      <li>
         <a href="/2018/12/15/winter-comming/">寒冬来了 闲聊几句</a>
       </li>
     
@@ -520,10 +522,6 @@ var _hmt = _hmt || [];
     
       <li>
         <a href="/2018/10/27/uint-minus/">慎用unsigned int减法</a>
-      </li>
-    
-      <li>
-        <a href="/2018/09/22/interview/">面试造核弹，工作拧螺丝？</a>
       </li>
     
   </ul>
@@ -557,7 +555,7 @@ var _hmt = _hmt || [];
   
   <footer id="footer"><div class="copyright">
   
-  &copy; 2018 <a href="/">Yubo Guo</a>
+  &copy; 2019 <a href="/">Yubo Guo</a>
   
 </div>
 <div class="theme-copyright">
