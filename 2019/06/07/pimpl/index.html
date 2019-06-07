@@ -1,0 +1,301 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  
+  <title>谈谈pimpl模式 | 一根笨茄子</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  
+    <meta name="author" content="Yubo Guo">
+  
+  
+    <meta name="description" content="相信大家在阅读C++代码的时候，一定都见过pImpl的实现方式。我第一次见到pImpl实现方式时，对于下面这种代码：
+++123void MyClass::SomeFunc() &amp;#123;	pImpl_-&amp;gt;SomeFunc();&amp;#125;
+总有一种“脱了裤子放屁”的感觉。而对于经常提到的pImpl模式的优点，什么“屏蔽私有接口”，什么“增加封装性”，又觉得虚之又虚——我这系统要么给自己">
+  
+  <meta name="description" content="相信大家在阅读C++代码的时候，一定都见过pImpl的实现方式。我第一次见到pImpl实现方式时，对于下面这种代码：
+++123void MyClass::SomeFunc() &amp;#123;	pImpl_-&amp;gt;SomeFunc();&amp;#125;
+总有一种“脱了裤子放屁”的感觉。而对于经常提到的pImpl模式的优点，什么“屏蔽私有接口”，什么“增加封装性”，又觉得虚之又虚——我这系统要么给自己">
+<meta property="og:type" content="article">
+<meta property="og:title" content="谈谈pimpl模式">
+<meta property="og:url" content="http://blog.guoyb.com/2019/06/07/pimpl/index.html">
+<meta property="og:site_name" content="一根笨茄子">
+<meta property="og:description" content="相信大家在阅读C++代码的时候，一定都见过pImpl的实现方式。我第一次见到pImpl实现方式时，对于下面这种代码：
+++123void MyClass::SomeFunc() &amp;#123;	pImpl_-&amp;gt;SomeFunc();&amp;#125;
+总有一种“脱了裤子放屁”的感觉。而对于经常提到的pImpl模式的优点，什么“屏蔽私有接口”，什么“增加封装性”，又觉得虚之又虚——我这系统要么给自己">
+<meta property="og:image" content="https://picabstract-preview-ftn.weiyun.com/ftn_pic_abs_v3/a37c88e2cf4b9a9672b29447408503614a9b4661ef1e8c9160c705805d2296cfc291f567a6c097c59bdf4ccfdb770a3a?pictype=scale&from=30113&version=3.3.3.3&uin=523977091&fname=%E4%BA%8C%E7%BB%B4%E7%A0%81.jpg&size=750">
+<meta property="og:updated_time" content="2019-06-07T02:26:04.455Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="谈谈pimpl模式">
+<meta name="twitter:description" content="相信大家在阅读C++代码的时候，一定都见过pImpl的实现方式。我第一次见到pImpl实现方式时，对于下面这种代码：
+++123void MyClass::SomeFunc() &amp;#123;	pImpl_-&amp;gt;SomeFunc();&amp;#125;
+总有一种“脱了裤子放屁”的感觉。而对于经常提到的pImpl模式的优点，什么“屏蔽私有接口”，什么“增加封装性”，又觉得虚之又虚——我这系统要么给自己">
+<meta name="twitter:image" content="https://picabstract-preview-ftn.weiyun.com/ftn_pic_abs_v3/a37c88e2cf4b9a9672b29447408503614a9b4661ef1e8c9160c705805d2296cfc291f567a6c097c59bdf4ccfdb770a3a?pictype=scale&from=30113&version=3.3.3.3&uin=523977091&fname=%E4%BA%8C%E7%BB%B4%E7%A0%81.jpg&size=750">
+  
+  
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <!--[if lt IE 9]><script src="//cdn.bootcss.com/html5shiv/3.7.0/html5shiv.min.js"></script><![endif]-->
+  
+  
+<script type="text/javascript">
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?996ee0fca2512b4c29f37f60cf6387ca";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-6897127630340076",
+    enable_page_level_ads: true
+  });
+</script>
+
+</head>
+<body>
+  <div class="wrapper">
+    <header id="header">
+  <div class="title">
+    <h1><a href="/">一根笨茄子</a></h1>
+    <p><a href="/"></a></p>
+  </div>
+  <nav class="nav">
+    <ul>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/about">关于我</a></li>
+      
+      
+    </ul>
+    <div class="clearfix"></div>
+  </nav>
+  <div class="clearfix"></div>
+</header>
+    <div class="content"><article class="post">
+  <header>
+    
+      <div class="icon"></div>
+      <a href="/2019/06/07/pimpl/">
+  <time datetime="2019-06-07T00:19:45.000Z">
+    2019-06-07
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title">谈谈pimpl模式</h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>相信大家在阅读C++代码的时候，一定都见过pImpl的实现方式。我第一次见到pImpl实现方式时，对于下面这种代码：</p>
+<figure class="highlight c"><figcaption><span>++</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> MyClass::SomeFunc() &#123;</span><br><span class="line">	pImpl_-&gt;SomeFunc();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>总有一种“脱了裤子放屁”的感觉。而对于经常提到的pImpl模式的优点，什么“屏蔽私有接口”，什么“增加封装性”，又觉得虚之又虚——我这系统要么给自己部门用的，要么是要开源的，有啥见不得人的，要屏蔽呢？多增加了一层pImpl也没见得封装性有什么提升啊？</p>
+<p>其实，pImpl模式既然应用如此广泛，必然有其价值。查阅资料、深入思考之后，我觉得它的好处主要是如下两点。</p>
+<a id="more"></a>
+<h2 id="编译速度友好"><a href="#编译速度友好" class="headerlink" title="编译速度友好"></a>编译速度友好</h2><p>其实上面说的“屏蔽私有接口”，更重要的是“编译防火墙”的作用。  </p>
+<p>C++程序员一定都受过编译速度的折磨。一个build敲下去，就可以起身去瑞幸咖啡薅一把羊毛了。那有经验的程序员都知道，前置声明可以大大加快编译速度：对于指针/引用，编译期只需要知道它占几个字节，把内存对象布局搞定就可以了，并不需要知道实现细节。  </p>
+<p>那么如果把一个类的实现细节，用一个Impl类封装起来，并且使用前置声明，放到对外的接口类中。那么对外接口类应该是这样的：  </p>
+<figure class="highlight c"><figcaption><span>++</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// MyClass.h</span></span><br><span class="line">Class MyClass &#123;</span><br><span class="line"> <span class="keyword">public</span>:  </span><br><span class="line">  <span class="comment">// Interface functions, such as</span></span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">SomeFunc</span><span class="params">()</span></span>;</span><br><span class="line"> <span class="keyword">private</span>:</span><br><span class="line">  Class Impl;</span><br><span class="line">  <span class="built_in">std</span>::<span class="built_in">unique_ptr</span>&lt;Impl&gt; pImpl_;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如此这般，当我修改Impl类中的函数实现细节时，所有include “MyClass.h”的文件，均不会需要重新编译，因为整个MyClass对象的内存布局是和Impl的实现无关的。  </p>
+<p>所以我认为，pImpl最突出的一个优势，是可以大大加快编译速度。而正好，这种实现方式，隐藏了实现的细节。对于一些闭源软件库来说，正好，也可以避免暴露实现细节。</p>
+<h2 id="移动语义友好"><a href="#移动语义友好" class="headerlink" title="移动语义友好"></a>移动语义友好</h2><p>C++11中引入了移动语义，可以参见我之前的一篇文章<a href="http://blog.guoyb.com/2018/07/07/move-again/">《再谈右值引用与移动语义》</a>。那pImpl模式，对移动语义也是友好的。  </p>
+<p>对于不使用pImpl模式的类来说，要实现移动语义，需要对每一个数据成员变量进行处理；更糟糕的是，每次为接口类MyClass新增一个数据成员（这肯定是很常见的事情），都需要记得，要去修改移动语义相关的函数。相信我，你一定会忘记的。  </p>
+<p>用了pImpl就不一样了，对于移动语义，只需要“移动”一个指针即可，高效且一劳永逸~后面再增加数据成员，也是Impl类内部的事情，接口类的移动语义无需变动！完美~</p>
+<h2 id="损失"><a href="#损失" class="headerlink" title="损失"></a>损失</h2><p>凡事都有两面性，pImpl模式肯定也有缺点。我这里想到两点：</p>
+<ul>
+<li>调用的间接性<ul>
+<li>接口类函数的实现，一定要经过pImpl指针转一道，性能肯定有损耗，增加新接口写起来也麻烦；增加了一个指针的大小，虽然看上去不是什么大问题，但是对于每个对象都比较小，但是对象数量很多的那种类，这样的空间开销也不可忽视。</li>
+</ul>
+</li>
+<li>const问题<ul>
+<li>另外，const是一个比较严重的问题。类的const函数可以确保不修改该类的数据成员变量，但是pImpl模式下，本来属于接口类的数据成员，全部被Impl类承包了。这时，接口类的const函数，只能确保pImpl<em>指针不被修改，而对于pImpl</em>指针所指向对象的成员变量，则无法强制保持const。</li>
+<li>这个问题可以通过<code>std::experimental::propagate_const</code>包装来修复<figure class="highlight c"><figcaption><span>++</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// MyClass.h</span></span><br><span class="line">Class MyClass &#123;</span><br><span class="line"> <span class="keyword">public</span>:  </span><br><span class="line">  <span class="comment">// Interface functions, such as</span></span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">SomeFunc</span><span class="params">()</span></span>;</span><br><span class="line"> <span class="keyword">private</span>:</span><br><span class="line">  Class Impl;</span><br><span class="line">  <span class="built_in">std</span>::experimental::propagate_const&lt;<span class="built_in">std</span>::<span class="built_in">unique_ptr</span>&lt;Impl&gt;&gt; pImpl_;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>pImpl是C++程序员经常遇到的一种编程模式，主要用于建立“编译防火墙”。同时，带来了屏蔽私有接口、移动语义友好等优点；  </p>
+<p>对于const函数被非const指针所屏蔽的问题，可以通过<code>std::experimental::propagate_const</code>来解决。</p>
+<p><br>  </p>
+<hr>
+<p>推荐阅读：<br><a href="http://blog.guoyb.com/2018/03/17/double-buffer/">使用双buffer无锁化</a><br><a href="http://blog.guoyb.com/2018/07/28/mutex-sleep/">踩坑记：临界区内要小心</a><br><a href="http://blog.guoyb.com/2018/12/01/disable-htt/">我为什么关掉了超线程</a>  </p>
+<p>转载请注明出处： <a href="http://blog.guoyb.com/2019/06/07/pimpl/">http://blog.guoyb.com/2019/06/07/pimpl/</a>  </p>
+<p>欢迎使用微信扫描下方二维码，关注我的微信公众号TechTalking，技术·生活·思考：<br><img src="https://picabstract-preview-ftn.weiyun.com/ftn_pic_abs_v3/a37c88e2cf4b9a9672b29447408503614a9b4661ef1e8c9160c705805d2296cfc291f567a6c097c59bdf4ccfdb770a3a?pictype=scale&amp;from=30113&amp;version=3.3.3.3&amp;uin=523977091&amp;fname=%E4%BA%8C%E7%BB%B4%E7%A0%81.jpg&amp;size=750" alt="后端技术小黑屋">  </p>
+
+    
+  </div>
+  <footer>
+    
+      
+  <div class="categories">
+    <a class="categories-link" href="/categories/技术/">技术</a>
+  </div>
+
+      
+  <div class="tags">
+    <a class="tags-link" href="/tags/C/">C++</a>
+  </div>
+
+      
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">Comments</h1>
+  <div class="ds-thread" data-thread-key="2019/06/07/pimpl/" data-title="谈谈pimpl模式" data-url="http://blog.guoyb.com/2019/06/07/pimpl/"></div>
+</section>
+</div>
+  </div>
+  
+  <div id="sidebar" class="widgets-right">
+  
+<div class="widget category">
+  <h3 class="title">categories</h3>
+  <ul class="entry">
+  
+    <li><a href="/categories/书单/">书单</a><small>11</small></li>
+  
+    <li><a href="/categories/技术/">技术</a><small>92</small></li>
+  
+    <li><a href="/categories/杂谈/">杂谈</a><small>22</small></li>
+  
+  </ul>
+</div>
+
+
+  
+<div class="widget tag">
+  <h3 class="title">recent_posts</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2019/06/07/pimpl/">谈谈pimpl模式</a>
+      </li>
+    
+      <li>
+        <a href="/2019/01/26/2018-booklist-2/">2018年下半年书单</a>
+      </li>
+    
+      <li>
+        <a href="/2018/12/15/winter-comming/">寒冬来了 闲聊几句</a>
+      </li>
+    
+      <li>
+        <a href="/2018/12/01/disable-htt/">我为什么关掉了超线程</a>
+      </li>
+    
+      <li>
+        <a href="/2018/11/03/dynamic-cast/">关于dynamic_cast</a>
+      </li>
+    
+  </ul>
+</div>
+
+
+  
+<div class="widget tagcloud">
+  <h3 class="title">tagcloud</h3>
+  <div class="entry">
+    <a href="/tags/C/" style="font-size: 10.91px;">C</a> <a href="/tags/C/" style="font-size: 18.18px;">C++</a> <a href="/tags/C-11/" style="font-size: 17.27px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Git/" style="font-size: 10px;">Git</a> <a href="/tags/Linux/" style="font-size: 10.91px;">Linux</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 10.91px;">MySQL</a> <a href="/tags/Python/" style="font-size: 19.09px;">Python</a> <a href="/tags/Scala/" style="font-size: 11.82px;">Scala</a> <a href="/tags/Spark/" style="font-size: 10.91px;">Spark</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10.91px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/crontab/" style="font-size: 10px;">crontab</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/grpc/" style="font-size: 10.91px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 10.91px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/mutex/" style="font-size: 10px;">mutex</a> <a href="/tags/protobuf/" style="font-size: 12.73px;">protobuf</a> <a href="/tags/redis/" style="font-size: 12.73px;">redis</a> <a href="/tags/regex/" style="font-size: 12.73px;">regex</a> <a href="/tags/rwlock/" style="font-size: 10px;">rwlock</a> <a href="/tags/shell/" style="font-size: 10.91px;">shell</a> <a href="/tags/skynet/" style="font-size: 14.55px;">skynet</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 16.36px;">书单</a> <a href="/tags/内存优化/" style="font-size: 10px;">内存优化</a> <a href="/tags/大数据/" style="font-size: 12.73px;">大数据</a> <a href="/tags/学习笔记/" style="font-size: 13.64px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/旅行/" style="font-size: 12.73px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 20px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 12.73px;">查证记录</a> <a href="/tags/生活/" style="font-size: 14.55px;">生活</a> <a href="/tags/读书笔记/" style="font-size: 15.45px;">读书笔记</a>
+  </div>
+</div>
+
+
+  
+<div class="widget tag">
+  <h3 class="title">友情链接</h3>
+  <ul class="entry">
+  
+    
+    <li><a href="http://www.linkedin.com/in/yubo-guo-739b0071" target="_blank">LinkedIn</a></li>
+  
+    
+    <li><a href="http://www.tuicool.com/sites/2emeIjb" target="_blank">推酷站点</a></li>
+  
+  </ul>
+</div>
+
+</div>
+  
+  <footer id="footer"><div class="copyright">
+  
+  &copy; 2019 <a href="/">Yubo Guo</a>
+  
+</div>
+<div class="theme-copyright">
+  Theme by <a href="https://github.com/orderedlist" target="_blank">orderedlist</a>
+   | 
+  Redesign by <a href="http://blog.dafengning.com/" target="_blank">Chong Zi</a>
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//lib.sinaapp.com/js/jquery/1.8/jquery.min.js"></script>
+<script src="/js/scale.fix.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"guoyb"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+
+
+<div id="rightfix" style="display:none;">
+
+<a href="#comment" id="gocomm" class="fix_btn" title="提问/评论"><i><i></i></i></a>
+
+
+<a href="javascript:void(0)" id="gotop" class="fix_btn" onclick="gotop();" title="回到顶部"><i></i></a>
+<script>
+  function gotop(){
+    $('html,body').animate({
+        scrollTop : '0px'
+      }, 800);
+  }
+  $(function(){
+    _rightfix = $('#rightfix');
+    $(window).scroll(function(){
+      $sollTop = document.documentElement.scrollTop + document.body.scrollTop;
+      if($sollTop > 350){
+        _rightfix.show();
+      }else{
+        _rightfix.hide();
+      }
+    });
+  });
+</script>
+
+</div>
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+  (function($){
+    $('.fancybox').fancybox();
+  })(jQuery);
+</script>
+
+</body>
+</html>
