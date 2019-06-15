@@ -4,26 +4,28 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="chrome=1">
   
-  <title>Spark“并行”写 | 一根笨茄子</title>
+  <title>没有存在感的weak_ptr | 一根笨茄子</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   
     <meta name="author" content="Yubo Guo">
   
   
-    <meta name="description" content="spark本来已经是一个分布式的计算平台，按说不应该手工去处理并行/异步的事情。但是，最近我实现的一个spark任务，需要一次写出数十个分区的数据，虽然这些分区的数据之间完全独立，但坑爹的是，基础数据平台提供的写数据接口只支持同步的一次写一个分区的数据。这样造成的结果就是，用循环来实现时，虽然我有很多个计算节点，数据（RDD）也分布于各个节点之上，但是我只能等一个分区写完成后，再写下一个分区：因">
+    <meta name="description" content="C++11标准中，引入了三种智能指针：其中shared_ptr、unique_ptr露面的机会非常多，大家也越来越接受使用shared_ptr、unique_ptr来取代普通指针，省去了手动管理内存的烦恼。但是，作为智能指针三胞胎之一的weak_ptr，正如其名，存在感真是相当弱。面试中也经常发现，应聘者往往能够对shared_ptr、unique_ptr如数家珍，但是说到weak_ptr就经常">
   
-  <meta name="description" content="spark本来已经是一个分布式的计算平台，按说不应该手工去处理并行/异步的事情。但是，最近我实现的一个spark任务，需要一次写出数十个分区的数据，虽然这些分区的数据之间完全独立，但坑爹的是，基础数据平台提供的写数据接口只支持同步的一次写一个分区的数据。这样造成的结果就是，用循环来实现时，虽然我有很多个计算节点，数据（RDD）也分布于各个节点之上，但是我只能等一个分区写完成后，再写下一个分区：因">
+  <meta name="description" content="C++11标准中，引入了三种智能指针：其中shared_ptr、unique_ptr露面的机会非常多，大家也越来越接受使用shared_ptr、unique_ptr来取代普通指针，省去了手动管理内存的烦恼。但是，作为智能指针三胞胎之一的weak_ptr，正如其名，存在感真是相当弱。面试中也经常发现，应聘者往往能够对shared_ptr、unique_ptr如数家珍，但是说到weak_ptr就经常">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Spark“并行”写">
-<meta property="og:url" content="http://blog.guoyb.com/2018/04/21/spark-scala-future/index.html">
+<meta property="og:title" content="没有存在感的weak_ptr">
+<meta property="og:url" content="http://blog.guoyb.com/2019/06/15/weak-ptr/index.html">
 <meta property="og:site_name" content="一根笨茄子">
-<meta property="og:description" content="spark本来已经是一个分布式的计算平台，按说不应该手工去处理并行/异步的事情。但是，最近我实现的一个spark任务，需要一次写出数十个分区的数据，虽然这些分区的数据之间完全独立，但坑爹的是，基础数据平台提供的写数据接口只支持同步的一次写一个分区的数据。这样造成的结果就是，用循环来实现时，虽然我有很多个计算节点，数据（RDD）也分布于各个节点之上，但是我只能等一个分区写完成后，再写下一个分区：因">
+<meta property="og:description" content="C++11标准中，引入了三种智能指针：其中shared_ptr、unique_ptr露面的机会非常多，大家也越来越接受使用shared_ptr、unique_ptr来取代普通指针，省去了手动管理内存的烦恼。但是，作为智能指针三胞胎之一的weak_ptr，正如其名，存在感真是相当弱。面试中也经常发现，应聘者往往能够对shared_ptr、unique_ptr如数家珍，但是说到weak_ptr就经常">
+<meta property="og:image" content="https://picabstract-preview-ftn.weiyun.com/ftn_pic_abs_v3/8da25c722c1082c56d1f3d46c5a1ede84cefa7d988d9bcf3e3a4c98ebcc363ee90c02fc18d5d1447d5b639c005f98d5a?pictype=scale&from=30113&version=3.3.3.3&uin=523977091&fname=%E5%BE%AA%E7%8E%AF%E5%BC%95%E7%94%A80.jpg&size=750">
+<meta property="og:image" content="https://picabstract-preview-ftn.weiyun.com/ftn_pic_abs_v3/2b015a9df4f906b60039a342cf15e72a61b7d7e8c8f6c3394259fcd4201bc99e5be9fdde2e9c52f4873b52c6e666a43d?pictype=scale&from=30113&version=3.3.3.3&uin=523977091&fname=%E5%BE%AA%E7%8E%AF%E5%BC%95%E7%94%A81.jpg&size=750">
 <meta property="og:image" content="https://picabstract-preview-ftn.weiyun.com/ftn_pic_abs_v3/a37c88e2cf4b9a9672b29447408503614a9b4661ef1e8c9160c705805d2296cfc291f567a6c097c59bdf4ccfdb770a3a?pictype=scale&from=30113&version=3.3.3.3&uin=523977091&fname=%E4%BA%8C%E7%BB%B4%E7%A0%81.jpg&size=750">
-<meta property="og:updated_time" content="2018-11-03T03:19:39.919Z">
+<meta property="og:updated_time" content="2019-06-15T06:00:30.451Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Spark“并行”写">
-<meta name="twitter:description" content="spark本来已经是一个分布式的计算平台，按说不应该手工去处理并行/异步的事情。但是，最近我实现的一个spark任务，需要一次写出数十个分区的数据，虽然这些分区的数据之间完全独立，但坑爹的是，基础数据平台提供的写数据接口只支持同步的一次写一个分区的数据。这样造成的结果就是，用循环来实现时，虽然我有很多个计算节点，数据（RDD）也分布于各个节点之上，但是我只能等一个分区写完成后，再写下一个分区：因">
-<meta name="twitter:image" content="https://picabstract-preview-ftn.weiyun.com/ftn_pic_abs_v3/a37c88e2cf4b9a9672b29447408503614a9b4661ef1e8c9160c705805d2296cfc291f567a6c097c59bdf4ccfdb770a3a?pictype=scale&from=30113&version=3.3.3.3&uin=523977091&fname=%E4%BA%8C%E7%BB%B4%E7%A0%81.jpg&size=750">
+<meta name="twitter:title" content="没有存在感的weak_ptr">
+<meta name="twitter:description" content="C++11标准中，引入了三种智能指针：其中shared_ptr、unique_ptr露面的机会非常多，大家也越来越接受使用shared_ptr、unique_ptr来取代普通指针，省去了手动管理内存的烦恼。但是，作为智能指针三胞胎之一的weak_ptr，正如其名，存在感真是相当弱。面试中也经常发现，应聘者往往能够对shared_ptr、unique_ptr如数家珍，但是说到weak_ptr就经常">
+<meta name="twitter:image" content="https://picabstract-preview-ftn.weiyun.com/ftn_pic_abs_v3/8da25c722c1082c56d1f3d46c5a1ede84cefa7d988d9bcf3e3a4c98ebcc363ee90c02fc18d5d1447d5b639c005f98d5a?pictype=scale&from=30113&version=3.3.3.3&uin=523977091&fname=%E5%BE%AA%E7%8E%AF%E5%BC%95%E7%94%A80.jpg&size=750">
   
   
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
@@ -74,15 +76,15 @@ var _hmt = _hmt || [];
   <header>
     
       <div class="icon"></div>
-      <a href="/2018/04/21/spark-scala-future/">
-  <time datetime="2018-04-21T02:20:11.000Z">
-    2018-04-21
+      <a href="/2019/06/15/weak-ptr/">
+  <time datetime="2019-06-15T04:45:44.000Z">
+    2019-06-15
   </time>
 </a>
     
     
   
-    <h1 class="title">Spark“并行”写</h1>
+    <h1 class="title">没有存在感的weak_ptr</h1>
   
 
   </header>
@@ -90,21 +92,28 @@ var _hmt = _hmt || [];
   <div class="entry">
     
       <hr>
-<p>spark本来已经是一个分布式的计算平台，按说不应该手工去处理并行/异步的事情。但是，最近我实现的一个spark任务，需要一次写出数十个分区的数据，虽然这些分区的数据之间完全独立，但坑爹的是，基础数据平台提供的写数据接口只支持<strong>同步</strong>的一次写一个分区的数据。这样造成的结果就是，用循环来实现时，虽然我有很多个计算节点，数据（RDD）也分布于各个节点之上，但是我只能等一个分区写完成后，再写下一个分区：因为“写分区”这个任务的下发是同步阻塞的。<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">partitions</span><br><span class="line">  .map(part =&gt;  writeToDisk(data.filter(part), part))</span><br></pre></td></tr></table></figure><br><a id="more"></a></p>
-<h2 id="引入Future"><a href="#引入Future" class="headerlink" title="引入Future"></a>引入Future</h2><hr>
-<p>这里要感谢scala提供的Future方案。它可以方便的将同步的阻塞操作包装成异步操作并行下发。  </p>
-<p>配合Await.ready操作来等待所有future完成，我们可以将上面的代码改写为：<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">partitions</span><br><span class="line">  .map(part =&gt; <span class="type">Future</span> &#123; writeToDisk(data.filter(data.part == part), part) &#125;)</span><br><span class="line">  .map(f =&gt; <span class="type">Await</span>.ready(f, <span class="type">Duration</span>.<span class="type">Inf</span>))</span><br></pre></td></tr></table></figure><br><br></p>
-<h2 id="避免data重复计算"><a href="#避免data重复计算" class="headerlink" title="避免data重复计算"></a>避免data重复计算</h2><hr>
-<p>在spark中，我们知道使用cache/persist可以避免数据流的重复计算。在这里也是一样，Future之前需要将data用cache/persist打个点。  </p>
-<p>但是这样还！不！够！  </p>
-<p>在这里我们希望发生的事情是data在future之前先计算好（只计算一次），然后异步的分发下去写对应的分区。  </p>
-<p>但是由于spark的惰性计算特性，使用Future之后，多个job并行下发，每个job在执行时data都还没有计算出来，也就没有cache的数据。反应到spark ui上的jobs页面的情况就是，看上去多个job并行执行了，但是cache操作并没有带来tasks skipped。  </p>
-<p>这时，我们需要在future之前，强制把data计算出来并cache住。这里其实只需要调用一些不影响数据的action算子即可，例如data.count()。  </p>
-<p>最终的结果，在使用上面的改进措施之后，我的这个spark任务执行时间缩短了约60%。<br><br></p>
+<p>C++11标准中，引入了三种智能指针：其中shared_ptr、unique_ptr露面的机会非常多，大家也越来越接受使用shared_ptr、unique_ptr来取代普通指针，省去了手动管理内存的烦恼。但是，作为智能指针三胞胎之一的weak_ptr，正如其名，存在感真是相当弱。面试中也经常发现，应聘者往往能够对shared_ptr、unique_ptr如数家珍，但是说到weak_ptr就经常语塞不知所谓了。</p>
+<a id="more"></a>
+<p>其实，weak_ptr的引入是为了解决老大哥shared_ptr存在的一个问题。shared_ptr相比于前辈auto_ptr虽然已经完善了不少，但是由于其基于引用计数来管理内存，导致shared_ptr在存在循环引用的情况下，会存在内存泄露！  </p>
+<p>如下图所示（高能预警，灵魂画手上线）：</p>
+<p><img src="https://picabstract-preview-ftn.weiyun.com/ftn_pic_abs_v3/8da25c722c1082c56d1f3d46c5a1ede84cefa7d988d9bcf3e3a4c98ebcc363ee90c02fc18d5d1447d5b639c005f98d5a?pictype=scale&amp;from=30113&amp;version=3.3.3.3&amp;uin=523977091&amp;fname=%E5%BE%AA%E7%8E%AF%E5%BC%95%E7%94%A80.jpg&amp;size=750" alt=""></p>
+<p>obj A和B均是通过shared_ptr持有的对象，同时obj A内部有一个shared_ptr指向obj B，同时obj B内部也有一个shared_ptr指向obj A。那么，obj A和obj B的引用计数将同时为2。当外部指向A和B的shared_ptr离开作用域时，引用计数各自减1，这时obj A和obj B均不会被析构，但是外部的shared_ptr已经没有了，也就是这两个对象成了孤立对象，内存泄露了~  </p>
+<p>Python也是使用引用计数作为垃圾回收的主要方式的，那Python是怎么处理的呢？  </p>
+<p>Python在引用计数之外，又引入了标记-清除（mark-sweep）法作为辅助的垃圾收集机制，专门用于对付这种循环引用导致的孤立对象。  </p>
+<p>但是，C++并没有GC，也无从找到root objects，标记清除法在智能指针场景下并不适用。  </p>
+<p>于是，没啥存在感的weak_ptr登场了~  </p>
+<p>weak_ptr只能从shared_ptr复制而来，并且不会新增shared_ptr的引用计数；weak_ptr销毁时，也不会影响到持有对象的生命周期；更重要的，weak_ptr完全没有重载operator *和operator -&gt;，这样就完全不能直接使用weak_ptr，而只能通过weak_ptr.lock()来获得一个“临时的”shared_ptr对象（此时引用计数加1，但是因为是临时的，所以最后会减1的，放心）。  </p>
+<p>那么，使用weak_ptr的情况下，上面的图变成了：  </p>
+<p><img src="https://picabstract-preview-ftn.weiyun.com/ftn_pic_abs_v3/2b015a9df4f906b60039a342cf15e72a61b7d7e8c8f6c3394259fcd4201bc99e5be9fdde2e9c52f4873b52c6e666a43d?pictype=scale&amp;from=30113&amp;version=3.3.3.3&amp;uin=523977091&amp;fname=%E5%BE%AA%E7%8E%AF%E5%BC%95%E7%94%A81.jpg&amp;size=750" alt=""></p>
+<p>这时，当外部的shared_ptr离开作用域销毁时，obj A的引用计数减到0，进行析构。析构导致obj A持有的obj B的shared_ptr引用计数减1，同时叠加外部shared_ptr销毁带来的引用计数减1，obj B的引用计数也将从2减为0，从而进行析构。  </p>
+<p>bingo~内存泄漏没有了~</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>weak_ptr虽然弱，虽然没有存在感，但是，有时候还是不得不用~  </p>
+<p>留意一点：weak_ptr只能解决那些程序员明确知道会存在循环引用的情况；如果类之间的引用关系过于复杂，导致“意外地”引入了循环引用，那么weak_ptr也是没辙的，毕竟他不是GC（GC中标记-清除法就可以处理这种情况）。</p>
+<p><br>  </p>
 <hr>
-<p>推荐阅读：<br><a href="http://blog.guoyb.com/2018/03/17/double-buffer/">使用双buffer无锁化</a><br><a href="http://blog.guoyb.com/2018/03/31/dont-copy/">不要拷贝</a><br><a href="http://blog.guoyb.com/2018/04/14/git-hooks/">一个新朋友 Git Hooks</a>  </p>
-<p>转载请注明出处： <a href="http://blog.guoyb.com/2018/04/21/spark-scala-future/">http://blog.guoyb.com/2018/04/21/spark-scala-future/</a>  </p>
-<p>欢迎使用微信扫描下方二维码，关注我的微信公众号TechTalking，技术·生活·思考：<br><img src="https://picabstract-preview-ftn.weiyun.com/ftn_pic_abs_v3/a37c88e2cf4b9a9672b29447408503614a9b4661ef1e8c9160c705805d2296cfc291f567a6c097c59bdf4ccfdb770a3a?pictype=scale&amp;from=30113&amp;version=3.3.3.3&amp;uin=523977091&amp;fname=%E4%BA%8C%E7%BB%B4%E7%A0%81.jpg&amp;size=750" alt="后端技术小黑屋">  </p>
+<p>推荐阅读：<br><a href="http://blog.guoyb.com/2018/03/17/double-buffer/">使用双buffer无锁化</a><br><a href="http://blog.guoyb.com/2019/06/07/pimpl/">谈谈pImpl模式</a><br><a href="http://blog.guoyb.com/2018/12/01/disable-htt/">我为什么关掉了超线程</a>  </p>
+<p>转载请注明出处： <a href="http://blog.guoyb.com/2019/06/15/weak-ptr/">http://blog.guoyb.com/2019/06/15/weak-ptr/</a>  </p>
+<p>欢迎使用微信扫描下方二维码，关注我的微信公众号TechTalking，技术·生活·思考：<br><img src="https://picabstract-preview-ftn.weiyun.com/ftn_pic_abs_v3/a37c88e2cf4b9a9672b29447408503614a9b4661ef1e8c9160c705805d2296cfc291f567a6c097c59bdf4ccfdb770a3a?pictype=scale&amp;from=30113&amp;version=3.3.3.3&amp;uin=523977091&amp;fname=%E4%BA%8C%E7%BB%B4%E7%A0%81.jpg&amp;size=750" alt="后端技术小黑屋"> </p>
 
     
   </div>
@@ -117,7 +126,7 @@ var _hmt = _hmt || [];
 
       
   <div class="tags">
-    <a class="tags-link" href="/tags/Scala/">Scala</a>, <a class="tags-link" href="/tags/Spark/">Spark</a>
+    <a class="tags-link" href="/tags/C/">C++</a>
   </div>
 
       
@@ -129,7 +138,7 @@ var _hmt = _hmt || [];
 
 <section id="comment">
   <h1 class="title">Comments</h1>
-  <div class="ds-thread" data-thread-key="2018/04/21/spark-scala-future/" data-title="Spark“并行”写" data-url="http://blog.guoyb.com/2018/04/21/spark-scala-future/"></div>
+  <div class="ds-thread" data-thread-key="2019/06/15/weak-ptr/" data-title="没有存在感的weak_ptr" data-url="http://blog.guoyb.com/2019/06/15/weak-ptr/"></div>
 </section>
 </div>
   </div>
