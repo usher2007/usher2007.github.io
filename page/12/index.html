@@ -75,6 +75,47 @@ var _hmt = _hmt || [];
   <header>
     
       <div class="icon"></div>
+      <a href="/2015/01/01/2014-booklist-2/">
+  <time datetime="2015-01-01T01:41:57.000Z">
+    2015-01-01
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title"><a href="/2015/01/01/2014-booklist-2/">2014年下半年书单</a></h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>工作之后就很难找出整块的时间读书了，即使有整块的时间可以用来阅读，心境也比上学的时候浮躁不少，遇到略有晦涩的部分就想跳过或者直接把书撂下，所以这半年读书的效率大打了折扣。</p>
+<h2 id="非技术类："><a href="#非技术类：" class="headerlink" title="非技术类："></a>非技术类：</h2><ul>
+<li><a href="http://book.douban.com/subject/1213945/">《红楼梦》</a><ul>
+<li>熟悉我的人都知道我是个坚定的红楼梦黑，红学黑，可是我自己之前却只看过红楼的前二三十回，因为实在是看不下去。这半年我硬着头皮把一百二十回的红楼梦完整的读了一遍，对它的评价由之前的一到两星升到四星左右。我发现随着年岁的增长（上一次读红楼梦还是在初中），我渐渐的能领悟到小说中的家长里短，人情世故，也能觉察到从始至终曹雪芹文字中的一丝丝忧伤和无奈。那扣掉的一星，是由于我认为那些研（chi1）究（si3）红（ren2）学（fan4）的所谓学者们，过分解读了太多的东西，让这部小说承载了太多的东西，使它在普通人眼中失去了小说本来的味道。或许，十年后，我再读红楼梦，会有更深的感悟。
+    
+  </div>
+  <footer class="end-sep">
+    
+      
+        <div class="alignleft">
+          <a href="/2015/01/01/2014-booklist-2/#more" class="more-link">Read More</a>
+        </div>
+      
+      
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+
+
+  
+    <article class="post">
+  <header>
+    
+      <div class="icon"></div>
       <a href="/2014/10/01/2014-booklist-1/">
   <time datetime="2014-10-01T00:07:23.000Z">
     2014-10-01
@@ -457,50 +498,6 @@ var _hmt = _hmt || [];
 
 
   
-    <article class="post">
-  <header>
-    
-      <div class="icon"></div>
-      <a href="/2014/04/07/python-source-7/">
-  <time datetime="2014-04-07T13:30:45.000Z">
-    2014-04-07
-  </time>
-</a>
-    
-    
-  
-    <h1 class="title"><a href="/2014/04/07/python-source-7/">《Python源码剖析》读书笔记-7 Python的编译结果</a></h1>
-  
-
-  </header>
-  
-  <div class="entry">
-    
-      <hr>
-<h3 id="第7章-Python的编译结果——Code对象与pyc文件"><a href="#第7章-Python的编译结果——Code对象与pyc文件" class="headerlink" title="第7章 Python的编译结果——Code对象与pyc文件"></a>第7章 Python的编译结果——Code对象与pyc文件</h3><ul>
-<li>Python的执行流程大致是：Python源代码(.py)-&gt;Python解释器(python27.dll)-&gt;Python字节码(.pyc)-&gt;Python虚拟机(python27.dll)-&gt;执行结果</li>
-<li>pyc文件中存储了编译的结果，一个嵌套的PyCodeObject对象，import会触发pyc文件的生成，import其实也就是把pyc文件中保存的PyCodeObject加载到内存中</li>
-<li><p>PyCodeObject的定义如下：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> &#123;</span><br><span class="line">    PyObject_HEAD</span><br><span class="line">    <span class="keyword">int</span> co_argcount;	 <span class="comment">/* #arguments, except *args */</span></span><br><span class="line">    <span class="keyword">int</span> co_nlocals;	 <span class="comment">/* #local variables */</span></span><br><span class="line">    <span class="keyword">int</span> co_stacksize;	 <span class="comment">/* #entries needed for evaluation stack */</span></span><br><span class="line">    <span class="keyword">int</span> co_flags;	 <span class="comment">/* CO_..., see below */</span></span><br><span class="line">    PyObject *co_code;	 <span class="comment">/* instruction opcodes */</span></span><br><span class="line">    PyObject *co_consts;	<span class="comment">/* list (constants used) */</span></span><br><span class="line">    PyObject *co_names;	 <span class="comment">/* list of strings (names used) */</span></span><br><span class="line">    PyObject *co_varnames;	<span class="comment">/* tuple of strings (local variable names) */</span></span><br><span class="line">    PyObject *co_freevars;	<span class="comment">/* tuple of strings (free variable names) */</span></span><br><span class="line">    PyObject *co_cellvars; <span class="comment">/* tuple of strings (cell variable names) */</span></span><br><span class="line">    <span class="comment">/* The rest doesn't count for hash/cmp */</span></span><br><span class="line">    PyObject *co_filename;	<span class="comment">/* string (where it was loaded from) */</span></span><br><span class="line">    PyObject *co_name;	 <span class="comment">/* string (name, for reference) */</span></span><br><span class="line">    <span class="keyword">int</span> co_firstlineno;	 <span class="comment">/* first source line number */</span></span><br><span class="line">    PyObject *co_lnotab;	<span class="comment">/* string (encoding addr&lt;-&gt;lineno mapping) See</span><br><span class="line">       Objects/lnotab_notes.txt for details. */</span></span><br><span class="line">    <span class="keyword">void</span> *co_zombieframe; <span class="comment">/* for optimization only (see frameobject.c) */</span></span><br><span class="line">    PyObject *co_weakreflist; <span class="comment">/* to support weakrefs to code objects */</span></span><br><span class="line">&#125; PyCodeObject;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>从PyObject_HEAD宏可以看出它也是一个普通的PyObject对象。</p>
-    
-  </div>
-  <footer class="end-sep">
-    
-      
-        <div class="alignleft">
-          <a href="/2014/04/07/python-source-7/#more" class="more-link">Read More</a>
-        </div>
-      
-      
-    
-    <div class="clearfix"></div>
-  </footer>
-</article>
-
-
-  
 
   <nav id="pagination">
   
@@ -524,7 +521,7 @@ var _hmt = _hmt || [];
   
     <li><a href="/categories/书单/">书单</a><small>12</small></li>
   
-    <li><a href="/categories/技术/">技术</a><small>93</small></li>
+    <li><a href="/categories/技术/">技术</a><small>94</small></li>
   
     <li><a href="/categories/杂谈/">杂谈</a><small>22</small></li>
   
@@ -536,6 +533,10 @@ var _hmt = _hmt || [];
 <div class="widget tag">
   <h3 class="title">recent_posts</h3>
   <ul class="entry">
+    
+      <li>
+        <a href="/2019/06/30/bloomfilter/">你真的了解bloom filter吗？</a>
+      </li>
     
       <li>
         <a href="/2019/06/22/2019-booklist-1/">2019年上半年书单</a>
@@ -553,10 +554,6 @@ var _hmt = _hmt || [];
         <a href="/2019/01/26/2018-booklist-2/">2018年下半年书单</a>
       </li>
     
-      <li>
-        <a href="/2018/12/15/winter-comming/">寒冬来了 闲聊几句</a>
-      </li>
-    
   </ul>
 </div>
 
@@ -565,7 +562,7 @@ var _hmt = _hmt || [];
 <div class="widget tagcloud">
   <h3 class="title">tagcloud</h3>
   <div class="entry">
-    <a href="/tags/C/" style="font-size: 11px;">C</a> <a href="/tags/C/" style="font-size: 18px;">C++</a> <a href="/tags/C-11/" style="font-size: 17px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Git/" style="font-size: 10px;">Git</a> <a href="/tags/Linux/" style="font-size: 11px;">Linux</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 11px;">MySQL</a> <a href="/tags/Python/" style="font-size: 19px;">Python</a> <a href="/tags/Scala/" style="font-size: 12px;">Scala</a> <a href="/tags/Spark/" style="font-size: 11px;">Spark</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 11px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/crontab/" style="font-size: 10px;">crontab</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/grpc/" style="font-size: 11px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 11px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/mutex/" style="font-size: 10px;">mutex</a> <a href="/tags/protobuf/" style="font-size: 13px;">protobuf</a> <a href="/tags/redis/" style="font-size: 13px;">redis</a> <a href="/tags/regex/" style="font-size: 13px;">regex</a> <a href="/tags/rwlock/" style="font-size: 10px;">rwlock</a> <a href="/tags/shell/" style="font-size: 11px;">shell</a> <a href="/tags/skynet/" style="font-size: 15px;">skynet</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 17px;">书单</a> <a href="/tags/内存优化/" style="font-size: 10px;">内存优化</a> <a href="/tags/大数据/" style="font-size: 13px;">大数据</a> <a href="/tags/学习笔记/" style="font-size: 14px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/旅行/" style="font-size: 13px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 20px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 13px;">查证记录</a> <a href="/tags/生活/" style="font-size: 15px;">生活</a> <a href="/tags/读书笔记/" style="font-size: 16px;">读书笔记</a>
+    <a href="/tags/BloomFilter/" style="font-size: 10px;">BloomFilter</a> <a href="/tags/C/" style="font-size: 11px;">C</a> <a href="/tags/C/" style="font-size: 18px;">C++</a> <a href="/tags/C-11/" style="font-size: 17px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Git/" style="font-size: 10px;">Git</a> <a href="/tags/Linux/" style="font-size: 11px;">Linux</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 11px;">MySQL</a> <a href="/tags/Python/" style="font-size: 19px;">Python</a> <a href="/tags/Scala/" style="font-size: 12px;">Scala</a> <a href="/tags/Spark/" style="font-size: 11px;">Spark</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 11px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/crontab/" style="font-size: 10px;">crontab</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/grpc/" style="font-size: 11px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 11px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/mutex/" style="font-size: 10px;">mutex</a> <a href="/tags/protobuf/" style="font-size: 13px;">protobuf</a> <a href="/tags/redis/" style="font-size: 13px;">redis</a> <a href="/tags/regex/" style="font-size: 13px;">regex</a> <a href="/tags/rwlock/" style="font-size: 10px;">rwlock</a> <a href="/tags/shell/" style="font-size: 11px;">shell</a> <a href="/tags/skynet/" style="font-size: 15px;">skynet</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 17px;">书单</a> <a href="/tags/内存优化/" style="font-size: 10px;">内存优化</a> <a href="/tags/大数据/" style="font-size: 13px;">大数据</a> <a href="/tags/学习笔记/" style="font-size: 14px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/旅行/" style="font-size: 13px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 20px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 13px;">查证记录</a> <a href="/tags/生活/" style="font-size: 15px;">生活</a> <a href="/tags/读书笔记/" style="font-size: 16px;">读书笔记</a>
   </div>
 </div>
 
