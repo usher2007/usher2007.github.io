@@ -75,6 +75,47 @@ var _hmt = _hmt || [];
   <header>
     
       <div class="icon"></div>
+      <a href="/2017/12/09/scala-match/">
+  <time datetime="2017-12-09T06:03:30.000Z">
+    2017-12-09
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title"><a href="/2017/12/09/scala-match/">scala模式匹配的一个问题</a></h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <hr>
+<p>最近开始用scala做一些工作。  </p>
+<p>scala和java可以说同源同种，而我上一次写java程序可能要追溯到快十年前了。平常习惯使用弱类型语言，突然间切到scala，还有点不太适应。最近碰到的这个小问题，就耗费掉我不少时间。  </p>
+<hr>
+<p>大概场景是有两份数据left和right，需要对他们做一次全连接（fullOuterJoin），然后对于得到的结果，优先选择left中的数据，left中的数据不存在则选择right中的数据。示意如下：<br>
+    
+  </div>
+  <footer class="end-sep">
+    
+      
+        <div class="alignleft">
+          <a href="/2017/12/09/scala-match/#more" class="more-link">Read More</a>
+        </div>
+      
+      
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+
+
+  
+    <article class="post">
+  <header>
+    
+      <div class="icon"></div>
       <a href="/2017/11/05/boost-python/">
   <time datetime="2017-11-05T10:33:47.000Z">
     2017-11-05
@@ -428,45 +469,6 @@ var _hmt = _hmt || [];
 
 
   
-    <article class="post">
-  <header>
-    
-      <div class="icon"></div>
-      <a href="/2017/09/09/python-mem/">
-  <time datetime="2017-09-09T05:40:04.000Z">
-    2017-09-09
-  </time>
-</a>
-    
-    
-  
-    <h1 class="title"><a href="/2017/09/09/python-mem/">如何估算一个Python对象的内存占用</a></h1>
-  
-
-  </header>
-  
-  <div class="entry">
-    
-      <hr>
-<h2 id="需求"><a href="#需求" class="headerlink" title="需求"></a>需求</h2><p>最近接到一个需求：制作一个工具，可以即时查看线上服务器的内存使用状况，不要求精确，但是如果存在爆内存的情况，要能查到有嫌疑的Entity是哪个。  </p>
-<h2 id="pytracemalloc神器无用武之地"><a href="#pytracemalloc神器无用武之地" class="headerlink" title="pytracemalloc神器无用武之地"></a>pytracemalloc神器无用武之地</h2><p>在网上一番搜索，对<a href="http://guppy-pe.sourceforge.net/">Guppy</a>、<a href="http://pysizer.8325.org/">PySizer</a>、<a href="http://pytracemalloc.readthedocs.io/">pytracemalloc</a>进行比较之后，貌似大家对pytracemalloc的评价较好。按照官方文档，需要对Python2.7.8源码打个patch，虽然我们项目使用的是2.7.11，不过也问题不大，打Patch时obmalloc.c里面有2个reject，手动将其merge到源码中即可。编译通过，写个小程序进行实现，可行，而且可以定位到源代码的行号，确实神器。于是将情况报告给领导，正以为将大功告成之时，领导说，tracemalloc这个库我们已经集成到引擎中，但是对服务器性能有影响，所以一般就在测试环境用用，不满足<strong>即时查看线上服务器内存使用状况</strong>的要求。根据我了解的情况，确实有这样的问题，pytracemalloc其实是修改了Python虚拟机分配内存时的代码，所以：<br>
-    
-  </div>
-  <footer class="end-sep">
-    
-      
-        <div class="alignleft">
-          <a href="/2017/09/09/python-mem/#more" class="more-link">Read More</a>
-        </div>
-      
-      
-    
-    <div class="clearfix"></div>
-  </footer>
-</article>
-
-
-  
 
   <nav id="pagination">
   
@@ -492,7 +494,7 @@ var _hmt = _hmt || [];
   
     <li><a href="/categories/技术/">技术</a><small>94</small></li>
   
-    <li><a href="/categories/杂谈/">杂谈</a><small>22</small></li>
+    <li><a href="/categories/杂谈/">杂谈</a><small>23</small></li>
   
   </ul>
 </div>
@@ -502,6 +504,10 @@ var _hmt = _hmt || [];
 <div class="widget tag">
   <h3 class="title">recent_posts</h3>
   <ul class="entry">
+    
+      <li>
+        <a href="/2019/07/07/maker-competition/">某创新创业大赛见闻</a>
+      </li>
     
       <li>
         <a href="/2019/06/30/bloomfilter/">你真的了解bloom filter吗？</a>
@@ -519,10 +525,6 @@ var _hmt = _hmt || [];
         <a href="/2019/06/07/pimpl/">谈谈pImpl模式</a>
       </li>
     
-      <li>
-        <a href="/2019/01/26/2018-booklist-2/">2018年下半年书单</a>
-      </li>
-    
   </ul>
 </div>
 
@@ -531,7 +533,7 @@ var _hmt = _hmt || [];
 <div class="widget tagcloud">
   <h3 class="title">tagcloud</h3>
   <div class="entry">
-    <a href="/tags/BloomFilter/" style="font-size: 10px;">BloomFilter</a> <a href="/tags/C/" style="font-size: 11px;">C</a> <a href="/tags/C/" style="font-size: 18px;">C++</a> <a href="/tags/C-11/" style="font-size: 17px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Git/" style="font-size: 10px;">Git</a> <a href="/tags/Linux/" style="font-size: 11px;">Linux</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 11px;">MySQL</a> <a href="/tags/Python/" style="font-size: 19px;">Python</a> <a href="/tags/Scala/" style="font-size: 12px;">Scala</a> <a href="/tags/Spark/" style="font-size: 11px;">Spark</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 11px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/crontab/" style="font-size: 10px;">crontab</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/grpc/" style="font-size: 11px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 11px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/mutex/" style="font-size: 10px;">mutex</a> <a href="/tags/protobuf/" style="font-size: 13px;">protobuf</a> <a href="/tags/redis/" style="font-size: 13px;">redis</a> <a href="/tags/regex/" style="font-size: 13px;">regex</a> <a href="/tags/rwlock/" style="font-size: 10px;">rwlock</a> <a href="/tags/shell/" style="font-size: 11px;">shell</a> <a href="/tags/skynet/" style="font-size: 15px;">skynet</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 17px;">书单</a> <a href="/tags/内存优化/" style="font-size: 10px;">内存优化</a> <a href="/tags/大数据/" style="font-size: 13px;">大数据</a> <a href="/tags/学习笔记/" style="font-size: 14px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/旅行/" style="font-size: 13px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 20px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 13px;">查证记录</a> <a href="/tags/生活/" style="font-size: 15px;">生活</a> <a href="/tags/读书笔记/" style="font-size: 16px;">读书笔记</a>
+    <a href="/tags/BloomFilter/" style="font-size: 10px;">BloomFilter</a> <a href="/tags/C/" style="font-size: 10.91px;">C</a> <a href="/tags/C/" style="font-size: 18.18px;">C++</a> <a href="/tags/C-11/" style="font-size: 17.27px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Git/" style="font-size: 10px;">Git</a> <a href="/tags/Linux/" style="font-size: 10.91px;">Linux</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 10.91px;">MySQL</a> <a href="/tags/Python/" style="font-size: 19.09px;">Python</a> <a href="/tags/Scala/" style="font-size: 11.82px;">Scala</a> <a href="/tags/Spark/" style="font-size: 10.91px;">Spark</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10.91px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/crontab/" style="font-size: 10px;">crontab</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/grpc/" style="font-size: 10.91px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 10.91px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/mutex/" style="font-size: 10px;">mutex</a> <a href="/tags/protobuf/" style="font-size: 12.73px;">protobuf</a> <a href="/tags/redis/" style="font-size: 12.73px;">redis</a> <a href="/tags/regex/" style="font-size: 12.73px;">regex</a> <a href="/tags/rwlock/" style="font-size: 10px;">rwlock</a> <a href="/tags/shell/" style="font-size: 10.91px;">shell</a> <a href="/tags/skynet/" style="font-size: 14.55px;">skynet</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 17.27px;">书单</a> <a href="/tags/内存优化/" style="font-size: 10px;">内存优化</a> <a href="/tags/大数据/" style="font-size: 12.73px;">大数据</a> <a href="/tags/学习笔记/" style="font-size: 13.64px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/旅行/" style="font-size: 12.73px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 20px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 12.73px;">查证记录</a> <a href="/tags/生活/" style="font-size: 15.45px;">生活</a> <a href="/tags/读书笔记/" style="font-size: 16.36px;">读书笔记</a>
   </div>
 </div>
 

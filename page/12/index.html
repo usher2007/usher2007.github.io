@@ -75,6 +75,48 @@ var _hmt = _hmt || [];
   <header>
     
       <div class="icon"></div>
+      <a href="/2015/01/24/sgjm-reviewmd/">
+  <time datetime="2015-01-24T14:29:28.000Z">
+    2015-01-24
+  </time>
+</a>
+    
+    
+  
+    <h1 class="title"><a href="/2015/01/24/sgjm-reviewmd/">《三国机密》感</a></h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <p>（感谢柚子童鞋投稿）</p>
+<hr>
+<ul>
+<li>作为程序员的女朋友，死皮赖脸地要在他博客上挤一篇小文刷存在感，感谢郭先森的慷慨允许。</li>
+<li>2015的开年手机掉厕所，然后被我洗坏了（虽然i6出来了，但是，郭先森，我真的不是故意的，我是有意的^-^）。正好，借这段时间，沉淀自己，过过没有手机的古墓派日子吧。不知不觉半个多月过去了，原来没有手机依然可以在这个时代安然地存在下去。。。</li>
+<li>没有手机的日子，每天上下班的2个小时都在发呆，郭先森贴心地给了他心爱的kindle,斟酌许久推荐了马伯庸的《三国机密》。马伯庸是谁？哪里人？什么时候出名的作家？呵呵，看到这些问题就会发现我是个伪书迷了，嗯，已经很久很久没好好看完一部完整的小说了。
+    
+  </div>
+  <footer class="end-sep">
+    
+      
+        <div class="alignleft">
+          <a href="/2015/01/24/sgjm-reviewmd/#more" class="more-link">Read More</a>
+        </div>
+      
+      
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+
+
+  
+    <article class="post">
+  <header>
+    
+      <div class="icon"></div>
       <a href="/2015/01/01/2014-booklist-2/">
   <time datetime="2015-01-01T01:41:57.000Z">
     2015-01-01
@@ -454,50 +496,6 @@ var _hmt = _hmt || [];
 
 
   
-    <article class="post">
-  <header>
-    
-      <div class="icon"></div>
-      <a href="/2014/04/10/python-source-8/">
-  <time datetime="2014-04-10T10:03:46.000Z">
-    2014-04-10
-  </time>
-</a>
-    
-    
-  
-    <h1 class="title"><a href="/2014/04/10/python-source-8/">《Python源码剖析》读书笔记-8 Python虚拟机框架</a></h1>
-  
-
-  </header>
-  
-  <div class="entry">
-    
-      <hr>
-<h3 id="第8章-Python虚拟机框架"><a href="#第8章-Python虚拟机框架" class="headerlink" title="第8章 Python虚拟机框架"></a>第8章 Python虚拟机框架</h3><ul>
-<li><p>####PyFrameObject</p>
-<ul>
-<li><p>定义为：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> _frame &#123;</span><br><span class="line">    PyObject_VAR_HEAD</span><br><span class="line">    <span class="keyword">struct</span> _frame *f_back;	<span class="comment">/* previous frame, or NULL */</span></span><br><span class="line">    PyCodeObject *f_code;	<span class="comment">/* code segment */</span></span><br><span class="line">    PyObject *f_builtins;	<span class="comment">/* builtin symbol table (PyDictObject) */</span></span><br><span class="line">    PyObject *f_globals;	<span class="comment">/* global symbol table (PyDictObject) */</span></span><br><span class="line">    PyObject *f_locals;	 <span class="comment">/* local symbol table (any mapping) */</span></span><br><span class="line">    PyObject **f_valuestack;	<span class="comment">/* points after the last local */</span></span><br><span class="line">    <span class="comment">/* Next free slot in f_valuestack. Frame creation sets to f_valuestack.</span><br><span class="line">       Frame evaluation usually NULLs it, but a frame that yields sets it</span><br><span class="line">       to the current stack top. */</span></span><br><span class="line">    PyObject **f_stacktop;</span><br><span class="line">    PyObject *f_trace;	 <span class="comment">/* Trace function */</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/* If an exception is raised in this frame, the next three are used to</span><br><span class="line">     * record the exception info (if any) originally in the thread state. See</span><br><span class="line">     * comments before set_exc_info() -- it's not obvious.</span><br><span class="line">     * Invariant: if _type is NULL, then so are _value and _traceback.</span><br><span class="line">     * Desired invariant: all three are NULL, or all three are non-NULL. That</span><br><span class="line">     * one isn't currently true, but "should be".</span><br><span class="line">     */</span></span><br><span class="line">    PyObject *f_exc_type, *f_exc_value, *f_exc_traceback;</span><br><span class="line"></span><br><span class="line">    PyThreadState *f_tstate;</span><br><span class="line">    <span class="keyword">int</span> f_lasti;	 <span class="comment">/* Last instruction if called */</span></span><br><span class="line">    <span class="comment">/* Call PyFrame_GetLineNumber() instead of reading this field</span><br><span class="line">       directly. As of 2.3 f_lineno is only valid when tracing is</span><br><span class="line">       active (i.e. when f_trace is set). At other times we use</span><br><span class="line">       PyCode_Addr2Line to calculate the line from the current</span><br><span class="line">       bytecode index. */</span></span><br><span class="line">    <span class="keyword">int</span> f_lineno;	 <span class="comment">/* Current line number */</span></span><br><span class="line">    <span class="keyword">int</span> f_iblock;	 <span class="comment">/* index in f_blockstack */</span></span><br><span class="line">    PyTryBlock f_blockstack[CO_MAXBLOCKS]; <span class="comment">/* for try and loop blocks */</span></span><br><span class="line">    PyObject *f_localsplus[<span class="number">1</span>];	<span class="comment">/* locals+stack, dynamically sized */</span></span><br><span class="line">&#125; PyFrameObject;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>PyCodeObject和PyFrameObject。PyFrameObject是Python的执行环境，PyCodeObject只是其中的一部分。从上面PyFrameObject的定义也可以看出，PyFrameObject还包含了名字空间，栈地址，线程状态对象等诸多其他内容</p>
-    
-  </div>
-  <footer class="end-sep">
-    
-      
-        <div class="alignleft">
-          <a href="/2014/04/10/python-source-8/#more" class="more-link">Read More</a>
-        </div>
-      
-      
-    
-    <div class="clearfix"></div>
-  </footer>
-</article>
-
-
-  
 
   <nav id="pagination">
   
@@ -523,7 +521,7 @@ var _hmt = _hmt || [];
   
     <li><a href="/categories/技术/">技术</a><small>94</small></li>
   
-    <li><a href="/categories/杂谈/">杂谈</a><small>22</small></li>
+    <li><a href="/categories/杂谈/">杂谈</a><small>23</small></li>
   
   </ul>
 </div>
@@ -533,6 +531,10 @@ var _hmt = _hmt || [];
 <div class="widget tag">
   <h3 class="title">recent_posts</h3>
   <ul class="entry">
+    
+      <li>
+        <a href="/2019/07/07/maker-competition/">某创新创业大赛见闻</a>
+      </li>
     
       <li>
         <a href="/2019/06/30/bloomfilter/">你真的了解bloom filter吗？</a>
@@ -550,10 +552,6 @@ var _hmt = _hmt || [];
         <a href="/2019/06/07/pimpl/">谈谈pImpl模式</a>
       </li>
     
-      <li>
-        <a href="/2019/01/26/2018-booklist-2/">2018年下半年书单</a>
-      </li>
-    
   </ul>
 </div>
 
@@ -562,7 +560,7 @@ var _hmt = _hmt || [];
 <div class="widget tagcloud">
   <h3 class="title">tagcloud</h3>
   <div class="entry">
-    <a href="/tags/BloomFilter/" style="font-size: 10px;">BloomFilter</a> <a href="/tags/C/" style="font-size: 11px;">C</a> <a href="/tags/C/" style="font-size: 18px;">C++</a> <a href="/tags/C-11/" style="font-size: 17px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Git/" style="font-size: 10px;">Git</a> <a href="/tags/Linux/" style="font-size: 11px;">Linux</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 11px;">MySQL</a> <a href="/tags/Python/" style="font-size: 19px;">Python</a> <a href="/tags/Scala/" style="font-size: 12px;">Scala</a> <a href="/tags/Spark/" style="font-size: 11px;">Spark</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 11px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/crontab/" style="font-size: 10px;">crontab</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/grpc/" style="font-size: 11px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 11px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/mutex/" style="font-size: 10px;">mutex</a> <a href="/tags/protobuf/" style="font-size: 13px;">protobuf</a> <a href="/tags/redis/" style="font-size: 13px;">redis</a> <a href="/tags/regex/" style="font-size: 13px;">regex</a> <a href="/tags/rwlock/" style="font-size: 10px;">rwlock</a> <a href="/tags/shell/" style="font-size: 11px;">shell</a> <a href="/tags/skynet/" style="font-size: 15px;">skynet</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 17px;">书单</a> <a href="/tags/内存优化/" style="font-size: 10px;">内存优化</a> <a href="/tags/大数据/" style="font-size: 13px;">大数据</a> <a href="/tags/学习笔记/" style="font-size: 14px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/旅行/" style="font-size: 13px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 20px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 13px;">查证记录</a> <a href="/tags/生活/" style="font-size: 15px;">生活</a> <a href="/tags/读书笔记/" style="font-size: 16px;">读书笔记</a>
+    <a href="/tags/BloomFilter/" style="font-size: 10px;">BloomFilter</a> <a href="/tags/C/" style="font-size: 10.91px;">C</a> <a href="/tags/C/" style="font-size: 18.18px;">C++</a> <a href="/tags/C-11/" style="font-size: 17.27px;">C++11</a> <a href="/tags/Decorator/" style="font-size: 10px;">Decorator</a> <a href="/tags/Git/" style="font-size: 10px;">Git</a> <a href="/tags/Linux/" style="font-size: 10.91px;">Linux</a> <a href="/tags/Makefile/" style="font-size: 10px;">Makefile</a> <a href="/tags/MySQL/" style="font-size: 10.91px;">MySQL</a> <a href="/tags/Python/" style="font-size: 19.09px;">Python</a> <a href="/tags/Scala/" style="font-size: 11.82px;">Scala</a> <a href="/tags/Spark/" style="font-size: 10.91px;">Spark</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Unity3D/" style="font-size: 10px;">Unity3D</a> <a href="/tags/Vim/" style="font-size: 10.91px;">Vim</a> <a href="/tags/coroutine/" style="font-size: 10px;">coroutine</a> <a href="/tags/crontab/" style="font-size: 10px;">crontab</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/grpc/" style="font-size: 10.91px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/libuv/" style="font-size: 10.91px;">libuv</a> <a href="/tags/linker/" style="font-size: 10px;">linker</a> <a href="/tags/mutex/" style="font-size: 10px;">mutex</a> <a href="/tags/protobuf/" style="font-size: 12.73px;">protobuf</a> <a href="/tags/redis/" style="font-size: 12.73px;">redis</a> <a href="/tags/regex/" style="font-size: 12.73px;">regex</a> <a href="/tags/rwlock/" style="font-size: 10px;">rwlock</a> <a href="/tags/shell/" style="font-size: 10.91px;">shell</a> <a href="/tags/skynet/" style="font-size: 14.55px;">skynet</a> <a href="/tags/virtualenv/" style="font-size: 10px;">virtualenv</a> <a href="/tags/书单/" style="font-size: 17.27px;">书单</a> <a href="/tags/内存优化/" style="font-size: 10px;">内存优化</a> <a href="/tags/大数据/" style="font-size: 12.73px;">大数据</a> <a href="/tags/学习笔记/" style="font-size: 13.64px;">学习笔记</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/旅行/" style="font-size: 12.73px;">旅行</a> <a href="/tags/杂谈/" style="font-size: 20px;">杂谈</a> <a href="/tags/查证记录/" style="font-size: 12.73px;">查证记录</a> <a href="/tags/生活/" style="font-size: 15.45px;">生活</a> <a href="/tags/读书笔记/" style="font-size: 16.36px;">读书笔记</a>
   </div>
 </div>
 
